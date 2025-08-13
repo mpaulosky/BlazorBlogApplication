@@ -47,5 +47,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="xunit.v3" Version="3.0.0" />
+  <PackageVersion Include="xunit.v3.core" Version="3.0.0" />
+  <PackageVersion Include="xunit.v3.common" Version="3.0.0" />
+  <PackageVersion Include="xunit.v3.extensibility.core" Version="3.0.0" />
   </ItemGroup>
 </Project>
