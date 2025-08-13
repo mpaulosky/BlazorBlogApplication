@@ -18,7 +18,7 @@ public class CounterCSharpTest : BunitContext
 
 	[Fact]
 public void ClickingButtonIncrementsCounter()
-{
+public void ClickingButtonIncrementsCounter() {
     // Arrange
     var cut = Render<Counter>();
 
