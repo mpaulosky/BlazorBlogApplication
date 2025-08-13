@@ -1,0 +1,81 @@
+@page "/user-overview"
+
+@using Mapster
+@using Web.Data.Auth0
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Web.Data.Models
+@inject Auth0Service Auth0Service
+@rendermode @(new InteractiveServerRenderMode(false))
+
+@attribute [Authorize(Roles = "Admin")]
+
+<PageHeadingComponent Level="2" HeaderText="User Over View" />
+
+<p>Hello @_username!</p>
+
+<div class="space-y-6">
+
+	@if (_users is null)
+	{
+		<p>Loading users...</p>
+	}
+	else if (!_users.Any())
+	{
+		<p>No users found.</p>
+	}
+	else
+	{
+		<QuickGrid Items="_users" Class="w-full">
+			<PropertyColumn Property="@(u => u.UserName)" Title="Name" />
+			<PropertyColumn Property="@(u => u.Email)" Title="Email" />
+			<TemplateColumn Title="Roles">
+				<ChildContent Context="roles">
+					<span>
+						@foreach (var role in (IEnumerable<object>)roles)
+						{
+							<span class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+								@role
+							</span>
+						}
+					</span>
+				</ChildContent>
+			</TemplateColumn>
+		</QuickGrid>
+	}
+
+</div>
+
+@code {
+
+	/// <summary>
+	/// The current authentication state.
+	/// </summary>
+	[CascadingParameter]
+	private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+	private string _username = string.Empty;
+
+	private IQueryable<AppUserDto>? _users;
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		if (AuthenticationState is not null)
+		{
+			var state = await AuthenticationState;
+
+			_username = state.User.Identity?.Name ?? string.Empty;
+		}
+
+		var users = await Auth0Service.GetUsersAsync();
+
+		// foreach (var user in users)
+		// {
+		// user.Roles = await Auth0Service.GetUserRolesAsync(user.UserId);
+		// }
+
+		_users = users.Adapt<IQueryable<AppUserDto>>();
+
+	}
+
+}

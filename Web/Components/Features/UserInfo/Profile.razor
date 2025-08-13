@@ -1,0 +1,85 @@
+@page "/profile"
+
+@using Web.Data.Auth0
+
+@inject Auth0Service Auth0Service
+
+<PageHeadingComponent Level="1" HeaderText="User Profile"/>
+
+@if (_user != null)
+{
+	<div>
+		<h2 class="text-3xl font-extrabold dark:text-gray-50">User Profile</h2>
+		<p class="mt-4">Hello @_user.Name</p>
+		<p class="mt-2">Here are your details:</p>
+		<p class="mt-2">You are logged in as: @_user.Name</p>
+		<p class="mt-2">Your user ID: @_user.UserId</p>
+		<p class="mt-2">Your email: @_user.Email</p>
+		<p class="mt-2">Your roles: @string.Join(", ", _user.Roles ?? ["No roles assigned"])</p>
+		<p class="mt-2">Your email verified: @_user.EmailVerified</p>
+		<p class="mt-2">Your created at: @_user.CreatedAt</p>
+		<p class="mt-2">Your updated at: @_user.UpdatedAt</p>
+	</div>
+}
+else
+{
+	<p>Loading user information...</p>
+}
+
+@code {
+
+	private UserResponse? _user;
+
+	[CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+	private const string _subClaimType = "sub";
+
+	private const string _roleClaimType = "https://schemas.microsoft.com/ws/2008/06/identity/claims/role";
+
+	/// <summary>
+  /// Initializes the component and loads user data if authenticated
+  /// </summary>
+	protected override async Task OnInitializedAsync()
+	{
+
+		var userId = await TryGetAuthenticatedUserIdAsync();
+		if (userId is not null) await LoadUserDataAsync(userId);
+
+	}
+
+	/// <summary>
+  /// Attempts to get the authenticated user ID from the authentication state
+  /// </summary>
+	private async Task<string?> TryGetAuthenticatedUserIdAsync()
+	{
+
+		if (AuthenticationState is null) return null;
+
+		var authState = await AuthenticationState;
+
+		var result = authState.User.FindFirst(_subClaimType)?.Value;
+
+		return result;
+
+	}
+
+	/// <summary>
+  /// Loads user data including roles for the specified user ID
+  /// </summary>
+	private async Task LoadUserDataAsync(string userId)
+	{
+
+		var users = await Auth0Service.GetUsersAsync();
+
+		if (users != null) _user = users.FirstOrDefault(u => u.UserId == userId);
+
+		if (_user is not null && AuthenticationState is not null)
+		{
+			var authState = await AuthenticationState;
+			var roleClaims = authState.User.FindAll(_roleClaimType);
+			_user.Roles = roleClaims.Select(c => c.Value).ToList();
+		}
+
+	}
+
+}

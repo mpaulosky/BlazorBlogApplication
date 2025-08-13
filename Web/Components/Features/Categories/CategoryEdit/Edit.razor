@@ -1,0 +1,127 @@
+@page "/categories/edit/{id:guid}"
+@using MongoDB.Bson
+@using Web.Components.Features.Categories.CategoryGet
+@using Web.Data.Models
+
+@inject NavigationManager Navigation
+@inject EditCategory.Handler EditHandler
+@inject GetCategory.Handler GetHandler
+@inject ILogger<Edit> Logger
+
+@attribute [Authorize(Roles = "Admin")]
+
+<PageHeadingComponent HeaderText="Edit Category" Level="1" TextColorClass="blue-500"/>
+
+@if (_isLoading)
+{
+	<LoadingComponent/>
+}
+else if (_category is null)
+{
+	<p>Category not found.</p>
+}
+else
+{
+	<EditForm Model="_category" OnValidSubmit="HandleValidSubmit">
+		<DataAnnotationsValidator/>
+		<ValidationSummary/>
+		@if (!string.IsNullOrEmpty(_errorMessage))
+		{
+			<div class="alert alert-danger">@_errorMessage</div>
+		}
+		<div class="mb-3">
+			<label for="name">Category CategoryName</label>
+			<InputText id="name" class="form-control" @bind-Value="_category.CategoryName"/>
+		</div>
+		@if (_isSubmitting)
+		{
+			<button class="btn btn-success" type="submit" disabled>Updating...</button>
+		}
+		else
+		{
+			<button class="btn btn-success" type="submit">Save Changes</button>
+		}
+		<button class="btn btn-light ms-2" type="button" @onclick="GoToList">Cancel</button>
+	</EditForm>
+}
+
+@code {
+
+	[Parameter] public ObjectId Id { get; set; }
+
+	private CategoryDto? _category;
+
+	private string? _errorMessage;
+
+	private bool _isLoading = true;
+
+	private bool _isSubmitting;
+
+	// Change from OnInitialized to OnInitializedAsync and use await
+	protected override async Task OnInitializedAsync()
+	{
+
+		var result = await GetHandler.HandleAsync(Id);
+
+		if (result.Success)
+		{
+			_category = result.Value ?? null;
+			_isLoading = false;
+		}
+		else
+		{
+			Logger.LogError(result.Error ?? "An error occurred while fetching the category.");
+			_errorMessage = result.Error ?? "An error occurred while fetching the category.";
+			_category = null;
+			_isLoading = false;
+			StateHasChanged();
+		}
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		
+		if (_category?.CategoryName is null || _category.CategoryName.Trim().Length == 0)
+		{
+			_errorMessage = "CategoryName cannot be null or empty.";
+			Logger.LogWarning("Category update failed: CategoryName cannot be null or empty.");
+			_isSubmitting = false;
+			StateHasChanged();
+			_isLoading = false;
+		}
+
+		_isSubmitting = true;
+
+		if (_category is null)
+		{
+			Logger.LogError("Category data is missing.");
+			_isSubmitting = false;
+			_isLoading = false;
+			return;
+		}
+
+		var result = await EditHandler.HandleAsync(_category);
+		
+		if (result.Success)
+		{
+			Logger.LogInformation("Category updated successfully: {CategoryName}", _category.CategoryName);
+			_isSubmitting = false;
+			_isLoading = false;
+			GoToList();
+		}
+		else
+		{
+			Logger.LogError(result.Error ?? "An error occurred while updating the category.");
+			_errorMessage = result.Error ?? "An error occurred while updating the category.";
+			_isSubmitting = false;
+			_isLoading = false;
+			StateHasChanged();
+		}
+	}
+
+	private void GoToList()
+	{
+		Navigation.NavigateTo("/categories");
+	}
+
+}

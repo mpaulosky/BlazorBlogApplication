@@ -1,0 +1,99 @@
+@page "/articles"
+
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Web.Data.Models
+
+@inject NavigationManager Navigation
+@inject GetArticles.Handler ArticlesHandler
+@inject ILogger<List> Logger
+
+@attribute [Authorize]
+
+<PageHeadingComponent HeaderText="Articles" Level="1" TextColorClass="blue-500"/>
+
+
+@if (_isLoading)
+{
+	<LoadingComponent/>
+}
+else if (_articles == null || !_articles.Any())
+{
+	<div class="alert alert-info">
+		No articles available.
+		<button class="btn btn-success mt-3" @onclick="GoToCreate">Create New Article</button>
+	</div>
+}
+else
+{
+	<QuickGrid Class="table" Items="_articles" Pagination="_pagination">
+		<PropertyColumn Property="article => article.Title" Sortable="true"/>
+		<PropertyColumn Property="article => article.Introduction" Title="Release Date"/>
+		<PropertyColumn Property="article => article.Content"/>
+		<PropertyColumn Property="article => article.Author.UserName" Title="Author"/>
+		<PropertyColumn Property="article => article.Category.CategoryName"/>
+		<PropertyColumn Property="article => article.CreatedOn" Title="CategoryCreated On" Format="{0:d}"/>
+		<PropertyColumn Property="article => article.ModifiedOn" Title="Modified On" Format="{0:d}"/>
+		<PropertyColumn Property="article => article.IsPublished" Title="Published"/>
+		<PropertyColumn Property="article => article.PublishedOn" Title="Published On" Format="{0:d}"/>
+		<PropertyColumn Property="article => article.Archived" Title="Archived"/>
+
+		<TemplateColumn Context="article">
+			<a href="@($"articles/edit?id={article.Id}")">Edit</a> |
+			<a href="@($"articles/details?id={article.Id}")">Details</a> |
+			<a href="@($"articles/delete?id={article.Id}")">Delete</a>
+		</TemplateColumn>
+	</QuickGrid>
+}
+<button class="btn btn-success mt-3" @onclick="GoToCreate">Create New Article</button>
+
+@code {
+
+	/// <summary>
+	///   The list of articles to display.
+	/// </summary>
+	private IQueryable<ArticleDto>? _articles;
+
+	/// <summary>
+	///   Pagination state for the article's list.
+	/// </summary>
+	private readonly PaginationState _pagination = new()  { ItemsPerPage = 5 };
+
+	/// <summary>
+	///   Indicates whether the page is loading data.
+	/// </summary>
+	private bool _isLoading = true;
+
+	/// <summary>
+	///   Called when the component is initialized. Loads all articles for display.
+	///   Adds structured logging for success and error cases.
+	/// </summary>
+	protected override async Task OnInitializedAsync()
+	{
+		Logger.LogInformation("Loading articles list.");
+
+		var result = await ArticlesHandler.HandleAsync();
+
+		if (result.Success)
+		{
+			Logger.LogInformation("Articles loaded successfully. Count: {Count}", result.Value?.Count() ?? 0);
+			_articles = result.Value?.AsQueryable() ?? null;
+		}
+		else
+		{
+			Logger.LogError("Failed to load articles. Error: {Error}", result.Error ?? "Unknown error");
+			_articles = null;
+		}
+
+		_isLoading = false;
+
+	}
+
+	/// <summary>
+	///   Navigates to the creation category page.
+	/// </summary>
+	private void GoToCreate()
+	{
+		Navigation.NavigateTo("/articles/create");
+	}
+
+}

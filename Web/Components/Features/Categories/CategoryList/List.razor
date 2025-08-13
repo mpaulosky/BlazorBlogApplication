@@ -1,0 +1,103 @@
+@page "/categories"
+
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using Web.Data.Models
+
+@inject NavigationManager Navigation
+@inject GetCategories.Handler CategoriesHandler
+@inject ILogger<List> Logger
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@* @attribute [Authorize(Roles = "Admin")] *@
+
+<PageHeadingComponent HeaderText="Categories" Level="1" TextColorClass="blue-500"/>
+<p class="text-gray-600">Welcome @_username!</p>
+
+@if (_isLoading)
+{
+	<LoadingComponent/>
+}
+else if (_categories is null || !_categories.Any())
+{
+	<div class="alert alert-info">
+		No categories available.
+		<button class="btn btn-success mt-3" @onclick="GoToCreate">CategoryCreate New Category</button>
+	</div>
+}
+else
+{
+	<QuickGrid Class="table" Items="_categories" Pagination="_pagination">
+		<PropertyColumn Property="category => category.CategoryName" Sortable="true"/>
+		<PropertyColumn Property="category => category.CreatedOn" Title="CategoryCreated On" Format="{0:d}"/>
+		<PropertyColumn Property="category => category.ModifiedOn" Title="Modified On" Format="{0:d}"/>
+
+		<TemplateColumn Context="category">
+			<a href="@($"categories/edit?id={category.Id}")">Edit</a> |
+			<a href="@($"categories/details?id={category.Id}")">Details</a> |
+			<a href="@($"categories/archive?id={category.Id}")">Archive</a>
+		</TemplateColumn>
+	</QuickGrid>
+}
+
+@code {
+
+	/// <summary>
+	///   The list of categories displayed in the grid.
+	/// </summary>
+	private IQueryable<CategoryDto>? _categories;
+
+	[CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+	private string _username = "";
+
+	/// <summary>
+	///   Pagination state for the article's list.
+	/// </summary>
+	private readonly PaginationState _pagination = new()  { ItemsPerPage = 5 };
+
+	/// <summary>
+	///   Indicates whether the page is loading data.
+	/// </summary>
+	private bool _isLoading = true;
+
+	/// <summary>
+	///   Called when the component is initialized. Loads all categories for display.
+	///   Adds structured logging for success and error cases.
+	///   Also retrieves the authentication state.
+	/// </summary>
+	protected override async Task OnInitializedAsync()
+	{
+
+		if (AuthenticationState is not null)
+		{
+			var state = await AuthenticationState;
+
+			_username = state.User.Identity?.Name ?? string.Empty;
+		}
+
+		var result = await CategoriesHandler.HandleAsync();
+
+		if (result.Success)
+		{
+			Logger.LogInformation("Categories loaded successfully. Count: {Count}", result.Value?.Count() ?? 0);
+			_categories = result.Value?.AsQueryable() ?? null;
+		}
+		else
+		{
+			Logger.LogError("Failed to load categories. Error: {Error}", result.Error ?? "Unknown error");
+			_categories = null;
+		}
+
+		_isLoading = false;
+
+	}
+
+	/// <summary>
+	///   Navigates to the creation category page.
+	/// </summary>
+	private void GoToCreate()
+	{
+		Navigation.NavigateTo("/categories/create");
+	}
+
+}
