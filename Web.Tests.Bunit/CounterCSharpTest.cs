@@ -8,7 +8,7 @@ public class CounterCSharpTest : BunitContext
 {
 	[Fact]
 	public void CounterStartsAtZero()
-{
+	public void CounterStartsAtZero() {
     // Arrange
     var cut = Render<Counter>();
 
