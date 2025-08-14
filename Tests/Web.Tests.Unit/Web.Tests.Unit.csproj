@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<OutputType>Exe</OutputType>
+		<RootNamespace>Web.Tests.Unit</RootNamespace>
+		<TargetFramework>net9.0</TargetFramework>
+		<RootNamespace>Web</RootNamespace>
+		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
+		<Content Update="_Imports.razor">
+		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.Testing"/>
+		<PackageReference Include="bunit"/>
+		<PackageReference Include="FluentAssertions"/>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk"/>
+		<PackageReference Include="Moq"/>
+		<PackageReference Include="NSubstitute"/>
+		<PackageReference Include="NSubstitute.Analyzers.CSharp"/>
+		<PackageReference Include="xunit.v3"/>
+		<PackageReference Include="xunit.runner.visualstudio"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Web\Web.csproj" />
+	</ItemGroup>
+</Project>
