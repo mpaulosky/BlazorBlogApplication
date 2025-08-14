@@ -26,7 +26,7 @@ public sealed class ArticleDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public ArticleDto() : this(ObjectId.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false, null, true) { }
+	public ArticleDto() : this(ObjectId.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false, null, false) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="ArticleDto" /> class.
@@ -44,23 +44,20 @@ public sealed class ArticleDto
 	/// <param name="isPublished">The newly published status</param>
 	/// <param name="publishedOn">The new publication date</param>
 	/// <param name="archived">Gets or sets the archived status of the entity.</param>
-	/// <param name="skipValidation">If true, skips validation on construction.</param>
-	/// <exception cref="ValidationException">Thrown when validation fails</exception>
 	private ArticleDto(
-			ObjectId id,
-			string title,
-			string introduction,
-			string content,
-			string coverImageUrl,
-			string urlSlug,
-			AppUserDto author,
-			CategoryDto category,
-			DateTime createdOn,
-			DateTime? modifiedOn,
-			bool isPublished,
-			DateTime? publishedOn = null,
-			bool archived = false,
-			bool skipValidation = false)
+		ObjectId id,
+		string title,
+		string introduction,
+		string content,
+		string coverImageUrl,
+		string urlSlug,
+		AppUserDto author,
+		CategoryDto category,
+		DateTime createdOn,
+		DateTime? modifiedOn,
+		bool isPublished,
+		DateTime? publishedOn = null,
+		bool archived = false)
 	{
 		Id = id;
 		Title = title;
@@ -75,11 +72,6 @@ public sealed class ArticleDto
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
 		Archived = archived;
-
-		if (!skipValidation)
-		{
-			ValidateState();
-		}
 	}
 
 	/// <summary>
@@ -203,31 +195,19 @@ public sealed class ArticleDto
 	/// </summary>
 	public static ArticleDto Empty { get; } =
 		new(
-				ObjectId.Empty,
-				string.Empty,
-				string.Empty,
-				string.Empty,
-				string.Empty,
-				string.Empty,
-				AppUserDto.Empty,
-				CategoryDto.Empty,
-				DateTime.MinValue,
-				null,
-				false,
-				null,
-				false,
-				true
+			ObjectId.Empty,
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			AppUserDto.Empty,
+			CategoryDto.Empty,
+			DateTime.MinValue,
+			null,
+			false,
+			null,
+			false
 		);
-
-	private void ValidateState()
-	{
-		var validator = new ArticleDtoValidator();
-		var validationResult = validator.Validate(this);
-
-		if (!validationResult.IsValid)
-		{
-			throw new ValidationException(string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
-		}
-	}
 
 }
