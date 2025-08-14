@@ -7,10 +7,16 @@
 // Project Name :  Tests
 // =======================================================
 
+using System.Net;
+
+using Aspire.Hosting.Testing;
+
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
 using static Shared.Services;
 
-namespace Tests;
+namespace Web;
 
 /// <summary>
 /// Contains integration tests for the web frontend.

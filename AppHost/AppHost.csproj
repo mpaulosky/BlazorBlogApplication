@@ -9,12 +9,15 @@
     <UserSecretsId>8b5bd4f2-e746-432d-9934-6601b6fc9dc8</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ApiService\ApiService.csproj" />
     <ProjectReference Include="..\Shared\Shared.csproj" IsAspireProjectResource="false" />
     <ProjectReference Include="..\Web\Web.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="Aspire.Hosting.MongoDB" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>

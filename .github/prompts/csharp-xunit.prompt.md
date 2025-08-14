@@ -19,16 +19,13 @@ Your goal is to help me write effective unit tests with XUnit v3, covering both 
   ```xml
   <ItemGroup>
     <PackageReference Include="bunit" /> <!-- For Blazor component/page testing -->
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="xunit.v3" />
-    <PackageReference Include="xunit.v3.core" />
-    <PackageReference Include="xunit.v3.common" />
-    <PackageReference Include="xunit.v3.runner.visualstudio" />
-    <PackageReference Include="xunit.v3.extensibility.core" />
     <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Moq" />
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="NSubstitute.Analyzers.CSharp" />
-    <PackageReference Include="Moq" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.v3.runner.visualstudio" />
   </ItemGroup>
   ```
 
@@ -71,6 +68,7 @@ For more advanced scenarios, see the [bUnit documentation](https://bunit.dev/doc
 ## References
 
 - [bUnit Documentation](https://bunit.dev/docs/getting-started/index.html)
+
   ```
 
   ```

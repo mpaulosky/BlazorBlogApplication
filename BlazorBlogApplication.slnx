@@ -1,9 +1,7 @@
-<Solution>
-  <Project Path="ApiService\ApiService.csproj" />
+﻿<Solution>
   <Project Path="AppHost\AppHost.csproj" />
   <Project Path="ServiceDefaults\ServiceDefaults.csproj" />
-  <Project Path="Shared\Shared.csproj" Type="C#" />
-  <Project Path="Tests\Tests.csproj" />
-  <Project Path="Web.Tests.Bunit/Web.Tests.Bunit.csproj" />
+  <Project Path="Shared\Shared.csproj" Type="Classic C#" />
+  <Project Path="Web.Tests.Unit\Web.Tests.Unit.csproj" Type="Classic C#" />
   <Project Path="Web\Web.csproj" />
 </Solution>
