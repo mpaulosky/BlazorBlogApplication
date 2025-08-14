@@ -2,5 +2,10 @@
   "dependencies": {
     "@tailwindcss/cli": "^4.1.11",
     "tailwindcss": "^4.1.11"
-  }
+  },
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build:css": "npx @tailwindcss/cli -i wwwroot/css/input.css -o wwwroot/css/app.css",
+		"watch:css": "npx @tailwindcss/cli -i wwwroot/css/input.css -o wwwroot/css/app.css --watch"
+	}
 }
