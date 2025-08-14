@@ -56,7 +56,7 @@ public class Article : Entity
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public Article() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, false, null, true) { }
+	public Article() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, false, null) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="Article" /> class.
@@ -70,19 +70,16 @@ public class Article : Entity
 	/// <param name="category">The new category</param>
 	/// <param name="isPublished">The newly published status</param>
 	/// <param name="publishedOn">The new publication date</param>
-	/// <param name="skipValidation">If true, skips validation on construction.</param>
-	/// <exception cref="ValidationException">Thrown when validation fails</exception>
 	public Article(
-			string title,
-			string introduction,
-			string content,
-			string coverImageUrl,
-			string urlSlug,
-			AppUserDto author,
-			CategoryDto category,
-			bool isPublished = false,
-			DateTimeOffset? publishedOn = null,
-			bool skipValidation = false)
+		string title,
+		string introduction,
+		string content,
+		string coverImageUrl,
+		string urlSlug,
+		AppUserDto author,
+		CategoryDto category,
+		bool isPublished = false,
+		DateTimeOffset? publishedOn = null)
 	{
 		Title = title;
 		Introduction = introduction;
@@ -93,11 +90,6 @@ public class Article : Entity
 		Category = category;
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
-
-		if (!skipValidation)
-		{
-			ValidateState();
-		}
 	}
 
 	/// <summary>
@@ -112,7 +104,6 @@ public class Article : Entity
 	/// <param name="category">The new category</param>
 	/// <param name="isPublished">The newly published status</param>
 	/// <param name="publishedOn">The new publication date</param>
-	/// <exception cref="ValidationException">Thrown when validation fails</exception>
 	public void Update(
 			string title,
 			string introduction,
@@ -133,7 +124,6 @@ public class Article : Entity
 		Category = category;
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
-		ValidateState();
 	}
 
 	public void Publish(DateTime publishedOn)
@@ -141,7 +131,6 @@ public class Article : Entity
 		IsPublished = true;
 		PublishedOn = publishedOn;
 		ModifiedOn = DateTimeOffset.UtcNow;
-		ValidateState();
 	}
 
 	public void Unpublish()
@@ -149,7 +138,6 @@ public class Article : Entity
 		IsPublished = false;
 		PublishedOn = null;
 		ModifiedOn = DateTimeOffset.UtcNow;
-		ValidateState();
 	}
 
 	/// <summary>
@@ -167,16 +155,5 @@ public class Article : Entity
 	{
 		Id = ObjectId.Empty
 	};
-
-	private void ValidateState()
-	{
-		var validator = new ArticleValidator();
-		var validationResult = validator.Validate(this);
-
-		if (!validationResult.IsValid)
-		{
-			throw new ValidationException(string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
-		}
-	}
 
 }

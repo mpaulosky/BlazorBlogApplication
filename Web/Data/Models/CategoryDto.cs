@@ -25,7 +25,7 @@ public class CategoryDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public CategoryDto() : this(ObjectId.Empty, string.Empty, DateTime.MinValue, null, false, true) { }
+	public CategoryDto() : this(ObjectId.Empty, string.Empty, DateTime.MinValue, null, false) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="CategoryDto" /> class.
@@ -35,26 +35,18 @@ public class CategoryDto
 	/// <param name="createdOn"></param>
 	/// <param name="modifiedOn"></param>
 	/// <param name="archived">Indicates whether the category is archived.</param>
-	/// <param name="skipValidation">If true, skips validation on construction.</param>
-	/// <exception cref="ValidationException">Thrown when validation fails</exception>
 	private CategoryDto(
-			ObjectId id,
-			string categoryName,
-			DateTime createdOn,
-			DateTime? modifiedOn,
-			bool archived = false,
-			bool skipValidation = false)
+		ObjectId id,
+		string categoryName,
+		DateTime createdOn,
+		DateTime? modifiedOn,
+		bool archived = false)
 	{
 		Id = id;
 		CategoryName = categoryName;
 		CreatedOn = createdOn;
 		ModifiedOn = modifiedOn;
 		Archived = archived;
-
-		if (!skipValidation)
-		{
-			ValidateState();
-		}
 	}
 
 	/// <summary>
@@ -105,21 +97,6 @@ public class CategoryDto
 	/// <summary>
 	///   Gets an empty category instance.
 	/// </summary>
-	public static CategoryDto Empty => new(ObjectId.Empty, string.Empty, DateTime.MinValue, null, false, true);
-
-	/// <summary>
-	///   Validates the current state of the category.
-	/// </summary>
-	/// <exception cref="ValidationException">Thrown when validation fails.</exception>
-	private void ValidateState()
-	{
-		var validator = new CategoryDtoValidator();
-		var validationResult = validator.Validate(this);
-
-		if (!validationResult.IsValid)
-		{
-			throw new ValidationException(string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
-		}
-	}
+	public static CategoryDto Empty => new(ObjectId.Empty, string.Empty, DateTime.MinValue, null, false);
 
 }

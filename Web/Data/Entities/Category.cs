@@ -30,45 +30,23 @@ public class Category : Entity
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public Category() : this(string.Empty, true) { }
+	public Category() : this(string.Empty) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="Category" /> class.
 	/// </summary>
 	/// <param name="categoryName">The categoryName of the category.</param>
-	/// <param name="skipValidation">If true, skips validation on construction.</param>
-	/// <exception cref="ValidationException">Thrown when validation fails</exception>
-	public Category(string categoryName, bool skipValidation = false)
+	public Category(string categoryName)
 	{
 		CategoryName = categoryName;
-
-		if (!skipValidation)
-		{
-			ValidateState();
-		}
 	}
 
 	/// <summary>
 	///   Gets an empty category instance.
 	/// </summary>
-	public static Category Empty => new(string.Empty, true)
+	public static Category Empty => new(string.Empty)
 	{
 		Id = ObjectId.Empty
 	};
-
-	/// <summary>
-	///   Validates the current state of the category.
-	/// </summary>
-	/// <exception cref="ValidationException">Thrown when validation fails.</exception>
-	private void ValidateState()
-	{
-		var validator = new CategoryValidator();
-		var validationResult = validator.Validate(this);
-
-		if (!validationResult.IsValid)
-		{
-			throw new ValidationException(string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
-		}
-	}
 
 }

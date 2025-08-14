@@ -21,7 +21,7 @@ public class AppUserDto
 	/// <summary>
 	/// Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public AppUserDto() : this(string.Empty, string.Empty, string.Empty, null, true) { }
+	public AppUserDto() : this(string.Empty, string.Empty, string.Empty, null) { }
 
 	/// <summary>
 	///  Initializes a new instance of the <see cref="AppUserDto" /> class.
@@ -30,18 +30,12 @@ public class AppUserDto
 	/// <param name="userName">The username of the user.</param>
 	/// <param name="email">The email address of the user.</param>
 	/// <param name="roles">The list of roles assigned to the user.</param>
-	/// <param name="skipValidation">If true, skips validation on construction.</param>
-	private AppUserDto(string id, string userName, string email, List<string>? roles, bool skipValidation = false)
+	private AppUserDto(string id, string userName, string email, List<string>? roles)
 	{
 		Id = id;
 		UserName = userName;
 		Email = email;
 		Roles = roles;
-
-		if (!skipValidation)
-		{
-			ValidateState();
-		}
 	}
 
 	/// <summary>
@@ -70,24 +64,6 @@ public class AppUserDto
 	/// <summary>
 	///  Gets an empty instance of AppUserDto with default values.
 	/// </summary>
-	public static AppUserDto Empty => new(string.Empty, string.Empty, string.Empty, null, true);
-
-
-	/// <summary>
-	///  Validates the current state of the user DTO.
-	/// </summary>
-	/// <exception cref="ValidationException">Thrown when validation fails.</exception>
-	void ValidateState()
-	{
-		var validator = new AppUserDtoValidator();
-		var validationResult = validator.Validate(this);
-
-		if (!validationResult.IsValid)
-		{
-			throw new ValidationException(string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage)));
-		}
-
-	}
-
+	public static AppUserDto Empty => new(string.Empty, string.Empty, string.Empty, null);
 
 }
