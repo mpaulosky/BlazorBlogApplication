@@ -21,7 +21,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="MongoDB.Bson" />
     <PackageReference Include="MongoDB.Driver" />
-    <PackageReference Include="MongoDB.Driver.Core" />
     <PackageReference Include="RestSharp" />
     <PackageReference Include="System.Text.RegularExpressions" />
     <PackageReference Include="WaffleGenerator.Bogus" />

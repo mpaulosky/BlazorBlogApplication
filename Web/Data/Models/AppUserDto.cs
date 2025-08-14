@@ -38,10 +38,7 @@ public class AppUserDto
 		Email = email;
 		Roles = roles;
 
-		if (!skipValidation)
-		{
-			ValidateState();
-		}
+		// Validation is performed at application boundaries (forms/endpoints) via FluentValidation.
 	}
 
 	/// <summary>

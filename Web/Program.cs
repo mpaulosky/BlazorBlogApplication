@@ -31,7 +31,7 @@ builder.Services
 
 builder.Services.AddHttpClient();
 
-builder.Services.AddHttpClient<Auth0Service>();
+builder.Services.AddHttpClient<IAuth0Service, Auth0Service>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

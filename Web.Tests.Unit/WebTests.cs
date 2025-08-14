@@ -11,10 +11,9 @@ using System.Net;
 
 using Aspire.Hosting.Testing;
 
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-
 using static Shared.Services;
+
+using TestContext = Xunit.TestContext;
 
 namespace Web;
 

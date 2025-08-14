@@ -4,6 +4,8 @@
 
 These instructions define the required coding, architecture, and project rules for all .NET code in this repository. They are based on the actual practices and conventions in the TailwindBlogApp solution. For more details, see [CONTRIBUTING.md](../docs/CONTRIBUTING.md).
 
+> Repository scope note (BlazorBlogApplication): This repo focuses on C#, .NET 9, Aspire (AppHost), and a Blazor Server web app. Items not currently used here are annotated as Optional (not used in this repo) rather than removed, to preserve broader guidance while avoiding confusion.
+
 ---
 
 ## C# (Required)
@@ -56,6 +58,8 @@ These instructions define the required coding, architecture, and project rules f
 
 ### Architecture (Required)
 
+> Repo note: CQRS/MyMediator, Vertical Slice Architecture, and Architecture Tests are Optional (not used in this repo).
+
 - **Enforce SOLID:** `true` (see `Domain/`, `ServiceDefaults/`)
 - **Enforce Dependency Injection:** `true` (see `Web/Program.cs`, `ServiceDefaults/`)
 - **Enforce Async/Await:** `true` (async methods and tests)
@@ -83,6 +87,8 @@ These instructions define the required coding, architecture, and project rules f
 
 ### Documentation (Required)
 
+> Repo note: Swagger/OpenAPI requirements are Optional (not used in this repo unless APIs are added).
+
 - **Require XML Docs:** `true` (see `<summary>` in test and code files)
 - **Require Swagger:** `true` (for REST APIs)
 - **Require OpenAPI:** `true` (OpenAPI/Swagger must be provided for all APIs)
@@ -95,12 +101,16 @@ These instructions define the required coding, architecture, and project rules f
 
 ### Logging (Required)
 
+> Repo note: OpenTelemetry and Application Insights are Optional (not used in this repo unless configured).
+
 - **Require Structured Logging:** `true`
 - **Require Health Checks:** `true`
 - **Use OpenTelemetry:** `true`
 - **Use Application Insights:** `true`
 
 ### Database (Required)
+
+> Repo note: Database specifics are Optional; MongoDB/TestContainers are not used in this repo.
 
 - **Use Entity Framework Core:** `true`
 - **Use MongoDB:** `true` (see `Persistence.MongoDb/`)
@@ -113,10 +123,14 @@ These instructions define the required coding, architecture, and project rules f
 
 ### Versioning (Required)
 
+> Repo note: API Versioning is Optional (not used in this repo unless APIs are added).
+
 - **Require API Versioning:** `true`
 - **Use Semantic Versioning:** `true`
 
 ### Caching (Required)
+
+> Repo note: Distributed and Output caching are Optional (not used in this repo unless configured).
 
 - **Require Caching Strategy:** `true`
 - **Use Distributed Cache:** `true`
@@ -130,9 +144,13 @@ These instructions define the required coding, architecture, and project rules f
 
 ### Background Services (Required)
 
+> Repo note: Background services are Optional (not used in this repo unless explicitly added).
+
 - **Require Background Service:** `true`
 
 ### Environment (Required)
+
+> Repo note: Key Vault is Optional (not used in this repo unless configured).
 
 - **Require Environment Config:** `true`
 - **Use User Secrets:** `true`
@@ -144,6 +162,8 @@ These instructions define the required coding, architecture, and project rules f
 - **Use FluentValidation:** `true`
 
 ### Testing (Required)
+
+> Repo note: Integration tests, Architecture tests, and Playwright are Optional (not used in this repo). xUnit and bUnit are used.
 
 - **Require Unit Tests:** `true` (see `Tests/`)
 - **Require Integration Tests:** `true` (see `Tests/`)
