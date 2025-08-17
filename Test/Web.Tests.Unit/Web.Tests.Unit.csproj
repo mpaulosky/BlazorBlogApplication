@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<OutputType>Exe</OutputType>
+		<RootNamespace>Web</RootNamespace>
+		<TargetFramework>net9.0</TargetFramework>
+		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.Testing" />
+		<PackageReference Include="bunit" />
+		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="JetBrains.Annotations"/>
+	<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="Moq" />
+		<PackageReference Include="NSubstitute" />
+		<PackageReference Include="NSubstitute.Analyzers.CSharp" />
+		<PackageReference Include="xunit.v3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\SRC\Shared\Shared.csproj" />
+	  <ProjectReference Include="..\..\SRC\Web\Web.csproj" />
+	  <ProjectReference Include="..\..\SRC\ServiceDefaults\ServiceDefaults.csproj" />
+	</ItemGroup>
+
+</Project>
