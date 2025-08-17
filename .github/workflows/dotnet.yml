@@ -63,7 +63,8 @@ jobs:
           for proj in $(find . -name "*.csproj" -path "*/Tests/*"); do
             name=$(basename "$proj" .csproj)
             filename="${name}_${timestamp}.trx"
-            dotnet test "$proj" --no-build --no-restore --logger "trx;LogFileName=${filename}" --results-directory "${{ github.workspace }}/TestResults/"
+            # Use a relative results directory so the container writes into the mounted workspace
+            dotnet test "$proj" --no-build --no-restore --logger "trx;LogFileName=${filename}" --results-directory "TestResults/"
           done
 
       - name: Upload Test Results
