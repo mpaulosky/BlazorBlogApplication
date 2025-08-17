@@ -3,8 +3,8 @@
 // File Name :     Auth0Service.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.Web
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web
 // =======================================================
 
 using System.Net.Http.Headers;

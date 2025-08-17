@@ -26,7 +26,7 @@ public sealed class ArticleDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public ArticleDto() : this(ObjectId.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false, null, false) { }
+	public ArticleDto() : this(ObjectId.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false, null, false, false) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="ArticleDto" /> class.
@@ -44,6 +44,7 @@ public sealed class ArticleDto
 	/// <param name="isPublished">The newly published status</param>
 	/// <param name="publishedOn">The new publication date</param>
 	/// <param name="archived">Gets or sets the archived status of the entity.</param>
+	/// <param name="canEdit"></param>
 	private ArticleDto(
 		ObjectId id,
 		string title,
@@ -57,7 +58,8 @@ public sealed class ArticleDto
 		DateTime? modifiedOn,
 		bool isPublished,
 		DateTime? publishedOn = null,
-		bool archived = false)
+		bool archived = false,
+		bool canEdit = false)
 	{
 		Id = id;
 		Title = title;
@@ -72,6 +74,7 @@ public sealed class ArticleDto
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
 		Archived = archived;
+		CanEdit = canEdit;
 	}
 
 	/// <summary>
@@ -191,6 +194,13 @@ public sealed class ArticleDto
 	public bool Archived { get; set; }
 
 	/// <summary>
+	///   Indicates whether the current user can edit/delete this article.
+	/// </summary>
+	[BsonRepresentation(BsonType.Boolean)]
+	[BsonElement("canEdit")]
+	public bool CanEdit { get; set; }
+
+	/// <summary>
 	///   Gets an empty article instance.
 	/// </summary>
 	public static ArticleDto Empty { get; } =
@@ -207,6 +217,7 @@ public sealed class ArticleDto
 			null,
 			false,
 			null,
+			false,
 			false
 		);
 

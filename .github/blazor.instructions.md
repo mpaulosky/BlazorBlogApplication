@@ -17,7 +17,7 @@ applyTo: '**/*.razor, **/*.razor.cs, **/*.razor.css'
 - Use camelCase for private fields and local variables.
 - Prefix interface names with "I" (e.g., IUserService).
 
-## Blazor and .NET Specific Guidelines
+## Blazor and .NET Specific ObjectIdelines
 
 - Utilize Blazor's built-in features for component lifecycle (e.g., OnInitializedAsync, OnParametersSetAsync).
 - Use data binding effectively with @bind.

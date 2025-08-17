@@ -144,7 +144,7 @@ Do not ever use HTML tags or any other formatting for the todo list, as it will 
 
 Always show the completed todo list to the user as the last item in your message, so that they can see that you have addressed all of the steps.
 
-# Communication Guidelines
+# Communication ObjectIdelines
 
 Always communicate clearly and concisely in a casual, friendly yet professional tone.
 <examples>

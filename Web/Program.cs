@@ -8,8 +8,22 @@
 // =======================================================
 
 using Web.Data.Auth0;
+using Web.Data.Models;
+using Web.Data.Validators;
+using FluentValidation;
+
+using Blazored.FluentValidation;
 
 using static Shared.Services;
+using Web.Components.Features.Articles.ArticleGet;
+using Web.Components.Features.Articles.ArticleList;
+using Web.Components.Features.Articles.ArticleCreate;
+using Web.Components.Features.Articles.ArticleEdit;
+
+using Web.Components.Features.Categories.CategoryEdit;
+using Web.Components.Features.Categories.CategoryList;
+using Web.Components.Features.Categories.CategoryCreate;
+using Web.Components.Features.Categories.CategoryDetails;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,16 +75,23 @@ builder.Services.AddAuthentication();
 
 builder.Services.AddScoped<GetArticles.Handler>();
 builder.Services.AddScoped<GetCategories.Handler>();
+builder.Services.AddScoped<GetArticle.IGetArticleHandler, GetArticle.Handler>();
+builder.Services.AddScoped<EditArticle.IEditArticleHandler, EditArticle.Handler>();
+builder.Services.AddScoped<GetArticles.IGetArticlesHandler, GetArticles.Handler>();
+builder.Services.AddScoped<CreateArticle.ICreateArticleHandler, CreateArticle.Handler>();
+builder.Services.AddScoped<EditCategory.IEditCategoryHandler, EditCategory.Handler>();
+builder.Services.AddScoped<GetCategory.IGetCategoryHandler, GetCategory.Handler>();
 
+// Register FluentValidation validators for Blazor forms
+builder.Services.AddScoped<IValidator<ArticleDto>, ArticleDtoValidator>();
+builder.Services.AddScoped<IValidator<CategoryDto>, CategoryDtoValidator>();
+
+// Register the MongoDB client
 var mongoConnectionString = configuration["mongoDb-connection"];
-
 builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoConnectionString));
 
-builder.Services.AddSingleton<MyBlogContext>(sp =>
-{
-	var mongoClient = sp.GetRequiredService<IMongoClient>();
-	return new MyBlogContext(mongoClient);
-});
+// Register the MongoDB context factory
+builder.Services.AddScoped<IMyBlogContextFactory, MyBlogContextFactory>();
 
 builder.Services.AddOutputCache();
 builder.Services.AddHealthChecks();

@@ -88,7 +88,7 @@ This repository enforces the following rules for all .NET code (see `.editorconf
 ### Database
 
 - **Entity Framework Core, MongoDB (see `Persistence.MongoDb/`), SQL Server**
-- **Async Operations, TestContainers for Integration Testing (`Tests/TailwindBlog.Persistence.MongoDb.Tests.Integration/`), Change Tracking, DbContext Pooling**
+- **Async Operations, TestContainers for Integration Testing (`Tests/Article Service.Persistence.MongoDb.Tests.Integration/`), Change Tracking, DbContext Pooling**
 
 ### Versioning & Caching
 

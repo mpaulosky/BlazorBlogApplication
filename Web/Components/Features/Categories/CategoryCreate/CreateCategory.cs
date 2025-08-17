@@ -18,11 +18,15 @@ namespace Web.Components.Features.Categories.CategoryCreate;
 /// </summary>
 public static class CreateCategory
 {
+	public interface ICreateCategoryHandler
+	{
+		Task<Result> HandleAsync(CategoryDto request);
+	}
 
 	/// <summary>
 	/// Represents a handler for creating new categories in the database.
 	/// </summary>
-	public class Handler
+	public class Handler : ICreateCategoryHandler
 	{
 
 		private readonly MyBlogContext _context;

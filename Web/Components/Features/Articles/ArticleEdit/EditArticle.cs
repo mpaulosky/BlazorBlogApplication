@@ -19,7 +19,15 @@ namespace Web.Components.Features.Articles.ArticleEdit;
 public static class EditArticle
 {
 
-	public class Handler
+	/// <summary>
+	/// Interface for editing articles in the database.
+	/// </summary>
+	public interface IEditArticleHandler
+	{
+		Task<Result> HandleAsync(ArticleDto request);
+	}
+
+	public class Handler : IEditArticleHandler
 	{
 
 		private readonly MyBlogContext _context;

@@ -25,7 +25,7 @@ public class CategoryDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public CategoryDto() : this(ObjectId.Empty, string.Empty, DateTime.MinValue, null, false) { }
+	public CategoryDto() : this(ObjectId.Empty, string.Empty, DateTimeOffset.UtcNow, null, false) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="CategoryDto" /> class.
@@ -38,8 +38,8 @@ public class CategoryDto
 	private CategoryDto(
 		ObjectId id,
 		string categoryName,
-		DateTime createdOn,
-		DateTime? modifiedOn,
+		DateTimeOffset createdOn,
+		DateTimeOffset? modifiedOn,
 		bool archived = false)
 	{
 		Id = id;
@@ -74,7 +74,7 @@ public class CategoryDto
 	[BsonRequired]
 	[BsonRepresentation(BsonType.DateTime)]
 	[BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-	public DateTime CreatedOn { get; set; }
+	public DateTimeOffset CreatedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets the date and time when this entity was last modified.
@@ -85,7 +85,7 @@ public class CategoryDto
 	[BsonIgnoreIfDefault]
 	[BsonRepresentation(BsonType.DateTime)]
 	[BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-	public DateTime? ModifiedOn { get; set; }
+	public DateTimeOffset? ModifiedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets a value indicating whether the article is marked as deleted.
@@ -95,8 +95,9 @@ public class CategoryDto
 	public bool Archived { get; set; }
 
 	/// <summary>
-	///   Gets an empty category instance.
+	///   Gets an empty singleton category instance.
 	/// </summary>
-	public static CategoryDto Empty => new(ObjectId.Empty, string.Empty, DateTime.MinValue, null, false);
+	private static readonly CategoryDto _empty = new(ObjectId.Empty, string.Empty, DateTimeOffset.UtcNow, null, false);
+	public static CategoryDto Empty => _empty;
 
 }

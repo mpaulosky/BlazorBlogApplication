@@ -18,12 +18,15 @@ namespace Web.Components.Features.Categories.CategoryEdit;
 /// </summary>
 public static class EditCategory
 {
+	public interface IEditCategoryHandler
+	{
+		Task<Result> HandleAsync(CategoryDto request);
+	}
 
-	public class Handler
+	public class Handler : IEditCategoryHandler
 	{
 
-		private readonly MyBlogContext _context;
-
+		private readonly IMyBlogContextFactory _contextFactory;
 		private readonly ILogger<Handler> _logger;
 
 		/// <summary>
@@ -31,9 +34,9 @@ public static class EditCategory
 		/// </summary>
 		/// <param name="context">The database context.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(MyBlogContext context, ILogger<Handler> logger)
+		public Handler(IMyBlogContextFactory contextFactory, ILogger<Handler> logger)
 		{
-			_context = context;
+			_contextFactory = contextFactory;
 			_logger = logger;
 		}
 
@@ -45,14 +48,15 @@ public static class EditCategory
 
 				var category = new Category
 				{
-						CategoryName = request.CategoryName,
-						ModifiedOn = DateTime.UtcNow,
+					CategoryName = request.CategoryName,
+					ModifiedOn = DateTime.UtcNow,
 				};
 
-				await _context.Categories.ReplaceOneAsync(
-						Builders<Category>.Filter.Eq(x => x.Id, request.Id),
-						category,
-						new ReplaceOptions { IsUpsert = false }
+				var context = await _contextFactory.CreateAsync(default);
+				await context.Categories.ReplaceOneAsync(
+					Builders<Category>.Filter.Eq(x => x.Id, request.Id),
+					category,
+					new ReplaceOptions { IsUpsert = false }
 				);
 
 				_logger.LogInformation("Category updated successfully: {CategoryName}", request.CategoryName);
