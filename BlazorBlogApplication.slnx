@@ -1,7 +1,7 @@
 ﻿<Solution>
-  <Project Path="AppHost\AppHost.csproj" />
-  <Project Path="ServiceDefaults\ServiceDefaults.csproj" />
-  <Project Path="Shared\Shared.csproj" Type="Classic C#" />
-  <Project Path="Web.Tests.Unit\Web.Tests.Unit.csproj" Type="Classic C#" />
-  <Project Path="Web\Web.csproj" />
+  <Project Path="SRC\AppHost\AppHost.csproj" />
+  <Project Path="SRC\ServiceDefaults\ServiceDefaults.csproj" Type="Classic C#" />
+  <Project Path="SRC\Shared\Shared.csproj" Type="Classic C#" />
+  <Project Path="SRC\Web\Web.csproj" />
+  <Project Path="Test\Web.Tests.Unit\Web.Tests.Unit.csproj" Type="Classic C#" />
 </Solution>
