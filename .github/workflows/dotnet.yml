@@ -78,14 +78,14 @@ jobs:
           ls -la "$GITHUB_WORKSPACE/TestResults" || true
       - name: "Debug: find any .trx files in workspace"
         run: |
-          echo "Searching for .trx files under $GITHUB_WORKSPACE"
+          echo "Searching for .trx files under $GITHUB_WORKSPACE/TestResults/"
           find "$GITHUB_WORKSPACE" -type f -name "*.trx" -print -ls || true
 
       - name: Copy TRX files to repo root (explicit)
         run: |
           echo "Copying any .trx files from $GITHUB_WORKSPACE/TestResults to repo root"
           if [ -d "$GITHUB_WORKSPACE/TestResults" ]; then
-            find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" -print -exec cp -v {} "$GITHUB_WORKSPACE/" \; || true
+            find "$GITHUB_WORKSPACE/TestResults/" -type f -name "*.trx" -print -exec cp -v {} "$GITHUB_WORKSPACE/" \; || true
           else
             echo "TestResults directory missing"
           fi
@@ -94,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Test-Results
-          path: "$GITHUB_WORKSPACE/TestResults/"
+          path: $GITHUB_WORKSPACE/TestResults/*.trx
 
       - name: Codecov
         if: github.actor != 'nektos/act'
