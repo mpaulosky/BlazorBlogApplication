@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Bunit
+// Project Name :  Web.Tests.Unit
 // =======================================================
 using System;
 using System.Collections.Generic;
@@ -48,7 +48,6 @@ public class EditTests : BunitContext
 		_fixture = new CategoryTestFixture();
 		// Ensure common test services and handler substitutes are registered
 		TestServiceRegistrations.RegisterCommonUtilities(this);
-		// Register the edit handler mock so the component will use it
 		Services.AddScoped(_ => _editHandlerMock);
 	}
 
