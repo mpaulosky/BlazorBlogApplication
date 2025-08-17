@@ -118,7 +118,7 @@ jobs:
           # that happens because act can't emulate GitHub App authentication).
           check_run: false
           files: |
-            TestResults/**/*.trx
+            $GITHUB_WORKSPACE/TestResults/**/*.trx
 
       - name: Install GitVersion
         if: github.actor != 'nektos/act'
