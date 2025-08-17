@@ -1,6 +1,5 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
 name: Build and Test .NET projects
 
 on:
@@ -26,7 +25,10 @@ jobs:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -36,17 +38,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "22.x"
           cache: "npm"
-          cache-dependency-path: |
-            **/Web/package-lock.json
+          cache-dependency-path: SRC/Web/package-lock.json
 
       - name: Install Node.js dependencies
-        working-directory: Web
+        working-directory: SRC/Web
         run: npm install
 
       - name: Build Tailwind CSS
-        working-directory: Web
+        working-directory: SRC/Web
         run: npm run build:css
 
       - name: Restore dependencies
@@ -56,52 +57,81 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Create Test Results Directory
-        run: mkdir -p TestResults
+        run: mkdir -p "$GITHUB_WORKSPACE/TestResults"
 
       - name: Run all tests in all test projects
         run: |
+          timestamp=$(date +%s)
           for proj in $(find . -name "*.csproj" -path "*/Tests/*"); do
             name=$(basename "$proj" .csproj)
-            dotnet run "$proj" --no-build --no-restore --report-xunit-trx  --report-xunit-trx-filename "${name}.trx"  --results-directory "${{ github.workspace }}/TestResults/"
+            filename="${name}_${timestamp}.trx"
+            # Use an absolute results directory so the container writes into the mounted workspace root
+            dotnet test "$proj" --no-build --no-restore --logger "trx;LogFileName=${filename}" --results-directory "$GITHUB_WORKSPACE/TestResults"
           done
+
+      - name: Workspace And TestResults Folder
+        run: |
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          echo "Listing repo root:"
+          ls -la "$GITHUB_WORKSPACE" || true
+          echo "Listing TestResults in workspace:"
+          ls -la "$GITHUB_WORKSPACE/TestResults" || true
+      - name: "Debug: find any .trx files in workspace"
+        run: |
+          echo "Searching for .trx files under $GITHUB_WORKSPACE/TestResults/"
+          find "$GITHUB_WORKSPACE" -type f -name "*.trx" -print -ls || true
+
+      - name: Copy TRX files to repo root (explicit)
+        run: |
+          echo "Copying any .trx files from $GITHUB_WORKSPACE/TestResults to repo root"
+          if [ -d "$GITHUB_WORKSPACE/TestResults" ]; then
+            find "$GITHUB_WORKSPACE/TestResults/" -type f -name "*.trx" -print -exec cp -v {} "$GITHUB_WORKSPACE/" \; || true
+          else
+            echo "TestResults directory missing"
+          fi
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
-          name: TailwindBlog-Test-Results
-          path: TestResults
+          name: Test-Results
+          path: $GITHUB_WORKSPACE/TestResults/*.trx
 
       - name: Codecov
+        if: github.actor != 'nektos/act'
         uses: codecov/codecov-action@v5.4.3
-
       - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && github.actor != 'nektos/act' }}
         uses: codecov/test-results-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         id: test-results
-        if: always()
+        # When running locally with act the GITHUB_ACTOR is 'nektos/act' and
+        # the runner can't access GitHub's API for local commit SHAs. Skip
+        # publishing test results (which queries commits/pull requests) in
+        # that case to avoid 403/422 API errors.
+        if: always() && github.actor != 'nektos/act'
         with:
+          # Disable creating GitHub check runs when running locally with act
+          # (this avoids the "You must authenticate via a GitHub App" 403 error
+          # that happens because act can't emulate GitHub App authentication).
+          check_run: false
           files: |
-            TestResults/**/*.trx
-
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
+            $GITHUB_WORKSPACE/TestResults/*.trx
 
       - name: Install GitVersion
+        if: github.actor != 'nektos/act'
         uses: gittools/actions/gitversion/setup@v4.1.0
         with:
-          versionSpec: "6.0"
+          versionSpec: "6.3.x"
 
       - name: Use GitVersion
+        if: github.actor != 'nektos/act'
         id: gitversion # step id used as a reference for output values
         uses: gittools/actions/gitversion/execute@v4.1.0
 
-      - run: |
+      - name: Show GitVersion
+        if: github.actor != 'nektos/act'
+        run: |
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
           echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
