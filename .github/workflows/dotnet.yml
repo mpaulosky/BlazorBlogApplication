@@ -69,7 +69,7 @@ jobs:
             dotnet test "$proj" --no-build --no-restore --logger "trx;LogFileName=${filename}" --results-directory "$GITHUB_WORKSPACE/TestResults"
           done
 
-      - name: Workspace And TestCoverage
+      - name: Workspace And TestResults Folder
         run: |
           echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
           echo "Listing repo root:"
@@ -117,7 +117,7 @@ jobs:
           # that happens because act can't emulate GitHub App authentication).
           check_run: false
           files: |
-            $GITHUB_WORKSPACE/TestResults/**/*.trx
+            $GITHUB_WORKSPACE/TestResults/*.trx
 
       - name: Install GitVersion
         if: github.actor != 'nektos/act'
