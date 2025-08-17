@@ -62,7 +62,19 @@ public class Article : Entity
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public Article() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, false, null, false) { }
+	public Article()
+	{
+		Title = string.Empty;
+		Introduction = string.Empty;
+		Content = string.Empty;
+		CoverImageUrl = string.Empty;
+		UrlSlug = string.Empty;
+		Author = AppUserDto.Empty;
+		Category = CategoryDto.Empty;
+		IsPublished = false;
+		PublishedOn = null;
+		IsArchived = false;
+	}
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="Article" /> class.
