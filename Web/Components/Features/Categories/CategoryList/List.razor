@@ -1,21 +1,19 @@
 @page "/categories"
 
-@using Microsoft.AspNetCore.Components.QuickGrid
 @using Web.Data.Models
 
 @inject NavigationManager Navigation
-@inject GetCategories.Handler CategoriesHandler
+@inject GetCategories.IGetCategoriesHandler CategoriesHandler
 @inject ILogger<List> Logger
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
-@* @attribute [Authorize(Roles = "Admin")] *@
+@attribute [Authorize]
 
-<PageHeadingComponent HeaderText="Categories" Level="1" TextColorClass="blue-500"/>
+<PageHeadingComponent HeaderText="Categories" Level="1" TextColorClass="blue-500" />
 <p class="text-gray-600">Welcome @_username!</p>
 
 @if (_isLoading)
 {
-	<LoadingComponent/>
+	<LoadingComponent />
 }
 else if (_categories is null || !_categories.Any())
 {
@@ -26,23 +24,38 @@ else if (_categories is null || !_categories.Any())
 }
 else
 {
-	<QuickGrid Class="table" Items="_categories" Pagination="_pagination">
-		<PropertyColumn Property="category => category.CategoryName" Sortable="true"/>
-		<PropertyColumn Property="category => category.CreatedOn" Title="CategoryCreated On" Format="{0:d}"/>
-		<PropertyColumn Property="category => category.ModifiedOn" Title="Modified On" Format="{0:d}"/>
-
-		<TemplateColumn Context="category">
-			<a href="@($"categories/edit?id={category.Id}")">Edit</a> |
-			<a href="@($"categories/details?id={category.Id}")">Details</a> |
-			<a href="@($"categories/archive?id={category.Id}")">Archive</a>
-		</TemplateColumn>
-	</QuickGrid>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Category Name</th>
+				<th>Created On</th>
+				<th>Modified On</th>
+				<th>Archived</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var category in _categories)
+			{
+				<tr>
+					<td>@category.CategoryName</td>
+					<td>@(category.CreatedOn.ToString("d"))</td>
+					<td>@(category.ModifiedOn.HasValue? category.ModifiedOn.Value.ToString("d") : "")</td>
+					<td>@category.Archived</td>
+					<td>
+						<button class="btn btn-primary btn-sm mx-1" @onclick="@(() => GoToEdit(category.Id))">Edit</button>
+						<button class="btn btn-info btn-sm mx-1" @onclick="@(() => GoToDetails(category.Id))">Details</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
 
 @code {
 
 	/// <summary>
-	///   The list of categories displayed in the grid.
+	/// The list of categories displayed in the grid.
 	/// </summary>
 	private IQueryable<CategoryDto>? _categories;
 
@@ -51,19 +64,14 @@ else
 	private string _username = "";
 
 	/// <summary>
-	///   Pagination state for the article's list.
-	/// </summary>
-	private readonly PaginationState _pagination = new()  { ItemsPerPage = 5 };
-
-	/// <summary>
-	///   Indicates whether the page is loading data.
+	/// Indicates whether the page is loading data.
 	/// </summary>
 	private bool _isLoading = true;
 
 	/// <summary>
-	///   Called when the component is initialized. Loads all categories for display.
-	///   Adds structured logging for success and error cases.
-	///   Also retrieves the authentication state.
+	/// Called when the component is initialized. Loads all categories for display.
+	/// Adds structured logging for success and error cases.
+	/// Also retrieves the authentication state.
 	/// </summary>
 	protected override async Task OnInitializedAsync()
 	{
@@ -93,11 +101,23 @@ else
 	}
 
 	/// <summary>
-	///   Navigates to the creation category page.
+	/// Navigates to the creation category page.
 	/// </summary>
 	private void GoToCreate()
 	{
 		Navigation.NavigateTo("/categories/create");
+	}
+
+	private void GoToEdit(ObjectId id)
+	{
+		// Use segment-style route to match route templates and tests
+		Navigation.NavigateTo($"/categories/edit/{id}");
+	}
+
+	private void GoToDetails(ObjectId id)
+	{
+		// Navigate using the details route with segment id
+		Navigation.NavigateTo($"/categories/{id}");
 	}
 
 }

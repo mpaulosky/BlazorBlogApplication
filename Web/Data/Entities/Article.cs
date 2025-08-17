@@ -50,13 +50,31 @@ public class Article : Entity
 	[Display(Name = "Is Published")]
 	public bool IsPublished { get; set; }
 
+	/// <summary>
+	/// Indicates whether the article is archived.
+	/// </summary>
+	[Display(Name = "Is Archived")]
+	public bool IsArchived { get; set; }
+
 	[Display(Name = "Published On")]
 	public DateTimeOffset? PublishedOn { get; set; }
 
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public Article() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, false, null) { }
+	public Article()
+	{
+		Title = string.Empty;
+		Introduction = string.Empty;
+		Content = string.Empty;
+		CoverImageUrl = string.Empty;
+		UrlSlug = string.Empty;
+		Author = AppUserDto.Empty;
+		Category = CategoryDto.Empty;
+		IsPublished = false;
+		PublishedOn = null;
+		IsArchived = false;
+	}
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="Article" /> class.
@@ -70,6 +88,10 @@ public class Article : Entity
 	/// <param name="category">The new category</param>
 	/// <param name="isPublished">The newly published status</param>
 	/// <param name="publishedOn">The new publication date</param>
+	/// <param name="isArchived">Indicates whether the article is archived.</param>
+	/// <remarks>
+	///   This constructor is used to create a new article instance with all required properties.
+	/// </remarks>
 	public Article(
 		string title,
 		string introduction,
@@ -79,7 +101,8 @@ public class Article : Entity
 		AppUserDto author,
 		CategoryDto category,
 		bool isPublished = false,
-		DateTimeOffset? publishedOn = null)
+		DateTimeOffset? publishedOn = null,
+		bool isArchived = false)
 	{
 		Title = title;
 		Introduction = introduction;
@@ -90,6 +113,7 @@ public class Article : Entity
 		Category = category;
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
+		IsArchived = isArchived;
 	}
 
 	/// <summary>
@@ -104,26 +128,30 @@ public class Article : Entity
 	/// <param name="category">The new category</param>
 	/// <param name="isPublished">The newly published status</param>
 	/// <param name="publishedOn">The new publication date</param>
+	/// /// <param name="isArchived">Indicates whether the article is archived.</param>
+	/// <remarks>
+	///   This method is used to update the article's properties.
+	/// </remarks>
 	public void Update(
-			string title,
-			string introduction,
-			string content,
-			string coverImageUrl,
-			string urlSlug,
-			AppUserDto author,
-			CategoryDto category,
-			bool isPublished,
-			DateTimeOffset? publishedOn)
+				string title,
+				string introduction,
+				string content,
+				string coverImageUrl,
+				string urlSlug,
+				CategoryDto category,
+				bool isPublished,
+				DateTimeOffset? publishedOn,
+				bool isArchived)
 	{
 		Title = title;
 		Introduction = introduction;
 		Content = content;
 		CoverImageUrl = coverImageUrl;
 		UrlSlug = urlSlug;
-		Author = author;
 		Category = category;
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
+		IsArchived = isArchived;
 	}
 
 	public void Publish(DateTime publishedOn)
@@ -150,10 +178,10 @@ public class Article : Entity
 			string.Empty,
 			string.Empty,
 			AppUserDto.Empty,
-			CategoryDto.Empty)
-
-	{
-		Id = ObjectId.Empty
-	};
+			CategoryDto.Empty,
+			false,
+			null,
+			false)
+	{ Id = ObjectId.Empty };
 
 }

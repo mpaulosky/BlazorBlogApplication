@@ -23,9 +23,17 @@ namespace Web.Components.Features.Articles.ArticleGet;
 public static class GetArticle
 {
 	/// <summary>
+	/// Interface for retrieving articles from the database.
+	/// </summary>
+	public interface IGetArticleHandler
+	{
+		Task<Result<ArticleDto>> HandleAsync(ObjectId id);
+	}
+
+	/// <summary>
 	/// Represents a handler for retrieving articles from the database.
 	/// </summary>
-	public class Handler
+	public class Handler : IGetArticleHandler
 	{
 		private readonly MyBlogContext _context;
 		private readonly ILogger<Handler> _logger;
@@ -48,17 +56,12 @@ public static class GetArticle
 		/// <returns>A <see cref="Result"/> representing the outcome of the operation.</returns>
 		public async Task<Result<ArticleDto>> HandleAsync(ObjectId id)
 		{
-
 			try
 			{
-
 				if (id == ObjectId.Empty)
 				{
-
 					_logger.LogError("The ID is empty.");
-
 					return Result.Fail<ArticleDto>("The ID cannot be empty.");
-
 				}
 
 				var filter = Builders<Article>.Filter.Eq("_id", id);

@@ -15,17 +15,22 @@ using Web.Data.Abstractions;
 using Web.Data.Entities;
 using Web.Data.Models;
 
-namespace Web.Components.Features.Categories.CategoryGet;
+namespace Web.Components.Features.Categories.CategoryDetails;
 
 /// <summary>
 /// Static class providing functionality for category creation.
 /// </summary>
 public static class GetCategory
 {
+	public interface IGetCategoryHandler
+	{
+		Task<Result<CategoryDto>> HandleAsync(ObjectId id);
+	}
+
 	/// <summary>
 	/// Represents a handler for retrieving categories from the database.
 	/// </summary>
-	public class Handler
+	public class Handler : IGetCategoryHandler
 	{
 		private readonly MyBlogContext _context;
 		private readonly ILogger<Handler> _logger;

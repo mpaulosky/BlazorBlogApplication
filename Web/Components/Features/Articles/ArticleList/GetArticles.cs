@@ -21,9 +21,17 @@ namespace Web.Components.Features.Articles.ArticleList;
 public static class GetArticles
 {
 	/// <summary>
+	/// Interface for retrieving articles from the database.
+	/// </summary>
+	public interface IGetArticlesHandler
+	{
+		Task<Result<IEnumerable<ArticleDto>>> HandleAsync(bool excludeArchived = false);
+	}
+
+	/// <summary>
 	/// Represents a handler for retrieving articles from the database.
 	/// </summary>
-	public class Handler
+	public class Handler : IGetArticlesHandler
 	{
 		private readonly MyBlogContext _context;
 		private readonly ILogger<Handler> _logger;

@@ -21,7 +21,7 @@ public class AppUserDto
 	/// <summary>
 	/// Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public AppUserDto() : this(string.Empty, string.Empty, string.Empty, null) { }
+	public AppUserDto() : this(string.Empty, string.Empty, string.Empty, new List<string>()) { }
 
 	/// <summary>
 	///  Initializes a new instance of the <see cref="AppUserDto" /> class.
@@ -35,7 +35,7 @@ public class AppUserDto
 		Id = id;
 		UserName = userName;
 		Email = email;
-		Roles = roles;
+		Roles = roles ?? new List<string>();
 	}
 
 	/// <summary>
@@ -62,8 +62,9 @@ public class AppUserDto
 	public List<string>? Roles { get; set; }
 
 	/// <summary>
-	///  Gets an empty instance of AppUserDto with default values.
+	///  Gets an empty singleton instance of AppUserDto with default values.
 	/// </summary>
-	public static AppUserDto Empty => new(string.Empty, string.Empty, string.Empty, null);
+	private static readonly AppUserDto _empty = new(string.Empty, string.Empty, string.Empty, new List<string>());
+	public static AppUserDto Empty => _empty;
 
 }

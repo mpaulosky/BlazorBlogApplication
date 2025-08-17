@@ -16,7 +16,7 @@ namespace Web.Data;
 /// <summary>
 ///   MongoDB context for blog data.
 /// </summary>
-public class MyBlogContext
+public class MyBlogContext : IMyBlogContext
 {
 
 	private readonly IMongoDatabase _database;
