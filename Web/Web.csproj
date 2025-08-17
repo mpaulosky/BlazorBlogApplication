@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+  <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 		<RootNamespace>Web</RootNamespace>
@@ -14,14 +14,13 @@
 
   <ItemGroup>
     <PackageReference Include="Auth0.AspNetCore.Authentication" />
+    <PackageReference Include="Blazored.FluentValidation" />
     <PackageReference Include="Bogus" />
     <PackageReference Include="FluentValidation" />
-    <PackageReference Include="Mapster" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" />
+  <PackageReference Include="Mapster" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="MongoDB.Bson" />
     <PackageReference Include="MongoDB.Driver" />
-    <PackageReference Include="MongoDB.Driver.Core" />
     <PackageReference Include="RestSharp" />
     <PackageReference Include="System.Text.RegularExpressions" />
     <PackageReference Include="WaffleGenerator.Bogus" />

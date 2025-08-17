@@ -1,20 +1,17 @@
 @page "/categories/{id:guid}"
-
-@using System.Globalization
-@using MongoDB.Bson
 @using Web.Data.Models
 
 @inject NavigationManager Navigation
-@inject GetCategory.Handler GetHandler
+@inject GetCategory.IGetCategoryHandler GetHandler
 @inject ILogger<Details> Logger
 
 @attribute [Authorize(Roles = "Admin")]
 
-<PageHeadingComponent HeaderText="Category Details" Level="1" TextColorClass="blue-500"/>
+<PageHeadingComponent HeaderText="Category Details" Level="1" TextColorClass="blue-500" />
 
 @if (_isLoading)
 {
-	<LoadingComponent/>
+	<LoadingComponent />
 }
 else if (_category is null)
 {
@@ -42,23 +39,24 @@ else
 @code {
 
 	/// <summary>
-	///   The unique identifier of the category to display.
+	/// The unique identifier of the category to display.
 	/// </summary>
 	[Parameter]
 	public ObjectId Id { get; set; }
+	[CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
 	/// <summary>
-	///   The category data to be displayed on the page.
+	/// The category data to be displayed on the page.
 	/// </summary>
 	private CategoryDto? _category;
 
 	/// <summary>
-	///   Indicates whether the component is currently loading data.
+	/// Indicates whether the component is currently loading data.
 	/// </summary>
 	private bool _isLoading = true;
 
 	/// <summary>
-	///   Initializes the component by loading the category data using the CategoryService.
+	/// Initializes the component by loading the category data using the CategoryService.
 	/// </summary>
 	protected override async Task OnInitializedAsync()
 	{
@@ -93,7 +91,7 @@ else
 	}
 
 	/// <summary>
-	///   Navigates to the edit page for the current category.
+	/// Navigates to the edit page for the current category.
 	/// </summary>
 	private void GoToEdit()
 	{
@@ -101,7 +99,7 @@ else
 	}
 
 	/// <summary>
-	///   Navigates back to the category list page.
+	/// Navigates back to the category list page.
 	/// </summary>
 	private void GoToList()
 	{

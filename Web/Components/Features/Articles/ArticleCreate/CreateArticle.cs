@@ -20,9 +20,17 @@ public static class CreateArticle
 {
 
 	/// <summary>
+	/// Interface for creating articles in the database.
+	/// </summary>
+	public interface ICreateArticleHandler
+	{
+		Task<Result> HandleAsync(ArticleDto request);
+	}
+
+	/// <summary>
 	/// Represents a handler for creating new categories in the database.
 	/// </summary>
-	public class Handler
+	public class Handler : ICreateArticleHandler
 	{
 
 		private readonly MyBlogContext _context;

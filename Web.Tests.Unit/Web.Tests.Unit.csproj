@@ -8,6 +8,7 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
 		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -22,7 +23,8 @@
 		<PackageReference Include="Aspire.Hosting.Testing" />
 		<PackageReference Include="bunit" />
 		<PackageReference Include="FluentAssertions" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="JetBrains.Annotations"/>
+	<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="Moq" />
 		<PackageReference Include="NSubstitute" />
 		<PackageReference Include="NSubstitute.Analyzers.CSharp" />

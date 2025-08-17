@@ -23,7 +23,12 @@ public static class GetCategories
 	/// <summary>
 	/// Represents a handler for retrieving categories from the database.
 	/// </summary>
-	public class Handler
+	public interface IGetCategoriesHandler
+	{
+		Task<Result<IEnumerable<CategoryDto>>> HandleAsync(bool excludeArchived = false);
+	}
+
+	public class Handler : IGetCategoriesHandler
 	{
 		private readonly MyBlogContext _context;
 		private readonly ILogger<Handler> _logger;

@@ -1,20 +1,20 @@
 @page "/articles"
 
-@using Microsoft.AspNetCore.Components.QuickGrid
 @using Web.Data.Models
 
 @inject NavigationManager Navigation
-@inject GetArticles.Handler ArticlesHandler
+@inject GetArticles.IGetArticlesHandler ArticlesHandler
 @inject ILogger<List> Logger
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 @attribute [Authorize]
 
-<PageHeadingComponent HeaderText="Articles" Level="1" TextColorClass="blue-500"/>
+<PageHeadingComponent HeaderText="Articles" Level="1" TextColorClass="blue-500" />
 
 
 @if (_isLoading)
 {
-	<LoadingComponent/>
+	<LoadingComponent />
 }
 else if (_articles == null || !_articles.Any())
 {
@@ -25,47 +25,65 @@ else if (_articles == null || !_articles.Any())
 }
 else
 {
-	<QuickGrid Class="table" Items="_articles" Pagination="_pagination">
-		<PropertyColumn Property="article => article.Title" Sortable="true"/>
-		<PropertyColumn Property="article => article.Introduction" Title="Release Date"/>
-		<PropertyColumn Property="article => article.Content"/>
-		<PropertyColumn Property="article => article.Author.UserName" Title="Author"/>
-		<PropertyColumn Property="article => article.Category.CategoryName"/>
-		<PropertyColumn Property="article => article.CreatedOn" Title="CategoryCreated On" Format="{0:d}"/>
-		<PropertyColumn Property="article => article.ModifiedOn" Title="Modified On" Format="{0:d}"/>
-		<PropertyColumn Property="article => article.IsPublished" Title="Published"/>
-		<PropertyColumn Property="article => article.PublishedOn" Title="Published On" Format="{0:d}"/>
-		<PropertyColumn Property="article => article.Archived" Title="Archived"/>
-
-		<TemplateColumn Context="article">
-			<a href="@($"articles/edit?id={article.Id}")">Edit</a> |
-			<a href="@($"articles/details?id={article.Id}")">Details</a> |
-			<a href="@($"articles/delete?id={article.Id}")">Delete</a>
-		</TemplateColumn>
-	</QuickGrid>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Title</th>
+				<th>Release Date</th>
+				<th>Content</th>
+				<th>Author</th>
+				<th>Category</th>
+				<th>Created On</th>
+				<th>Modified On</th>
+				<th>Published</th>
+				<th>Published On</th>
+				<th>Archived</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var article in _articles)
+			{
+				<tr>
+					<td>@article.Title</td>
+					<td>@article.Introduction</td>
+					<td>@article.Content</td>
+					<td>@article.Author.UserName</td>
+					<td>@article.Category.CategoryName</td>
+					<td>@(article.CreatedOn.ToShortDateString())</td>
+					<td>@(article.ModifiedOn.HasValue? article.ModifiedOn.Value.ToShortDateString() : "")</td>
+					<td>@article.IsPublished</td>
+					<td>@article.PublishedOn?.ToString("d")</td>
+					<td>@article.Archived</td>
+					<td>
+						<button class="btn btn-primary btn-sm mx-1" @onclick="@(() => GoToEdit(article.Id))"
+							disabled="@(!article.CanEdit)">Edit</button>
+						<button class="btn btn-info btn-sm mx-1" @onclick="@(() => GoToDetails(article.Id))">Details</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
 <button class="btn btn-success mt-3" @onclick="GoToCreate">Create New Article</button>
 
 @code {
 
 	/// <summary>
-	///   The list of articles to display.
+	/// The list of articles to display.
 	/// </summary>
 	private IQueryable<ArticleDto>? _articles;
+	[CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
 	/// <summary>
-	///   Pagination state for the article's list.
-	/// </summary>
-	private readonly PaginationState _pagination = new()  { ItemsPerPage = 5 };
-
-	/// <summary>
-	///   Indicates whether the page is loading data.
+	/// Indicates whether the page is loading data.
 	/// </summary>
 	private bool _isLoading = true;
 
 	/// <summary>
-	///   Called when the component is initialized. Loads all articles for display.
-	///   Adds structured logging for success and error cases.
+	/// Called when the component is initialized. Loads all articles for display.
+	/// Adds structured logging for success and error cases.
+	/// Determines per-article edit/delete permissions for the current user.
 	/// </summary>
 	protected override async Task OnInitializedAsync()
 	{
@@ -77,6 +95,22 @@ else
 		{
 			Logger.LogInformation("Articles loaded successfully. Count: {Count}", result.Value?.Count() ?? 0);
 			_articles = result.Value?.AsQueryable() ?? null;
+
+			// Determine current user and roles
+			var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+			var user = authState.User;
+			var userId = user.FindFirst(c =>
+			c.Type is "sub" or "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+			var isAdmin = user?.IsInRole("Admin") ?? false;
+			var isAuthor = user?.IsInRole("Author") ?? false;
+
+			if (_articles is not null)
+			{
+				foreach (var article in _articles)
+				{
+					article.CanEdit = isAdmin || (isAuthor && article.Author.Id == userId);
+				}
+			}
 		}
 		else
 		{
@@ -89,11 +123,21 @@ else
 	}
 
 	/// <summary>
-	///   Navigates to the creation category page.
+	/// Navigates to the creation category page.
 	/// </summary>
 	private void GoToCreate()
 	{
 		Navigation.NavigateTo("/articles/create");
+	}
+
+	private void GoToEdit(ObjectId id)
+	{
+		Navigation.NavigateTo($"/articles/edit/{id}");
+	}
+
+	private void GoToDetails(ObjectId id)
+	{
+		Navigation.NavigateTo($"/articles/details/{id}");
 	}
 
 }

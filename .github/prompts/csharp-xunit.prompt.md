@@ -6,7 +6,51 @@ description: "Get best practices for XUnit unit testing, including data-driven t
 
 # XUnit Best Practices
 
-Your goal is to help me write effective unit tests with XUnit v3, covering both standard and data-driven testing approaches.
+Your goal is to help me write effective unit tests with XUnit v3, covering both standard and data-driven testing approaches. Use the following guidelines and examples to create robust tests. Ensure to use the AAA (Arrange-Act-Assert) pattern. When applicable, prefer using data-driven tests with the `[Theory]` attribute and inline data. When dealing with references move them into the GlobalUsings.cs file. When mocking dependencies, use a mocking library like Moq or NSubstitute.
+
+## Quick Tips
+
+- **Use `GlobalUsings.cs` for common references** (e.g., `using Xunit;`, `using FluentAssertions;`, `using NSubstitute;`). This keeps your test files clean and consistent.
+- **Test data management:** Use fakes, builders, or factories for generating test data. Prefer deterministic data for repeatable tests.
+- **Test discovery/filtering:** Use XUnit v3's improved test discovery and filtering (e.g., `dotnet test --filter FullyQualifiedName~MyTest` or by trait/category).
+
+### Example: Testing a Blazor Counter Component using XUnit
+
+````csharp
+
+using Xunit;
+using FluentAssertions;
+using Web.Data.Fakes;
+using Web.Data.Models;
+using JetBrains.Annotations;
+
+/// <summary>
+/// Unit tests for the <see cref="Article"/> class.
+/// </summary>
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(Article))]
+public class ArticleTests
+{
+[Fact]
+public void DefaultConstructor_ShouldInitializeWithDefaults()
+{
+// Arrange & Act
+var article = new Article();
+
+    	// Assert
+    	article.Title.Should().Be("");
+    	article.Introduction.Should().Be("");
+    	article.Content.Should().Be("");
+    	article.CoverImageUrl.Should().Be("");
+    	article.UrlSlug.Should().Be("");
+    	article.Author.Should().Be(AppUserDto.Empty);
+    	article.Category.Should().Be(CategoryDto.Empty);
+    	article.IsPublished.Should().BeFalse();
+    	article.PublishedOn.Should().BeNull();
+    	article.IsArchived.Should().BeFalse();
+    }
+
+...
 
 ## Project Setup
 
@@ -27,7 +71,7 @@ Your goal is to help me write effective unit tests with XUnit v3, covering both 
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.v3.runner.visualstudio" />
   </ItemGroup>
-  ```
+````
 
 # Blazor Component and Page Testing with bUnit
 
@@ -37,40 +81,94 @@ bUnit is the recommended library for unit testing Blazor components and pages. I
 - Use `TestContext` to render and interact with components in tests.
 - Use semantic HTML comparison and event simulation (e.g., `cut.Find("button").Click()`).
 - Pass parameters, cascading values, and inject services as needed.
-- Mock dependencies like `IJSRuntime` for isolation.
+- **Mock dependencies like `IJSRuntime` and services for isolation:**
+  ```csharp
+  JSInterop.Mode = JSRuntimeMode.Loose;
+  JSInterop.Setup<SomeJsCall>().SetResult("result");
+  Services.AddSingleton(MockedService);
+  ```
 - Use FluentAssertions for expressive assertions.
 
-### Example: Testing a Blazor Counter Component
+### Example: Advanced bUnit Mocking
 
 ```csharp
 using Bunit;
+using NSubstitute;
 using Xunit;
 
-public class CounterTests : TestContext
+public class MyComponentTests : BunitContext
 {
   [Fact]
-  public void CounterShouldIncrementWhenClicked()
+  public void RendersWithMockedService()
   {
-    // Arrange: render the Counter component
-    var cut = RenderComponent<Counter>();
+    // Arrange
+    var service = Substitute.For<IMyService>();
+    service.GetData().Returns("mocked");
+    Services.AddSingleton(service);
 
-    // Act: find and click the button
-    cut.Find("button").Click();
+    // Act
+    var cut = RenderComponent<MyComponent>();
 
-    // Assert: verify the count incremented
-    cut.Find("p").MarkupMatches("<p>Current count: 1</p>");
+    // Assert
+    cut.Markup.Should().Contain("mocked");
   }
 }
 ```
 
 For more advanced scenarios, see the [bUnit documentation](https://bunit.dev/docs/getting-started/index.html).
 
-## References
+## Async and Exception Testing
 
-- [bUnit Documentation](https://bunit.dev/docs/getting-started/index.html)
+- Use async test methods for code that returns `Task`:
 
+  ```csharp
+  [Fact]
+  public async Task SaveAsync_ShouldPersistData()
+  {
+    // Arrange
+    var repo = new Repository();
+
+    // Act
+    await repo.SaveAsync("data");
+
+    // Assert
+    var result = await repo.GetAsync();
+    result.Should().Be("data");
+  }
   ```
 
+- Test exceptions with FluentAssertions:
+
+  ```csharp
+  [Fact]
+  public void Method_ShouldThrowArgumentException()
+  {
+    // Arrange
+    var obj = new MyClass();
+
+    // Act
+    Action act = () => obj.Method(null);
+
+    // Assert
+    act.Should().Throw<ArgumentException>().WithMessage("*null*");
+  }
+  ```
+
+  For async:
+
+  ```csharp
+  [Fact]
+  public async Task MethodAsync_ShouldThrowInvalidOperationException()
+  {
+    // Arrange
+    var obj = new MyClass();
+
+    // Act
+    Func<Task> act = async () => await obj.MethodAsync();
+
+    // Assert
+    await act.Should().ThrowAsync<InvalidOperationException>();
+  }
   ```
 
 ## Test Structure
@@ -78,9 +176,9 @@ For more advanced scenarios, see the [bUnit documentation](https://bunit.dev/doc
 - No test class attributes required (unlike MSTest/NUnit)
 - Use fact-based tests with `[Fact]` attribute for simple tests
 - Strictly follow the Arrange-Act-Assert (AAA) pattern
-  - **Arrange**: Set up test prerequisites and inputs
-  - **Act**: Call the method or operation being tested
-  - **Assert**: Verify the expected outcome using FluentAssertions
+- **Arrange**: Set up test prerequisites and inputs
+- **Act**: Call the method or operation being tested
+- **Assert**: Verify the expected outcome using FluentAssertions
 - Use blank lines to separate each section of the AAA pattern for clarity
 - Name tests using the pattern `MethodName_Scenario_ExpectedBehavior`
 - Use constructor for setup and `IDisposable.Dispose()` for teardown
@@ -122,27 +220,27 @@ For more advanced scenarios, see the [bUnit documentation](https://bunit.dev/doc
 - Reference equality: `result.Should().BeSameAs(expected)`
 - Boolean conditions: `result.Should().BeTrue()` or `result.Should().BeFalse()`
 - Collections:
-  - `collection.Should().Contain(item)`
-  - `collection.Should().NotContain(item)`
-  - `collection.Should().HaveCount(count)`
-  - `collection.Should().BeEmpty()`
+- `collection.Should().Contain(item)`
+- `collection.Should().NotContain(item)`
+- `collection.Should().HaveCount(count)`
+- `collection.Should().BeEmpty()`
 - Strings:
-  - `string.Should().Contain("substring")`
-  - `string.Should().StartWith("prefix")`
-  - `string.Should().Match("regex pattern")`
+- `string.Should().Contain("substring")`
+- `string.Should().StartWith("prefix")`
+- `string.Should().Match("regex pattern")`
 - Exceptions:
-  - `Action act = () => methodThatThrows();`
-  - `act.Should().Throw<ExpectedException>().WithMessage("*expected message*")`
-  - For async: `Func<Task> act = async () => await asyncMethodThatThrows();`
-  - `await act.Should().ThrowAsync<ExpectedException>()`
+- `Action act = () => methodThatThrows();`
+- `act.Should().Throw<ExpectedException>().WithMessage("*expected message*")`
+- For async: `Func<Task> act = async () => await asyncMethodThatThrows();`
+- `await act.Should().ThrowAsync<ExpectedException>()`
 - Types:
-  - `obj.Should().BeOfType<ExpectedType>()`
-  - `obj.Should().BeAssignableTo<ExpectedInterface>()`
+- `obj.Should().BeOfType<ExpectedType>()`
+- `obj.Should().BeAssignableTo<ExpectedInterface>()`
 - Nullability:
-  - `obj.Should().NotBeNull()`
-  - `obj.Should().BeNull()`
+- `obj.Should().NotBeNull()`
+- `obj.Should().BeNull()`
 - Chain assertions for complex verifications:
-  - `person.Should().NotBeNull().And.BeOfType<Customer>().Which.Name.Should().StartWith("J")`
+- `person.Should().NotBeNull().And.BeOfType<Customer>().Which.Name.Should().StartWith("J")`
 
 ## Mocking and Isolation
 
@@ -165,16 +263,16 @@ For more advanced scenarios, see the [bUnit documentation](https://bunit.dev/doc
 [Test]
 public void Add_TwoPositiveNumbers_ReturnsCorrectSum()
 {
-    // Arrange
-    var calculator = new Calculator();
-    int a = 2;
-    int b = 3;
+  // Arrange
+  var calculator = new Calculator();
+  int a = 2;
+  int b = 3;
 
-    // Act
-    int result = calculator.Add(a, b);
+  // Act
+  int result = calculator.Add(a, b);
 
-    // Assert
-    result.Should().Be(5);
+  // Assert
+  result.Should().Be(5);
 }
 
 [Theory]
@@ -183,44 +281,44 @@ public void Add_TwoPositiveNumbers_ReturnsCorrectSum()
 [InlineData(-1, 1, 0)]
 public void Add_VariousInputs_ReturnsExpectedResults(int a, int b, int expected)
 {
-    // Arrange
-    var calculator = new Calculator();
+  // Arrange
+  var calculator = new Calculator();
 
-    // Act
-    int result = calculator.Add(a, b);
+  // Act
+  int result = calculator.Add(a, b);
 
-    // Assert
-    result.Should().Be(expected);
+  // Assert
+  result.Should().Be(expected);
 }
 
 // Example using new Observation attribute
 [Observation]
 public void Calculator_ShouldExist()
 {
-    // Arrange & Act
-    var calculator = new Calculator();
+  // Arrange & Act
+  var calculator = new Calculator();
 
-    // Assert
-    calculator.Should().NotBeNull();
+  // Assert
+  calculator.Should().NotBeNull();
 }
 
 // Example with test output
 [Test]
 public void Add_WithLogging_ReturnsCorrectSum()
 {
-    // Arrange
-    var calculator = new Calculator();
-    int a = 2;
-    int b = 3;
+  // Arrange
+  var calculator = new Calculator();
+  int a = 2;
+  int b = 3;
 
-    // Log test information
-    TestOutput.WriteLine($"Testing addition with values {a} and {b}");
+  // Log test information
+  TestOutput.WriteLine($"Testing addition with values {a} and {b}");
 
-    // Act
-    int result = calculator.Add(a, b);
+  // Act
+  int result = calculator.Add(a, b);
 
-    // Assert
-    result.Should().Be(5);
-    TestOutput.WriteLine($"Result was {result} as expected");
+  // Assert
+  result.Should().Be(5);
+  TestOutput.WriteLine($"Result was {result} as expected");
 }
 ```
