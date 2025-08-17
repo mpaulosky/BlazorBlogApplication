@@ -36,17 +36,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "22.x"
           cache: "npm"
-          cache-dependency-path: |
-            **/Web/package-lock.json
+          cache-dependency-path: SRC/Web/package-lock.json
 
       - name: Install Node.js dependencies
-        working-directory: Web
+        working-directory: SRC/Web
         run: npm install
 
       - name: Build Tailwind CSS
-        working-directory: Web
+        working-directory: SRC/Web
         run: npm run build:css
 
       - name: Restore dependencies
@@ -77,14 +76,16 @@ jobs:
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/test-results-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         id: test-results
         if: always()
         with:
+          # Disable creating GitHub check runs when running locally with act
+          # (this avoids the "You must authenticate via a GitHub App" 403 error
+          # that happens because act can't emulate GitHub App authentication).
+          check_run: false
           files: |
             TestResults/**/*.trx
 
@@ -96,7 +97,7 @@ jobs:
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v4.1.0
         with:
-          versionSpec: "6.0"
+          versionSpec: "6.0.x"
 
       - name: Use GitVersion
         id: gitversion # step id used as a reference for output values
