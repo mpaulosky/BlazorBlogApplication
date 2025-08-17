@@ -81,6 +81,15 @@ jobs:
           echo "Searching for .trx files under $GITHUB_WORKSPACE"
           find "$GITHUB_WORKSPACE" -type f -name "*.trx" -print -ls || true
 
+      - name: Copy TRX files to repo root (explicit)
+        run: |
+          echo "Copying any .trx files from $GITHUB_WORKSPACE/TestResults to repo root"
+          if [ -d "$GITHUB_WORKSPACE/TestResults" ]; then
+            find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" -print -exec cp -v {} "$GITHUB_WORKSPACE/" \; || true
+          else
+            echo "TestResults directory missing"
+          fi
+
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
         with:
@@ -121,7 +130,8 @@ jobs:
         id: gitversion # step id used as a reference for output values
         uses: gittools/actions/gitversion/execute@v4.1.0
 
-      - run: |
+      - name: Show GitVersion
+        if: github.actor != 'nektos/act'
+        run: |
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
           echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
-          if: github.actor != 'nektos/act'
