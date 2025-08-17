@@ -21,7 +21,9 @@ public static class TestServiceRegistrations
 		// If tests need more behavior, replace with a test double in those tests.
 		var http = new HttpClient();
 		var config = new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build();
-		var svc = new Auth0Service(http, config);
+		ctx.Services.AddSingleton<HttpClient>();
+		var config = new Microsoft.Extensions.Configuration.ConfigurationBuilder().Build();
+		var svc = new Auth0Service(ctx.Services.GetRequiredService<HttpClient>(), config);
 		ctx.Services.AddSingleton(svc);
 	}
 
