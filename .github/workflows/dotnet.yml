@@ -59,9 +59,11 @@ jobs:
 
       - name: Run all tests in all test projects
         run: |
+          timestamp=$(date +%s)
           for proj in $(find . -name "*.csproj" -path "*/Tests/*"); do
             name=$(basename "$proj" .csproj)
-            dotnet run "$proj" --no-build --no-restore --report-xunit-trx  --report-xunit-trx-filename "${name}.trx"  --results-directory "${{ github.workspace }}/TestResults/"
+            filename="${name}_${timestamp}.trx"
+            dotnet test "$proj" --no-build --no-restore --logger "trx;LogFileName=${filename}" --results-directory "${{ github.workspace }}/TestResults/"
           done
 
       - name: Upload Test Results
@@ -71,10 +73,11 @@ jobs:
           path: TestResults
 
       - name: Codecov
+        if: github.actor != 'nektos/act'
         uses: codecov/codecov-action@v5.4.3
 
       - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && github.actor != 'nektos/act' }}
         uses: codecov/test-results-action@v1
 
       - name: Publish Test Results
@@ -99,14 +102,17 @@ jobs:
           fetch-depth: 0
 
       - name: Install GitVersion
+        if: github.actor != 'nektos/act'
         uses: gittools/actions/gitversion/setup@v4.1.0
         with:
           versionSpec: "6.0.x"
 
       - name: Use GitVersion
+        if: github.actor != 'nektos/act'
         id: gitversion # step id used as a reference for output values
         uses: gittools/actions/gitversion/execute@v4.1.0
 
       - run: |
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
           echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+        if: github.actor != 'nektos/act'
