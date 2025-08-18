@@ -7,11 +7,12 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-namespace Web.Tests.Unit.Data.Models;
+namespace Web.Data.Models;
 
 /// <summary>
 ///   Unit tests for the <see cref="ArticleDto"/> class.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class ArticleDtoTests
 {
 	[Fact]

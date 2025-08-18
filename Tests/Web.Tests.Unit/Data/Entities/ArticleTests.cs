@@ -7,7 +7,7 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-namespace Web.Tests.Unit.Data.Entities;
+namespace Web.Data.Entities;
 
 /// <summary>
 ///   Unit tests for the <see cref="Article"/> class.

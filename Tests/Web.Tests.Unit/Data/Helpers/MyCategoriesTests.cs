@@ -7,13 +7,12 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Data.Helpers;
-
-namespace Web.Tests.Unit.Data.Helpers;
+namespace Web.Data.Helpers;
 
 /// <summary>
 ///   Unit tests for the <see cref="MyCategories"/> class.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class MyCategoriesTests
 {
 	[Fact]

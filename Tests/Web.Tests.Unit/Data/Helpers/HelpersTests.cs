@@ -7,17 +7,18 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-namespace Web.Tests.Unit.Data.Helpers;
+namespace Web.Data.Helpers;
 
 /// <summary>
-///   Unit tests for the <see cref="Helpers"/> class.
+///   Unit tests for the <see cref="Web.Helpers"/> class.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class HelpersTests
 {
 	[Fact]
 	public void SomeHelperMethod_ShouldReturnExpectedResult()
 	{
-		// Example: Replace with actual method and expected result
+		// Example: Replace with an actual method and expected result
 		// var result = Helpers.SomeHelperMethod(input);
 		// result.Should().Be(expected);
 		Assert.True(true); // Placeholder
