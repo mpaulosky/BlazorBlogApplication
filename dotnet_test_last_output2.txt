@@ -1,3 +1,0 @@
-  Run tests: 'E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\bin\Debug\net9.0\Web.Tests.Unit.dll' [net9.0|x64]
-  Passed! - Failed: 0, Passed: 169, Skipped: 7, Total: 176, Duration: 2s 701ms - Web.Tests.Unit.dll (net9.0|x64)
-  Tests succeeded: 'E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\bin\Debug\net9.0\Web.Tests.Unit.dll' [net9.0|x64]

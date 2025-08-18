@@ -77,7 +77,7 @@ public class CreateTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this);
 		var navMan = Services.GetRequiredService<BunitNavigationManager>();
-		// Ensure handler returns success so the component navigates
+		// Ensure the handler returns success so the component navigates
 		_createHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
 		var cut = Render<Create>();
 

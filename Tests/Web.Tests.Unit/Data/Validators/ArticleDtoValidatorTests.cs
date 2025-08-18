@@ -7,13 +7,11 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Data.Models;
-using Web.Data.Validators;
 using FluentValidation.TestHelper;
-using Xunit;
 
-namespace Web.Tests.Unit.Data.Validators;
+namespace Web.Data.Validators;
 
+[ExcludeFromCodeCoverage]
 public class ArticleDtoValidatorTests
 {
 	private readonly ArticleDtoValidator _validator = new();

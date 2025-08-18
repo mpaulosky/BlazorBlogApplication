@@ -9,12 +9,7 @@
 
 using Web.Components.Features.Articles.ArticleCreate;
 using static Web.Components.Features.Articles.ArticleCreate.CreateArticle;
-using Web.Data.Models;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.Logging;
-using NSubstitute;
-using FluentAssertions;
+
 using Microsoft.AspNetCore.Components;
 
 namespace Web.Components.Features.Articles;
@@ -37,7 +32,7 @@ public class CreateTests : BunitContext
 		Services.AddScoped(_ => _mockHandler);
 		Services.AddScoped(_ => _mockLogger);
 		// Removed registration for concrete Handler type; only register the interface for mocking
-		Services.AddScoped<CreateArticle.ICreateArticleHandler>(_ => _mockHandler);
+		Services.AddScoped<ICreateArticleHandler>(_ => _mockHandler);
 		Services.AddCascadingAuthenticationState();
 		Services.AddAuthorization();
 	}

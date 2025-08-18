@@ -9,7 +9,7 @@
 
 // ...usings moved to GlobalUsings.cs...
 
-namespace Web.Tests.Unit.Data.Abstractions;
+namespace Web.Data.Abstractions;
 
 /// <summary>
 ///   Unit tests for the <see cref="Entity"/> base class.

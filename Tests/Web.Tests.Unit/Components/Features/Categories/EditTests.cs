@@ -6,25 +6,9 @@
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Bunit;
-using NSubstitute;
-using FluentAssertions;
-using Xunit;
-using MongoDB.Bson;
-using MongoDB.Driver;
-// using Bunit.TestDoubles; (not needed for BunitNavigationManager)
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
+
 using Web.Components.Features.Categories.CategoryEdit;
 using Web.Components.Features.Categories.CategoryDetails;
-using Web.Data.Entities;
-using Web.Data.Models;
-using Web.Data.Abstractions;
-using Web.Data;
 
 namespace Web.Components.Features.Categories;
 
@@ -33,18 +17,11 @@ namespace Web.Components.Features.Categories;
 public class EditTests : BunitContext
 {
 	private readonly EditCategory.IEditCategoryHandler _editHandlerMock;
-	private readonly GetCategory.IGetCategoryHandler _getHandlerMock;
-	// removed unused concrete handler field - tests register handler substitutes via the fixture
-	private readonly IMyBlogContextFactory _mockContextFactory;
-	private readonly ILogger<GetCategory.Handler> _mockLogger;
 	private readonly CategoryTestFixture _fixture;
 
 	public EditTests()
 	{
 		_editHandlerMock = Substitute.For<EditCategory.IEditCategoryHandler>();
-		_getHandlerMock = Substitute.For<GetCategory.IGetCategoryHandler>();
-		_mockContextFactory = Substitute.For<IMyBlogContextFactory>();
-		_mockLogger = Substitute.For<ILogger<GetCategory.Handler>>();
 		_fixture = new CategoryTestFixture();
 		// Ensure common test services and handler substitutes are registered
 		TestServiceRegistrations.RegisterCommonUtilities(this);
@@ -338,7 +315,7 @@ public class EditTests : BunitContext
 		var form = cut.Find("form");
 
 		// Act
-		form.Submit();
+		await form.SubmitAsync();
 
 		// Assert
 		await _editHandlerMock.Received(1).HandleAsync(Arg.Is<CategoryDto>(dto => dto.Id == categoryDto.Id));
@@ -369,7 +346,7 @@ public class EditTests : BunitContext
 
 
 	[Fact(Skip = "bUnit does not enforce [Authorize] in component tests; test via integration tests instead")]
-	public async Task Edit_Form_Not_Rendered_For_Unauthorized_User()
+	public void Edit_Form_Not_Rendered_For_Unauthorized_User()
 	{
 		// TODO: cover authorization behavior in integration/Playwright tests where auth is enforced.
 	}

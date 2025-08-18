@@ -7,12 +7,6 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Components.Features.UserInfo;
-using Microsoft.AspNetCore.Components.Authorization;
-using NSubstitute;
-using FluentAssertions;
-using Xunit;
-
 namespace Web.Components.Features.UserInfo;
 
 /// <summary>
@@ -36,7 +30,7 @@ public class UserOverviewTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
 		var cut = Render<UserOverview>();
-		cut.Instance.GetType().GetField("_users", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, null);
+		cut.Instance.GetType().GetField("_users", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, null);
 		cut.Render();
 		cut.Markup.Should().Contain("Loading users...");
 	}
@@ -47,7 +41,7 @@ public class UserOverviewTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
 		var cut = Render<UserOverview>();
-		cut.Instance.GetType().GetField("_users", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, new List<AppUserDto>().AsQueryable());
+		cut.Instance.GetType().GetField("_users", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, new List<AppUserDto>().AsQueryable());
 		cut.Render();
 		cut.Markup.Should().Contain("No users found.");
 	}
@@ -63,7 +57,7 @@ public class UserOverviewTests : BunitContext
 			new AppUserDto { UserName = "Bob", Email = "bob@example.com", Roles = new List<string>{"Editor"} }
 		};
 		var cut = Render<UserOverview>();
-		cut.Instance.GetType().GetField("_users", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, users.AsQueryable());
+		cut.Instance.GetType().GetField("_users", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, users.AsQueryable());
 		cut.Render();
 		cut.Markup.Should().Contain("Alice");
 		cut.Markup.Should().Contain("Bob");
