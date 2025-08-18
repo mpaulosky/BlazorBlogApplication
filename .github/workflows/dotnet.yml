@@ -65,32 +65,41 @@ jobs:
           for proj in $(find . -name "*.csproj" -path "*/Tests/*"); do
             name=$(basename "$proj" .csproj)
             filename="${name}_${timestamp}.trx"
-            # Use an absolute results directory so the container writes into the mounted workspace root
             dotnet test "$proj" --no-build --no-restore --logger "trx;LogFileName=${filename}" --results-directory "$GITHUB_WORKSPACE/TestResults"
           done
 
       - name: Workspace And TestResults Folder
+        id: check-testresults
         run: |
           echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
           echo "Listing repo root:"
           ls -la "$GITHUB_WORKSPACE" || true
-          echo "Listing TestResults in workspace:"
-          ls -la "$GITHUB_WORKSPACE/TestResults" || true
-      - name: "Debug: find any .trx files in workspace"
-        run: |
-          echo "Searching for .trx files under $GITHUB_WORKSPACE/TestResults/"
-          find "$GITHUB_WORKSPACE" -type f -name "*.trx" -print -ls || true
-
-      - name: Copy TRX files to repo root (explicit)
-        run: |
-          echo "Copying any .trx files from $GITHUB_WORKSPACE/TestResults to repo root"
+          echo "Checking for TestResults folder: $GITHUB_WORKSPACE/TestResults"
           if [ -d "$GITHUB_WORKSPACE/TestResults" ]; then
-            find "$GITHUB_WORKSPACE/TestResults/" -type f -name "*.trx" -print -exec cp -v {} "$GITHUB_WORKSPACE/" \; || true
+            echo "TestResults folder found"
+            echo "Listing TestResults directory contents:"
+            ls -la "$GITHUB_WORKSPACE/TestResults" || true
+            echo "Searching for .trx files in TestResults..."
+            # count .trx files recursively in TestResults
+            trx_count=$(find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" | wc -l || true)
+            if [ "$trx_count" -gt 0 ]; then
+              echo "Found $trx_count .trx file(s) in TestResults (recursive). Listing filenames and showing a short preview of each:"
+              echo "List of .trx files found:"
+              find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" -print || true
+              echo "Showing short previews (first 200 lines) for each .trx:"
+              find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" -print -exec sh -c 'echo "--- Contents of: $1 (first 200 lines) ---"; head -n 200 "$1" || true; echo "--- End of $1 ---"' _ {} \;
+              echo "found_trx=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "No .trx files found in TestResults"
+              echo "found_trx=false" >> "$GITHUB_OUTPUT"
+            fi
           else
-            echo "TestResults directory missing"
+            echo "TestResults folder NOT found"
+            echo "found_trx=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload Test Results
+        if: ${{ steps.check-testresults.outputs.found_trx == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: Test-Results
