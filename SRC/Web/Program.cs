@@ -12,18 +12,8 @@ using Web.Data.Models;
 using Web.Data.Validators;
 using FluentValidation;
 
-using Blazored.FluentValidation;
-
 using static Shared.Services;
 using Web.Components.Features.Articles.ArticleGet;
-using Web.Components.Features.Articles.ArticleList;
-using Web.Components.Features.Articles.ArticleCreate;
-using Web.Components.Features.Articles.ArticleEdit;
-
-using Web.Components.Features.Categories.CategoryEdit;
-using Web.Components.Features.Categories.CategoryList;
-using Web.Components.Features.Categories.CategoryCreate;
-using Web.Components.Features.Categories.CategoryDetails;
 
 var builder = WebApplication.CreateBuilder(args);
 
