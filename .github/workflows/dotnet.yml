@@ -70,7 +70,7 @@ jobs:
           find ./Test -name "*.csproj" 2>/dev/null
           (find ./Tests -name "*.csproj" 2>/dev/null; find ./Test -name "*.csproj" 2>/dev/null) | while read -r proj; do
             # double-check with IsTestProject property as a safety
-            if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null || true; then
+            if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null; then
               name=$(basename "$proj" .csproj)
               filename="${name}_${timestamp}"
               echo "Running tests for: $proj -> $GITHUB_WORKSPACE/TestResults/${filename}.trx (logs -> $GITHUB_WORKSPACE/TestResults/${filename}.log)"
