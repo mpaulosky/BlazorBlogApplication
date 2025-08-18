@@ -57,10 +57,10 @@ jobs:
         run: npm run build:css
 
       - name: Restore dependencies
-        run: dotnet restore BlazorBlogApplication.slnx
+        run: dotnet restore BlazorBlogApplication.sln
 
       - name: Build
-        run: dotnet build BlazorBlogApplication.slnx --no-restore
+        run: dotnet build BlazorBlogApplication.sln --no-restore
 
       - name: Run all tests in all test projects
         id: run-tests
