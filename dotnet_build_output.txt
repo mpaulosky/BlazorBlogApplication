@@ -1,0 +1,17 @@
+  Determining projects to restore...
+  Restored E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj (in 1.03 sec).
+  4 of 5 projects are up-to-date for restore.
+  Shared -> E:\github\BlazorBlogApplication\SRC\Shared\bin\Debug\net9.0\Shared.dll
+  ServiceDefaults -> E:\github\BlazorBlogApplication\SRC\ServiceDefaults\bin\Debug\net9.0\ServiceDefaults.dll
+  Web -> E:\github\BlazorBlogApplication\SRC\Web\bin\Debug\net9.0\Web.dll
+  AppHost -> E:\github\BlazorBlogApplication\SRC\AppHost\bin\Debug\net9.0\AppHost.dll
+E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Components\Features\Categories\EditTests.cs(372,20): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread. [E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj]
+  Web.Tests.Unit -> E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\bin\Debug\net9.0\Web.Tests.Unit.dll
+
+Build succeeded.
+
+E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Components\Features\Categories\EditTests.cs(372,20): warning CS1998: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread. [E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj]
+    1 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:04.88
