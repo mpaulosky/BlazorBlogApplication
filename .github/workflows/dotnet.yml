@@ -146,7 +146,7 @@ jobs:
           echo "=== Summary ==="
           echo "TestResults folder exists: $([ -d \"$GITHUB_WORKSPACE/TestResults\" ] && echo 'true' || echo 'false')"
           echo "TRX files found: $found_trx"
-            echo "Log files found: $([ $log_count -gt 0 ] && echo 'true' || echo 'false')"
+          echo "Log files found: $([ $log_count -gt 0 ] && echo 'true' || echo 'false')"
 
       - name: Upload Test Results
         if: ${{ steps.check-test-results.outputs.found_trx == 'true' }}
