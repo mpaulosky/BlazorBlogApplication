@@ -194,13 +194,6 @@ jobs:
           name: Test-Logs
           path: ${{ github.workspace }}/TestResults/**/*.log
 
-      - name: Upload TestResults (fallback for debugging)
-        if: ${{ steps.check-test-results.outputs.found_trx != 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: TestResults-Debug
-          path: ${{ github.workspace }}/TestResults/**
-
       - name: Codecov
         if: github.actor != 'nektos/act'
         uses: codecov/codecov-action@v5.4.3
