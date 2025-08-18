@@ -56,16 +56,33 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
 
-      - name: Create Test Results Directory
-        run: mkdir -p "$GITHUB_WORKSPACE/TestResults"
-
       - name: Run all tests in all test projects
         run: |
+          # Ensure repository-level TestResults exists
+          mkdir -p "$GITHUB_WORKSPACE/TestResults"
           timestamp=$(date +%s)
-          for proj in $(find . -name "*.csproj" -path "*/Tests/*"); do
-            name=$(basename "$proj" .csproj)
-            filename="${name}_${timestamp}.trx"
-            dotnet test "$proj" --no-build --no-restore --logger "trx;LogFileName=TestResults/${filename}.trx" --settings runsettings.xml
+          # Ensure pipefail so that dotnet test failures cause non-zero exit when piped
+          set -o pipefail
+
+          # Find .csproj files only under the Tests/ or Test/ folders to avoid accidental runs
+          # Use two searches and combine results
+          find ./Tests -name "*.csproj" 2>/dev/null
+          find ./Test -name "*.csproj" 2>/dev/null
+          (find ./Tests -name "*.csproj" 2>/dev/null; find ./Test -name "*.csproj" 2>/dev/null) | while read -r proj; do
+            # double-check with IsTestProject property as a safety
+            if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null || true; then
+              name=$(basename "$proj" .csproj)
+              filename="${name}_${timestamp}"
+              echo "Running tests for: $proj -> $GITHUB_WORKSPACE/TestResults/${filename}.trx (logs -> $GITHUB_WORKSPACE/TestResults/${filename}.log)"
+              # Capture stdout/stderr to a per-project log file for debugging
+              dotnet test "$proj" \
+                --no-build --no-restore \
+                --logger "trx;LogFileName=${filename}.trx" \
+                --settings "$GITHUB_WORKSPACE/runsettings.xml" \
+                --results-directory "$GITHUB_WORKSPACE/TestResults" 2>&1 | tee "$GITHUB_WORKSPACE/TestResults/${filename}.log"
+            else
+              echo "Skipping non-test project: $proj"
+            fi
           done
 
       - name: Workspace And TestResults Folder
@@ -78,51 +95,58 @@ jobs:
           echo ""
           echo "=== Checking TestResults Folder ==="
           echo "Looking for TestResults folder at: $GITHUB_WORKSPACE/TestResults"
+          found_trx=false
           if [ -d "$GITHUB_WORKSPACE/TestResults" ]; then
             echo "✅ TestResults folder found"
             echo ""
-            echo "=== TestResults Directory Contents ==="
+            echo "=== TestResults Directory Contents (top-level) ==="
             ls -la "$GITHUB_WORKSPACE/TestResults" || true
             echo ""
             echo "=== Recursive Search for .trx Files ==="
-            echo "Searching for .trx files recursively in TestResults directory..."
-            # count .trx files recursively in TestResults with verbose output
-            trx_files=$(find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" 2>/dev/null || true)
-            trx_count=$(echo "$trx_files" | grep -c . 2>/dev/null || echo "0")
+            # Use find safely and handle zero results
+            mapfile -t trx_files < <(find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" 2>/dev/null || true)
+            trx_count=${#trx_files[@]}
             echo "Search command: find \"$GITHUB_WORKSPACE/TestResults\" -type f -name \"*.trx\""
             echo "Files found: $trx_count"
-            
+
             if [ "$trx_count" -gt 0 ]; then
               echo "✅ Found $trx_count .trx file(s) in TestResults (recursive search)"
-              echo ""
               echo "=== List of .trx Files Found ==="
-              echo "$trx_files"
-              echo ""
-              echo "=== File Details ==="
-              find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" -exec ls -la {} \; 2>/dev/null || true
-              echo ""
-              echo "=== Short Previews (first 200 lines) of each .trx file ==="
-              while IFS= read -r file; do
-                if [ -n "$file" ] && [ -f "$file" ]; then
-                  echo "--- Contents of: $file (first 200 lines) ---"
-                  head -n 200 "$file" 2>/dev/null || echo "Error reading file: $file"
-                  echo "--- End of $file ---"
-                  echo ""
-                fi
-              done <<< "$trx_files"
-              echo "found_trx=true" >> "$GITHUB_OUTPUT"
+              for f in "${trx_files[@]}"; do
+                echo "$f"
+                ls -la "$f" || true
+                echo "--- Contents preview (first 50 lines) ---"
+                head -n 50 "$f" || true
+                echo "--- End preview ---"
+              done
+              found_trx=true
             else
               echo "❌ No .trx files found in TestResults directory"
-              echo "found_trx=false" >> "$GITHUB_OUTPUT"
             fi
           else
             echo "❌ TestResults folder NOT found"
-            echo "found_trx=false" >> "$GITHUB_OUTPUT"
           fi
+
+            # Also detect per-project logs
+            mapfile -t log_files < <(find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.log" 2>/dev/null || true)
+            log_count=${#log_files[@]}
+            echo "Log files found: $log_count"
+            if [ "$log_count" -gt 0 ]; then
+              echo "=== List of .log Files Found ==="
+              for lf in "${log_files[@]}"; do
+                echo "$lf"
+                ls -la "$lf" || true
+              done
+            fi
+
+            # Export the result as a step output
+            echo "found_trx=$found_trx" >> "$GITHUB_OUTPUT"
+            echo "found_logs=$([ $log_count -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
           echo ""
           echo "=== Summary ==="
           echo "TestResults folder exists: $([ -d \"$GITHUB_WORKSPACE/TestResults\" ] && echo 'true' || echo 'false')"
-          echo "TRX files found: $([ -f \"$GITHUB_OUTPUT\" ] && grep -o 'found_trx=.*' \"$GITHUB_OUTPUT\" | cut -d'=' -f2 || echo 'unknown')"
+          echo "TRX files found: $found_trx"
+            echo "Log files found: $([ $log_count -gt 0 ] && echo 'true' || echo 'false')"
 
       - name: Upload Test Results
         if: ${{ steps.check-test-results.outputs.found_trx == 'true' }}
@@ -131,6 +155,20 @@ jobs:
           name: Test-Results
           path: ${{ github.workspace }}/TestResults/**/*.trx
 
+      - name: Upload Test Logs
+        if: ${{ steps.check-test-results.outputs.found_logs == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test-Logs
+          path: ${{ github.workspace }}/TestResults/**/*.log
+
+      - name: Upload TestResults (fallback for debugging)
+        if: ${{ steps.check-test-results.outputs.found_trx != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults-Debug
+          path: ${{ github.workspace }}/TestResults/**
+
       - name: Codecov
         if: github.actor != 'nektos/act'
         uses: codecov/codecov-action@v5.4.3
@@ -138,21 +176,6 @@ jobs:
         if: ${{ !cancelled() && github.actor != 'nektos/act' }}
         uses: codecov/test-results-action@v1
 
-      - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        id: test-results
-        # When running locally with the 'nektos/act,' the GITHUB_ACTOR is 'nektos/act' and
-        # the runner can't access GitHub's API for local commit SHAs. Skip
-        # publishing test results (which queries commits/pull requests) in
-        # that case to avoid 403/422 API errors.
-        if: always() && github.actor != 'nektos/act'
-        with:
-          # Disable creating GitHub check runs when running locally with 'nektos/act'
-          # (this avoids the "You must authenticate via a GitHub App" 403 error
-          # that happens because 'nektos/act' can't emulate GitHub App authentication).
-          check_run: false
-          files: |
-            ${{ github.workspace }}/TestResults/**/*.trx
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         # When running locally with 'nektos/act,' the GITHUB_ACTOR is 'nektos/act' and
@@ -166,9 +189,7 @@ jobs:
           # that happens because 'nektos/act' can't emulate GitHub App authentication).
           check_run: false
           files: |
-            TestResults/**/*.xml
             TestResults/**/*.trx
-            TestResults/**/*.json
 
       - name: Install GitVersion
         if: github.actor != 'nektos/act'
