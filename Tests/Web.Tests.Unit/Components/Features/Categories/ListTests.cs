@@ -7,9 +7,6 @@
 // Project Name :  Web.Tests.Bunit
 // =======================================================
 
-using Microsoft.AspNetCore.Components.Authorization;
-using System.Security.Claims;
-using Web.Components.Features.Categories.CategoryList;
 using static Web.Components.Features.Categories.CategoryList.GetCategories;
 
 namespace Web.Components.Features.Categories;
@@ -34,10 +31,9 @@ public class ListTests : BunitContext
 
 	private void SetupHandlerCategories(IEnumerable<CategoryDto>? categories, bool success = true, string? error = null)
 	{
-		if (success)
-			_mockHandler.HandleAsync(Arg.Any<bool>()).Returns(Task.FromResult(Result<IEnumerable<CategoryDto>>.Ok(categories ?? new List<CategoryDto>())));
-		else
-			_mockHandler.HandleAsync(Arg.Any<bool>()).Returns(Task.FromResult(Result<IEnumerable<CategoryDto>>.Fail(error ?? "Error")));
+		_mockHandler.HandleAsync(Arg.Any<bool>()).Returns(success
+				? Task.FromResult(Result<IEnumerable<CategoryDto>>.Ok(categories ?? new List<CategoryDto>()))
+				: Task.FromResult(Result<IEnumerable<CategoryDto>>.Fail(error ?? "Error")));
 	}
 
 	[Fact]
@@ -99,7 +95,7 @@ public class ListTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		SetupHandlerCategories(null);
 		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
-		cut.Instance.GetType().GetField("_isLoading", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, true);
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, true);
 		cut.Render();
 		// loading component renders a spinner and 'Loading...' text
 		cut.Markup.Should().Contain("Loading...");
@@ -112,12 +108,12 @@ public class ListTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		SetupHandlerCategories(null, success: false, error: "Failed to load categories");
 		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
-		cut.Instance.GetType().GetField("_isLoading", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, false);
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
 		cut.Render();
 		// Error state shows the failure message via logger/error text
 		cut.Markup.Should().Contain("No categories available")
 			.And.Contain("Create New Category");
-		// The component logs errors but shows friendly message; ensure test checks for logged error indirectly by ensuring no rows are present
+		// The component logs errors but shows a friendly message; ensure test checks for logged error indirectly by ensuring no rows are present
 	}
 
 	[Fact]
@@ -128,7 +124,7 @@ public class ListTests : BunitContext
 		var nav = Services.GetRequiredService<BunitNavigationManager>();
 		SetupHandlerCategories(new List<CategoryDto>());
 		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
-		cut.Instance.GetType().GetField("_isLoading", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, false);
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
 		cut.Render();
 		cut.Find("button.btn-success").Click();
 		nav.Uri.Should().EndWith("/categories/create");
@@ -146,11 +142,11 @@ public class ListTests : BunitContext
 		};
 		SetupHandlerCategories(categoriesDto);
 		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
-		cut.Instance.GetType().GetField("_isLoading", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetField("_categories", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, categoriesDto.AsQueryable());
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
+		cut.Instance.GetType().GetField("_categories", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, categoriesDto.AsQueryable());
 		cut.Render();
 		cut.Find("button.btn-primary").Click();
-		// the component navigates to segment-style edit route
+		// the component navigates to a segment-style edit route
 		nav.Uri.Should().Contain("/categories/edit/");
 	}
 
@@ -166,8 +162,8 @@ public class ListTests : BunitContext
 		};
 		SetupHandlerCategories(categoriesDto);
 		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
-		cut.Instance.GetType().GetField("_isLoading", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetField("_categories", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, categoriesDto.AsQueryable());
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
+		cut.Instance.GetType().GetField("_categories", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, categoriesDto.AsQueryable());
 		cut.Render();
 		cut.Find("button.btn-info").Click();
 		// the component navigates to segment-style details route
@@ -185,8 +181,8 @@ public class ListTests : BunitContext
 		};
 		SetupHandlerCategories(categoriesDto);
 		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
-		cut.Instance.GetType().GetField("_isLoading", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetField("_categories", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, categoriesDto.AsQueryable());
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
+		cut.Instance.GetType().GetField("_categories", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, categoriesDto.AsQueryable());
 		cut.Render();
 		var expectedHeaders = new[] { "Category Name", "Created On", "Modified On", "Archived", "Actions" };
 		foreach (var header in expectedHeaders)

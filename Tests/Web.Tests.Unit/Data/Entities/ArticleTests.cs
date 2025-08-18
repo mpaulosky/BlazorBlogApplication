@@ -7,13 +7,6 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System;
-using FluentAssertions;
-using Web.Data.Entities;
-using Web.Data.Fakes;
-using Web.Data.Models;
-using Xunit;
-
 namespace Web.Tests.Unit.Data.Entities;
 
 /// <summary>

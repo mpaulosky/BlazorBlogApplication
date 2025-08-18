@@ -7,10 +7,6 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Data.Models;
-using Xunit;
-using FluentAssertions;
-
 namespace Web.Tests.Unit.Data.Models;
 
 /// <summary>

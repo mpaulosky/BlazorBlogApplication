@@ -33,7 +33,9 @@ global using NSubstitute;
 
 global using Web.Components.Features.Articles.ArticleGet;
 global using Web.Components.Features.Articles.ArticleList;
+global using Web.Data;
 global using Web.Data.Abstractions;
+global using Web.Data.Entities;
 global using Web.Data.Fakes;
 global using Web.Data.Models;
 

@@ -7,8 +7,6 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Data.Entities;
-
 namespace Web;
 
 /// <summary>

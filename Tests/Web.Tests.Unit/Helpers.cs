@@ -10,9 +10,7 @@
 using MongoDB.Driver;
 
 using Moq;
-using System.Linq;
-using System.Security.Claims;
-using System.Diagnostics.CodeAnalysis;
+
 // Ensure the TestServiceRegistrations helper is available to register common services
 // into a BunitContext when tests call SetAuthorization.
 

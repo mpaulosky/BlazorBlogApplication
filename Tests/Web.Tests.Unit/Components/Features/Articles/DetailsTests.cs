@@ -297,7 +297,7 @@ public class DetailsTests : BunitContext
 
 		// Simulate loading state
 		// Directly set the private field so the component renders the LoadingComponent
-		cut.Instance.GetType().GetField("_isLoading", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 			?.SetValue(cut.Instance, true);
 		cut.Render();
 

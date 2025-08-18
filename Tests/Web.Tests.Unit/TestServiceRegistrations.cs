@@ -1,11 +1,5 @@
-using System;
-using System.Net.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Bunit;
-using NSubstitute;
 using MongoDB.Driver;
-using Web.Data;
+
 using Web.Data.Auth0;
 using Web.Components.Features.Categories.CategoryDetails;
 using Web.Components.Features.Categories.CategoryEdit;
@@ -63,7 +57,7 @@ public static class TestServiceRegistrations
 
 			// Return a substitute implementation so tests don't fail due to
 			// unresolved concretes.
-			return NSubstitute.Substitute.For<TInterface>();
+			return Substitute.For<TInterface>();
 		});
 	}
 
@@ -72,22 +66,22 @@ public static class TestServiceRegistrations
 	{
 		var mongoClient = Substitute.For<IMongoClient>();
 		var mongoDatabase = Substitute.For<IMongoDatabase>();
-		var categoriesCollection = Substitute.For<IMongoCollection<Web.Data.Entities.Category>>();
+		var categoriesCollection = Substitute.For<IMongoCollection<Category>>();
 		mongoClient.GetDatabase(Arg.Any<string>(), null).Returns(mongoDatabase);
-		mongoDatabase.GetCollection<Web.Data.Entities.Category>(Arg.Any<string>(), null).Returns(categoriesCollection);
+		mongoDatabase.GetCollection<Category>(Arg.Any<string>(), null).Returns(categoriesCollection);
 
 		// Default FindAsync behavior: return an empty cursor so components that
 		// call FindAsync without explicit test setups receive an empty result set
 		// instead of throwing or returning null.
 		categoriesCollection
-			.FindAsync<Web.Data.Entities.Category>(Arg.Any<MongoDB.Driver.FilterDefinition<Web.Data.Entities.Category>>(), Arg.Any<MongoDB.Driver.FindOptions<Web.Data.Entities.Category, Web.Data.Entities.Category>>(), Arg.Any<System.Threading.CancellationToken>())
-			.Returns(Task.FromResult((IAsyncCursor<Web.Data.Entities.Category>)new SimpleCursor<Web.Data.Entities.Category>(new List<Web.Data.Entities.Category>())));
+			.FindAsync<Category>(Arg.Any<FilterDefinition<Category>>(), Arg.Any<FindOptions<Category, Category>>(), Arg.Any<CancellationToken>())
+			.Returns(Task.FromResult((IAsyncCursor<Category>)new SimpleCursor<Category>(new List<Category>())));
 
 		var blogContext = new MyBlogContext(mongoClient);
 
 		ctx.Services.AddScoped(_ => blogContext);
-		ctx.Services.AddScoped<Web.Data.IMyBlogContext>(_ => blogContext);
-		ctx.Services.AddScoped<Web.Data.IMyBlogContextFactory>(_ => new TestMyBlogContextFactory(blogContext));
+		ctx.Services.AddScoped<IMyBlogContext>(_ => blogContext);
+		ctx.Services.AddScoped<IMyBlogContextFactory>(_ => new TestMyBlogContextFactory(blogContext));
 
 		return blogContext;
 	}
@@ -96,21 +90,21 @@ public static class TestServiceRegistrations
 	public static void RegisterHandlerSubstitutes(BunitContext ctx)
 	{
 		// Prepare sample data shared by multiple default substitutes
-		var sampleCategory = new Web.Data.Models.CategoryDto
+		var sampleCategory = new CategoryDto
 		{
-			Id = MongoDB.Bson.ObjectId.GenerateNewId(),
+			Id = ObjectId.GenerateNewId(),
 			CategoryName = "General Programming",
 		};
 
-		var sampleArticle = new Web.Data.Models.ArticleDto
+		var sampleArticle = new ArticleDto
 		{
-			Id = MongoDB.Bson.ObjectId.GenerateNewId(),
+			Id = ObjectId.GenerateNewId(),
 			Title = "The Empathy Of Mission Contemplation",
 			Introduction = "Intro",
 			Content = "Sample article content",
 			CoverImageUrl = string.Empty,
 			UrlSlug = "the-empathy-of-mission-contemplation",
-			Author = Web.Data.Models.AppUserDto.Empty,
+			Author = AppUserDto.Empty,
 			Category = sampleCategory,
 			CreatedOn = DateTime.UtcNow,
 			ModifiedOn = null,
@@ -128,8 +122,8 @@ public static class TestServiceRegistrations
 		{
 			var getCategorySub = Substitute.For<GetCategory.IGetCategoryHandler>();
 			// Default: return a sample category so components render normally in tests.
-			getCategorySub.HandleAsync(Arg.Any<MongoDB.Bson.ObjectId>())
-				.Returns(Task.FromResult(Web.Data.Abstractions.Result.Ok(sampleCategory)));
+			getCategorySub.HandleAsync(Arg.Any<ObjectId>())
+				.Returns(Task.FromResult(Result.Ok(sampleCategory)));
 			// Register the interface with a factory that prefers a concrete handler if present,
 			// otherwise falls back to the substitute.
 			ctx.Services.AddScoped<GetCategory.IGetCategoryHandler>(sp =>
@@ -150,7 +144,7 @@ public static class TestServiceRegistrations
 		if (!isEitherRegistered(typeof(Web.Components.Features.Categories.CategoryList.GetCategories.IGetCategoriesHandler), typeof(Web.Components.Features.Categories.CategoryList.GetCategories.Handler)))
 		{
 			var getCategoriesSub = Substitute.For<Web.Components.Features.Categories.CategoryList.GetCategories.IGetCategoriesHandler>();
-			getCategoriesSub.HandleAsync(Arg.Any<bool>()).Returns(Task.FromResult(Web.Data.Abstractions.Result.Ok<IEnumerable<Web.Data.Models.CategoryDto>>(new[] { sampleCategory })));
+			getCategoriesSub.HandleAsync(Arg.Any<bool>()).Returns(Task.FromResult(Result.Ok<IEnumerable<CategoryDto>>(new[] { sampleCategory })));
 			ctx.Services.AddScoped<Web.Components.Features.Categories.CategoryList.GetCategories.IGetCategoriesHandler>(sp =>
 			{
 				try
@@ -169,7 +163,7 @@ public static class TestServiceRegistrations
 		if (!isEitherRegistered(typeof(Web.Components.Features.Categories.CategoryCreate.CreateCategory.ICreateCategoryHandler), typeof(Web.Components.Features.Categories.CategoryCreate.CreateCategory.Handler)))
 		{
 			var createCategorySub = Substitute.For<Web.Components.Features.Categories.CategoryCreate.CreateCategory.ICreateCategoryHandler>();
-			createCategorySub.HandleAsync(Arg.Any<Web.Data.Models.CategoryDto>()).Returns(Task.FromResult(Web.Data.Abstractions.Result.Ok()));
+			createCategorySub.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
 			ctx.Services.AddScoped<Web.Components.Features.Categories.CategoryCreate.CreateCategory.ICreateCategoryHandler>(sp =>
 			{
 				try
@@ -188,7 +182,7 @@ public static class TestServiceRegistrations
 		if (!isEitherRegistered(typeof(EditCategory.IEditCategoryHandler), typeof(EditCategory.Handler)))
 		{
 			var editCategorySub = Substitute.For<EditCategory.IEditCategoryHandler>();
-			editCategorySub.HandleAsync(Arg.Any<Web.Data.Models.CategoryDto>()).Returns(Task.FromResult(Web.Data.Abstractions.Result.Ok()));
+			editCategorySub.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
 			ctx.Services.AddScoped<EditCategory.IEditCategoryHandler>(sp =>
 			{
 				try
@@ -205,16 +199,16 @@ public static class TestServiceRegistrations
 		}
 
 		// Articles
-		if (!isEitherRegistered(typeof(Web.Components.Features.Articles.ArticleGet.GetArticle.IGetArticleHandler), typeof(Web.Components.Features.Articles.ArticleGet.GetArticle.Handler)))
+		if (!isEitherRegistered(typeof(GetArticle.IGetArticleHandler), typeof(GetArticle.Handler)))
 		{
-			var getArticleSub = Substitute.For<Web.Components.Features.Articles.ArticleGet.GetArticle.IGetArticleHandler>();
-			getArticleSub.HandleAsync(Arg.Any<MongoDB.Bson.ObjectId>()).Returns(Task.FromResult(Web.Data.Abstractions.Result.Ok(sampleArticle)));
-			ctx.Services.AddScoped<Web.Components.Features.Articles.ArticleGet.GetArticle.IGetArticleHandler>(sp =>
+			var getArticleSub = Substitute.For<GetArticle.IGetArticleHandler>();
+			getArticleSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(sampleArticle)));
+			ctx.Services.AddScoped<GetArticle.IGetArticleHandler>(sp =>
 			{
 				try
 				{
-					var concrete = sp.GetService(typeof(Web.Components.Features.Articles.ArticleGet.GetArticle.Handler));
-					if (concrete is Web.Components.Features.Articles.ArticleGet.GetArticle.IGetArticleHandler asInterface)
+					var concrete = sp.GetService(typeof(GetArticle.Handler));
+					if (concrete is GetArticle.IGetArticleHandler asInterface)
 					{
 						return asInterface;
 					}
@@ -224,16 +218,16 @@ public static class TestServiceRegistrations
 			});
 		}
 
-		if (!isEitherRegistered(typeof(Web.Components.Features.Articles.ArticleList.GetArticles.IGetArticlesHandler), typeof(Web.Components.Features.Articles.ArticleList.GetArticles.Handler)))
+		if (!isEitherRegistered(typeof(GetArticles.IGetArticlesHandler), typeof(GetArticles.Handler)))
 		{
-			var getArticlesSub = Substitute.For<Web.Components.Features.Articles.ArticleList.GetArticles.IGetArticlesHandler>();
-			getArticlesSub.HandleAsync(Arg.Any<bool>()).Returns(Task.FromResult(Web.Data.Abstractions.Result.Ok<IEnumerable<Web.Data.Models.ArticleDto>>(new[] { sampleArticle })));
-			ctx.Services.AddScoped<Web.Components.Features.Articles.ArticleList.GetArticles.IGetArticlesHandler>(sp =>
+			var getArticlesSub = Substitute.For<GetArticles.IGetArticlesHandler>();
+			getArticlesSub.HandleAsync(Arg.Any<bool>()).Returns(Task.FromResult(Result.Ok<IEnumerable<ArticleDto>>(new[] { sampleArticle })));
+			ctx.Services.AddScoped<GetArticles.IGetArticlesHandler>(sp =>
 			{
 				try
 				{
-					var concrete = sp.GetService(typeof(Web.Components.Features.Articles.ArticleList.GetArticles.Handler));
-					if (concrete is Web.Components.Features.Articles.ArticleList.GetArticles.IGetArticlesHandler asInterface)
+					var concrete = sp.GetService(typeof(GetArticles.Handler));
+					if (concrete is GetArticles.IGetArticlesHandler asInterface)
 					{
 						return asInterface;
 					}
@@ -327,9 +321,9 @@ public static class TestServiceRegistrations
 		{
 			// If for some reason AddAuthorization isn't available, ensure there is
 			// still an AuthenticationStateProvider so rendering doesn't throw.
-			if (!ctx.Services.Any(sd => sd.ServiceType == typeof(Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider)))
+			if (!ctx.Services.Any(sd => sd.ServiceType == typeof(AuthenticationStateProvider)))
 			{
-				ctx.Services.AddScoped<Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider, TestFallbackAuthenticationStateProvider>();
+				ctx.Services.AddScoped<AuthenticationStateProvider, TestFallbackAuthenticationStateProvider>();
 			}
 		}
 
@@ -348,12 +342,12 @@ public static class TestServiceRegistrations
 	}
 
 	// Simple fallback provider returning an anonymous (unauthenticated) user.
-	internal class TestFallbackAuthenticationStateProvider : Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider
+	internal class TestFallbackAuthenticationStateProvider : AuthenticationStateProvider
 	{
-		public override System.Threading.Tasks.Task<Microsoft.AspNetCore.Components.Authorization.AuthenticationState> GetAuthenticationStateAsync()
+		public override Task<AuthenticationState> GetAuthenticationStateAsync()
 		{
-			var anonymous = new System.Security.Claims.ClaimsPrincipal(new System.Security.Claims.ClaimsIdentity());
-			return System.Threading.Tasks.Task.FromResult(new Microsoft.AspNetCore.Components.Authorization.AuthenticationState(anonymous));
+			var anonymous = new ClaimsPrincipal(new ClaimsIdentity());
+			return Task.FromResult(new AuthenticationState(anonymous));
 		}
 	}
 
@@ -364,7 +358,7 @@ public static class TestServiceRegistrations
 		RegisterAuth0Service(ctx);
 		// Ensure MyBlogContext is available so concrete handlers (that require it)
 		// can be activated when tests register concrete handler types directly.
-		if (!ctx.Services.Any(sd => sd.ServiceType == typeof(Web.Data.IMyBlogContext)))
+		if (!ctx.Services.Any(sd => sd.ServiceType == typeof(IMyBlogContext)))
 		{
 			RegisterMyBlogContext(ctx);
 		}
@@ -377,8 +371,8 @@ public static class TestServiceRegistrations
 		MapIfConcreteRegistered<EditCategory.Handler, EditCategory.IEditCategoryHandler>(ctx);
 		MapIfConcreteRegistered<Web.Components.Features.Categories.CategoryList.GetCategories.Handler, Web.Components.Features.Categories.CategoryList.GetCategories.IGetCategoriesHandler>(ctx);
 		MapIfConcreteRegistered<Web.Components.Features.Categories.CategoryCreate.CreateCategory.Handler, Web.Components.Features.Categories.CategoryCreate.CreateCategory.ICreateCategoryHandler>(ctx);
-		MapIfConcreteRegistered<Web.Components.Features.Articles.ArticleGet.GetArticle.Handler, Web.Components.Features.Articles.ArticleGet.GetArticle.IGetArticleHandler>(ctx);
-		MapIfConcreteRegistered<Web.Components.Features.Articles.ArticleList.GetArticles.Handler, Web.Components.Features.Articles.ArticleList.GetArticles.IGetArticlesHandler>(ctx);
+		MapIfConcreteRegistered<GetArticle.Handler, GetArticle.IGetArticleHandler>(ctx);
+		MapIfConcreteRegistered<GetArticles.Handler, GetArticles.IGetArticlesHandler>(ctx);
 
 		// Also register lightweight handler substitutes so tests that call
 		// RegisterAll() (for example Helpers.SetAuthorization) have default
@@ -411,13 +405,13 @@ public static class TestServiceRegistrations
 	}
 
 	// Internal simple IMyBlogContextFactory used by tests
-	private class TestMyBlogContextFactory : Web.Data.IMyBlogContextFactory
+	private class TestMyBlogContextFactory : IMyBlogContextFactory
 	{
-		private readonly Web.Data.IMyBlogContext _ctx;
-		public TestMyBlogContextFactory(Web.Data.IMyBlogContext ctx) => _ctx = ctx;
-		public System.Threading.Tasks.Task<Web.Data.IMyBlogContext> CreateAsync(System.Threading.CancellationToken cancellationToken = default)
+		private readonly IMyBlogContext _ctx;
+		public TestMyBlogContextFactory(IMyBlogContext ctx) => _ctx = ctx;
+		public Task<IMyBlogContext> CreateAsync(CancellationToken cancellationToken = default)
 		{
-			return System.Threading.Tasks.Task.FromResult(_ctx);
+			return Task.FromResult(_ctx);
 		}
 	}
 }
