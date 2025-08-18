@@ -1,0 +1,164 @@
+Build started 8/18/2025 10:32:16 AM.
+     1>Project "E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" on node 1 (Restore target(s)).
+     1>_GetAllRestoreProjectPathItems:
+         Determining projects to restore...
+     1>Project "E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" (1) is building "E:\github\BlazorBlogApplication\SRC\AppHost\AppHost.csproj" (2:3) on node 1 (_GenerateRestoreGraphProjectEntry target(s)).
+     2>AddReferenceToDashboardAndDCP:
+         "C:\Program Files\dotnet\dotnet.exe" exec "E:\teqsl\.nuget\packages\aspire.apphost.sdk\9.4.0\tools\net8.0\Aspire.RuntimeIdentifier.Tool.dll" --runtimeGraphPath "C:\Program Files\dotnet\sdk\9.0.304\RuntimeIdentifierGraph.json" --supportedRids "win-x64,win-x86,win-arm64,linux-x64,linux-arm64,linux-musl-x64,osx-x64,osx-arm64" --netcoreSdkRuntimeIdentifier "win-x64"
+     2>Done Building Project "E:\github\BlazorBlogApplication\SRC\AppHost\AppHost.csproj" (_GenerateRestoreGraphProjectEntry target(s)).
+     1>Restore:
+         X.509 certificate chain validation will use the default trust store selected by .NET for code signing.
+         X.509 certificate chain validation will use the default trust store selected by .NET for timestamping.
+         Assets file has not changed. Skipping assets file writing. Path: E:\github\BlazorBlogApplication\SRC\AppHost\obj\project.assets.json
+         Assets file has not changed. Skipping assets file writing. Path: E:\github\BlazorBlogApplication\SRC\Shared\obj\project.assets.json
+         Assets file has not changed. Skipping assets file writing. Path: E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\obj\project.assets.json
+         Assets file has not changed. Skipping assets file writing. Path: E:\github\BlazorBlogApplication\SRC\ServiceDefaults\obj\project.assets.json
+         Assets file has not changed. Skipping assets file writing. Path: E:\github\BlazorBlogApplication\SRC\Web\obj\project.assets.json
+         Restored E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj (in 117 ms).
+         Restored E:\github\BlazorBlogApplication\SRC\Web\Web.csproj (in 117 ms).
+         Restored E:\github\BlazorBlogApplication\SRC\AppHost\AppHost.csproj (in 117 ms).
+         Restored E:\github\BlazorBlogApplication\SRC\Shared\Shared.csproj (in 117 ms).
+         Restored E:\github\BlazorBlogApplication\SRC\ServiceDefaults\ServiceDefaults.csproj (in 117 ms).
+         
+         NuGet Config files used:
+             C:\Users\teqsl\AppData\Roaming\NuGet\NuGet.Config
+             C:\Program Files (x86)\NuGet\Config\Microsoft.VisualStudio.FallbackLocation.config
+             C:\Program Files (x86)\NuGet\Config\Microsoft.VisualStudio.Offline.config
+         
+         Feeds used:
+             https://api.nuget.org/v3/index.json
+             C:\Program Files (x86)\Microsoft SDKs\NuGetPackages\
+             C:\Program Files\dotnet\library-packs
+         All projects are up-to-date for restore.
+     1>Done Building Project "E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" (Restore target(s)).
+   1:7>Project "E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" on node 3 (VSTest target(s)).
+   1:7>Project "E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" (1:7) is building "E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" (1:8) on node 3 (default targets).
+   1:8>Project "E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" (1:8) is building "E:\github\BlazorBlogApplication\SRC\AppHost\AppHost.csproj" (2:6) on node 4 (default targets).
+     2>AddReferenceToDashboardAndDCP:
+         "C:\Program Files\dotnet\dotnet.exe" exec "E:\teqsl\.nuget\packages\aspire.apphost.sdk\9.4.0\tools\net8.0\Aspire.RuntimeIdentifier.Tool.dll" --runtimeGraphPath "C:\Program Files\dotnet\sdk\9.0.304\RuntimeIdentifierGraph.json" --supportedRids "win-x64,win-x86,win-arm64,linux-x64,linux-arm64,linux-musl-x64,osx-x64,osx-arm64" --netcoreSdkRuntimeIdentifier "win-x64"
+   1:8>Project "E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" (1:8) is building "E:\github\BlazorBlogApplication\SRC\Shared\Shared.csproj" (3:8) on node 3 (default targets).
+     3>GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+   1:8>Project "E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" (1:8) is building "E:\github\BlazorBlogApplication\SRC\ServiceDefaults\ServiceDefaults.csproj" (4:7) on node 2 (default targets).
+     4>GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+     3>CoreGenerateAssemblyInfo:
+       Skipping target "CoreGenerateAssemblyInfo" because all output files are up-to-date with respect to the input files.
+       _GenerateSourceLinkFile:
+         Source Link file 'obj\Debug\net9.0\Shared.sourcelink.json' is up-to-date.
+       CoreCompile:
+       Skipping target "CoreCompile" because all output files are up-to-date with respect to the input files.
+       GenerateBuildDependencyFile:
+       Skipping target "GenerateBuildDependencyFile" because all output files are up-to-date with respect to the input files.
+       CopyFilesToOutputDirectory:
+         Shared -> E:\github\BlazorBlogApplication\SRC\Shared\bin\Debug\net9.0\Shared.dll
+     3>Done Building Project "E:\github\BlazorBlogApplication\SRC\Shared\Shared.csproj" (default targets).
+     4>CoreGenerateAssemblyInfo:
+       Skipping target "CoreGenerateAssemblyInfo" because all output files are up-to-date with respect to the input files.
+       _GenerateSourceLinkFile:
+         Source Link file 'obj\Debug\net9.0\ServiceDefaults.sourcelink.json' is up-to-date.
+       CoreCompile:
+       Skipping target "CoreCompile" because all output files are up-to-date with respect to the input files.
+       GenerateBuildDependencyFile:
+       Skipping target "GenerateBuildDependencyFile" because all output files are up-to-date with respect to the input files.
+       CopyFilesToOutputDirectory:
+         ServiceDefaults -> E:\github\BlazorBlogApplication\SRC\ServiceDefaults\bin\Debug\net9.0\ServiceDefaults.dll
+     4>Done Building Project "E:\github\BlazorBlogApplication\SRC\ServiceDefaults\ServiceDefaults.csproj" (default targets).
+   1:8>Project "E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" (1:8) is building "E:\github\BlazorBlogApplication\SRC\Web\Web.csproj" (5:7) on node 1 (default targets).
+     5>GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+       CoreGenerateAssemblyInfo:
+       Skipping target "CoreGenerateAssemblyInfo" because all output files are up-to-date with respect to the input files.
+       _DiscoverMvcApplicationParts:
+       Skipping target "_DiscoverMvcApplicationParts" because all output files are up-to-date with respect to the input files.
+       _GenerateSourceLinkFile:
+         Source Link file 'obj\Debug\net9.0\Web.sourcelink.json' is up-to-date.
+       CoreCompile:
+       Skipping target "CoreCompile" because all output files are up-to-date with respect to the input files.
+       _CreateAppHost:
+       Skipping target "_CreateAppHost" because all output files are up-to-date with respect to the input files.
+       _ProcessScopedCssFiles:
+       Skipping target "_ProcessScopedCssFiles" because all output files are up-to-date with respect to the input files.
+       ResolveBuildCompressedStaticWebAssetsConfiguration:
+         Accepted compressed asset 'E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\smgmg48rr4-xz9ol6hm7u.gz' for 'E:\github\BlazorBlogApplication\SRC\Web\wwwroot\css\app.css'.
+         Accepted compressed asset 'E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\ybb4a288vk-s2nrpejjgi.gz' for 'E:\github\BlazorBlogApplication\SRC\Web\wwwroot\css\input.css'.
+         Accepted compressed asset 'E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\q71foe9gy3-cmapd0fi15.gz' for 'E:\github\BlazorBlogApplication\SRC\Web\wwwroot\css\open-iconic\font\css\open-iconic-bootstrap.min.css'.
+         Accepted compressed asset 'E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\uit6oe8d27-wk8x8xm0ah.gz' for 'E:\github\BlazorBlogApplication\SRC\Web\wwwroot\css\open-iconic\font\fonts\open-iconic.otf'.
+         Accepted compressed asset 'E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\kzt6s2lyum-sjnzgf7e1h.gz' for 'E:\github\BlazorBlogApplication\SRC\Web\wwwroot\css\open-iconic\font\fonts\open-iconic.svg'.
+         Accepted compressed asset 'E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\8r6w3kccyn-psxpu4y82n.gz' for 'E:\github\BlazorBlogApplication\SRC\Web\wwwroot\css\open-iconic\README.md'.
+         Accepted compressed asset 'E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\gga45437c7-w8fcoenqk4.gz' for 'E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\scopedcss\bundle\Web.styles.css'.
+         Accepted compressed asset 'E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\6bir0r8491-w8fcoenqk4.gz' for 'E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\scopedcss\projectbundle\Web.bundle.scp.css'.
+         Resolved 8 compressed assets for 8 candidate assets.
+       ResolveBuildCompressedStaticWebAssets:
+         Processing compressed asset: E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\smgmg48rr4-xz9ol6hm7u.gz
+         Processing compressed asset: E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\6bir0r8491-w8fcoenqk4.gz
+         Processing compressed asset: E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\gga45437c7-w8fcoenqk4.gz
+         Processing compressed asset: E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\8r6w3kccyn-psxpu4y82n.gz
+         Processing compressed asset: E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\kzt6s2lyum-sjnzgf7e1h.gz
+         Processing compressed asset: E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\uit6oe8d27-wk8x8xm0ah.gz
+         Processing compressed asset: E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\q71foe9gy3-cmapd0fi15.gz
+         Processing compressed asset: E:\github\BlazorBlogApplication\SRC\Web\obj\Debug\net9.0\compressed\ybb4a288vk-s2nrpejjgi.gz
+       _BuildCopyStaticWebAssetsPreserveNewest:
+       Skipping target "_BuildCopyStaticWebAssetsPreserveNewest" because it has no outputs.
+       _CopyOutOfDateSourceItemsToOutputDirectory:
+       Skipping target "_CopyOutOfDateSourceItemsToOutputDirectory" because all output files are up-to-date with respect to the input files.
+       GenerateBuildDependencyFile:
+       Skipping target "GenerateBuildDependencyFile" because all output files are up-to-date with respect to the input files.
+       GenerateBuildRuntimeConfigurationFiles:
+       Skipping target "GenerateBuildRuntimeConfigurationFiles" because all output files are up-to-date with respect to the input files.
+       CopyFilesToOutputDirectory:
+         Web -> E:\github\BlazorBlogApplication\SRC\Web\bin\Debug\net9.0\Web.dll
+     5>Done Building Project "E:\github\BlazorBlogApplication\SRC\Web\Web.csproj" (default targets).
+     2>GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+       CoreGenerateAssemblyInfo:
+       Skipping target "CoreGenerateAssemblyInfo" because all output files are up-to-date with respect to the input files.
+       _GenerateSourceLinkFile:
+         Source Link file 'obj\Debug\net9.0\AppHost.sourcelink.json' is up-to-date.
+       CoreCompile:
+       Skipping target "CoreCompile" because all output files are up-to-date with respect to the input files.
+       _CreateAppHost:
+       Skipping target "_CreateAppHost" because all output files are up-to-date with respect to the input files.
+       _CopyOutOfDateSourceItemsToOutputDirectory:
+       Skipping target "_CopyOutOfDateSourceItemsToOutputDirectory" because all output files are up-to-date with respect to the input files.
+       GenerateBuildDependencyFile:
+       Skipping target "GenerateBuildDependencyFile" because all output files are up-to-date with respect to the input files.
+       GenerateBuildRuntimeConfigurationFiles:
+       Skipping target "GenerateBuildRuntimeConfigurationFiles" because all output files are up-to-date with respect to the input files.
+       CopyFilesToOutputDirectory:
+         AppHost -> E:\github\BlazorBlogApplication\SRC\AppHost\bin\Debug\net9.0\AppHost.dll
+     2>Done Building Project "E:\github\BlazorBlogApplication\SRC\AppHost\AppHost.csproj" (default targets).
+     1>GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+       _GenerateSelfRegisteredExtensions:
+       Skipping target "_GenerateSelfRegisteredExtensions" because all output files are up-to-date with respect to the input files.
+       _XunitGenerateEntryPoint:
+       Skipping target "_XunitGenerateEntryPoint" because all output files are up-to-date with respect to the input files.
+       CoreGenerateAssemblyInfo:
+       Skipping target "CoreGenerateAssemblyInfo" because all output files are up-to-date with respect to the input files.
+       _GenerateSourceLinkFile:
+         Source Link file 'obj\Debug\net9.0\Web.Tests.Unit.sourcelink.json' is up-to-date.
+       CoreCompile:
+       Skipping target "CoreCompile" because all output files are up-to-date with respect to the input files.
+       _CreateAppHost:
+       Skipping target "_CreateAppHost" because all output files are up-to-date with respect to the input files.
+       _CopyOutOfDateSourceItemsToOutputDirectory:
+       Skipping target "_CopyOutOfDateSourceItemsToOutputDirectory" because all output files are up-to-date with respect to the input files.
+       GenerateBuildDependencyFile:
+       Skipping target "GenerateBuildDependencyFile" because all output files are up-to-date with respect to the input files.
+       GenerateBuildRuntimeConfigurationFiles:
+       Skipping target "GenerateBuildRuntimeConfigurationFiles" because all output files are up-to-date with respect to the input files.
+       CopyFilesToOutputDirectory:
+         Web.Tests.Unit -> E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\bin\Debug\net9.0\Web.Tests.Unit.dll
+     1>Done Building Project "E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" (default targets).
+     1>InvokeTestingPlatform:
+         Run tests: 'E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\bin\Debug\net9.0\Web.Tests.Unit.dll' [net9.0|x64]
+         Passed! - Failed: 0, Passed: 169, Skipped: 7, Total: 176, Duration: 2s 458ms - Web.Tests.Unit.dll (net9.0|x64)
+         Tests succeeded: 'E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\bin\Debug\net9.0\Web.Tests.Unit.dll' [net9.0|x64]
+     1>Done Building Project "E:\github\BlazorBlogApplication\Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" (VSTest target(s)).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:12.98
