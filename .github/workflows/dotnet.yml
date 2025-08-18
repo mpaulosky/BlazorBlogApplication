@@ -61,11 +61,10 @@ jobs:
 
       - name: Run all tests in all test projects
         run: |
-          timestamp=$(date +%s)
           for proj in $(find . -name "*.csproj" -path "*/Tests/*"); do
             name=$(basename "$proj" .csproj)
             filename="${name}_${timestamp}.trx"
-            dotnet test "$proj" --no-build --no-restore --logger "trx;LogFileName=${filename}" --results-directory "$GITHUB_WORKSPACE/TestResults"
+            dotnet test "$proj" --no-build --no-restore --logger "trx;LogFileName=${{ github.workspace }}/TestResults/${filename}.trx" --settings runsettings.xml
           done
 
       - name: Workspace And TestResults Folder
