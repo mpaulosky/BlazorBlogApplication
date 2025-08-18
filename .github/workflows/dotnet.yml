@@ -71,39 +71,67 @@ jobs:
       - name: Workspace And TestResults Folder
         id: check-testresults
         run: |
+          echo "=== TestResults Diagnostic Information ==="
           echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
-          echo "Listing repo root:"
+          echo "Current directory: $(pwd)"
+          echo ""
+          echo "=== Repository Root Contents ==="
           ls -la "$GITHUB_WORKSPACE" || true
-          echo "Checking for TestResults folder: $GITHUB_WORKSPACE/TestResults"
+          echo ""
+          echo "=== Checking TestResults Folder ==="
+          echo "Looking for TestResults folder at: $GITHUB_WORKSPACE/TestResults"
           if [ -d "$GITHUB_WORKSPACE/TestResults" ]; then
-            echo "TestResults folder found"
-            echo "Listing TestResults directory contents:"
+            echo "✅ TestResults folder found"
+            echo ""
+            echo "=== TestResults Directory Contents ==="
             ls -la "$GITHUB_WORKSPACE/TestResults" || true
-            echo "Searching for .trx files in TestResults..."
-            # count .trx files recursively in TestResults
-            trx_count=$(find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" | wc -l || true)
+            echo ""
+            echo "=== Recursive Search for .trx Files ==="
+            echo "Searching for .trx files recursively in TestResults directory..."
+            # count .trx files recursively in TestResults with verbose output
+            trx_files=$(find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" 2>/dev/null || true)
+            trx_count=$(echo "$trx_files" | grep -c . 2>/dev/null || echo "0")
+            echo "Search command: find \"$GITHUB_WORKSPACE/TestResults\" -type f -name \"*.trx\""
+            echo "Files found: $trx_count"
+            
             if [ "$trx_count" -gt 0 ]; then
-              echo "Found $trx_count .trx file(s) in TestResults (recursive). Listing filenames and showing a short preview of each:"
-              echo "List of .trx files found:"
-              find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" -print || true
-              echo "Showing short previews (first 200 lines) for each .trx:"
-              find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" -print -exec sh -c 'echo "--- Contents of: $1 (first 200 lines) ---"; head -n 200 "$1" || true; echo "--- End of $1 ---"' _ {} \;
+              echo "✅ Found $trx_count .trx file(s) in TestResults (recursive search)"
+              echo ""
+              echo "=== List of .trx Files Found ==="
+              echo "$trx_files"
+              echo ""
+              echo "=== File Details ==="
+              find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" -exec ls -la {} \; 2>/dev/null || true
+              echo ""
+              echo "=== Short Previews (first 200 lines) of each .trx file ==="
+              while IFS= read -r file; do
+                if [ -n "$file" ] && [ -f "$file" ]; then
+                  echo "--- Contents of: $file (first 200 lines) ---"
+                  head -n 200 "$file" 2>/dev/null || echo "Error reading file: $file"
+                  echo "--- End of $file ---"
+                  echo ""
+                fi
+              done <<< "$trx_files"
               echo "found_trx=true" >> "$GITHUB_OUTPUT"
             else
-              echo "No .trx files found in TestResults"
+              echo "❌ No .trx files found in TestResults directory"
               echo "found_trx=false" >> "$GITHUB_OUTPUT"
             fi
           else
-            echo "TestResults folder NOT found"
+            echo "❌ TestResults folder NOT found"
             echo "found_trx=false" >> "$GITHUB_OUTPUT"
           fi
+          echo ""
+          echo "=== Summary ==="
+          echo "TestResults folder exists: $([ -d \"$GITHUB_WORKSPACE/TestResults\" ] && echo 'true' || echo 'false')"
+          echo "TRX files found: $([ -f \"$GITHUB_OUTPUT\" ] && grep -o 'found_trx=.*' \"$GITHUB_OUTPUT\" | cut -d'=' -f2 || echo 'unknown')"
 
       - name: Upload Test Results
         if: ${{ steps.check-testresults.outputs.found_trx == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: Test-Results
-          path: $GITHUB_WORKSPACE/TestResults/*.trx
+          path: ${{ github.workspace }}/TestResults/**/*.trx
 
       - name: Codecov
         if: github.actor != 'nektos/act'
@@ -126,7 +154,7 @@ jobs:
           # that happens because act can't emulate GitHub App authentication).
           check_run: false
           files: |
-            $GITHUB_WORKSPACE/TestResults/*.trx
+            ${{ github.workspace }}/TestResults/**/*.trx
 
       - name: Install GitVersion
         if: github.actor != 'nektos/act'
