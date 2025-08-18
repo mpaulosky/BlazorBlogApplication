@@ -10,7 +10,7 @@
 namespace Web.Data.Helpers;
 
 /// <summary>
-///   Unit tests for the <see cref="Web.Helpers"/> class.
+///   Unit tests for the <see cref="Helpers"/> class.
 /// </summary>
 [ExcludeFromCodeCoverage]
 public class HelpersTests

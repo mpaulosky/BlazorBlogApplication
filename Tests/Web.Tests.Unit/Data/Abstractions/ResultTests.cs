@@ -50,7 +50,7 @@ public class ResultTests
 
 		// Assert
 		result.Success.Should().BeFalse();
-		result.Value.Should().Be(0);
+		result.Value.Should().Be(default(int));
 		result.Error.Should().Be("fail");
 	}
 
