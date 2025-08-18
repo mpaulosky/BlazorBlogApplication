@@ -17,6 +17,11 @@ on:
         required: true
         default: "Manual run"
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -57,33 +62,52 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Run all tests in all test projects
+        id: run-tests
         run: |
           # Ensure repository-level TestResults exists
           mkdir -p "$GITHUB_WORKSPACE/TestResults"
           timestamp=$(date +%s)
-          # Ensure pipefail so that dotnet test failures cause non-zero exit when piped
-          set -o pipefail
 
-          # Find .csproj files only under the Tests/ or Test/ folders to avoid accidental runs
-          # Use two searches and combine results
-          find ./Tests -name "*.csproj" 2>/dev/null
-          find ./Test -name "*.csproj" 2>/dev/null
-          (find ./Tests -name "*.csproj" 2>/dev/null; find ./Test -name "*.csproj" 2>/dev/null) | while read -r proj; do
+          # We'll capture exit codes per-project and continue so that artifacts/logs
+          # can be uploaded even when tests fail. At the end we export the
+          # aggregated exit code via GITHUB_OUTPUT for a later step to fail the job.
+          overall_rc=0
+
+          # Use process substitution to feed the while loop so it does not run
+          # in a subshell (this avoids pipe-related errexit/pipefail surprises).
+          set -o pipefail
+          while IFS= read -r proj; do
             # double-check with IsTestProject property as a safety
-            if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null || true; then
+            if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null; then
               name=$(basename "$proj" .csproj)
               filename="${name}_${timestamp}"
               echo "Running tests for: $proj -> $GITHUB_WORKSPACE/TestResults/${filename}.trx (logs -> $GITHUB_WORKSPACE/TestResults/${filename}.log)"
-              # Capture stdout/stderr to a per-project log file for debugging
+
+              # Temporarily disable errexit so we can capture dotnet test's exit code
+              # while still allowing the step to continue and upload artifacts.
+              set +e
               dotnet test "$proj" \
                 --no-build --no-restore \
                 --logger "trx;LogFileName=${filename}.trx" \
                 --settings "$GITHUB_WORKSPACE/runsettings.xml" \
                 --results-directory "$GITHUB_WORKSPACE/TestResults" 2>&1 | tee "$GITHUB_WORKSPACE/TestResults/${filename}.log"
+              rc=$?
+              set -e
+
+              if [ "$rc" -ne 0 ]; then
+                echo "dotnet test failed for $proj (exit code $rc)"
+                overall_rc=$rc
+              fi
             else
               echo "Skipping non-test project: $proj"
             fi
-          done
+          done < <( (find ./Tests -name "*.csproj" 2>/dev/null; find ./Test -name "*.csproj" 2>/dev/null) )
+
+          # Export aggregated result for later steps
+          echo "tests_exit_code=$overall_rc" >> "$GITHUB_OUTPUT"
+          # Do not exit with failure here so uploading artifacts can run; a later
+          # step will fail the job if tests_exit_code != 0.
+          exit 0
 
       - name: Workspace And TestResults Folder
         id: check-test-results
@@ -207,3 +231,14 @@ jobs:
         run: |
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
           echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+
+      - name: Fail on test failures
+        if: always()
+        run: |
+          # If the run-tests step exported a non-zero exit code, fail now
+          tests_exit_code=${{ steps.run-tests.outputs.tests_exit_code }}
+          echo "tests_exit_code=$tests_exit_code"
+          if [ "$tests_exit_code" != "0" ]; then
+            echo "Tests failed with exit code $tests_exit_code"
+            exit $tests_exit_code
+          fi
