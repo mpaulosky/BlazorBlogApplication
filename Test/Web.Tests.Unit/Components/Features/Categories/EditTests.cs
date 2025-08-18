@@ -370,7 +370,7 @@ public class EditTests : BunitContext
 
 
 	[Fact(Skip = "bUnit does not enforce [Authorize] in component tests; test via integration tests instead")]
-	public async Task Edit_Form_Not_Rendered_For_Unauthorized_User()
+	public void Edit_Form_Not_Rendered_For_Unauthorized_User()
 	{
 		// TODO: cover authorization behavior in integration/Playwright tests where auth is enforced.
 	}
