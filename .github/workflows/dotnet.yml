@@ -66,7 +66,7 @@ jobs:
         id: run-tests
         run: |
           # Ensure repository-level TestResults exists
-          mkdir -p "$GITHUB_WORKSPACE/TestResults"
+          mkdir -p "TestResults"
           timestamp=$(date +%s)
 
           # We'll capture exit codes per-project and continue so that artifacts/logs
@@ -82,7 +82,7 @@ jobs:
             if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null; then
               name=$(basename "$proj" .csproj)
               filename="${name}_${timestamp}"
-              echo "Running tests for: $proj -> $GITHUB_WORKSPACE/TestResults/${filename}.trx (logs -> $GITHUB_WORKSPACE/TestResults/${filename}.log)"
+              echo "Running tests for: $proj -> TestResults/${filename}.trx (logs -> TestResults/${filename}.log)"
 
               # Temporarily disable errexit so we can capture dotnet test's exit code
               # while still allowing the step to continue and upload artifacts.
@@ -91,7 +91,7 @@ jobs:
                 --no-build --no-restore \
                 --logger "trx;LogFileName=${filename}.trx" \
                 --settings "$GITHUB_WORKSPACE/runsettings.xml" \
-                --results-directory "$GITHUB_WORKSPACE/TestResults" 2>&1 | tee "$GITHUB_WORKSPACE/TestResults/${filename}.log"
+                --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
               rc=$?
               set -e
 
@@ -102,7 +102,7 @@ jobs:
             else
               echo "Skipping non-test project: $proj"
             fi
-          done < <( (find ./Tests -name "*.csproj" 2>/dev/null; find ./Test -name "*.csproj" 2>/dev/null) )
+          done < <( find Tests -name "*.csproj" -type f 2>/dev/null || true )
 
           # Export aggregated result for later steps
           echo "tests_exit_code=$overall_rc" >> "$GITHUB_OUTPUT"
@@ -119,19 +119,19 @@ jobs:
           ls -la "$GITHUB_WORKSPACE" || true
           echo ""
           echo "=== Checking TestResults Folder ==="
-          echo "Looking for TestResults folder at: $GITHUB_WORKSPACE/TestResults"
+          echo "Looking for TestResults folder at: TestResults"
           found_trx=false
-          if [ -d "$GITHUB_WORKSPACE/TestResults" ]; then
+          if [ -d "TestResults" ]; then
             echo "✅ TestResults folder found"
             echo ""
             echo "=== TestResults Directory Contents (top-level) ==="
-            ls -la "$GITHUB_WORKSPACE/TestResults" || true
+            ls -la "TestResults" || true
             echo ""
             echo "=== Recursive Search for .trx Files ==="
             # Use find safely and handle zero results
-            mapfile -t trx_files < <(find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.trx" 2>/dev/null || true)
+            mapfile -t trx_files < <(find "TestResults" -type f -name "*.trx" 2>/dev/null || true)
             trx_count=${#trx_files[@]}
-            echo "Search command: find \"$GITHUB_WORKSPACE/TestResults\" -type f -name \"*.trx\""
+            echo "Search command: find \"TestResults\" -type f -name \"*.trx\""
             echo "Files found: $trx_count"
 
             if [ "$trx_count" -gt 0 ]; then
@@ -153,7 +153,7 @@ jobs:
           fi
 
             # Also detect per-project logs
-            mapfile -t log_files < <(find "$GITHUB_WORKSPACE/TestResults" -type f -name "*.log" 2>/dev/null || true)
+            mapfile -t log_files < <(find "TestResults" -type f -name "*.log" 2>/dev/null || true)
             log_count=${#log_files[@]}
             echo "Log files found: $log_count"
             if [ "$log_count" -gt 0 ]; then
@@ -169,7 +169,7 @@ jobs:
             echo "found_logs=$([ $log_count -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
           echo ""
           echo "=== Summary ==="
-          echo "TestResults folder exists: $([ -d \"$GITHUB_WORKSPACE/TestResults\" ] && echo 'true' || echo 'false')"
+          echo "TestResults folder exists: $([ -d \"TestResults\" ] && echo 'true' || echo 'false')"
           echo "TRX files found: $found_trx"
             echo "Log files found: $([ $log_count -gt 0 ] && echo 'true' || echo 'false')"
 
@@ -178,21 +178,21 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Test-Results
-          path: ${{ github.workspace }}/TestResults/**/*.trx
+          path: TestResults/**/*.trx
 
       - name: Upload Test Logs
         if: ${{ steps.check-test-results.outputs.found_logs == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: Test-Logs
-          path: ${{ github.workspace }}/TestResults/**/*.log
+          path: TestResults/**/*.log
 
       - name: Upload TestResults (fallback for debugging)
         if: ${{ steps.check-test-results.outputs.found_trx != 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: TestResults-Debug
-          path: ${{ github.workspace }}/TestResults/**
+          path: TestResults/**
 
       - name: Codecov
         if: github.actor != 'nektos/act'
