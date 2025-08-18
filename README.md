@@ -1,4 +1,25 @@
-# BlazorApp Solution
+# BlazorBlogApplication Solution
+
+## New Aspire and BlazorServer Hosted Application
+
+### A tool to Create and Manage Articles using a MongoDb to store documents. It includes architecture, bunit, unit and integration tests with the integration tests using a docker container for the test MongoDb database to ensure clean isolated data for the tests
+
+****
+![GitHub](https://img.shields.io/github/license/mpaulosky/BlazorBlogApplication?logo=github)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/mpaulosky/BlazorBlogApplication?logo=github)
+[![CodeCov Main](https://codecov.io/gh/mpaulosky/BlazorBlogApplication/branch/main/graph/badge.svg)](https://codecov.io/gh/mpaulosky/BlazorBlogApplication)
+****
+[![.NET Build](https://github.com/mpaulosky/BlazorBlogApplication/actions/workflows/dotnet.yml/badge.svg)](https://github.com/mpaulosky/BlazorBlogApplication/actions/workflows/dotnet.yml)
+****
+[![Open Issues](https://img.shields.io/github/issues/mpaulosky/BlazorBlogApplication.svg?style=flatsquare&logo=github&label=Open%20Issues)](https://github.com/mpaulosky/BlazorBlogApplication/issues)
+[![Closed Issues](https://img.shields.io/github/issues-closed/mpaulosky/BlazorBlogApplication.svg?style=flatsquare&logo=github&label=Closed%20Issues)](https://github.com/mpaulosky/BlazorBlogApplication/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aclosed)
+[![Open Bug Issues](https://img.shields.io/github/issues/mpaulosky/BlazorBlogApplication/bug.svg?style=flatsquare&logo=github&label=Open%20Bug%20Issues)](https://github.com/mpaulosky/BlazorBlogApplication/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+[![Closed Bug Issues](https://img.shields.io/github/issues-closed/mpaulosky/BlazorBlogApplication/bug.svg?style=flatsquare&logo=github&label=Closed%20Bug%20Issues)](https://github.com/mpaulosky/BlazorBlogApplication/issues?q=is%3Aissue+is%3Aclosed+label%3Abug)
+****
+![GitHub pull requests](https://img.shields.io/github/issues-pr/mpaulosky/BlazorBlogApplication?label=pull%20requests&logo=github)
+![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/mpaulosky/BlazorBlogApplication?logo=github)
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/mpaulosky/BlazorBlogApplication/main?label=last%20commit%20main&logo=github)
+****
 
 ## Overview
 
