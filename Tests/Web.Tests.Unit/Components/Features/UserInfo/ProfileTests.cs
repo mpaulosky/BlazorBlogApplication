@@ -7,14 +7,7 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Components.Features.UserInfo;
-using Microsoft.AspNetCore.Components.Authorization;
-using FluentAssertions;
 using Web.Data.Auth0;
-using Web.Components.Features.Categories.CategoryEdit;
-using Web.Components.Features.Categories.CategoryDetails;
-using Web.Data.Entities;
-using Microsoft.Extensions.Logging;
 
 namespace Web.Components.Features.UserInfo;
 
@@ -39,7 +32,7 @@ public class ProfileTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "User");
 		var cut = Render<Profile>();
-		cut.Instance.GetType().GetField("_user", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, null);
+		cut.Instance.GetType().GetField("_user", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, null);
 		cut.Render();
 		cut.Markup.Should().Contain("Loading user information...");
 	}
@@ -61,7 +54,7 @@ public class ProfileTests : BunitContext
 			Picture = "https://example.com/pic.jpg"
 		};
 		var cut = Render<Profile>();
-		cut.Instance.GetType().GetField("_user", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?.SetValue(cut.Instance, user);
+		cut.Instance.GetType().GetField("_user", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, user);
 		cut.Render();
 		cut.Markup.Should().Contain("Alice");
 		cut.Markup.Should().Contain("auth0|123");

@@ -219,8 +219,8 @@ public class EditTests : BunitContext
 
 		// Configure the FluentValidation validator to return a validation failure
 		// so the ValidationSummary/validator components render errors on submit.
-		_articleDtoValidator.Validate(Arg.Any<FluentValidation.ValidationContext<ArticleDto>>())
-			.Returns(new FluentValidation.Results.ValidationResult(new[] { new FluentValidation.Results.ValidationFailure("Title", "Title is required") }));
+		_articleDtoValidator.Validate(Arg.Any<ValidationContext<ArticleDto>>())
+			.Returns(new ValidationResult(new[] { new ValidationFailure("Title", "Title is required") }));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, article.Id));
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetField("_article", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, article);

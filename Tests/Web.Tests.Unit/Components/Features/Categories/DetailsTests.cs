@@ -8,13 +8,11 @@
 // =======================================================
 
 using Web.Components.Features.Categories.CategoryDetails;
-using NSubstitute;
-using System.Threading.Tasks;
 
 namespace Web.Components.Features.Categories;
 
 /// <summary>
-///   Unit tests for <see cref="Categories.CategoryGet.Details" />
+///   Unit tests for <see cref="Categories.CategoryDetails.Details" />
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Details))]
@@ -35,7 +33,7 @@ public class DetailsTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<MongoDB.Bson.ObjectId>()).Returns(Task.FromResult(Web.Data.Abstractions.Result.Fail<Web.Data.Models.CategoryDto>("Category not found.")));
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -53,7 +51,7 @@ public class DetailsTests : BunitContext
 		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Is<MongoDB.Bson.ObjectId>(id => id == categoryDto.Id)).Returns(Task.FromResult(Web.Data.Abstractions.Result.Ok(categoryDto)));
+		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id)).Returns(Task.FromResult(Result.Ok(categoryDto)));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -75,7 +73,7 @@ public class DetailsTests : BunitContext
 		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<MongoDB.Bson.ObjectId>()).Returns(Task.FromResult(Web.Data.Abstractions.Result.Ok(categoryDto)));
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -94,7 +92,7 @@ public class DetailsTests : BunitContext
 		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<MongoDB.Bson.ObjectId>()).Returns(Task.FromResult(Web.Data.Abstractions.Result.Ok(categoryDto)));
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 		var navigationManager = Services.GetRequiredService<BunitNavigationManager>();
 
@@ -114,7 +112,7 @@ public class DetailsTests : BunitContext
 		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<MongoDB.Bson.ObjectId>()).Returns(Task.FromResult(Web.Data.Abstractions.Result.Ok(categoryDto)));
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 		var navigationManager = Services.GetRequiredService<BunitNavigationManager>();
 
@@ -133,7 +131,7 @@ public class DetailsTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<MongoDB.Bson.ObjectId>()).Returns(Task.FromResult(Web.Data.Abstractions.Result.Fail<Web.Data.Models.CategoryDto>("Category not found.")));
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -150,7 +148,7 @@ public class DetailsTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<MongoDB.Bson.ObjectId>()).Returns<Task<Result<CategoryDto>>>(_ => throw new Exception("DB error"));
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns<Task<Result<CategoryDto>>>(_ => throw new Exception("DB error"));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act

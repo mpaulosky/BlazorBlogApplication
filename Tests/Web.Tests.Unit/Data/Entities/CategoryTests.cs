@@ -7,15 +7,13 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Data.Entities;
-using Xunit;
-using FluentAssertions;
-
-namespace Web.Tests.Unit.Data.Entities;
+namespace Web.Data.Entities;
 
 /// <summary>
 ///   Unit tests for the <see cref="Category"/> class.
 /// </summary>
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(Category))]
 public class CategoryTests
 {
 	[Fact]

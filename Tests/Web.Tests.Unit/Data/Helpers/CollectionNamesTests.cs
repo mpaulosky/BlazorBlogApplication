@@ -7,15 +7,12 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Data.Helpers;
-using Xunit;
-using FluentAssertions;
-
-namespace Web.Tests.Unit.Data.Helpers;
+namespace Web.Data.Helpers;
 
 /// <summary>
 ///   Unit tests for the <see cref="CollectionNames"/> class.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class CollectionNamesTests
 {
 	[Fact]

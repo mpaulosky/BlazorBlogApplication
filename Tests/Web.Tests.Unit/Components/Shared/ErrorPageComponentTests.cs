@@ -12,6 +12,8 @@ namespace Web.Components.Shared;
 /// <summary>
 ///   Unit tests for <see cref="ErrorPageComponent" />.
 /// </summary>
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(ErrorPageComponent))]
 public class ErrorPageComponentTests : BunitContext
 {
 

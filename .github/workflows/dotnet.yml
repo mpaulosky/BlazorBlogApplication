@@ -57,10 +57,10 @@ jobs:
         run: npm run build:css
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore BlazorBlogApplication.sln
 
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build BlazorBlogApplication.sln --no-restore
 
       - name: Run all tests in all test projects
         id: run-tests
@@ -180,13 +180,6 @@ jobs:
           name: Test-Results
           path: TestResults/**/*.trx
 
-      - name: Upload Test Logs
-        if: ${{ steps.check-test-results.outputs.found_logs == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: Test-Logs
-          path: TestResults/**/*.log
-
       - name: Upload TestResults (fallback for debugging)
         if: ${{ steps.check-test-results.outputs.found_trx != 'true' }}
         uses: actions/upload-artifact@v4
@@ -200,13 +193,6 @@ jobs:
         with:
           name: Test-Logs
           path: ${{ github.workspace }}/TestResults/**/*.log
-
-      - name: Upload TestResults (fallback for debugging)
-        if: ${{ steps.check-test-results.outputs.found_trx != 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: TestResults-Debug
-          path: ${{ github.workspace }}/TestResults/**
 
       - name: Codecov
         if: github.actor != 'nektos/act'
@@ -230,20 +216,6 @@ jobs:
           check_run: false
           files: |
             ${{ github.workspace }}/TestResults/**/*.trx
-      - name: Publish Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        # When running locally with 'nektos/act,' the GITHUB_ACTOR is 'nektos/act' and
-        # the runner can't access GitHub's API for local commit SHAs. Skip
-        # publishing test results (which queries commits/pull requests) in
-        # that case to avoid 403/422 API errors.
-        if: always() && github.actor != 'nektos/act'
-        with:
-          # Disable creating GitHub check runs when running locally with 'nektos/act'
-          # (this avoids the "You must authenticate via a GitHub App" 403 error
-          # that happens because 'nektos/act' can't emulate GitHub App authentication).
-          check_run: false
-          files: |
-            TestResults/**/*.trx
 
       - name: Install GitVersion
         if: github.actor != 'nektos/act'

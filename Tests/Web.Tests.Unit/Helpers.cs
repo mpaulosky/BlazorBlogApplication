@@ -7,18 +7,9 @@
 // Project Name :  Web.Tests.Bunit
 // =======================================================
 
-using MongoDB.Driver;
-
-using Moq;
-using System.Linq;
-using System.Security.Claims;
-using System.Diagnostics.CodeAnalysis;
-// Ensure the TestServiceRegistrations helper is available to register common services
-// into a BunitContext when tests call SetAuthorization.
-
-
 namespace Web;
 
+[ExcludeFromCodeCoverage]
 public static class Helpers
 {
 
@@ -69,15 +60,15 @@ public static class TestFixtures
 	public static Mock<IAsyncCursor<TEntity>> GetMockCursor<TEntity>(IEnumerable<TEntity> list) where TEntity : class?
 	{
 		Mock<IAsyncCursor<TEntity>> cursor = new();
-		cursor.Setup(_ => _.Current).Returns(list);
+		cursor.Setup(a => a.Current).Returns(list);
 
 		cursor
-				.SetupSequence(_ => _.MoveNext(It.IsAny<CancellationToken>()))
+				.SetupSequence(a => a.MoveNext(It.IsAny<CancellationToken>()))
 				.Returns(true)
 				.Returns(false);
 
 		cursor
-				.SetupSequence(_ => _.MoveNextAsync(It.IsAny<CancellationToken>()))
+				.SetupSequence(a => a.MoveNextAsync(It.IsAny<CancellationToken>()))
 				.Returns(Task.FromResult(true))
 				.Returns(Task.FromResult(false));
 

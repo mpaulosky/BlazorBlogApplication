@@ -7,12 +7,10 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-// ...usings moved to GlobalUsings.cs...
-
-namespace Web.Tests.Unit.Data.Abstractions;
+namespace Web.Data.Abstractions;
 
 /// <summary>
-///   Unit tests for the <see cref="Result"/> and <see cref="Result<T>"/> classes.
+///   Unit tests for the <see cref="Result"/> and <see cref="Result{T}"/> classes.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Result))]

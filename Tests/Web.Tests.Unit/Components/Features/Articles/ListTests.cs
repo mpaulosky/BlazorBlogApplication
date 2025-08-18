@@ -7,10 +7,7 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Components.Features.Articles.ArticleList;
 using static Web.Components.Features.Articles.ArticleList.GetArticles;
-using Microsoft.JSInterop;
-using MongoDB.Bson;
 
 namespace Web.Components.Features.Articles;
 
@@ -35,17 +32,14 @@ public class ListTests : BunitContext
 
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
-		// Setup JSInterop for QuickGrid and 'init' calls
-		// QuickGrid is not used in this solution; no JSInterop setup required for tests
 	}
 
 	// Helper to set up handler return for articles
 	private void SetupHandlerArticles(IEnumerable<ArticleDto>? articles, bool success = true, string? error = null)
 	{
-		if (success)
-			_mockHandler.HandleAsync().Returns(Task.FromResult(Result<IEnumerable<ArticleDto>>.Ok(articles ?? new List<ArticleDto>())));
-		else
-			_mockHandler.HandleAsync().Returns(Task.FromResult(Result<IEnumerable<ArticleDto>>.Fail(error ?? "Error")));
+		_mockHandler.HandleAsync().Returns(success
+				? Task.FromResult(Result<IEnumerable<ArticleDto>>.Ok(articles ?? new List<ArticleDto>()))
+				: Task.FromResult(Result<IEnumerable<ArticleDto>>.Fail(error ?? "Error")));
 	}
 
 	[Fact]
@@ -124,7 +118,6 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
-		var id = ObjectId.GenerateNewId();
 		SetupHandlerArticles(null);
 		var cut = Render<List>();
 
