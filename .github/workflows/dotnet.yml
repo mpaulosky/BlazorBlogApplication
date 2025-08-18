@@ -61,6 +61,7 @@ jobs:
 
       - name: Run all tests in all test projects
         run: |
+          timestamp=$(date +%s)
           for proj in $(find . -name "*.csproj" -path "*/Tests/*"); do
             name=$(basename "$proj" .csproj)
             filename="${name}_${timestamp}.trx"
@@ -68,13 +69,11 @@ jobs:
           done
 
       - name: Workspace And TestResults Folder
-        id: check-testresults
+        id: check-test-results
         run: |
           echo "=== TestResults Diagnostic Information ==="
           echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
-          echo "Current directory: $(pwd)"
-          echo ""
-          echo "=== Repository Root Contents ==="
+          echo "Listing repo root:"
           ls -la "$GITHUB_WORKSPACE" || true
           echo ""
           echo "=== Checking TestResults Folder ==="
@@ -126,7 +125,7 @@ jobs:
           echo "TRX files found: $([ -f \"$GITHUB_OUTPUT\" ] && grep -o 'found_trx=.*' \"$GITHUB_OUTPUT\" | cut -d'=' -f2 || echo 'unknown')"
 
       - name: Upload Test Results
-        if: ${{ steps.check-testresults.outputs.found_trx == 'true' }}
+        if: ${{ steps.check-test-results.outputs.found_trx == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: Test-Results
@@ -142,29 +141,29 @@ jobs:
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         id: test-results
-        # When running locally with act the GITHUB_ACTOR is 'nektos/act' and
+        # When running locally with the 'nektos/act,' the GITHUB_ACTOR is 'nektos/act' and
         # the runner can't access GitHub's API for local commit SHAs. Skip
         # publishing test results (which queries commits/pull requests) in
         # that case to avoid 403/422 API errors.
         if: always() && github.actor != 'nektos/act'
         with:
-          # Disable creating GitHub check runs when running locally with act
+          # Disable creating GitHub check runs when running locally with 'nektos/act'
           # (this avoids the "You must authenticate via a GitHub App" 403 error
-          # that happens because act can't emulate GitHub App authentication).
+          # that happens because 'nektos/act' can't emulate GitHub App authentication).
           check_run: false
           files: |
             ${{ github.workspace }}/TestResults/**/*.trx
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
-        # When running locally with act the GITHUB_ACTOR is 'nektos/act' and
+        # When running locally with 'nektos/act,' the GITHUB_ACTOR is 'nektos/act' and
         # the runner can't access GitHub's API for local commit SHAs. Skip
         # publishing test results (which queries commits/pull requests) in
         # that case to avoid 403/422 API errors.
         if: always() && github.actor != 'nektos/act'
         with:
-          # Disable creating GitHub check runs when running locally with act
+          # Disable creating GitHub check runs when running locally with 'nektos/act'
           # (this avoids the "You must authenticate via a GitHub App" 403 error
-          # that happens because act can't emulate GitHub App authentication).
+          # that happens because 'nektos/act' can't emulate GitHub App authentication).
           check_run: false
           files: |
             TestResults/**/*.xml
