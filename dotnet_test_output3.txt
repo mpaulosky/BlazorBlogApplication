@@ -46,7 +46,7 @@ A total of 1 test files matched the specified pattern.
   Passed Should_Render_Correct_Error_Information(errorCode: 0, expectedTitle: "Unknown Error", expectedMessage: "An error occurred. Please try again later.", expectedColor: "text-red-500", expectedShadowStyle: "shadow-red-500") [15 ms]
   Passed Should_Render_Correct_Error_Information(errorCode: 404, expectedTitle: "404 Not Found", expectedMessage: "The page you are looking for does not exist", expectedColor: "text-yellow-500", expectedShadowStyle: "shadow-yellow-500") [3 ms]
   Passed Should_Render_Correct_Error_Information(errorCode: 401, expectedTitle: "401 Unauthorized", expectedMessage: "You are not authorized to view this page.", expectedColor: "text-yellow-500", expectedShadowStyle: "shadow-yellow-500") [1 ms]
-  Passed Should_Render_Correct_Error_Information(errorCode: 500, expectedTitle: "500 Internal Server Error", expectedMessage: "An unexpected error occured on the server", expectedColor: "text-red-500", expectedShadowStyle: "shadow-red-500") [8 ms]
+  Passed Should_Render_Correct_Error_Information(errorCode: 500, expectedTitle: "500 Internal Server Error", expectedMessage: "An unexpected error occurred on the server", expectedColor: "text-red-500", expectedShadowStyle: "shadow-red-500") [8 ms]
   Passed Should_Render_Correct_Error_Information(errorCode: 403, expectedTitle: "403 Forbidden", expectedMessage: "Access to this resource is forbidden", expectedColor: "text-red-500", expectedShadowStyle: "shadow-red-500") [4 ms]
 [xUnit.net 00:00:04.75]     Only_Authorized_Users_Can_Access [SKIP]
 [xUnit.net 00:00:04.75]       Bunit does not enforce [Authorize]; page is always rendered in test context.
