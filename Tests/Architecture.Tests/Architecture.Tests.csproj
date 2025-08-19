@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsTestProject>true</IsTestProject>
+		<RootNamespace>Architecture</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector"/>
+		<PackageReference Include="FluentAssertions"/>
+		<PackageReference Include="JetBrains.Annotations"/>
+		<PackageReference Include="Microsoft.NET.Test.Sdk"/>
+		<PackageReference Include="NSubstitute"/>
+		<PackageReference Include="xunit.runner.visualstudio"/>
+		<PackageReference Include="NetArchTest.Rules"/>
+		<PackageReference Include="xunit.v3"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\SRC\AppHost\AppHost.csproj"/>
+		<ProjectReference Include="..\..\SRC\Shared\Shared.csproj" />
+		<ProjectReference Include="..\..\SRC\Web\Web.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="xunit.runner.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+</Project>
