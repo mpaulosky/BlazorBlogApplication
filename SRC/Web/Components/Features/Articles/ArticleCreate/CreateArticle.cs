@@ -33,7 +33,7 @@ public static class CreateArticle
 	public class Handler : ICreateArticleHandler
 	{
 
-		private readonly MyBlogContext _context;
+		private readonly IMyBlogContext _context;
 		private readonly ILogger<Handler> _logger;
 
 		/// <summary>
@@ -41,7 +41,7 @@ public static class CreateArticle
 		/// </summary>
 		/// <param name="context">The database context.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(MyBlogContext context, ILogger<Handler> logger)
+		public Handler(IMyBlogContext context, ILogger<Handler> logger)
 		{
 			_context = context;
 			_logger = logger;
@@ -52,13 +52,13 @@ public static class CreateArticle
 		/// </summary>
 		/// <param name="request">The category DTO.</param>
 		/// <returns>A <see cref="Result"/> indicating success or failure.</returns>
-		public async Task<Result> HandleAsync(ArticleDto request)
+		public async Task<Result> HandleAsync(ArticleDto? request)
 		{
 			try
 			{
 				var article = new Article
 				{
-					Title = request.Title,
+					Title = request!.Title,
 					Introduction = request.Introduction,
 					Content = request.Content,
 					CoverImageUrl = request.CoverImageUrl,
@@ -78,7 +78,7 @@ public static class CreateArticle
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Failed to create category: {Title}", request.Title);
+				_logger.LogError(ex, "Failed to create category");
 				return Result.Fail(ex.Message);
 			}
 		}

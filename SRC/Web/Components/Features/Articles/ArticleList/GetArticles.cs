@@ -33,7 +33,7 @@ public static class GetArticles
 	/// </summary>
 	public class Handler : IGetArticlesHandler
 	{
-		private readonly MyBlogContext _context;
+		private readonly IMyBlogContext _context;
 		private readonly ILogger<Handler> _logger;
 
 		/// <summary>
@@ -41,7 +41,7 @@ public static class GetArticles
 		/// </summary>
 		/// <param name="context">The database context.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(MyBlogContext context, ILogger<Handler> logger)
+		public Handler(IMyBlogContext context, ILogger<Handler> logger)
 		{
 			_context = context;
 			_logger = logger;
