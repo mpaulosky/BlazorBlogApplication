@@ -7,8 +7,12 @@
 // Project Name :  Web.Tests.Bunit
 // =======================================================
 
+using Microsoft.AspNetCore.Components;
 using Web.Components.Features.Articles.ArticleDetails;
 using static Web.Components.Features.Articles.ArticleGet.GetArticle;
+
+using Microsoft.AspNetCore.Components.Authorization;
+using Web.Components.Shared;
 
 namespace Web.Components.Features.Articles;
 
@@ -341,6 +345,34 @@ public class DetailsTests : BunitContext
 		// Assert
 		var editButton = cut.Find("button.btn-secondary");
 		editButton.HasAttribute("disabled").Should().BeTrue();
+	}
+
+	[Fact]
+	public void Unauthenticated_User_Is_Shown_NotAuthorized()
+	{
+		// Arrange - simulate not authorized
+		Helpers.SetAuthorization(this, false);
+		TestServiceRegistrations.RegisterCommonUtilities(this);
+
+		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
+		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		{
+			builder.OpenComponent<ErrorPageComponent>(0);
+			builder.AddAttribute(1, "ErrorCode", 401);
+			builder.AddAttribute(2, "TextColor", "red-600");
+			builder.AddAttribute(3, "ShadowStyle", "shadow-red-500");
+			builder.CloseComponent();
+		};
+
+		var cut = Render<AuthorizeView>(parameters => parameters
+			.Add(p => p.Authorized, authorizedFragment)
+			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+		);
+
+		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message
+		cut.Markup.Should().Contain("401 Unauthorized");
+		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
 
 }
