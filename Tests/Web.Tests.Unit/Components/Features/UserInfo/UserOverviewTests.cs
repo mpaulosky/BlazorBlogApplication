@@ -9,6 +9,10 @@
 
 namespace Web.Components.Features.UserInfo;
 
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components;
+using Web.Components.Shared;
+
 /// <summary>
 ///   Unit tests for <see cref="UserOverview" /> (User Overview Page).
 /// </summary>
@@ -21,7 +25,7 @@ public class UserOverviewTests : BunitContext
 		Services.AddCascadingAuthenticationState();
 		Services.AddAuthorization();
 
-		TestServiceRegistrations.RegisterCommonUtilities(this);
+		TestServiceRegistrations.RegisterAll(this);
 	}
 
 	[Fact]
@@ -65,13 +69,55 @@ public class UserOverviewTests : BunitContext
 		cut.Markup.Should().Contain("Editor");
 	}
 
-	[Fact(Skip = "Bunit does not enforce [Authorize]; page is always rendered in test context.")]
-	public void Only_Admin_Can_Access()
+	[Fact]
+	public void Only_Authenticated_Users_Can_Access()
 	{
-		// Arrange
+		// Arrange - unauthenticated
 		Helpers.SetAuthorization(this, false);
-		var cut = Render<UserOverview>();
-		// Assert
-		cut.FindAll("table").Should().BeEmpty();
+		TestServiceRegistrations.RegisterCommonUtilities(this);
+
+		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		{
+			builder.OpenComponent<ErrorPageComponent>(0);
+			builder.AddAttribute(1, "ErrorCode", 401);
+			builder.AddAttribute(2, "TextColor", "red-600");
+			builder.AddAttribute(3, "ShadowStyle", "shadow-red-500");
+			builder.CloseComponent();
+		};
+
+		var cut = Render<AuthorizeView>(parameters => parameters
+			.Add(p => p.Authorized, authorizedFragment)
+			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+		);
+
+		cut.Markup.Should().Contain("401 Unauthorized");
+		cut.Markup.Should().Contain("You are not authorized to view this page.");
+	}
+
+	[Fact]
+	public void Non_Admin_User_Is_Not_Authorized()
+	{
+		// Arrange - authenticated but not in Admin role
+		Helpers.SetAuthorization(this, true, "User");
+		TestServiceRegistrations.RegisterCommonUtilities(this);
+
+		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		{
+			builder.OpenComponent<ErrorPageComponent>(0);
+			builder.AddAttribute(1, "ErrorCode", 401);
+			builder.AddAttribute(2, "TextColor", "red-600");
+			builder.AddAttribute(3, "ShadowStyle", "shadow-red-500");
+			builder.CloseComponent();
+		};
+
+		var cut = Render<AuthorizeView>(parameters => parameters
+			.Add(p => p.Authorized, authorizedFragment)
+			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+		);
+
+		cut.Markup.Should().Contain("401 Unauthorized");
+		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
 }

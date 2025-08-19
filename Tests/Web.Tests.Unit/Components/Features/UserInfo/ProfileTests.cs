@@ -8,6 +8,9 @@
 // =======================================================
 
 using Web.Data.Auth0;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components;
+using Web.Components.Shared;
 
 namespace Web.Components.Features.UserInfo;
 
@@ -31,8 +34,13 @@ public class ProfileTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "User");
+		TestServiceRegistrations.RegisterAll(this);
+
+		// Act
 		var cut = Render<Profile>();
 		cut.Instance.GetType().GetField("_user", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, null);
+
+		// Assert
 		cut.Render();
 		cut.Markup.Should().Contain("Loading user information...");
 	}
@@ -42,6 +50,7 @@ public class ProfileTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "User");
+		TestServiceRegistrations.RegisterAll(this);
 		var user = new UserResponse
 		{
 			Name = "Alice",
@@ -65,13 +74,31 @@ public class ProfileTests : BunitContext
 		cut.Markup.Should().Contain("Your email verified: True");
 	}
 
-	[Fact(Skip = "Bunit does not enforce [Authorize]; page is always rendered in test context.")]
+	[Fact]
 	public void Only_Authenticated_User_Can_Access()
 	{
-		// Arrange
+		// Arrange - simulate not authorized
 		Helpers.SetAuthorization(this, false);
-		var cut = Render<Profile>();
-		// Assert
-		cut.FindAll("div").Should().BeEmpty();
+		TestServiceRegistrations.RegisterCommonUtilities(this);
+
+		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
+		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		{
+			builder.OpenComponent<ErrorPageComponent>(0);
+			builder.AddAttribute(1, "ErrorCode", 401);
+			builder.AddAttribute(2, "TextColor", "red-600");
+			builder.AddAttribute(3, "ShadowStyle", "shadow-red-500");
+			builder.CloseComponent();
+		};
+
+		var cut = Render<AuthorizeView>(parameters => parameters
+			.Add(p => p.Authorized, authorizedFragment)
+			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+		);
+
+		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message
+		cut.Markup.Should().Contain("401 Unauthorized");
+		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
 }
