@@ -3,5 +3,6 @@
   <Project Path="SRC\ServiceDefaults\ServiceDefaults.csproj" Type="Classic C#" />
   <Project Path="SRC\Shared\Shared.csproj" Type="Classic C#" />
   <Project Path="SRC\Web\Web.csproj" />
+  <Project Path="Tests\Architecture.Tests\Architecture.Tests.csproj" Type="Classic C#" />
   <Project Path="Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" Type="Classic C#" />
 </Solution>
