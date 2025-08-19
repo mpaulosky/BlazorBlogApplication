@@ -7,13 +7,16 @@
 // Project Name :  Web
 // =======================================================
 
+using FluentValidation;
+
+using ServiceDefaults;
+
+using Web.Components.Features.Articles.ArticleGet;
 using Web.Data.Auth0;
 using Web.Data.Models;
 using Web.Data.Validators;
-using FluentValidation;
 
 using static Shared.Services;
-using Web.Components.Features.Articles.ArticleGet;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,6 +85,9 @@ builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoConnection
 
 // Register the MongoDB context factory
 builder.Services.AddScoped<IMyBlogContextFactory, MyBlogContextFactory>();
+builder.Services.AddScoped<IMyBlogContext>(sp =>
+		new MyBlogContext(sp.GetRequiredService<IMongoClient>()));
+
 
 builder.Services.AddOutputCache();
 builder.Services.AddHealthChecks();
