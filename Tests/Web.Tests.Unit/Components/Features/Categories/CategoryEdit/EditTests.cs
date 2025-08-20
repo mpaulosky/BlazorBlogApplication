@@ -7,16 +7,9 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Components.Features.Categories.CategoryEdit;
-using static Web.Components.Features.Categories.CategoryEdit.EditCategory;
 using Web.Components.Features.Categories.CategoryDetails;
-using static Web.Components.Features.Categories.CategoryDetails.GetCategory;
 
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using Web.Components.Shared;
-
-namespace Web.Components.Features.Categories;
+namespace Web.Components.Features.Categories.CategoryEdit;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Edit))]
@@ -381,8 +374,8 @@ public class EditTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
-		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
 			builder.AddAttribute(1, "ErrorCode", 401);
@@ -406,13 +399,13 @@ public class EditTests : BunitContext
 	[InlineData("Author")]
 	public void Authenticated_NonAdmin_Is_Shown_NotAuthorized(string role)
 	{
-		// Arrange - simulate authenticated user without Admin role
+		// Arrange - simulate an authenticated user without an Admin role
 		Helpers.SetAuthorization(this, true, role);
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
-		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
 			builder.AddAttribute(1, "ErrorCode", 401);

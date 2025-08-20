@@ -9,17 +9,13 @@
 
 using static Web.Components.Features.Categories.CategoryList.GetCategories;
 
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using Web.Components.Shared;
-
-namespace Web.Components.Features.Categories;
+namespace Web.Components.Features.Categories.CategoryList;
 
 /// <summary>
 ///   Unit tests for <see cref="List{T}" />
 /// </summary>
 [ExcludeFromCodeCoverage]
-[TestSubject(typeof(Web.Components.Features.Categories.CategoryList.List))]
+[TestSubject(typeof(List))]
 public class ListTests : BunitContext
 {
 	private readonly IGetCategoriesHandler _mockHandler;
@@ -28,7 +24,7 @@ public class ListTests : BunitContext
 	{
 		_mockHandler = Substitute.For<IGetCategoriesHandler>();
 		Services.AddScoped(_ => _mockHandler);
-		Services.AddScoped<ILogger<Web.Components.Features.Categories.CategoryList.List>>(_ => Substitute.For<ILogger<Web.Components.Features.Categories.CategoryList.List>>());
+		Services.AddScoped<ILogger<List>>(_ => Substitute.For<ILogger<List>>());
 		Services.AddCascadingAuthenticationState();
 		Services.AddAuthorization();
 	}
@@ -48,7 +44,7 @@ public class ListTests : BunitContext
 		SetupHandlerCategories(null);
 
 		// Act
-		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
+		var cut = Render<List>();
 
 		// Assert
 		cut.Markup.Should().Contain("No categories available.");
@@ -64,7 +60,7 @@ public class ListTests : BunitContext
 		SetupHandlerCategories(null);
 
 		// Act
-		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
+		var cut = Render<List>();
 
 		// Assert
 		cut.Markup.Should().Contain("No categories available");
@@ -79,13 +75,13 @@ public class ListTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		var categoriesDto = new List<CategoryDto>
 		{
-			new CategoryDto { CategoryName = "Cat1", CreatedOn = DateTimeOffset.Now, ModifiedOn = DateTimeOffset.Now, Archived = false },
-			new CategoryDto { CategoryName = "Cat2", CreatedOn = DateTimeOffset.Now, ModifiedOn = null, Archived = true }
+			new CategoryDto { CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now, Archived = false },
+			new CategoryDto { CategoryName = "Cat2", CreatedOn = DateTime.Now, ModifiedOn = null, Archived = true }
 		};
 		SetupHandlerCategories(categoriesDto);
 
 		// Act
-		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
+		var cut = Render<List>();
 
 		// Assert
 		cut.Markup.Should().Contain("Cat1");
@@ -98,7 +94,7 @@ public class ListTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		SetupHandlerCategories(null);
-		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
+		var cut = Render<List>();
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, true);
 		cut.Render();
 		// loading component renders a spinner and 'Loading...' text
@@ -111,7 +107,7 @@ public class ListTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		SetupHandlerCategories(null, success: false, error: "Failed to load categories");
-		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
+		var cut = Render<List>();
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
 		cut.Render();
 		// Error state shows the failure message via logger/error text
@@ -127,7 +123,7 @@ public class ListTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		var nav = Services.GetRequiredService<BunitNavigationManager>();
 		SetupHandlerCategories(new List<CategoryDto>());
-		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
+		var cut = Render<List>();
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
 		cut.Render();
 		cut.Find("button.btn-success").Click();
@@ -142,10 +138,10 @@ public class ListTests : BunitContext
 		var nav = Services.GetRequiredService<BunitNavigationManager>();
 		var categoriesDto = new List<CategoryDto>
 		{
-			new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "Cat1", CreatedOn = DateTimeOffset.Now, ModifiedOn = DateTimeOffset.Now, Archived = false }
+			new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now, Archived = false }
 		};
 		SetupHandlerCategories(categoriesDto);
-		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
+		var cut = Render<List>();
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetField("_categories", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, categoriesDto.AsQueryable());
 		cut.Render();
@@ -162,10 +158,10 @@ public class ListTests : BunitContext
 		var nav = Services.GetRequiredService<BunitNavigationManager>();
 		var categoriesDto = new List<CategoryDto>
 		{
-			new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "Cat1", CreatedOn = DateTimeOffset.Now, ModifiedOn = DateTimeOffset.Now, Archived = false }
+			new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now, Archived = false }
 		};
 		SetupHandlerCategories(categoriesDto);
-		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
+		var cut = Render<List>();
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetField("_categories", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, categoriesDto.AsQueryable());
 		cut.Render();
@@ -181,10 +177,10 @@ public class ListTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		var categoriesDto = new List<CategoryDto>
 		{
-			new CategoryDto { CategoryName = "Cat1", CreatedOn = DateTimeOffset.Now, ModifiedOn = DateTimeOffset.Now, Archived = false }
+			new CategoryDto { CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now, Archived = false }
 		};
 		SetupHandlerCategories(categoriesDto);
-		var cut = Render<Web.Components.Features.Categories.CategoryList.List>();
+		var cut = Render<List>();
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetField("_categories", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, categoriesDto.AsQueryable());
 		cut.Render();
@@ -203,8 +199,8 @@ public class ListTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
-		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
 			builder.AddAttribute(1, "ErrorCode", 401);
@@ -228,13 +224,13 @@ public class ListTests : BunitContext
 	[InlineData("Author")]
 	public void Authenticated_NonAdmin_Is_Shown_NotAuthorized(string role)
 	{
-		// Arrange - simulate authenticated user without Admin role
+		// Arrange - simulate an authenticated user without an Admin role
 		Helpers.SetAuthorization(this, true, role);
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
-		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
 			builder.AddAttribute(1, "ErrorCode", 401);
