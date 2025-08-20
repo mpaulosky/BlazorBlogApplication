@@ -10,8 +10,6 @@
 namespace Web.Components.Features.UserInfo;
 
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components;
-using Web.Components.Shared;
 
 /// <summary>
 ///   Unit tests for <see cref="UserOverview" /> (User Overview Page).
@@ -76,8 +74,8 @@ public class UserOverviewTests : BunitContext
 		Helpers.SetAuthorization(this, false);
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
-		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
-		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
 			builder.AddAttribute(1, "ErrorCode", 401);
@@ -102,8 +100,8 @@ public class UserOverviewTests : BunitContext
 		Helpers.SetAuthorization(this, true, "User");
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
-		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
-		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
 			builder.AddAttribute(1, "ErrorCode", 401);

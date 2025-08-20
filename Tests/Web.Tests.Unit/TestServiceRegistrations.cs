@@ -7,9 +7,9 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 
+using Web.Components.Features.Articles.ArticleDetails;
 using Web.Components.Features.Categories.CategoryCreate;
 using Web.Components.Features.Categories.CategoryDetails;
 using Web.Components.Features.Categories.CategoryEdit;
@@ -126,7 +126,7 @@ public static class TestServiceRegistrations
 			ModifiedOn = null,
 			IsPublished = true,
 			PublishedOn = DateTime.UtcNow,
-			Archived = false,
+			IsArchived = false,
 			CanEdit = true
 		};
 

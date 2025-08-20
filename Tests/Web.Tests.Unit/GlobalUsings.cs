@@ -22,6 +22,7 @@ global using FluentValidation.Results;
 
 global using JetBrains.Annotations;
 
+global using Microsoft.AspNetCore.Components;
 global using Microsoft.AspNetCore.Components.Authorization;
 global using Microsoft.AspNetCore.Components.Web;
 global using Microsoft.Extensions.DependencyInjection;
@@ -34,8 +35,8 @@ global using Moq;
 
 global using NSubstitute;
 
-global using Web.Components.Features.Articles.ArticleGet;
 global using Web.Components.Features.Articles.ArticleList;
+global using Web.Components.Shared;
 global using Web.Data;
 global using Web.Data.Abstractions;
 global using Web.Data.Entities;

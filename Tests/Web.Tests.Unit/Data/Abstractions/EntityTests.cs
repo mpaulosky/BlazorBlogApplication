@@ -28,7 +28,7 @@ public class EntityTests
 
 		// Assert
 		entity.Id.Should().NotBeNull();
-		entity.CreatedOn.Should().BeAfter(DateTimeOffset.UtcNow.AddMinutes(-1));
+		entity.CreatedOn.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
 		entity.ModifiedOn.Should().BeNull();
 		entity.Archived.Should().BeFalse();
 	}
@@ -38,7 +38,7 @@ public class EntityTests
 	{
 		// Arrange
 		var entity = new TestEntity();
-		var now = DateTimeOffset.UtcNow;
+		var now = DateTime.UtcNow;
 
 		// Act
 		entity.ModifiedOn = now;

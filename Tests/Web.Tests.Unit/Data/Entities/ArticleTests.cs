@@ -72,16 +72,15 @@ public class ArticleTests
 	{
 		// Arrange
 		var article = FakeArticle.GetNewArticle(true);
-		var newCategoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		var newTitle = "Updated Title";
-		var newIntro = "Updated Intro";
-		var newContent = "Updated Content";
-		var newCover = "https://newcover.com/image.png";
-		var newSlug = "updated-slug";
-		var newCategory = newCategoryDto;
-		var newPublished = true;
-		var newPublishedOn = DateTimeOffset.UtcNow;
-		var newArchived = true;
+		const string newTitle = "Updated Title";
+		const string newIntro = "Updated Intro";
+		const string newContent = "Updated Content";
+		const string newCover = "https://newcover.com/image.png";
+		const string newSlug = "updated-slug";
+		var newCategory = FakeCategoryDto.GetNewCategoryDto(true);
+		const bool newPublished = true;
+		var newPublishedOn = DateTime.UtcNow;
+		const bool newArchived = true;
 
 		// Act
 		article.Update(newTitle, newIntro, newContent, newCover, newSlug, newCategory, newPublished, newPublishedOn, newArchived);
@@ -127,7 +126,7 @@ public class ArticleTests
 		// Assert
 		article.IsPublished.Should().BeFalse();
 		article.PublishedOn.Should().BeNull();
-		article.ModifiedOn.Should().BeAfter(DateTimeOffset.UtcNow.AddSeconds(-2));
+		article.ModifiedOn.Should().BeAfter(DateTime.UtcNow.AddSeconds(-2));
 	}
 
 	[Fact]

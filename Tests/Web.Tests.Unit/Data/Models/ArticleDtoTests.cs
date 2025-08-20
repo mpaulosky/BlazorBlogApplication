@@ -28,7 +28,7 @@ public class ArticleDtoTests
 		dto.Author.Should().NotBeNull();
 		dto.Category.Should().NotBeNull();
 		dto.IsPublished.Should().BeFalse();
-		dto.Archived.Should().BeFalse();
+		dto.IsArchived.Should().BeFalse();
 		dto.CanEdit.Should().BeFalse();
 	}
 
@@ -45,7 +45,7 @@ public class ArticleDtoTests
 		dto.Author.Should().NotBeNull();
 		dto.Category.Should().NotBeNull();
 		dto.IsPublished.Should().BeFalse();
-		dto.Archived.Should().BeFalse();
+		dto.IsArchived.Should().BeFalse();
 		dto.CanEdit.Should().BeFalse();
 	}
 }
