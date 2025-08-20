@@ -55,6 +55,12 @@ var article = new Article();
 ## Project Setup
 
 - Use a separate test project with naming convention `[ProjectName].Tests.Unit`
+- Use the .NET SDK-style project format
+- Target the same framework as your main project (e.g., `net6.0`, `net7.0`)
+- Reference the same NuGet packages as your main project
+- Reference the same project references as your main project
+- Reference any additional dependencies required for testing
+- Set the projects root namespace to match the project under test (e.g., `Web`)
 - Reference XUnit v3 packages: `xunit.v3.core`, `xunit.v3.assert`, and `xunit.v3.runner.visualstudio`
 - Also reference `Microsoft.NET.Test.Sdk`, `FluentAssertions`, and `bunit` packages for Blazor component/page testing
 - Create test classes that match the classes being tested (e.g., `CalculatorTests` for `Calculator`)
@@ -78,7 +84,7 @@ var article = new Article();
 bUnit is the recommended library for unit testing Blazor components and pages. It integrates seamlessly with xUnit, NUnit, and MSTest, and runs tests in milliseconds. Key practices:
 
 - Add the `bunit` NuGet package to your test project.
-- Use `TestContext` to render and interact with components in tests.
+- Use `BunitContext` to render and interact with components in tests.
 - Use semantic HTML comparison and event simulation (e.g., `cut.Find("button").Click()`).
 - Pass parameters, cascading values, and inject services as needed.
 - **Mock dependencies like `IJSRuntime` and services for isolation:**
@@ -175,6 +181,7 @@ For more advanced scenarios, see the [bUnit documentation](https://bunit.dev/doc
 
 - No test class attributes required (unlike MSTest/NUnit)
 - Use fact-based tests with `[Fact]` attribute for simple tests
+- Use `[Theory]` attribute for data-driven tests
 - Strictly follow the Arrange-Act-Assert (AAA) pattern
 - **Arrange**: Set up test prerequisites and inputs
 - **Act**: Call the method or operation being tested
@@ -191,6 +198,10 @@ For more advanced scenarios, see the [bUnit documentation](https://bunit.dev/doc
 - Use `[Theory]` for data-driven tests (same as in XUnit v2)
 - Use the new `[Observation]` attribute for specification-style tests
 - Use `TestOutput` property for writing to test output (replaces `ITestOutputHelper`)
+- Strictly follow the Arrange-Act-Assert (AAA) pattern
+- **Arrange**: Set up test prerequisites and inputs
+- **Act**: Call the method or operation being tested
+- **Assert**: Verify the expected outcome using FluentAssertions
 - Leverage the improved assertion failure messages in XUnit v3
 - Take advantage of improved parallelization and performance in test runs
 - Use built-in asynchronous test methods with `async`/`await` support
@@ -252,6 +263,7 @@ For more advanced scenarios, see the [bUnit documentation](https://bunit.dev/doc
 ## Test Organization
 
 - Group tests by feature or component
+- Follow the folder structure of the main project
 - Use `[Trait("Category", "CategoryName")]` for categorization
 - Use collection fixtures to group tests with shared dependencies
 - Skip tests conditionally with `Skip = "reason"` in test attributes
