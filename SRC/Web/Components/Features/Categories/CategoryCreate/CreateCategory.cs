@@ -7,10 +7,6 @@
 // Project CategoryName :  Web
 // =======================================================
 
-using Web.Data.Abstractions;
-using Web.Data.Entities;
-using Web.Data.Models;
-
 namespace Web.Components.Features.Categories.CategoryCreate;
 
 /// <summary>

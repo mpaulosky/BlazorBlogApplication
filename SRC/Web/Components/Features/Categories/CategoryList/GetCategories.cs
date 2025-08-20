@@ -7,12 +7,6 @@
 // Project Name :  Web
 // =======================================================
 
-using Mapster;
-
-using Web.Data.Abstractions;
-using Web.Data.Entities;
-using Web.Data.Models;
-
 namespace Web.Components.Features.Categories.CategoryList;
 
 /// <summary>

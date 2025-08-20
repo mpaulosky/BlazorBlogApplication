@@ -7,10 +7,6 @@
 // Project Name :  Web
 // =======================================================
 
-using Web.Data.Abstractions;
-using Web.Data.Entities;
-using Web.Data.Models;
-
 namespace Web.Components.Features.Categories.CategoryEdit;
 
 /// <summary>
@@ -52,7 +48,7 @@ public static class EditCategory
 					ModifiedOn = DateTime.UtcNow,
 				};
 
-				var context = await _contextFactory.CreateAsync(default);
+				var context = await _contextFactory.CreateAsync();
 				await context.Categories.ReplaceOneAsync(
 					Builders<Category>.Filter.Eq(x => x.Id, request.Id),
 					category,
