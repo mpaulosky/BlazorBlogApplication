@@ -69,28 +69,20 @@ jobs:
           mkdir -p "TestResults"
           timestamp=$(date +%s)
 
-          # We'll capture exit codes per-project and continue so that artifacts/logs
-          # can be uploaded even when tests fail. At the end we export the
-          # aggregated exit code via GITHUB_OUTPUT for a later step to fail the job.
-          overall_rc=0
-
-          # Use process substitution to feed the while loop so it does not run
-          # in a subshell (this avoids pipe-related errexit/pipefail surprises).
           set -o pipefail
+
           while IFS= read -r proj; do
-            # double-check with IsTestProject property as a safety
             if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null; then
               name=$(basename "$proj" .csproj)
               filename="${name}_${timestamp}"
               echo "Running tests for: $proj -> TestResults/${filename}.trx (logs -> TestResults/${filename}.log)"
 
-              # Temporarily disable errexit so we can capture dotnet test's exit code
-              # while still allowing the step to continue and upload artifacts.
               set +e
               dotnet test "$proj" \
                 --no-build --no-restore \
                 --logger "trx;LogFileName=${filename}.trx" \
-                --settings "$GITHUB_WORKSPACE/runsettings.xml" \
+                --logger "junit;LogFileName=${filename}.xml" \
+                --collect:"XPlat Code Coverage" \
                 --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
               rc=$?
               set -e
@@ -104,10 +96,7 @@ jobs:
             fi
           done < <( find Tests -name "*.csproj" -type f 2>/dev/null || true )
 
-          # Export aggregated result for later steps
           echo "tests_exit_code=$overall_rc" >> "$GITHUB_OUTPUT"
-          # Do not exit with failure here so uploading artifacts can run; a later
-          # step will fail the job if tests_exit_code != 0.
           exit 0
 
       - name: Workspace And TestResults Folder
