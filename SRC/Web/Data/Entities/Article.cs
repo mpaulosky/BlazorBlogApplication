@@ -7,13 +7,6 @@
 // Project Name :  Web
 // =======================================================
 
-using System.ComponentModel.DataAnnotations;
-
-using MongoDB.Bson;
-
-using Web.Data.Abstractions;
-using Web.Data.Models;
-
 namespace Web.Data.Entities;
 
 /// <summary>
@@ -56,12 +49,12 @@ public class Article : Entity
 	public bool IsArchived { get; set; }
 
 	[Display(Name = "Published On")]
-	public DateTimeOffset? PublishedOn { get; set; }
+	public DateTime? PublishedOn { get; set; }
 
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public Article() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, false, null, false) { }
+	public Article() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="Article" /> class.
@@ -88,7 +81,7 @@ public class Article : Entity
 		AppUserDto author,
 		CategoryDto category,
 		bool isPublished = false,
-		DateTimeOffset? publishedOn = null,
+		DateTime? publishedOn = null,
 		bool isArchived = false)
 	{
 		Title = title;
@@ -111,11 +104,10 @@ public class Article : Entity
 	/// <param name="content"></param>
 	/// <param name="coverImageUrl">The new cover image URL</param>
 	/// <param name="urlSlug">The new URL slug</param>
-	/// <param name="author">The new author</param>
 	/// <param name="category">The new category</param>
 	/// <param name="isPublished">The newly published status</param>
 	/// <param name="publishedOn">The new publication date</param>
-	/// /// <param name="isArchived">Indicates whether the article is archived.</param>
+	/// <param name="isArchived">Indicates whether the article is archived.</param>
 	/// <remarks>
 	///   This method is used to update the article's properties.
 	/// </remarks>
@@ -127,7 +119,7 @@ public class Article : Entity
 				string urlSlug,
 				CategoryDto category,
 				bool isPublished,
-				DateTimeOffset? publishedOn,
+				DateTime? publishedOn,
 				bool isArchived)
 	{
 		Title = title;
@@ -145,14 +137,14 @@ public class Article : Entity
 	{
 		IsPublished = true;
 		PublishedOn = publishedOn;
-		ModifiedOn = DateTimeOffset.UtcNow;
+		ModifiedOn = DateTime.UtcNow;
 	}
 
 	public void Unpublish()
 	{
 		IsPublished = false;
 		PublishedOn = null;
-		ModifiedOn = DateTimeOffset.UtcNow;
+		ModifiedOn = DateTime.UtcNow;
 	}
 
 	/// <summary>
@@ -165,10 +157,7 @@ public class Article : Entity
 			string.Empty,
 			string.Empty,
 			AppUserDto.Empty,
-			CategoryDto.Empty,
-			false,
-			null,
-			false)
+			CategoryDto.Empty)
 	{ Id = ObjectId.Empty };
 
 }

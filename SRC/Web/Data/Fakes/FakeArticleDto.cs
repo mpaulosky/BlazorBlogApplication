@@ -9,11 +9,7 @@
 
 using Bogus;
 
-using MongoDB.Bson;
-
-using Web.Data.Entities;
 using Web.Data.Helpers;
-using Web.Data.Models;
 
 namespace Web.Data.Fakes;
 
@@ -66,6 +62,7 @@ public static class FakeArticleDto
 				.RuleFor(f => f.ModifiedOn, _ => Helpers.Helpers.GetStaticDate())
 				.RuleFor(f => f.IsPublished, f => f.Random.Bool())
 				.RuleFor(f => f.PublishedOn, (_, f) => f.IsPublished ? Helpers.Helpers.GetStaticDate() : null)
+				.RuleFor(f => f.IsArchived, f => f.Random.Bool())
 				.RuleFor(f => f.Category, _ => FakeCategoryDto.GetNewCategoryDto(useSeed))
 				.RuleFor(f => f.Author, _ => FakeAppUserDto.GetNewAppUserDto(useSeed));
 

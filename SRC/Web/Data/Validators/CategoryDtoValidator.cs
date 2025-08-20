@@ -9,9 +9,6 @@
 
 using FluentValidation;
 
-using Web.Data.Entities;
-using Web.Data.Models;
-
 namespace Web.Data.Validators;
 
 /// <summary>

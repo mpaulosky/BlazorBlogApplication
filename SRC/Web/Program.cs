@@ -11,9 +11,8 @@ using FluentValidation;
 
 using ServiceDefaults;
 
-using Web.Components.Features.Articles.ArticleGet;
+using Web.Components.Features.Articles.ArticleDetails;
 using Web.Data.Auth0;
-using Web.Data.Models;
 using Web.Data.Validators;
 
 using static Shared.Services;

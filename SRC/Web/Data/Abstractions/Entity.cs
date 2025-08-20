@@ -7,9 +7,6 @@
 // Project Name :  Web
 // =======================================================
 
-using System.ComponentModel.DataAnnotations;
-
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Web.Data.Abstractions;
@@ -34,9 +31,8 @@ public abstract class Entity
 	/// </summary>
 	[Display(Name = "Created On")]
 	[BsonElement("createdOn")]
-	[BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
 	[BsonRepresentation(BsonType.DateTime)]
-	public DateTimeOffset CreatedOn { get; protected init; } = DateTimeOffset.UtcNow;
+	public DateTime CreatedOn { get; protected init; } = DateTime.UtcNow;
 
 	/// <summary>
 	///   Gets or sets the date and time when this entity was la/// </summary>
@@ -45,8 +41,7 @@ public abstract class Entity
 	[BsonIgnoreIfNull]
 	[BsonIgnoreIfDefault]
 	[BsonRepresentation(BsonType.DateTime)]
-	[BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-	public DateTimeOffset? ModifiedOn { get; set; }
+	public DateTime? ModifiedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets the archived status of the entity.

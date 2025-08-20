@@ -9,10 +9,7 @@
 
 using Bogus;
 
-using MongoDB.Bson;
-
 using Web.Data.Enums;
-using Web.Data.Models;
 
 namespace Web.Data.Fakes;
 

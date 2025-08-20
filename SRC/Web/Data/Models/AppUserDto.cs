@@ -7,8 +7,6 @@
 // Project Name :  Web
 // =======================================================
 
-using System.ComponentModel.DataAnnotations;
-
 namespace Web.Data.Models;
 
 /// <summary>
