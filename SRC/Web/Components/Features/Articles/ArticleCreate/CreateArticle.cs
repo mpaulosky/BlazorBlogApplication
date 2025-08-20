@@ -7,10 +7,6 @@
 // Project CategoryName :  Web
 // =======================================================
 
-using Web.Data.Abstractions;
-using Web.Data.Entities;
-using Web.Data.Models;
-
 namespace Web.Components.Features.Articles.ArticleCreate;
 
 /// <summary>
@@ -66,8 +62,8 @@ public static class CreateArticle
 					Author = request.Author,
 					Category = request.Category,
 					IsPublished = request.IsPublished,
-					PublishedOn = request.PublishedOn ?? DateTimeOffset.UtcNow,
-					Archived = request.Archived
+					PublishedOn = request.PublishedOn ?? DateTime.UtcNow,
+					Archived = request.IsArchived
 				};
 
 				await _context.Articles.InsertOneAsync(article);

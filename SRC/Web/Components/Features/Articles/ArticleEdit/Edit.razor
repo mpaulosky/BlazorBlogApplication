@@ -1,5 +1,5 @@
 @page "/articles/edit/{id:guid}"
-@using Web.Components.Features.Articles.ArticleGet
+@using Web.Components.Features.Articles.ArticleDetails
 @using Web.Data.Models
 
 @inject NavigationManager Navigation
@@ -50,7 +50,7 @@ else
 		</div>
 		<div class="mb-3">
 			<label>Archived</label>
-			<InputCheckbox class="form-check-input" @bind-Value="_article.Archived" />
+			<InputCheckbox class="form-check-input" @bind-Value="_article.IsArchived" />
 		</div>
 		<button class="btn btn-success" type="submit" disabled="@_isSubmitting">@(_isSubmitting ? "Updating..." :
 					"Edit")</button>

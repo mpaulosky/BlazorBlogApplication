@@ -7,15 +7,7 @@
 // Project Name :  Web
 // =======================================================
 
-using Mapster;
-
-using MongoDB.Bson;
-
-using Web.Data.Abstractions;
-using Web.Data.Entities;
-using Web.Data.Models;
-
-namespace Web.Components.Features.Articles.ArticleGet;
+namespace Web.Components.Features.Articles.ArticleDetails;
 
 /// <summary>
 /// Static class providing functionality for article creation.
@@ -75,7 +67,8 @@ public static class GetArticle
 				}
 
 				_logger.LogInformation("Article was found successfully: {CategoryId}", id);
-				return Result<ArticleDto>.Ok(article.Adapt<ArticleDto>());
+				var dto = ArticleDto.FromEntity(article);
+				return Result<ArticleDto>.Ok(dto);
 			}
 			catch (Exception ex)
 			{

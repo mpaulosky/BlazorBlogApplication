@@ -7,10 +7,6 @@
 // Project Name :  Web
 // =======================================================
 
-using Web.Data.Abstractions;
-using Web.Data.Entities;
-using Web.Data.Models;
-
 namespace Web.Components.Features.Articles.ArticleEdit;
 
 /// <summary>
@@ -61,9 +57,9 @@ public static class EditArticle
 					Author = request.Author,
 					Category = request.Category,
 					IsPublished = request.IsPublished,
-					PublishedOn = request.PublishedOn ?? DateTimeOffset.UtcNow,
-					Archived = request.Archived,
-					ModifiedOn = DateTimeOffset.UtcNow
+					PublishedOn = request.PublishedOn,
+					IsArchived = request.IsArchived,
+					ModifiedOn = DateTime.UtcNow
 				};
 
 				await _context.Articles.ReplaceOneAsync(

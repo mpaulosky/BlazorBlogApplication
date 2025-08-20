@@ -1,5 +1,4 @@
 @page "/articles/detail/{id:guid}"
-@using Web.Components.Features.Articles.ArticleGet
 @using Web.Data.Models
 
 @inject NavigationManager Navigation
@@ -30,7 +29,7 @@ else
 			<p><strong>Category:</strong> @_article.Category.CategoryName</p>
 			<p><strong>Published:</strong> @(_article.IsPublished ? "Yes" : "No")</p>
 			<p><strong>Published On:</strong> @_article.PublishedOn?.ToString("d")</p>
-			<p><strong>Archived:</strong> @_article.Archived</p>
+			<p><strong>Archived:</strong> @_article.IsArchived</p>
 			<button class="btn btn-secondary" @onclick="GoToEdit" disabled="@(!_article.CanEdit)">Edit</button>
 			<button class="btn btn-light" @onclick="GoToList">Back to List</button>
 		</div>

@@ -54,7 +54,7 @@ else
 					<td>@(article.ModifiedOn.HasValue? article.ModifiedOn.Value.ToShortDateString() : "")</td>
 					<td>@article.IsPublished</td>
 					<td>@article.PublishedOn?.ToString("d")</td>
-					<td>@article.Archived</td>
+					<td>@article.IsArchived</td>
 					<td>
 						<button class="btn btn-primary btn-sm mx-1" @onclick="@(() => GoToEdit(article.Id))"
 							disabled="@(!article.CanEdit)">Edit</button>
