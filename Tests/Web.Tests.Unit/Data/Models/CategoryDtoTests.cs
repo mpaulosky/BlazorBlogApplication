@@ -21,7 +21,7 @@ public class CategoryDtoTests
 		var dto = new CategoryDto();
 		dto.Id.Should().NotBeNull();
 		dto.CategoryName.Should().BeEmpty();
-		dto.CreatedOn.Should().BeAfter(DateTimeOffset.UtcNow.AddMinutes(-1));
+		dto.CreatedOn.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
 		dto.ModifiedOn.Should().BeNull();
 		dto.Archived.Should().BeFalse();
 	}
@@ -32,7 +32,7 @@ public class CategoryDtoTests
 		var dto = CategoryDto.Empty;
 		dto.Id.Should().NotBeNull();
 		dto.CategoryName.Should().BeEmpty();
-		dto.CreatedOn.Should().BeAfter(DateTimeOffset.UtcNow.AddMinutes(-1));
+		dto.CreatedOn.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
 		dto.ModifiedOn.Should().BeNull();
 		dto.Archived.Should().BeFalse();
 	}

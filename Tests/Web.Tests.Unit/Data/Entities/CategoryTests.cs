@@ -22,7 +22,7 @@ public class CategoryTests
 		var category = new Category();
 		category.Id.Should().NotBeNull();
 		category.CategoryName.Should().BeEmpty();
-		category.CreatedOn.Should().BeAfter(DateTimeOffset.UtcNow.AddMinutes(-1));
+		category.CreatedOn.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
 		category.ModifiedOn.Should().BeNull();
 		category.Archived.Should().BeFalse();
 	}

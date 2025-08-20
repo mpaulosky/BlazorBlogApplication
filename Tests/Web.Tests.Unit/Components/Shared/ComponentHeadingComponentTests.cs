@@ -34,7 +34,7 @@ public class ComponentHeadingComponentTests : BunitContext
 		cut.Markup.Should().Contain($"h{level}");
 		cut.Markup.Should().Contain(headerColor);
 		cut.Markup.Should().Contain(expectedHtml);
-		
+
 	}
 
 }

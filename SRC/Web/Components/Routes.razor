@@ -3,7 +3,7 @@
 		<Found Context="routeData">
 			<AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)">
 				<NotAuthorized>
-					<ErrorPageComponent ErrorType="404" ShadowColor="shadow-red-500" TextColor="red-600"></ErrorPageComponent>
+					<ErrorPageComponent ErrorCode="401" ShadowColor="shadow-red-500" TextColor="red-600"></ErrorPageComponent>
 				</NotAuthorized>
 				<Authorizing>
 					<div class="main">Please wait...</div>

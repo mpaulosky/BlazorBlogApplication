@@ -7,9 +7,6 @@
 // Project Name :  Web
 // =======================================================
 
-using System.ComponentModel.DataAnnotations;
-
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Web.Data.Models;
@@ -23,7 +20,7 @@ public class CategoryDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public CategoryDto() : this(ObjectId.Empty, string.Empty, DateTimeOffset.UtcNow, null, false) { }
+	public CategoryDto() : this(ObjectId.Empty, string.Empty, DateTime.UtcNow, null) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="CategoryDto" /> class.
@@ -36,8 +33,8 @@ public class CategoryDto
 	private CategoryDto(
 		ObjectId id,
 		string categoryName,
-		DateTimeOffset createdOn,
-		DateTimeOffset? modifiedOn,
+		DateTime createdOn,
+		DateTime? modifiedOn,
 		bool archived = false)
 	{
 		Id = id;
@@ -71,8 +68,7 @@ public class CategoryDto
 	[BsonElement("createdOn")]
 	[BsonRequired]
 	[BsonRepresentation(BsonType.DateTime)]
-	[BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-	public DateTimeOffset CreatedOn { get; set; }
+	public DateTime CreatedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets the date and time when this entity was last modified.
@@ -82,8 +78,7 @@ public class CategoryDto
 	[BsonIgnoreIfNull]
 	[BsonIgnoreIfDefault]
 	[BsonRepresentation(BsonType.DateTime)]
-	[BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
-	public DateTimeOffset? ModifiedOn { get; set; }
+	public DateTime? ModifiedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets a value indicating whether the article is marked as deleted.
@@ -95,7 +90,7 @@ public class CategoryDto
 	/// <summary>
 	///   Gets an empty singleton category instance.
 	/// </summary>
-	private static readonly CategoryDto _empty = new(ObjectId.Empty, string.Empty, DateTimeOffset.UtcNow, null, false);
+	private static readonly CategoryDto _empty = new(ObjectId.Empty, string.Empty, DateTime.UtcNow, null);
 	public static CategoryDto Empty => _empty;
 
 }

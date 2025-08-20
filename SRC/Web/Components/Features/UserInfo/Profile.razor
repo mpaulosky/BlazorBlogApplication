@@ -2,9 +2,11 @@
 
 @using Web.Data.Auth0
 
+@attribute [Authorize]
+
 @inject Auth0Service Auth0Service
 
-<PageHeadingComponent Level="1" HeaderText="User Profile"/>
+<PageHeadingComponent Level="1" HeaderText="User Profile" />
 
 @if (_user != null)
 {
@@ -37,8 +39,8 @@ else
 	private const string _roleClaimType = "https://schemas.microsoft.com/ws/2008/06/identity/claims/role";
 
 	/// <summary>
-  /// Initializes the component and loads user data if authenticated
-  /// </summary>
+	/// Initializes the component and loads user data if authenticated
+	/// </summary>
 	protected override async Task OnInitializedAsync()
 	{
 
@@ -48,8 +50,8 @@ else
 	}
 
 	/// <summary>
-  /// Attempts to get the authenticated user ID from the authentication state
-  /// </summary>
+	/// Attempts to get the authenticated user ID from the authentication state
+	/// </summary>
 	private async Task<string?> TryGetAuthenticatedUserIdAsync()
 	{
 
@@ -64,8 +66,8 @@ else
 	}
 
 	/// <summary>
-  /// Loads user data including roles for the specified user ID
-  /// </summary>
+	/// Loads user data including roles for the specified user ID
+	/// </summary>
 	private async Task LoadUserDataAsync(string userId)
 	{
 

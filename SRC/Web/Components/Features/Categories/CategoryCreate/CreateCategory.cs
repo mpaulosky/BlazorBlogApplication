@@ -7,10 +7,6 @@
 // Project CategoryName :  Web
 // =======================================================
 
-using Web.Data.Abstractions;
-using Web.Data.Entities;
-using Web.Data.Models;
-
 namespace Web.Components.Features.Categories.CategoryCreate;
 
 /// <summary>
@@ -29,7 +25,7 @@ public static class CreateCategory
 	public class Handler : ICreateCategoryHandler
 	{
 
-		private readonly MyBlogContext _context;
+		private readonly IMyBlogContext _context;
 		private readonly ILogger<Handler> _logger;
 
 		/// <summary>
@@ -37,7 +33,7 @@ public static class CreateCategory
 		/// </summary>
 		/// <param name="context">The database context.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(MyBlogContext context, ILogger<Handler> logger)
+		public Handler(IMyBlogContext context, ILogger<Handler> logger)
 		{
 			_context = context;
 			_logger = logger;

@@ -9,8 +9,6 @@
 
 using FluentValidation;
 
-using Web.Data.Models;
-
 namespace Web.Data.Validators;
 
 public class ArticleDtoValidator : AbstractValidator<ArticleDto>

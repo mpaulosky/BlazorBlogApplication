@@ -7,15 +7,7 @@
 // Project Name :  Web
 // =======================================================
 
-using Mapster;
-
-using MongoDB.Bson;
-
-using Web.Data.Abstractions;
-using Web.Data.Entities;
-using Web.Data.Models;
-
-namespace Web.Components.Features.Articles.ArticleGet;
+namespace Web.Components.Features.Articles.ArticleDetails;
 
 /// <summary>
 /// Static class providing functionality for article creation.
@@ -35,7 +27,7 @@ public static class GetArticle
 	/// </summary>
 	public class Handler : IGetArticleHandler
 	{
-		private readonly MyBlogContext _context;
+		private readonly IMyBlogContext _context;
 		private readonly ILogger<Handler> _logger;
 
 		/// <summary>
@@ -43,7 +35,7 @@ public static class GetArticle
 		/// </summary>
 		/// <param name="context">The database context.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(MyBlogContext context, ILogger<Handler> logger)
+		public Handler(IMyBlogContext context, ILogger<Handler> logger)
 		{
 			_context = context;
 			_logger = logger;
@@ -75,7 +67,8 @@ public static class GetArticle
 				}
 
 				_logger.LogInformation("Article was found successfully: {CategoryId}", id);
-				return Result<ArticleDto>.Ok(article.Adapt<ArticleDto>());
+				var dto = ArticleDto.FromEntity(article);
+				return Result<ArticleDto>.Ok(dto);
 			}
 			catch (Exception ex)
 			{

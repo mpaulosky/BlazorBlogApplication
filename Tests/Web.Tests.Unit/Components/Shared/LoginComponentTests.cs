@@ -34,7 +34,7 @@ public class AccessControlComponentTests : BunitContext
 
 	}
 
-	private  void SetAuthorization(bool isAuthorized = true, bool hasRoles = false)
+	private void SetAuthorization(bool isAuthorized = true, bool hasRoles = false)
 	{
 
 		var authContext = AddAuthorization();

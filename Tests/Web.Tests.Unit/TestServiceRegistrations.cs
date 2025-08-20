@@ -7,9 +7,9 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 
+using Web.Components.Features.Articles.ArticleDetails;
 using Web.Components.Features.Categories.CategoryCreate;
 using Web.Components.Features.Categories.CategoryDetails;
 using Web.Components.Features.Categories.CategoryEdit;
@@ -108,33 +108,29 @@ public static class TestServiceRegistrations
 		// Prepare sample data shared by multiple default substitutes
 		var sampleCategory = new CategoryDto
 		{
-				Id = ObjectId.GenerateNewId(),
-				CategoryName = "General Programming"
+			Id = ObjectId.GenerateNewId(),
+			CategoryName = "General Programming"
 		};
 
 		var sampleArticle = new ArticleDto
 		{
-				Id = ObjectId.GenerateNewId(),
-				Title = "The Empathy Of Mission Contemplation",
-				Introduction = "Intro",
-				Content = "Sample article content",
-				CoverImageUrl = string.Empty,
-				UrlSlug = "the-empathy-of-mission-contemplation",
-				Author = AppUserDto.Empty,
-				Category = sampleCategory,
-				CreatedOn = DateTime.UtcNow,
-				ModifiedOn = null,
-				IsPublished = true,
-				PublishedOn = DateTime.UtcNow,
-				Archived = false,
-				CanEdit = true
+			Id = ObjectId.GenerateNewId(),
+			Title = "The Empathy Of Mission Contemplation",
+			Introduction = "Intro",
+			Content = "Sample article content",
+			CoverImageUrl = string.Empty,
+			UrlSlug = "the-empathy-of-mission-contemplation",
+			Author = AppUserDto.Empty,
+			Category = sampleCategory,
+			CreatedOn = DateTime.UtcNow,
+			ModifiedOn = null,
+			IsPublished = true,
+			PublishedOn = DateTime.UtcNow,
+			IsArchived = false,
+			CanEdit = true
 		};
 
-		// Categories
-		Func<Type, bool> isRegistered = t => ctx.Services.Any(sd => sd.ServiceType == t);
-		Func<Type, Type, bool> isEitherRegistered = (iface, concrete) => isRegistered(iface) || isRegistered(concrete);
-
-		if (!isEitherRegistered(typeof(GetCategory.IGetCategoryHandler), typeof(GetCategory.Handler)))
+		if (!IsEitherRegistered(typeof(GetCategory.IGetCategoryHandler), typeof(GetCategory.Handler)))
 		{
 			var getCategorySub = Substitute.For<GetCategory.IGetCategoryHandler>();
 
@@ -161,7 +157,7 @@ public static class TestServiceRegistrations
 			});
 		}
 
-		if (!isEitherRegistered(typeof(GetCategories.IGetCategoriesHandler), typeof(GetCategories.Handler)))
+		if (!IsEitherRegistered(typeof(GetCategories.IGetCategoriesHandler), typeof(GetCategories.Handler)))
 		{
 			var getCategoriesSub = Substitute.For<GetCategories.IGetCategoriesHandler>();
 
@@ -185,7 +181,7 @@ public static class TestServiceRegistrations
 			});
 		}
 
-		if (!isEitherRegistered(typeof(CreateCategory.ICreateCategoryHandler), typeof(CreateCategory.Handler)))
+		if (!IsEitherRegistered(typeof(CreateCategory.ICreateCategoryHandler), typeof(CreateCategory.Handler)))
 		{
 			var createCategorySub = Substitute.For<CreateCategory.ICreateCategoryHandler>();
 			createCategorySub.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
@@ -207,7 +203,7 @@ public static class TestServiceRegistrations
 			});
 		}
 
-		if (!isEitherRegistered(typeof(EditCategory.IEditCategoryHandler), typeof(EditCategory.Handler)))
+		if (!IsEitherRegistered(typeof(EditCategory.IEditCategoryHandler), typeof(EditCategory.Handler)))
 		{
 			var editCategorySub = Substitute.For<EditCategory.IEditCategoryHandler>();
 			editCategorySub.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
@@ -230,7 +226,7 @@ public static class TestServiceRegistrations
 		}
 
 		// Articles
-		if (!isEitherRegistered(typeof(GetArticle.IGetArticleHandler), typeof(GetArticle.Handler)))
+		if (!IsEitherRegistered(typeof(GetArticle.IGetArticleHandler), typeof(GetArticle.Handler)))
 		{
 			var getArticleSub = Substitute.For<GetArticle.IGetArticleHandler>();
 			getArticleSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(sampleArticle)));
@@ -252,7 +248,7 @@ public static class TestServiceRegistrations
 			});
 		}
 
-		if (!isEitherRegistered(typeof(GetArticles.IGetArticlesHandler), typeof(GetArticles.Handler)))
+		if (!IsEitherRegistered(typeof(GetArticles.IGetArticlesHandler), typeof(GetArticles.Handler)))
 		{
 			var getArticlesSub = Substitute.For<GetArticles.IGetArticlesHandler>();
 
@@ -275,6 +271,13 @@ public static class TestServiceRegistrations
 				return getArticlesSub;
 			});
 		}
+
+		return;
+
+		bool IsEitherRegistered(Type iface, Type concrete) => IsRegistered(iface) || IsRegistered(concrete);
+
+		// Categories
+		bool IsRegistered(Type t) => ctx.Services.Any(sd => sd.ServiceType == t);
 	}
 
 	// Simple IAsyncCursor<T> implementation used for default FindAsync responses in tests
@@ -387,6 +390,12 @@ public static class TestServiceRegistrations
 		catch
 		{
 			// Swallow - registration of substitutes is the best effort for test safety.
+		}
+
+		// Ensure a minimal Auth0Service is available for components that inject it.
+		if (ctx.Services.All(sd => sd.ServiceType != typeof(Web.Data.Auth0.Auth0Service)))
+		{
+			RegisterAuth0Service(ctx);
 		}
 	}
 

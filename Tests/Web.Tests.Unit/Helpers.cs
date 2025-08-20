@@ -31,22 +31,33 @@ public static class Helpers
 		// This includes NavigationManager, loggers, a lightweight Auth0Service,
 		// a test MyBlogContext, and handler substitutes/mappings. Individual
 		// tests may still override or register concrete handlers as needed.
-		TestServiceRegistrations.RegisterAll(context);
+		//TestServiceRegistrations.RegisterAll(context);
 
 		var authContext = context.AddAuthorization();
 
 		if (isAuthorized)
 		{
+			// Keep the default test identity name for broad test compatibility
 			authContext.SetAuthorized("Test User");
+
+			// Build claims: include email and a sample profile picture URL as string, and optional roles
+			const string testEmail = "test@example.com";
+			var claims = new List<Claim>
+			{
+				new(ClaimTypes.Email, testEmail),
+				new("picture", "https://example.com/picture.jpg")
+			};
+
+			if (roles.Length > 0)
+			{
+				claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
+			}
+
+			authContext.SetClaims(claims.ToArray());
 		}
 		else
 		{
 			authContext.SetNotAuthorized();
-		}
-
-		if (roles.Length > 0)
-		{
-			authContext.SetClaims(roles.Select(r => new Claim(ClaimTypes.Role, r)).ToArray());
 		}
 
 	}

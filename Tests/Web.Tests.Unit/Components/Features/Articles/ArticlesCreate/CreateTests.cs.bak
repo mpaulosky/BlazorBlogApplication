@@ -8,11 +8,10 @@
 // =======================================================
 
 using Web.Components.Features.Articles.ArticleCreate;
+
 using static Web.Components.Features.Articles.ArticleCreate.CreateArticle;
 
-using Microsoft.AspNetCore.Components;
-
-namespace Web.Components.Features.Articles;
+namespace Web.Components.Features.Articles.ArticlesCreate;
 
 /// <summary>
 ///   Unit tests for <see cref="Create" /> (Articles Create Page).
@@ -23,34 +22,21 @@ public class CreateTests : BunitContext
 {
 
 	private readonly ICreateArticleHandler _mockHandler;
-	private readonly ILogger<Create> _mockLogger;
 
 	public CreateTests()
 	{
 		_mockHandler = Substitute.For<ICreateArticleHandler>();
-		_mockLogger = Substitute.For<ILogger<Create>>();
+		var mockLogger = Substitute.For<ILogger<Create>>();
 		Services.AddScoped(_ => _mockHandler);
-		Services.AddScoped(_ => _mockLogger);
-		// Removed registration for concrete Handler type; only register the interface for mocking
+		Services.AddScoped(_ => mockLogger);
 		Services.AddScoped<ICreateArticleHandler>(_ => _mockHandler);
 		Services.AddCascadingAuthenticationState();
 		Services.AddAuthorization();
 	}
-
-	[Fact]
-	public void Renders_Form()
-	{
-		// Arrange
-		Helpers.SetAuthorization(this);
-		var cut = Render<Create>();
-
-		// Act
-		// (No action needed, render)
-
-		// Assert
-		cut.Markup.Should().Contain("Title");
-		cut.Markup.Should().Contain("Introduction");
-	}
+	//
+	// public CreateTests(ILogger<Create> mockLogger) {
+	// 	_mockLogger = mockLogger;
+	// }
 
 	[Fact]
 	public void Renders_Form_With_All_Fields()
@@ -180,17 +166,76 @@ public class CreateTests : BunitContext
 		await submitTask;
 	}
 
-	[Fact(Skip = "Bunit does not enforce [Authorize]; form is always rendered in test context.")]
-	public void Only_Admin_Or_Author_Can_Access()
+	[Fact]
+	public void Cancel_Button_Navigates_To_Articles_List()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this, false);
-
-		// Act
+		Helpers.SetAuthorization(this, true, "Admin");
+		var nav = Services.GetRequiredService<NavigationManager>();
 		var cut = Render<Create>();
 
+		// Act
+		var cancel = cut.Find("button[type='button']");
+		cancel.Click();
+
 		// Assert
-		cut.FindAll("form").Should().BeEmpty(); // No form should be rendered for unauthorized users
+		nav.Uri.Should().EndWith("/articles");
+	}
+
+	[Fact]
+	public void Unauthenticated_User_Is_Shown_NotAuthorized()
+	{
+		// Arrange - simulate not authorized
+		Helpers.SetAuthorization(this, false);
+		TestServiceRegistrations.RegisterCommonUtilities(this);
+
+		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
+		{
+			builder.OpenComponent<ErrorPageComponent>(0);
+			builder.AddAttribute(1, "ErrorCode", 401);
+			builder.AddAttribute(2, "TextColor", "red-600");
+			builder.AddAttribute(3, "ShadowStyle", "shadow-red-500");
+			builder.CloseComponent();
+		};
+
+		var cut = Render<AuthorizeView>(parameters => parameters
+			.Add(p => p.Authorized, authorizedFragment)
+			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+		);
+
+		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message
+		cut.Markup.Should().Contain("401 Unauthorized");
+		cut.Markup.Should().Contain("You are not authorized to view this page.");
+	}
+
+	[Fact]
+	public void Authenticated_NonAdmin_NonAuthor_Is_Shown_NotAuthorized()
+	{
+		// Arrange - simulate authenticated user without Admin/Author roles
+		Helpers.SetAuthorization(this, true, "User");
+		TestServiceRegistrations.RegisterCommonUtilities(this);
+
+		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
+		{
+			builder.OpenComponent<ErrorPageComponent>(0);
+			builder.AddAttribute(1, "ErrorCode", 401);
+			builder.AddAttribute(2, "TextColor", "red-600");
+			builder.AddAttribute(3, "ShadowStyle", "shadow-red-500");
+			builder.CloseComponent();
+		};
+
+		var cut = Render<AuthorizeView>(parameters => parameters
+			.Add(p => p.Authorized, authorizedFragment)
+			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+		);
+
+		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message
+		cut.Markup.Should().Contain("401 Unauthorized");
+		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
 
 }

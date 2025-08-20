@@ -7,6 +7,8 @@
 // Project Name :  AppHost
 // =======================================================
 
+using System.Diagnostics.CodeAnalysis;
+
 using static Shared.Services;
 
 namespace AppHost;
@@ -14,6 +16,7 @@ namespace AppHost;
 /// <summary>
 /// Entry point for the distributed application host. Configures and runs the Aspire projects.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public static class AppHostEntryPoint
 {
 

@@ -7,10 +7,6 @@
 // Project Name :  Web
 // =======================================================
 
-using Web.Data.Abstractions;
-using Web.Data.Entities;
-using Web.Data.Models;
-
 namespace Web.Components.Features.Articles.ArticleEdit;
 
 /// <summary>
@@ -30,7 +26,7 @@ public static class EditArticle
 	public class Handler : IEditArticleHandler
 	{
 
-		private readonly MyBlogContext _context;
+		private readonly IMyBlogContext _context;
 
 		private readonly ILogger<Handler> _logger;
 
@@ -39,7 +35,7 @@ public static class EditArticle
 		/// </summary>
 		/// <param name="context">The database context.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(MyBlogContext context, ILogger<Handler> logger)
+		public Handler(IMyBlogContext context, ILogger<Handler> logger)
 		{
 			_context = context;
 			_logger = logger;
@@ -61,9 +57,9 @@ public static class EditArticle
 					Author = request.Author,
 					Category = request.Category,
 					IsPublished = request.IsPublished,
-					PublishedOn = request.PublishedOn ?? DateTimeOffset.UtcNow,
-					Archived = request.Archived,
-					ModifiedOn = DateTimeOffset.UtcNow
+					PublishedOn = request.PublishedOn,
+					IsArchived = request.IsArchived,
+					ModifiedOn = DateTime.UtcNow
 				};
 
 				await _context.Articles.ReplaceOneAsync(

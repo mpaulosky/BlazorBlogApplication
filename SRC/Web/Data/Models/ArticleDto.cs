@@ -7,9 +7,6 @@
 // Project Name :  Web
 // =======================================================
 
-using System.ComponentModel.DataAnnotations;
-
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 using Web.Data.Validators;
@@ -26,7 +23,7 @@ public sealed class ArticleDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public ArticleDto() : this(ObjectId.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false, null, false, false) { }
+	public ArticleDto() : this(ObjectId.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="ArticleDto" /> class.
@@ -43,7 +40,7 @@ public sealed class ArticleDto
 	/// <param name="modifiedOn">The date the item was modified</param>
 	/// <param name="isPublished">The newly published status</param>
 	/// <param name="publishedOn">The new publication date</param>
-	/// <param name="archived">Gets or sets the archived status of the entity.</param>
+	/// <param name="isArchived">Gets or sets the archived status of the entity.</param>
 	/// <param name="canEdit"></param>
 	private ArticleDto(
 		ObjectId id,
@@ -58,7 +55,7 @@ public sealed class ArticleDto
 		DateTime? modifiedOn,
 		bool isPublished,
 		DateTime? publishedOn = null,
-		bool archived = false,
+		bool isArchived = false,
 		bool canEdit = false)
 	{
 		Id = id;
@@ -73,7 +70,7 @@ public sealed class ArticleDto
 		ModifiedOn = modifiedOn;
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
-		Archived = archived;
+		IsArchived = isArchived;
 		CanEdit = canEdit;
 	}
 
@@ -153,7 +150,6 @@ public sealed class ArticleDto
 	[BsonElement("createdOn")]
 	[BsonRequired]
 	[BsonRepresentation(BsonType.DateTime)]
-	[BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
 	public DateTime CreatedOn { get; set; }
 
 	/// <summary>
@@ -164,7 +160,6 @@ public sealed class ArticleDto
 	[BsonIgnoreIfNull]
 	[BsonIgnoreIfDefault]
 	[BsonRepresentation(BsonType.DateTime)]
-	[BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
 	public DateTime? ModifiedOn { get; set; }
 
 	/// <summary>
@@ -183,15 +178,14 @@ public sealed class ArticleDto
 	[BsonIgnoreIfNull]
 	[BsonIgnoreIfDefault]
 	[BsonRepresentation(BsonType.DateTime)]
-	[BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
 	public DateTime? PublishedOn { get; set; }
 
 	/// <summary>
-	///   Gets or sets a value indicating whether the article is marked as deleted.
+	///   Gets or sets a value indicating whether the article is marked as archived.
 	/// </summary>
 	[BsonRepresentation(BsonType.Boolean)]
-	[BsonElement("archived")]
-	public bool Archived { get; set; }
+	[BsonElement("isArchived")]
+	public bool IsArchived { get; set; }
 
 	/// <summary>
 	///   Indicates whether the current user can edit/delete this article.
@@ -215,10 +209,28 @@ public sealed class ArticleDto
 			CategoryDto.Empty,
 			DateTime.MinValue,
 			null,
-			false,
-			null,
-			false,
 			false
 		);
+
+	public static ArticleDto FromEntity(Article article)
+	{
+		return new ArticleDto
+		{
+			Id = article.Id,
+			Title = article.Title,
+			Introduction = article.Introduction,
+			Content = article.Content,
+			CoverImageUrl = article.CoverImageUrl,
+			UrlSlug = article.UrlSlug,
+			Author = article.Author,
+			Category = article.Category,
+			CreatedOn = article.CreatedOn,
+			ModifiedOn = article.ModifiedOn,
+			IsPublished = article.IsPublished,
+			PublishedOn = article.PublishedOn,
+			IsArchived = article.IsArchived,
+			CanEdit = false
+		};
+	}
 
 }

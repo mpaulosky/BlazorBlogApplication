@@ -7,12 +7,6 @@
 // Project CategoryName :  Web
 // =======================================================
 
-using System.ComponentModel.DataAnnotations;
-
-using MongoDB.Bson;
-
-using Web.Data.Abstractions;
-
 namespace Web.Data.Entities;
 
 /// <summary>
