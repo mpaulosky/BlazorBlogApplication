@@ -26,12 +26,12 @@ public class Result
 
 	public static Result Ok()
 	{
-		return new Result (true);
+		return new Result(true);
 	}
 
 	public static Result Fail(string errorMessage)
 	{
-		return new Result (false, errorMessage);
+		return new Result(false, errorMessage);
 	}
 
 	public static Result<T> Ok<T>(T value)

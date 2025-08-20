@@ -25,8 +25,8 @@ public class AboutPageTest : BunitContext
 		const string expectedHtml =
 				"""
 				<header class="mx-auto max-w-7xl mb-6
-								p-1 sm:px-4 md:px-6 lg:px-8 
-								rounded-md shadow-md 
+								p-1 sm:px-4 md:px-6 lg:px-8
+								rounded-md shadow-md
 								shadow-blue-500">
 				  <h1 class="text-3xl font-bold tracking-tight text-gray-50">About</h1>
 				</header>

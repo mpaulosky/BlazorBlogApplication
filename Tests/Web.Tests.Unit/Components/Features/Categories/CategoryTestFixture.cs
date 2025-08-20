@@ -128,7 +128,7 @@ public class CategoryTestFixture : IAsyncDisposable
 	///   Create a concrete EditCategory.Handler wired to the fixture's MyBlogContext via a factory stub.
 	///   Tests can register this into a bUnit TestContext or the test DI container.
 	/// </summary>
-	private				EditCategory.Handler CreateEditHandler()
+	private EditCategory.Handler CreateEditHandler()
 	{
 		var editLogger = Substitute.For<ILogger<EditCategory.Handler>>();
 		var factory = new TestMyBlogContextFactory(BlogContext);

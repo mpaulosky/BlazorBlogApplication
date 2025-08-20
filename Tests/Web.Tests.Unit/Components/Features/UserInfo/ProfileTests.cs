@@ -100,3 +100,4 @@ public class ProfileTests : BunitContext
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
 }
+
