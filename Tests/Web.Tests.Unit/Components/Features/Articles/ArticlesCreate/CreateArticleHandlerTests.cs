@@ -9,7 +9,7 @@
 
 using Web.Components.Features.Articles.ArticleCreate;
 
-namespace Web.Components.Features.Articles;
+namespace Web.Components.Features.Articles.ArticlesCreate;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(CreateArticle.Handler))]

@@ -8,13 +8,10 @@
 // =======================================================
 
 using Web.Components.Features.Articles.ArticleCreate;
+
 using static Web.Components.Features.Articles.ArticleCreate.CreateArticle;
 
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using Web.Components.Shared;
-
-namespace Web.Components.Features.Articles;
+namespace Web.Components.Features.Articles.ArticlesCreate;
 
 /// <summary>
 ///   Unit tests for <see cref="Create" /> (Articles Create Page).
@@ -25,19 +22,21 @@ public class CreateTests : BunitContext
 {
 
 	private readonly ICreateArticleHandler _mockHandler;
-	private readonly ILogger<Create> _mockLogger;
 
 	public CreateTests()
 	{
 		_mockHandler = Substitute.For<ICreateArticleHandler>();
-		_mockLogger = Substitute.For<ILogger<Create>>();
+		var mockLogger = Substitute.For<ILogger<Create>>();
 		Services.AddScoped(_ => _mockHandler);
-		Services.AddScoped(_ => _mockLogger);
-		// Removed registration for concrete Handler type; only register the interface for mocking
+		Services.AddScoped(_ => mockLogger);
 		Services.AddScoped<ICreateArticleHandler>(_ => _mockHandler);
 		Services.AddCascadingAuthenticationState();
 		Services.AddAuthorization();
 	}
+	//
+	// public CreateTests(ILogger<Create> mockLogger) {
+	// 	_mockLogger = mockLogger;
+	// }
 
 	[Fact]
 	public void Renders_Form_With_All_Fields()
@@ -191,8 +190,8 @@ public class CreateTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
-		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
 			builder.AddAttribute(1, "ErrorCode", 401);
@@ -219,8 +218,8 @@ public class CreateTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
-		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
 			builder.AddAttribute(1, "ErrorCode", 401);

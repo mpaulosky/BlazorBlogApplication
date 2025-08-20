@@ -7,15 +7,10 @@
 // Project Name :  Web.Tests.Bunit
 // =======================================================
 
-using Web.Components.Features.Articles.ArticleEdit;
 using static Web.Components.Features.Articles.ArticleEdit.EditArticle;
-using static Web.Components.Features.Articles.ArticleGet.GetArticle;
+using static Web.Components.Features.Articles.ArticleDetails.GetArticle;
 
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
-using Web.Components.Shared;
-
-namespace Web.Components.Features.Articles;
+namespace Web.Components.Features.Articles.ArticleEdit;
 
 /// <summary>
 ///   Unit tests for <see cref="Edit" /> (Articles Edit Page).
@@ -222,9 +217,9 @@ public class EditTests : BunitContext
 		_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Task.FromResult(Result.Ok()));
 
 		// Configure the FluentValidation validator to return a validation failure
-		// so the ValidationSummary/validator components render errors on submit.
+		// so the ValidationSummary/validator components render errors on submitting.
 		_articleDtoValidator.Validate(Arg.Any<ValidationContext<ArticleDto>>())
-			.Returns(new ValidationResult(new[] { new ValidationFailure("Title", "Title is required") }));
+			.Returns(new ValidationResult([ new ValidationFailure("Title", "Title is required") ]));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, article.Id));
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetField("_article", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, article);
@@ -262,8 +257,8 @@ public class EditTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
-		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
 			builder.AddAttribute(1, "ErrorCode", 401);
@@ -290,8 +285,8 @@ public class EditTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = auth => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
-		RenderFragment<AuthenticationState> notAuthorizedFragment = auth => builder =>
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
 			builder.AddAttribute(1, "ErrorCode", 401);

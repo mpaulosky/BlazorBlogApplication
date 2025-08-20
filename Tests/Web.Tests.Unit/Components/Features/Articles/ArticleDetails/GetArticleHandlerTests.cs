@@ -7,37 +7,35 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using NSubstitute;
-using System.Threading;
-using Web.Components.Features.Articles.ArticleGet;
-using Web.Data;
-using Web.Data.Entities;
-using Web.Data.Models;
-using Web.Components.Features.Categories; // for StubCursor
+using Web.Components.Features.Categories;
+using Web.Data.Helpers;
 
-namespace Web.Components.Features.Articles;
+// for StubCursor
+
+namespace Web.Components.Features.Articles.ArticleDetails;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(GetArticle.Handler))]
 public class GetArticleHandlerTests
 {
+	static GetArticleHandlerTests()
+	{
+		MapsterConfig.RegisterMappings();
+	}
+
 	public enum FailureScenario
 	{
-		EmptyId,
-		NotFound,
-		FindThrows,
-		ArticlesGetterThrows
+		EMPTY_ID,
+		NOT_FOUND,
+		FIND_THROWS,
+		ARTICLES_GETTER_THROWS
 	}
 
 	[Theory]
-	[InlineData(FailureScenario.EmptyId)]
-	[InlineData(FailureScenario.NotFound)]
-	[InlineData(FailureScenario.FindThrows)]
-	[InlineData(FailureScenario.ArticlesGetterThrows)]
+	[InlineData(FailureScenario.EMPTY_ID)]
+	[InlineData(FailureScenario.NOT_FOUND)]
+	[InlineData(FailureScenario.FIND_THROWS)]
+	[InlineData(FailureScenario.ARTICLES_GETTER_THROWS)]
 	public async Task HandleAsync_UnexpectedStates_ReturnsFailure(FailureScenario scenario)
 	{
 		// Arrange
@@ -46,19 +44,19 @@ public class GetArticleHandlerTests
 
 		switch (scenario)
 		{
-			case FailureScenario.EmptyId:
+			case FailureScenario.EMPTY_ID:
 				context.Articles.Returns(collection);
 				break;
-			case FailureScenario.NotFound:
+			case FailureScenario.NOT_FOUND:
 				var emptyCursor = new StubCursor<Article>(new List<Article>());
 				collection.FindAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<FindOptions<Article, Article>>(), Arg.Any<CancellationToken>()).ReturnsForAnyArgs(Task.FromResult((IAsyncCursor<Article>)emptyCursor));
 				context.Articles.Returns(collection);
 				break;
-			case FailureScenario.FindThrows:
-				collection.When(c => c.FindAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<FindOptions<Article, Article>>(), Arg.Any<CancellationToken>())).Do(ci => throw new InvalidOperationException("Find failed"));
+			case FailureScenario.FIND_THROWS:
+				collection.When(c => c.FindAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<FindOptions<Article, Article>>(), Arg.Any<CancellationToken>())).Do(_ => throw new InvalidOperationException("Find failed"));
 				context.Articles.Returns(collection);
 				break;
-			case FailureScenario.ArticlesGetterThrows:
+			case FailureScenario.ARTICLES_GETTER_THROWS:
 				// Simulate Articles property throwing when accessed
 				context.Articles.Returns(_ => throw new InvalidOperationException("Getter fail"));
 				break;
@@ -67,7 +65,7 @@ public class GetArticleHandlerTests
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
 		var handler = new GetArticle.Handler(context, logger);
 
-		var id = scenario == FailureScenario.EmptyId ? ObjectId.Empty : ObjectId.GenerateNewId();
+		var id = scenario == FailureScenario.EMPTY_ID ? ObjectId.Empty : ObjectId.GenerateNewId();
 
 		// Act
 		var result = await handler.HandleAsync(id);
@@ -85,10 +83,10 @@ public class GetArticleHandlerTests
 		var article = FakeArticle.GetNewArticle(true);
 
 		var collection = Substitute.For<IMongoCollection<Article>>();
-		var cursor = new StubCursor<Article>(new List<Article> { article });
+		var cursor = new StubCursor<Article>([article]);
 		collection
 				.FindAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<FindOptions<Article, Article>>(), Arg.Any<CancellationToken>())
-				.ReturnsForAnyArgs(Task.FromResult((IAsyncCursor<Article>)cursor));
+				.ReturnsForAnyArgs(Task.FromResult<IAsyncCursor<Article>>(cursor));
 
 		var context = Substitute.For<IMyBlogContext>();
 		context.Articles.Returns(collection);
@@ -96,10 +94,10 @@ public class GetArticleHandlerTests
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
 		var handler = new GetArticle.Handler(context, logger);
 
-		var id = ObjectId.GenerateNewId();
+		//var id = ObjectId.GenerateNewId();
 
 		// Act
-		var result = await handler.HandleAsync(id);
+		var result = await handler.HandleAsync(article.Id);
 
 		// Assert
 		if (result.Failure)
@@ -179,7 +177,7 @@ public class GetArticleHandlerTests
 		// Arrange - make FindAsync throw
 		var collection = Substitute.For<IMongoCollection<Article>>();
 		collection.When(c => c.FindAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<FindOptions<Article, Article>>(), Arg.Any<CancellationToken>()))
-				.Do(ci => throw new InvalidOperationException("DB fail"));
+				.Do(_ => throw new InvalidOperationException("DB fail"));
 
 		var context = Substitute.For<IMyBlogContext>();
 		context.Articles.Returns(collection);
@@ -208,7 +206,7 @@ public class GetArticleHandlerTests
 	{
 		// Arrange - ensure the StubCursor behaves as expected when FirstOrDefaultAsync is called
 		var article = FakeArticle.GetNewArticle(true);
-		var cursor = new StubCursor<Article>(new List<Article> { article });
+		var cursor = new StubCursor<Article>([article]);
 
 		// Act
 		Article? found = null;
@@ -229,7 +227,7 @@ public class GetArticleHandlerTests
 		}
 
 		found.Should().NotBeNull();
-		found!.Id.Should().Be(article.Id);
+		found.Id.Should().Be(article.Id);
 	}
 
 }
