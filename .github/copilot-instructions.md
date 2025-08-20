@@ -92,6 +92,18 @@ These instructions define the required coding, architecture, and project rules f
 - **Require LICENSE:** `true` (see `LICENSE`)
 - **Require Code of Conduct:** `true` (see `CODE_OF_CONDUCT.md`)
 - **Require File Copyright Headers:** `true`
+- **Use Copyright Header Format:** `true` (see below for format)
+
+```
+=======================================================
+Copyright (c) ${File.CreatedYear}. All rights reserved.
+File Name :     ${File.FileName}
+Company :       mpaulosky
+Author :        Matthew Paulosky
+Solution Name : ${File.SolutionName}
+Project Name :  ${File.ProjectName}
+=======================================================
+```
 
 ### Logging (Required)
 
