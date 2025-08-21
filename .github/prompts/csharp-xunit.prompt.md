@@ -1,6 +1,5 @@
 ---
-mode: "agent"
-tools: ["changes", "codebase", "editFiles", "problems", "search"]
+tools: ["changes", "codebase", "editFiles", "problems", "search", "github"]
 description: "Get best practices for XUnit unit testing, including data-driven tests"
 ---
 

@@ -84,7 +84,8 @@ jobs:
                 --logger "trx;LogFileName=${filename}.trx" \
                 --logger "junit;LogFileName=${filename}.xml" \
                 --collect:"XPlat Code Coverage" \
-                --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log" --settings runsettings.xml
+                --settings runsettings.xml \
+                --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
               rc=$?
               set -e
 
@@ -186,12 +187,10 @@ jobs:
 
       - name: Codecov
         uses: codecov/codecov-action@v5.4.3
-        
+
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/test-results-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -208,6 +207,7 @@ jobs:
           check_run: false
           files: |
             ${{ github.workspace }}/TestResults/**/*.trx
+            ${{ github.workspace }}/TestResults/**/*.xml
 
       - name: Install GitVersion
         if: github.actor != 'nektos/act'
