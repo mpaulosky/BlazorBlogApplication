@@ -27,6 +27,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    # Allow the job to request OIDC tokens for Codecov tokenless uploads
+    permissions:
+      id-token: write
+
     env:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
@@ -84,6 +88,8 @@ jobs:
                 --logger "trx;LogFileName=${filename}.trx" \
                 --logger "junit;LogFileName=${filename}.xml" \
                 --collect:"XPlat Code Coverage" \
+                --settings runsettings.xml \
+                --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
                 --settings runsettings.xml \
                 --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
               rc=$?
@@ -185,8 +191,21 @@ jobs:
           name: Test-Logs
           path: ${{ github.workspace }}/TestResults/**/*.log
 
-      - name: Codecov
-        uses: codecov/codecov-action@v5.4.3
+      - name: Upload coverage to Codecov (explicit)
+        uses: codecov/codecov-action@v5
+        with:
+          # Search the TestResults folder where dotnet test writes coverage XML
+          directory: TestResults
+          # Explicitly look for common coverage file names created by coverlet / XPlat collector
+          files: TestResults/**/*.coverage.cobertura.xml,TestResults/**/coverage.cobertura.xml,TestResults/**/*.coverage.xml,**/coverage.cobertura.xml
+          # Don't fail the whole CI when Codecov has a problem; set as desired
+          fail_ci_if_error: false
+          # Helpful when debugging why files aren't found
+          verbose: true
+          # Optional: group this upload under a flag
+          flags: unittests
+        # Use OIDC to authenticate uploads where possible (public repos or org-level allowlist)
+      # Use OIDC or CODECOV_TOKEN (set as a repo secret) for authentication. No explicit env required here.
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
@@ -207,6 +226,7 @@ jobs:
           check_run: false
           files: |
             ${{ github.workspace }}/TestResults/**/*.trx
+            ${{ github.workspace }}/TestResults/**/*.xml
             ${{ github.workspace }}/TestResults/**/*.xml
 
       - name: Install GitVersion
