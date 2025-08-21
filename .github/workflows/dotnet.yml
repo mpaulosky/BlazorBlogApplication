@@ -31,6 +31,10 @@ jobs:
     permissions:
       id-token: write
 
+    # Allow the job to request OIDC tokens for Codecov tokenless uploads
+    permissions:
+      id-token: write
+
     env:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
@@ -88,6 +92,8 @@ jobs:
                 --logger "trx;LogFileName=${filename}.trx" \
                 --logger "junit;LogFileName=${filename}.xml" \
                 --collect:"XPlat Code Coverage" \
+                --settings runsettings.xml \
+                --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
                 --settings runsettings.xml \
                 --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
                 --settings runsettings.xml \
@@ -226,6 +232,7 @@ jobs:
           check_run: false
           files: |
             ${{ github.workspace }}/TestResults/**/*.trx
+            ${{ github.workspace }}/TestResults/**/*.xml
             ${{ github.workspace }}/TestResults/**/*.xml
 
       - name: Install GitVersion
