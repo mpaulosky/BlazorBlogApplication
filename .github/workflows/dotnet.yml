@@ -95,7 +95,6 @@ jobs:
                 --settings runsettings.xml \
                 --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
                 --settings runsettings.xml \
-                --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
                 --settings runsettings.xml \
                 --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
               rc=$?
