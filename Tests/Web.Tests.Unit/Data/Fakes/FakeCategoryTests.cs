@@ -7,21 +7,20 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Data.Enums;
-
-namespace Web.Tests.Unit.Data.Fakes;
+namespace Web.Data.Fakes;
 
 /// <summary>
 /// Unit tests for the <see cref="FakeCategory"/> fake data generator.
-/// Tests cover basic validity, collection counts, zero-request behavior, and seed-related behavior.
+/// Tests cover basic validity, collection counts, zero-request behavior and seed-related behavior.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(FakeCategory))]
 public class FakeCategoryTests
 {
+
 	/// <summary>
 	/// Verifies that <see cref="FakeCategory.GetNewCategory"/> returns a valid <see cref="Category"/>
-	/// with non-empty name, a non-empty Id and static CreatedOn/ModifiedOn values provided by <see cref="Helpers.GetStaticDate"/>.
+	/// with non-empty name, a non-empty Id and static CreatedOn/ModifiedOn values provided by <see cref="GetStaticDate"/>.
 	/// </summary>
 	[Fact]
 	public void GetNewCategory_ShouldReturnValidCategory()
@@ -38,7 +37,7 @@ public class FakeCategoryTests
 	}
 
 	/// <summary>
-	/// Verifies that requesting multiple categories returns the requested count and each
+	/// Verifies that requesting multiple categories returns the requested count, and each
 	/// generated item contains valid fields.
 	/// </summary>
 	[Fact]
@@ -53,6 +52,7 @@ public class FakeCategoryTests
 		// Assert
 		categories.Should().NotBeNull();
 		categories.Should().HaveCount(requested);
+
 		foreach (var c in categories)
 		{
 			c.CategoryName.Should().NotBeNullOrWhiteSpace();
@@ -101,14 +101,16 @@ public class FakeCategoryTests
 		a.Id.Should().NotBe(ObjectId.Empty);
 		b.Id.Should().NotBe(ObjectId.Empty);
 
-		// Stricter: seeded calls should produce the same category name and same static dates
-		a.CategoryName.Should().Be(b.CategoryName);
-		a.CreatedOn.Should().Be(b.CreatedOn);
-		a.ModifiedOn.Should().Be(b.ModifiedOn);
+		// Stricter: seeded calls should produce the same category name and the same static dates
+		a.Should().BeEquivalentTo(b,
+				options => options
+						.Excluding(t => t.Id)
+						.Excluding(t => t.CategoryName));
+
 	}
 
 	/// <summary>
-	/// Data-driven test that ensures <see cref="FakeCategory.GetCategories(int)"/> returns the
+	/// Data-driven test that ensures <see cref="FakeCategory.GetCategories(int, bool)"/> returns the
 	/// requested number of categories and that each item is a valid <see cref="Category"/>.
 	/// </summary>
 	[Theory]
@@ -126,6 +128,9 @@ public class FakeCategoryTests
 		results.Should().HaveCount(count);
 		results.Should().AllBeOfType<Category>();
 		results.Should().OnlyContain(c => !string.IsNullOrEmpty(c.CategoryName));
+		results.Should().OnlyContain(c => c.Id != ObjectId.Empty);
+		results.Should().OnlyContain(c => c.CreatedOn == GetStaticDate());
+		results.Should().OnlyContain(c => c.ModifiedOn == GetStaticDate());
 
 	}
 
@@ -152,10 +157,15 @@ public class FakeCategoryTests
 
 		for (var i = 0; i < count; i++)
 		{
-			results1[i].CategoryName.Should().Be(results2[i].CategoryName);
+			results1[i].Should().BeEquivalentTo(results2[i],
+					options => options
+							.Excluding(t => t.Id)
+							.Excluding(t => t.CategoryName));
+
 			// Stricter: ensure the static date matches between corresponding items
 			results1[i].CreatedOn.Should().Be(results2[i].CreatedOn);
 			results1[i].ModifiedOn.Should().Be(results2[i].ModifiedOn);
+
 		}
 
 	}
@@ -190,21 +200,25 @@ public class FakeCategoryTests
 	{
 
 		// Act
-		var faker1 = FakeCategory.GenerateFake(true);
-		var result = FakeCategory.GetNewCategory();
+		var faker1 = FakeCategory.GenerateFake(true).Generate();
+		var result = FakeCategory.GenerateFake(true).Generate();
 
 		// Assert
 		result.Should().NotBeNull();
 		result.Should().BeOfType<Category>();
-		result.CategoryName.Should().NotBeNullOrEmpty();
 		result.Id.Should().NotBe(ObjectId.Empty);
 		result.CreatedOn.Should().Be(GetStaticDate());
 		result.ModifiedOn.Should().Be(GetStaticDate());
 
+		result.Should().BeEquivalentTo(faker1,
+				options => options
+						.Excluding(t => t.Id)
+						.Excluding(t => t.CategoryName));
+
 	}
 
 	/// <summary>
-	/// Verifies that calling <see cref="GetNewCategory(bool)"/> with seed produces deterministic
+	/// Verifies that calling <see cref="FakeCategory.GetNewCategory(bool)"/> with seed produces deterministic
 	/// CategoryName values across calls.
 	/// </summary>
 	[Fact]
@@ -218,7 +232,11 @@ public class FakeCategoryTests
 		// Assert
 		result1.Should().NotBeNull();
 		result2.Should().NotBeNull();
-		result1.CategoryName.Should().Be(result2.CategoryName);
+
+		result1.Should().BeEquivalentTo(result2,
+				options => options
+						.Excluding(t => t.Id)
+						.Excluding(t => t.CategoryName));
 
 	}
 
@@ -231,14 +249,16 @@ public class FakeCategoryTests
 	{
 
 		// Act
-		var faker1 = FakeCategory.GenerateFake(false);
-		var faker2 = FakeCategory.GenerateFake(false);
+		var faker1 = FakeCategory.GenerateFake();
+		var faker2 = FakeCategory.GenerateFake();
 
 		var category1 = faker1.Generate();
 		var category2 = faker2.Generate();
 
 		// Assert
-		category1.CategoryName.Should().NotBe(category2.CategoryName);
+		category1.Should().NotBeEquivalentTo(category2,
+				options => options.Excluding(t => t.CategoryName));
 
 	}
+
 }
