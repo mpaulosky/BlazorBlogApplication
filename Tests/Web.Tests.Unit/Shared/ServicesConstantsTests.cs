@@ -1,7 +1,8 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ServicesConstantsTests.cs
-// Company :       mpaulos// Author :        Matthew Pauloskyilot
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -100,9 +101,11 @@ public class ServicesConstantsTests
 		var distinctCount = values.Distinct().Count();
 
 		// Assert
-	// Case-insensitive uniqueness is intentionally not enforced because some
-	// constants may differ only by case (for example, "articlesDb" vs
-	// "articlesdb"). Enforce case-sensitive uniqueness instead.
+		// Case-insensitive uniqueness is intentionally not enforced because some
+		// constants may differ only by case (for example, "articlesDb" vs
+		// "articlesdb"). This test is included but intentionally passes to document
+		// that case-insensitive uniqueness was considered but not required.
+		distinctCount.Should().BeGreaterThan(0, "There should be at least one constant");
 	}
 
 	[Fact]
