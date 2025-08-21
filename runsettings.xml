@@ -7,7 +7,7 @@
     </RunConfiguration>
     <DataCollectionRunSettings>
         <DataCollectors>
-            <DataCollector friendlyName="XPlat code coverage">
+            <DataCollector friendlyName="XPlat Code Coverage">
                 <Configuration>
                     <Format>opencover</Format>
                     <CodeCoverage>

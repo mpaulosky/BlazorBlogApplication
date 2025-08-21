@@ -42,5 +42,6 @@ global using Web.Data.Abstractions;
 global using Web.Data.Entities;
 global using Web.Data.Fakes;
 global using Web.Data.Models;
-
+global using static Web.Data.Helpers.Helpers;
+global using Web.Data.Helpers;
 global using Xunit;
