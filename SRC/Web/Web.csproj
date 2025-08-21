@@ -17,7 +17,7 @@
     <PackageReference Include="Blazored.FluentValidation" />
     <PackageReference Include="Bogus" />
     <PackageReference Include="FluentValidation" />
-  <PackageReference Include="Mapster" />
+    <PackageReference Include="Mapster" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="MongoDB.Bson" />
     <PackageReference Include="MongoDB.Driver" />
@@ -25,5 +25,10 @@
     <PackageReference Include="System.Text.RegularExpressions" />
     <PackageReference Include="WaffleGenerator.Bogus" />
   </ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Web.Tests.Unit"/>
+		<InternalsVisibleTo Include="Architecture.Tests.Unit"/>
+	</ItemGroup>
 
 </Project>

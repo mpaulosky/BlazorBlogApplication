@@ -33,3 +33,5 @@ global using Web.Data;
 global using Web.Data.Abstractions;
 global using Web.Data.Entities;
 global using Web.Data.Models;
+global using static Web.Data.Helpers.Helpers;
+global using static Web.Data.Helpers.MyCategories;
