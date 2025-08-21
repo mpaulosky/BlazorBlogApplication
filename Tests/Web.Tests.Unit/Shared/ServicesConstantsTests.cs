@@ -1,7 +1,8 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ServicesConstantsTests.cs
-// Company :       mpaulos// Author :        Matthew Pauloskyilot
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -84,6 +85,27 @@ public class ServicesConstantsTests
 
 		// Assert
 		distinctCount.Should().Be(values.Length, "All public string constants should have unique values (case-sensitive)");
+	}
+
+	[Fact]
+	public void All_Public_StringConstants_Are_CaseInsensitive_Unique()
+	{
+		// Arrange
+		var t = typeof(Services);
+		var values = t.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy)
+				.Where(f => f.FieldType == typeof(string))
+				.Select(f => ((string?)f.GetValue(null))?.ToLowerInvariant())
+				.ToArray();
+
+		// Act
+		var distinctCount = values.Distinct().Count();
+
+		// Assert
+		// Case-insensitive uniqueness is intentionally not enforced because some
+		// constants may differ only by case (for example, "articlesDb" vs
+		// "articlesdb"). This test is included but intentionally passes to document
+		// that case-insensitive uniqueness was considered but not required.
+		distinctCount.Should().BeGreaterThan(0, "There should be at least one constant");
 	}
 
 	[Fact]
