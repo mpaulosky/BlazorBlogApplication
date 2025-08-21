@@ -1,8 +1,7 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ServicesConstantsTests.cs
-// Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Company :       mpaulos// Author :        Matthew Pauloskyilot
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -102,5 +101,22 @@ public class ServicesConstantsTests
 
 		// Assert
 		distinctCount.Should().Be(values.Length, "All public string constants should be case-insensitively unique (this is optional depending on app semantics)");
+	}
+
+	[Fact]
+	public void All_Public_StringConstant_Names_Are_Uppercase()
+	{
+		// Arrange
+		var t = typeof(Services);
+		var fields = t.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy)
+			.Where(f => f.FieldType == typeof(string))
+			.ToArray();
+
+		// Act & Assert
+		foreach (var f in fields)
+		{
+			// Only allow uppercase letters, digits and underscore in constant names
+			f.Name.Should().MatchRegex("^[A-Z0-9_]+$", $"Field name '{f.Name}' should be uppercase and contain only A-Z, 0-9, or underscore");
+		}
 	}
 }
