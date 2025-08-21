@@ -90,6 +90,8 @@ jobs:
                 --collect:"XPlat Code Coverage" \
                 --settings runsettings.xml \
                 --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
+                --settings runsettings.xml \
+                --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
               rc=$?
               set -e
 
@@ -224,6 +226,7 @@ jobs:
           check_run: false
           files: |
             ${{ github.workspace }}/TestResults/**/*.trx
+            ${{ github.workspace }}/TestResults/**/*.xml
             ${{ github.workspace }}/TestResults/**/*.xml
 
       - name: Install GitVersion
