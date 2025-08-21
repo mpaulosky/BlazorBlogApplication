@@ -1,0 +1,106 @@
+// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     ServicesConstantsTests.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
+// =======================================================
+
+namespace Shared;
+
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(Services))]
+public class ServicesConstantsTests
+{
+	[Theory]
+	[InlineData("SERVER", "Server")]
+	[InlineData("DATABASE", "articlesDb")]
+	[InlineData("WEBSITE", "Web")]
+	[InlineData("CACHE", "RedisCache")]
+	[InlineData("SERVER_NAME", "posts-server")]
+	[InlineData("DATABASE_NAME", "articlesdb")]
+	[InlineData("OUTPUT_CACHE", "output-cache")]
+	[InlineData("API_SERVICE", "api-service")]
+	[InlineData("CATEGORY_CACHE_NAME", "CategoryData")]
+	[InlineData("ARTICLE_CACHE_NAME", "ArticleData")]
+	[InlineData("ADMIN_POLICY", "AdminOnly")]
+	[InlineData("DEFAULT_CORS_POLICY", "DefaultPolicy")]
+	public void Constant_Equals_ExpectedValue(string fieldName, string expected)
+	{
+		// Arrange
+		var t = typeof(Services);
+
+		// Act
+		var fi = t.GetField(fieldName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy);
+
+		// Assert
+		fi.Should().NotBeNull($"Field '{fieldName}' should exist on {t.FullName}");
+		fi!.FieldType.Should().Be(typeof(string), $"Field '{fieldName}' should be a string");
+		var value = (string?)fi.GetValue(null);
+		value.Should().Be(expected, $"Field '{fieldName}' should have the expected value");
+	}
+
+	[Fact]
+	public void All_Public_StringConstants_Are_NotNullOrWhiteSpace_And_Are_Trimmed_And_Are_Const()
+	{
+		// Arrange
+		var t = typeof(Services);
+		var fields = t.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy)
+				.Where(f => f.FieldType == typeof(string))
+				.ToArray();
+
+		// Pre-check
+		fields.Should().NotBeNull().And.NotBeEmpty("There should be at least one public string constant in Services");
+
+		// Act & Assert
+		foreach (var f in fields)
+		{
+			// Act
+			var val = (string?)f.GetValue(null);
+
+			// Assert - not null or whitespace
+			val.Should().NotBeNullOrWhiteSpace($"Field '{f.Name}' must not be null/empty/whitespace");
+
+			// Assert - trimmed (no leading/trailing whitespace)
+			val!.Should().Be(val.Trim(), $"Field '{f.Name}' must not have leading or trailing whitespace");
+
+			// Assert - is compile-time const
+			f.IsLiteral.Should().BeTrue($"Field '{f.Name}' should be a const (IsLiteral == true)");
+		}
+	}
+
+	[Fact]
+	public void All_Public_StringConstants_Are_CaseSensitive_Unique()
+	{
+		// Arrange
+		var t = typeof(Services);
+		var values = t.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy)
+				.Where(f => f.FieldType == typeof(string))
+				.Select(f => (string?)f.GetValue(null))
+				.ToArray();
+
+		// Act
+		var distinctCount = values.Distinct().Count();
+
+		// Assert
+		distinctCount.Should().Be(values.Length, "All public string constants should have unique values (case-sensitive)");
+	}
+
+	[Fact]
+	public void All_Public_StringConstants_Are_CaseInsensitive_Unique()
+	{
+		// Arrange
+		var t = typeof(Services);
+		var values = t.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy)
+				.Where(f => f.FieldType == typeof(string))
+				.Select(f => ((string?)f.GetValue(null))?.ToLowerInvariant())
+				.ToArray();
+
+		// Act
+		var distinctCount = values.Distinct().Count();
+
+		// Assert
+		distinctCount.Should().Be(values.Length, "All public string constants should be case-insensitively unique (this is optional depending on app semantics)");
+	}
+}
