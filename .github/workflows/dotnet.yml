@@ -208,6 +208,7 @@ jobs:
           check_run: false
           files: |
             ${{ github.workspace }}/TestResults/**/*.trx
+            ${{ github.workspace }}/TestResults/**/*.xml
 
       - name: Install GitVersion
         if: github.actor != 'nektos/act'
