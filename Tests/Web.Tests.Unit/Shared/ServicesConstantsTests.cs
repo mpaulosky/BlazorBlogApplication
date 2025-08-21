@@ -87,25 +87,6 @@ public class ServicesConstantsTests
 	}
 
 	[Fact]
-	public void All_Public_StringConstants_Are_CaseInsensitive_Unique()
-	{
-		// Arrange
-		var t = typeof(Services);
-		var values = t.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy)
-				.Where(f => f.FieldType == typeof(string))
-				.Select(f => ((string?)f.GetValue(null))?.ToLowerInvariant())
-				.ToArray();
-
-		// Act
-		var distinctCount = values.Distinct().Count();
-
-		// Assert
-	// Case-insensitive uniqueness is intentionally not enforced because some
-	// constants may differ only by case (for example, "articlesDb" vs
-	// "articlesdb"). Enforce case-sensitive uniqueness instead.
-	}
-
-	[Fact]
 	public void All_Public_StringConstant_Names_Are_Uppercase()
 	{
 		// Arrange
