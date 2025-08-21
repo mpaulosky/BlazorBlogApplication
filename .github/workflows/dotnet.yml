@@ -31,6 +31,10 @@ jobs:
     permissions:
       id-token: write
 
+    # Allow the job to request OIDC tokens for Codecov tokenless uploads
+    permissions:
+      id-token: write
+
     env:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
@@ -90,6 +94,7 @@ jobs:
                 --collect:"XPlat Code Coverage" \
                 --settings runsettings.xml \
                 --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
+                --settings runsettings.xml \
                 --settings runsettings.xml \
                 --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
               rc=$?
@@ -197,7 +202,7 @@ jobs:
           # Search the TestResults folder where dotnet test writes coverage XML
           directory: TestResults
           # Explicitly look for common coverage file names created by coverlet / XPlat collector
-          files: TestResults/**/*.coverage.cobertura.xml,TestResults/**/coverage.cobertura.xml,TestResults/**/*.coverage.xml,**/coverage.cobertura.xml
+          files: TestResults/**/*.xml,TestResults/**/coverage.cobertura.xml,TestResults/**/*.coverage.xml,**/coverage.cobertura.xml
           # Don't fail the whole CI when Codecov has a problem; set as desired
           fail_ci_if_error: false
           # Helpful when debugging why files aren't found
