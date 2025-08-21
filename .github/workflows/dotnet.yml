@@ -71,6 +71,7 @@ jobs:
 
           set -o pipefail
 
+
           while IFS= read -r proj; do
             if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null; then
               name=$(basename "$proj" .csproj)
