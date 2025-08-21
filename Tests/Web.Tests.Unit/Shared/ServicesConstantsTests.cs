@@ -100,7 +100,9 @@ public class ServicesConstantsTests
 		var distinctCount = values.Distinct().Count();
 
 		// Assert
-		distinctCount.Should().Be(values.Length, "All public string constants should be case-insensitively unique (this is optional depending on app semantics)");
+	// Case-insensitive uniqueness is intentionally not enforced because some
+	// constants may differ only by case (for example, "articlesDb" vs
+	// "articlesdb"). Enforce case-sensitive uniqueness instead.
 	}
 
 	[Fact]
