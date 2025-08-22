@@ -57,9 +57,6 @@ jobs:
       - name: Build
         run: dotnet build --no-restore
 
-      - name: Create Test Results Directory
-        run: mkdir -p TestResults
-
       - name: Run all tests in all test projects
         run: |
           # Ensure repository-level TestResults exists
@@ -71,16 +68,14 @@ jobs:
           while IFS= read -r proj; do
             if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null; then
               name=$(basename "$proj" .csproj)
-              filename="${name}_${timestamp}"
-              echo "Running tests for: $proj -> TestResults/${filename}.trx (logs -> TestResults/${filename}.coverage.log)"
+              echo "Running tests for: $proj -> TestResults/${name}.trx (logs -> TestResults/${name}.log)"
 
               set +e
               dotnet test "$proj" \
                 --no-build --no-restore \
-                --logger "trx;LogFileName=${filename}.trx" \
-                --logger "junit;LogFileName=TestResults.xml" \
+                --logger "trx;LogFileName=${name}.trx" \
                 --settings runsettings.xml \
-                --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
+                --results-directory "TestResults" 2>&1 | tee "TestResults/${name}.log"
 
               rc=$?
               set -e
@@ -120,8 +115,23 @@ jobs:
           name: Solution-Test-Results
           path: TestResults
 
+      - name: Upload TestResults (fallback for debugging)
+        if: ${{ steps.check-test-results.outputs.found_trx != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults-Debug
+          path: TestResults/**
+
+      - name: Upload Test Logs
+        if: ${{ steps.check-test-results.outputs.found_logs == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test-Logs
+          path: ${{ github.workspace }}/TestResults/**/*.log
+
       - name: Codecov
-        uses: codecov/codecov-action@v5.4.3
+      - uses: actions/checkout@v4
+      - uses: codecov/codecov-action@v5.4.3
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
@@ -149,3 +159,14 @@ jobs:
       - run: |
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
           echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+
+      - name: Fail on test failures
+        if: always()
+        run: |
+          # If the run-tests step exported a non-zero exit code, fail now
+          tests_exit_code=${{ steps.run-tests.outputs.tests_exit_code }}
+          echo "tests_exit_code=$tests_exit_code"
+          if [ "$tests_exit_code" != "0" ]; then
+            echo "Tests failed with exit code $tests_exit_code"
+            exit $tests_exit_code
+          fi
