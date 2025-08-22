@@ -61,7 +61,6 @@ jobs:
         run: mkdir -p TestResults
 
       - name: Run all tests in all test projects
-        working-directory: BlazorBlogApplication/
         id: run-tests
         run: |
           # Ensure repository-level TestResults exists
