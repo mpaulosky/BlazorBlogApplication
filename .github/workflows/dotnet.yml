@@ -80,7 +80,7 @@ jobs:
               dotnet test "$proj" \
                 --no-build --no-restore \
                 --logger "trx;LogFileName=${filename}.trx" \
-                --logger:"junit;LogFilePath=TestResults.xml" \
+                --logger:"junit;LogFileName=${filename}.junit.xml" \
                 --settings runsettings.xml \
                 --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
 
