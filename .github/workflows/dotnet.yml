@@ -97,6 +97,20 @@ jobs:
           name: Solution-Test-Results
           path: TestResults
 
+      - name: Upload TestResults (fallback for debugging)
+        if: ${{ steps.check-test-results.outputs.found_trx != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults-Debug
+          path: TestResults/**
+
+      - name: Upload Test Logs
+        if: ${{ steps.check-test-results.outputs.found_logs == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test-Logs
+          path: ${{ github.workspace }}/TestResults/**/*.log
+
       - name: Codecov
         uses: codecov/codecov-action@v5.4.3
 
@@ -127,3 +141,14 @@ jobs:
       - run: |
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
           echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+
+      - name: Fail on test failures
+        if: always()
+        run: |
+          # If the run-tests step exported a non-zero exit code, fail now
+          tests_exit_code=${{ steps.run-tests.outputs.tests_exit_code }}
+          echo "tests_exit_code=$tests_exit_code"
+          if [ "$tests_exit_code" != "0" ]; then
+            echo "Tests failed with exit code $tests_exit_code"
+            exit $tests_exit_code
+          fi
