@@ -79,17 +79,14 @@ jobs:
           while IFS= read -r proj; do
             if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null; then
               name=$(basename "$proj" .csproj)
-              filename="${name}_${timestamp}"
-              echo "Running tests for: $proj -> TestResults/${filename}.trx (logs -> TestResults/${filename}.coverage.log)"
+              echo "Running tests for: $proj -> TestResults/${name}.trx (logs -> TestResults/${name}.coverage.log)"
 
               set +e
               dotnet test "$proj" \
                 --no-build --no-restore \
-                --logger "trx;LogFileName=${filename}.trx" \
-                --logger "junit;LogFileName=${filename}.coverage.xml" \
-                --collect:"XPlat Code Coverage" \
+                --logger "trx;LogFileName=${name}.trx" \
                 --settings runsettings.xml \
-                --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
+                --results-directory "TestResults" 2>&1 | tee "TestResults/${name}.log"
 
               rc=$?
               set -e
@@ -190,21 +187,8 @@ jobs:
           name: Test-Logs
           path: ${{ github.workspace }}/TestResults/**/*.log
 
-      - name: Upload coverage to Codecov (explicit)
-        uses: codecov/codecov-action@v5
-        with:
-          # Search the TestResults folder where dotnet test writes coverage XML
-          directory: TestResults
-          # Explicitly look for common coverage file names created by coverlet / XPlat collector
-          files: TestResults/**/*.xml,TestResults/**/coverage.cobertura.xml,TestResults/**/*.coverage.xml,**/coverage.cobertura.xml
-          # Don't fail the whole CI when Codecov has a problem; set as desired
-          fail_ci_if_error: false
-          # Helpful when debugging why files aren't found
-          verbose: true
-          # Optional: group this upload under a flag
-          flags: unittests
-        # Use OIDC to authenticate uploads where possible (public repos or org-level allowlist)
-      # Use OIDC or CODECOV_TOKEN (set as a repo secret) for authentication. No explicit env required here.
+      - name: Codecov
+        uses: codecov/codecov-action@v5.4.3
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
@@ -225,8 +209,6 @@ jobs:
           check_run: false
           files: |
             ${{ github.workspace }}/TestResults/**/*.trx
-            ${{ github.workspace }}/TestResults/**/*.xml
-            ${{ github.workspace }}/TestResults/**/*.xml
 
       - name: Install GitVersion
         if: github.actor != 'nektos/act'
