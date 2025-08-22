@@ -130,8 +130,7 @@ jobs:
           path: ${{ github.workspace }}/TestResults/**/*.log
 
       - name: Codecov
-      - uses: actions/checkout@v4
-      - uses: codecov/codecov-action@v5.4.3
+        uses: codecov/codecov-action@v5.4.3
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
