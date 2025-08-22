@@ -58,6 +58,7 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Run all tests in all test projects
+        id: run-tests
         run: |
           # Ensure repository-level TestResults exists
           mkdir -p "TestResults"
@@ -68,32 +69,13 @@ jobs:
           while IFS= read -r proj; do
             if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null; then
               name=$(basename "$proj" .csproj)
-              echo "Running tests for: $proj -> TestResults/${name}.trx (logs -> TestResults/${name}.log)"
-
+              echo "Running tests for: $proj -> TestResults/${name}.trx (logs -> TestResults/${name}.coverage.log)"
               set +e
               dotnet test "$proj" \
                 --no-build --no-restore \
                 --logger "trx;LogFileName=${name}.trx" \
                 --settings runsettings.xml \
                 --results-directory "TestResults" 2>&1 | tee "TestResults/${name}.log"
-
-              rc=$?
-              set -e
-
-              if [ "$rc" -ne 0 ]; then
-                echo "dotnet test failed for $proj (exit code $rc)"
-                overall_rc=$rc
-              fi
-            else
-              echo "Skipping non-test project: $proj"
-            fi
-          done < <( find Tests -name "*.csproj" -type f 2>/dev/null || true )
-
-          echo "tests_exit_code=$overall_rc" >> "$GITHUB_OUTPUT"
-          exit 0 \
-                --settings runsettings.xml \
-                --results-directory "TestResults" 2>&1 | tee "TestResults/${name}.log"
-
               rc=$?
               set -e
 
@@ -137,6 +119,7 @@ jobs:
         uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: TestResults/**/*.xml
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
