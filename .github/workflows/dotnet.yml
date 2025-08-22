@@ -27,6 +27,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -36,7 +38,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "22"
           cache: "npm"
           cache-dependency-path: |
             **/Web/package-lock.json
@@ -60,10 +62,57 @@ jobs:
 
       - name: Run all tests in all test projects
         run: |
-          for proj in $(find . -name "*.csproj" -path "*/Tests/*"); do
-            name=$(basename "$proj" .csproj)
-            dotnet test "$proj" --no-build --no-restore --logger "trx;LogFileName=${{ github.workspace }}/TestResults/${name}.trx" --settings runsettings.xml
-          done
+          # Ensure repository-level TestResults exists
+          mkdir -p "TestResults"
+          timestamp=$(date +%s)
+
+          set -o pipefail
+
+          while IFS= read -r proj; do
+            if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null; then
+              name=$(basename "$proj" .csproj)
+              filename="${name}_${timestamp}"
+              echo "Running tests for: $proj -> TestResults/${filename}.trx (logs -> TestResults/${filename}.coverage.log)"
+
+              set +e
+              dotnet test "$proj" \
+                --no-build --no-restore \
+                --logger "trx;LogFileName=${filename}.trx" \
+                --logger:"junit;LogFilePath=TestResults.xml" \
+                --settings runsettings.xml \
+                --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
+
+              rc=$?
+              set -e
+
+              if [ "$rc" -ne 0 ]; then
+                echo "dotnet test failed for $proj (exit code $rc)"
+                overall_rc=$rc
+              fi
+            else
+              echo "Skipping non-test project: $proj"
+            fi
+          done < <( find Tests -name "*.csproj" -type f 2>/dev/null || true )
+
+          echo "tests_exit_code=$overall_rc" >> "$GITHUB_OUTPUT"
+          exit 0 \
+                --settings runsettings.xml \
+                --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
+
+              rc=$?
+              set -e
+
+              if [ "$rc" -ne 0 ]; then
+                echo "dotnet test failed for $proj (exit code $rc)"
+                overall_rc=$rc
+              fi
+            else
+              echo "Skipping non-test project: $proj"
+            fi
+          done < <( find Tests -name "*.csproj" -type f 2>/dev/null || true )
+
+          echo "tests_exit_code=$overall_rc" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -87,11 +136,6 @@ jobs:
         with:
           files: |
             TestResults/**/*.trx
-
-      - name: Checkout
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v4.1.0
