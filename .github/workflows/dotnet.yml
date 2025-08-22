@@ -48,7 +48,7 @@ jobs:
         run: npm install
 
       - name: Build Tailwind CSS
-        working-directory: Web
+        working-directory: SRC/Web
         run: npm run build:css
 
       - name: Restore dependencies
