@@ -80,13 +80,13 @@ jobs:
             if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null; then
               name=$(basename "$proj" .csproj)
               filename="${name}_${timestamp}"
-              echo "Running tests for: $proj -> TestResults/${filename}.trx (logs -> TestResults/${filename}.log)"
+              echo "Running tests for: $proj -> TestResults/${filename}.trx (logs -> TestResults/${filename}.coverage.log)"
 
               set +e
               dotnet test "$proj" \
                 --no-build --no-restore \
                 --logger "trx;LogFileName=${filename}.trx" \
-                --logger "junit;LogFileName=${filename}.xml" \
+                --logger "junit;LogFileName=${filename}.coverage.xml" \
                 --collect:"XPlat Code Coverage" \
                 --settings runsettings.xml \
                 --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
