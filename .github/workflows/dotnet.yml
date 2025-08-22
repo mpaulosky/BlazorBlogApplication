@@ -41,14 +41,14 @@ jobs:
           node-version: "22"
           cache: "npm"
           cache-dependency-path: |
-            **/Web/package-lock.json
+            SRC/Web/package-lock.json
 
       - name: Install Node.js dependencies
-        working-directory: Web
+        working-directory: SRC/Web
         run: npm install
 
       - name: Build Tailwind CSS
-        working-directory: Web
+        working-directory: SRC/Web
         run: npm run build:css
 
       - name: Restore dependencies
@@ -92,7 +92,7 @@ jobs:
           echo "tests_exit_code=$overall_rc" >> "$GITHUB_OUTPUT"
           exit 0 \
                 --settings runsettings.xml \
-                --results-directory "TestResults" 2>&1 | tee "TestResults/${filename}.log"
+                --results-directory "TestResults" 2>&1 | tee "TestResults/${name}.log"
 
               rc=$?
               set -e
