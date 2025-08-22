@@ -18,16 +18,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.Testing" />
 		<PackageReference Include="coverlet.collector" />
 		<PackageReference Include="FluentAssertions" />
 		<PackageReference Include="JetBrains.Annotations" />
 		<PackageReference Include="JunitXml.TestLogger" />
 		<PackageReference Include="Microsoft.CodeCoverage" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
-		<PackageReference Include="NSubstitute" />
-		<PackageReference Include="xunit.runner.visualstudio" />
 		<PackageReference Include="NetArchTest.Rules" />
+		<PackageReference Include="NSubstitute" />
 		<PackageReference Include="xunit.v3" />
+		<PackageReference Include="xunit.runner.visualstudio" />
 	</ItemGroup>
 
 	<ItemGroup>
