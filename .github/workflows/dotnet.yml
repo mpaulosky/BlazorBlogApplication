@@ -71,8 +71,10 @@ jobs:
               name=$(basename "$proj" .csproj)
               echo "Running tests for: $proj -> TestResults/${name}.trx (logs -> TestResults/${name}.coverage.log)"
               set +e
+              # Run tests and collect XPlat Code Coverage; quoting is safe for bash
               dotnet test "$proj" \
                 --no-build --no-restore \
+                --collect:"XPlat Code Coverage" \
                 --logger "trx;LogFileName=${name}.trx" \
                 --settings runsettings.xml \
                 --results-directory "TestResults" 2>&1 | tee "TestResults/${name}.log"
