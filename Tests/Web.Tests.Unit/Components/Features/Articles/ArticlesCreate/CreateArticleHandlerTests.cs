@@ -15,20 +15,17 @@ namespace Web.Components.Features.Articles.ArticlesCreate;
 [TestSubject(typeof(CreateArticle.Handler))]
 public class CreateArticleHandlerTests
 {
+	private readonly ArticlesTestFixture _fixture = new ArticlesTestFixture();
+
 	[Fact]
 	public async Task HandleAsync_WithValidArticle_InsertsArticleAndReturnsOk()
 	{
-		// Arrange
-		var collection = Substitute.For<IMongoCollection<Article>>();
-		// Ensure InsertOneAsync completes successfully
-		collection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
-				.Returns(Task.CompletedTask);
-
-		var context = Substitute.For<IMyBlogContext>();
-		context.Articles.Returns(collection);
+		// Arrange - use fixture-backed collection
+		_fixture.ArticlesCollection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
+			.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
-		var handler = new CreateArticle.Handler(context, logger);
+		var handler = new CreateArticle.Handler(_fixture.BlogContext, logger);
 
 		var dto = FakeArticleDto.GetNewArticleDto(true);
 
@@ -38,22 +35,18 @@ public class CreateArticleHandlerTests
 		// Assert
 		result.Success.Should().BeTrue();
 		// Verify an Article was inserted, and PublishedOn was set (not default)
-		_ = collection.Received(1).InsertOneAsync(Arg.Is<Article>(a => a.Title == dto.Title && a.Introduction == dto.Introduction && a.PublishedOn != null), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
+		_ = _fixture.ArticlesCollection.Received(1).InsertOneAsync(Arg.Is<Article>(a => a.Title == dto.Title && a.Introduction == dto.Introduction && a.PublishedOn != null), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
 	}
 
 	[Fact]
 	public async Task HandleAsync_WhenInsertThrows_ReturnsFailWithErrorMessage()
 	{
 		// Arrange
-		var collection = Substitute.For<IMongoCollection<Article>>();
-		collection.When(c => c.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()))
-				.Do(_ => throw new InvalidOperationException("DB error"));
-
-		var context = Substitute.For<IMyBlogContext>();
-		context.Articles.Returns(collection);
+		_fixture.ArticlesCollection.When(c => c.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()))
+			.Do(_ => throw new InvalidOperationException("DB error"));
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
-		var handler = new CreateArticle.Handler(context, logger);
+		var handler = new CreateArticle.Handler(_fixture.BlogContext, logger);
 
 		var dto = new ArticleDto { Title = "T" };
 
@@ -69,15 +62,11 @@ public class CreateArticleHandlerTests
 	public async Task HandleAsync_PublishedOnProvided_UsesProvidedPublishedOn()
 	{
 		// Arrange
-		var collection = Substitute.For<IMongoCollection<Article>>();
-		collection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
-				.Returns(Task.CompletedTask);
-
-		var context = Substitute.For<IMyBlogContext>();
-		context.Articles.Returns(collection);
+		_fixture.ArticlesCollection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
+			.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
-		var handler = new CreateArticle.Handler(context, logger);
+		var handler = new CreateArticle.Handler(_fixture.BlogContext, logger);
 
 		var provided = DateTime.UtcNow.AddDays(-1);
 		var dto = new ArticleDto { Title = "T", PublishedOn = provided };
@@ -87,22 +76,18 @@ public class CreateArticleHandlerTests
 
 		// Assert
 		result.Success.Should().BeTrue();
-		_ = collection.Received(1).InsertOneAsync(Arg.Is<Article>(a => a.PublishedOn == provided && a.Title == dto.Title), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
+		_ = _fixture.ArticlesCollection.Received(1).InsertOneAsync(Arg.Is<Article>(a => a.PublishedOn == provided && a.Title == dto.Title), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
 	}
 
 	[Fact]
 	public async Task HandleAsync_LogsInformation_OnSuccess()
 	{
 		// Arrange
-		var collection = Substitute.For<IMongoCollection<Article>>();
-		collection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
-				.Returns(Task.CompletedTask);
-
-		var context = Substitute.For<IMyBlogContext>();
-		context.Articles.Returns(collection);
+		_fixture.ArticlesCollection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
+			.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
-		var handler = new CreateArticle.Handler(context, logger);
+		var handler = new CreateArticle.Handler(_fixture.BlogContext, logger);
 
 		var dto = new ArticleDto { Title = "LoggingTest" };
 
@@ -124,15 +109,11 @@ public class CreateArticleHandlerTests
 	public async Task HandleAsync_LogsError_OnException()
 	{
 		// Arrange
-		var collection = Substitute.For<IMongoCollection<Article>>();
-		collection.When(c => c.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()))
-				.Do(_ => throw new InvalidOperationException("DB error"));
-
-		var context = Substitute.For<IMyBlogContext>();
-		context.Articles.Returns(collection);
+		_fixture.ArticlesCollection.When(c => c.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()))
+			.Do(_ => throw new InvalidOperationException("DB error"));
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
-		var handler = new CreateArticle.Handler(context, logger);
+		var handler = new CreateArticle.Handler(_fixture.BlogContext, logger);
 
 		var dto = new ArticleDto { Title = "T" };
 
@@ -154,14 +135,10 @@ public class CreateArticleHandlerTests
 	public async Task HandleAsync_NullRequest_ReturnsFail()
 	{
 		// Arrange
-		var collection = Substitute.For<IMongoCollection<Article>>();
-		collection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
-
-		var context = Substitute.For<IMyBlogContext>();
-		context.Articles.Returns(collection);
+		_fixture.ArticlesCollection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
-		var handler = new CreateArticle.Handler(context, logger);
+		var handler = new CreateArticle.Handler(_fixture.BlogContext, logger);
 
 		// Act
 		var result = await handler.HandleAsync(null);
