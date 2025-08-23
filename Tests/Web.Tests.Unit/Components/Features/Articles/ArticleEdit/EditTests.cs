@@ -305,4 +305,114 @@ public class EditTests : BunitContext
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
 
+	[Fact]
+	public async Task OnInitializedAsync_SuccessWithNullValue_Sets_Article_Null_And_NotLoading()
+	{
+		// Arrange
+		var id = ObjectId.GenerateNewId();
+		// Simulate a successful result but with a null Value
+		_mockGetArticleHandler.HandleAsync(id).Returns(Task.FromResult(Result<ArticleDto>.Ok((ArticleDto)null!)));
+		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, id));
+
+		// Act - explicitly invoke the lifecycle method to ensure the branch executes
+		var onInit = cut.Instance.GetType().GetMethod("OnInitializedAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+		if (onInit is not null)
+		{
+			await cut.InvokeAsync(async () => await (Task)onInit.Invoke(cut.Instance, null)!);
+		}
+
+		// Assert - internal state should reflect that there is no article and loading has completed
+		var isLoading = (bool?)cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(cut.Instance);
+		var article = cut.Instance.GetType().GetField("_article", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(cut.Instance) as ArticleDto;
+
+		isLoading.Should().BeFalse();
+		article.Should().BeNull();
+	}
+
+	[Fact]
+	public async Task OnInitializedAsync_Failure_Sets_ErrorMessage_And_NotLoading()
+	{
+		// Arrange
+		var id = ObjectId.GenerateNewId();
+		// Simulate a failed result from the GetArticle handler
+		_mockGetArticleHandler.HandleAsync(id).Returns(Task.FromResult(Result<ArticleDto>.Fail("Fetch error")));
+		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, id));
+
+		// Act - explicitly invoke the lifecycle method to ensure the failure branch executes
+		var onInit = cut.Instance.GetType().GetMethod("OnInitializedAsync", BindingFlags.NonPublic | BindingFlags.Instance);
+		if (onInit is not null)
+		{
+			await cut.InvokeAsync(async () => await (Task)onInit.Invoke(cut.Instance, null)!);
+		}
+
+		// Assert - internal state should reflect the error and loading has completed
+		var isLoading = (bool?)cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(cut.Instance);
+		var article = cut.Instance.GetType().GetField("_article", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(cut.Instance) as ArticleDto;
+		var errorMessage = (string?)cut.Instance.GetType().GetField("_errorMessage", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(cut.Instance);
+
+		isLoading.Should().BeFalse();
+		article.Should().BeNull();
+		errorMessage.Should().Be("Fetch error");
+	}
+
+	[Fact]
+	public async Task HandleValidSubmit_With_Whitespace_Title_Shows_Error_And_Resets_Flags()
+	{
+		// Arrange
+		var article = FakeArticleDto.GetNewArticleDto(true);
+		// Make the title whitespace so Trim().Length == 0
+		article.Title = "   ";
+		_mockGetArticleHandler.HandleAsync(article.Id).Returns(Task.FromResult(Result<ArticleDto>.Ok(article)));
+		// Ensure edit handler is callable but not used in this guard path
+		_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Task.FromResult(Result.Ok()));
+		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, article.Id));
+
+		// Ensure component state reflects not loading and article populated
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
+		cut.Instance.GetType().GetField("_article", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, article);
+
+		// Act - invoke the submit handler directly
+		var submit = cut.Instance.GetType().GetMethod("HandleValidSubmit", BindingFlags.NonPublic | BindingFlags.Instance);
+		if (submit is not null)
+		{
+			await cut.InvokeAsync(async () => await (Task)submit.Invoke(cut.Instance, null)!);
+		}
+
+		// Assert - the guard should set an error message and reset submission/loading flags
+		var isSubmitting = (bool?)cut.Instance.GetType().GetField("_isSubmitting", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(cut.Instance);
+		var isLoading = (bool?)cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(cut.Instance);
+		var errorMessage = (string?)cut.Instance.GetType().GetField("_errorMessage", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(cut.Instance);
+
+		isSubmitting.Should().BeFalse();
+		isLoading.Should().BeFalse();
+		errorMessage.Should().Be("Title cannot be null or empty.");
+	}
+
+	[Fact]
+	public async Task HandleValidSubmit_When_Article_Is_Null_Does_NotThrow_And_Resets_Flags()
+	{
+		// Arrange
+		var id = ObjectId.GenerateNewId();
+		_mockGetArticleHandler.HandleAsync(id).Returns(Task.FromResult(Result<ArticleDto>.Ok((ArticleDto)null!)));
+		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, id));
+
+		// Ensure the component state reflects not loading and no article
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
+		cut.Instance.GetType().GetField("_article", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, null);
+
+		// Act - invoke the submit handler directly
+		var submit = cut.Instance.GetType().GetMethod("HandleValidSubmit", BindingFlags.NonPublic | BindingFlags.Instance);
+		if (submit is not null)
+		{
+			await cut.InvokeAsync(async () => await (Task)submit.Invoke(cut.Instance, null)!);
+		}
+
+		// Assert - submission flags should be false and loading should remain false
+		var isSubmitting = (bool?)cut.Instance.GetType().GetField("_isSubmitting", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(cut.Instance);
+		var isLoading = (bool?)cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(cut.Instance);
+
+		isSubmitting.Should().BeFalse();
+		isLoading.Should().BeFalse();
+	}
+
 }

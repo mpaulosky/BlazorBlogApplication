@@ -20,7 +20,7 @@ public static class EditArticle
 	/// </summary>
 	public interface IEditArticleHandler
 	{
-		Task<Result> HandleAsync(ArticleDto request);
+		Task<Result> HandleAsync(ArticleDto? request);
 	}
 
 	public class Handler : IEditArticleHandler
@@ -41,8 +41,13 @@ public static class EditArticle
 			_logger = logger;
 		}
 
-		public async Task<Result> HandleAsync(ArticleDto request)
+		public async Task<Result> HandleAsync(ArticleDto? request)
 		{
+
+			if (request is null)
+			{
+				return Result.Fail("Request is null.");
+			}
 
 			try
 			{
@@ -76,7 +81,8 @@ public static class EditArticle
 			catch (Exception ex)
 			{
 
-				_logger.LogError(ex, "Failed to update category: {Title}", request.Title);
+				// Avoid dereferencing request in the error path (it may be null).
+				_logger.LogError(ex, "Failed to update category: {Title}", request?.Title);
 
 				return Result.Fail(ex.Message);
 

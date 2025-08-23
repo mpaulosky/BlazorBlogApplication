@@ -23,6 +23,8 @@ public class GetArticleHandlerTests
 		MapsterConfig.RegisterMappings();
 	}
 
+	private readonly ArticlesTestFixture _fixture = new ArticlesTestFixture();
+
 	public enum FailureScenario
 	{
 		EMPTY_ID,
@@ -38,32 +40,35 @@ public class GetArticleHandlerTests
 	[InlineData(FailureScenario.ARTICLES_GETTER_THROWS)]
 	public async Task HandleAsync_UnexpectedStates_ReturnsFailure(FailureScenario scenario)
 	{
-		// Arrange
-		var collection = Substitute.For<IMongoCollection<Article>>();
-		var context = Substitute.For<IMyBlogContext>();
+		// Arrange - prefer fixture-backed collection/context when possible
+		var collection = _fixture.ArticlesCollection;
+		IMyBlogContext? context = _fixture.BlogContext;
 
 		switch (scenario)
 		{
 			case FailureScenario.EMPTY_ID:
-				context.Articles.Returns(collection);
+				// fixture BlogContext already provides Articles collection
 				break;
 			case FailureScenario.NOT_FOUND:
 				var emptyCursor = new StubCursor<Article>(new List<Article>());
-				collection.FindAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<FindOptions<Article, Article>>(), Arg.Any<CancellationToken>()).ReturnsForAnyArgs(Task.FromResult((IAsyncCursor<Article>)emptyCursor));
-				context.Articles.Returns(collection);
+				_fixture.ArticlesCollection
+					.FindAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<FindOptions<Article, Article>>(), Arg.Any<CancellationToken>())
+					.ReturnsForAnyArgs(Task.FromResult((IAsyncCursor<Article>)emptyCursor));
 				break;
 			case FailureScenario.FIND_THROWS:
-				collection.When(c => c.FindAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<FindOptions<Article, Article>>(), Arg.Any<CancellationToken>())).Do(_ => throw new InvalidOperationException("Find failed"));
-				context.Articles.Returns(collection);
+				_fixture.ArticlesCollection.When(c => c.FindAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<FindOptions<Article, Article>>(), Arg.Any<CancellationToken>()))
+					.Do(_ => throw new InvalidOperationException("Find failed"));
 				break;
 			case FailureScenario.ARTICLES_GETTER_THROWS:
 				// Simulate Articles property throwing when accessed
+				// Create a substitute context that throws when Articles getter is accessed
+				context = Substitute.For<IMyBlogContext>();
 				context.Articles.Returns(_ => throw new InvalidOperationException("Getter fail"));
 				break;
 		}
 
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
-		var handler = new GetArticle.Handler(context, logger);
+		var handler = new GetArticle.Handler(context!, logger);
 
 		var id = scenario == FailureScenario.EMPTY_ID ? ObjectId.Empty : ObjectId.GenerateNewId();
 

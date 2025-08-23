@@ -87,7 +87,6 @@ else
 	/// </summary>
 	private string? _errorMessage;
 
-
 	/// <summary>
 	/// Initializes the component by loading the article data.
 	/// </summary>
@@ -115,10 +114,8 @@ else
 	/// Handles the submission of the edit form when valid.
 	/// Updates the article and navigates back to the article detail page.
 	/// </summary>
-
 	private async Task HandleValidSubmit()
 	{
-
 
 		if (_article?.Title is null || _article.Title.Trim().Length == 0)
 		{
@@ -132,21 +129,11 @@ else
 
 		_isSubmitting = true;
 
-		if (_article is null)
-		{
-			Logger.LogError("Article data is missing.");
-			_isSubmitting = false;
-			_isLoading = false;
-			return;
-		}
-
 		var result = await ArticleHandler.HandleAsync(_article);
 
 		if (result.Success)
 		{
 			Logger.LogInformation("Category updated successfully: {Title}", _article.Title);
-			_isSubmitting = false;
-			_isLoading = false;
 			GoToList();
 		}
 		else
@@ -157,6 +144,7 @@ else
 			_isLoading = false;
 			StateHasChanged();
 		}
+
 	}
 
 	/// <summary>
@@ -164,6 +152,8 @@ else
 	/// </summary>
 	private void GoToList()
 	{
+		_isSubmitting = false;
+		_isLoading = false;
 		Navigation.NavigateTo("/articles");
 	}
 
