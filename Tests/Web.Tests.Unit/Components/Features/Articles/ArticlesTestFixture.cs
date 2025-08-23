@@ -44,10 +44,6 @@ public class ArticlesTestFixture : IAsyncDisposable
 	/// Configure the underlying articles collection to return the supplied articles
 	/// from FindAsync via the generic <see cref="StubCursor{T}" />.
 	/// </summary>
-	/// <summary>
-	/// Configure the underlying articles collection to return the supplied articles
-	/// from FindAsync via the generic <see cref="StubCursor{T}" />.
-	/// </summary>
 	public void SetupFindAsync(IEnumerable<Article> articles)
 	{
 		var cursor = new StubCursor<Article>(articles?.ToList() ?? new List<Article>());
