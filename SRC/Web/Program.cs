@@ -122,10 +122,6 @@ builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
-{
-}
-
 // Validate required configuration now that the final IConfiguration is
 // available (this ensures test-provided in-memory config is visible).
 var finalCfg = app.Configuration;
