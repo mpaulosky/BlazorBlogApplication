@@ -77,7 +77,6 @@ jobs:
                 --collect:"XPlat Code Coverage" \
                 --logger "trx;LogFileName=${name}.trx" \
                 --logger "junit;LogFileName=${name}.coverage.opencover.xml" \
-                --settings runsettings.xml \
                 --results-directory "test-results" 2>&1 | tee "test-results/${name}.log"
               rc=$?
               set -e
@@ -99,12 +98,6 @@ jobs:
         with:
           name: Solution-Test-Results
           path: test-results
-
-      - name: Upload test-results (fallback for debugging)
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-Debug
-          path: test-results/**
 
       - name: Upload Test Logs
         uses: actions/upload-artifact@v4
