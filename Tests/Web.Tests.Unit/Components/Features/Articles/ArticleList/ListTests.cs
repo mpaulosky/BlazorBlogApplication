@@ -239,11 +239,6 @@ public class ListTests : BunitContext
 
 		var initial = nav.Uri;
 
-		catch (InvalidOperationException)
-		{
-			// expected for disabled button in some bUnit configurations
-		}
-
 		// Assert - navigation should not have changed
 		nav.Uri.Should().Be(initial);
 	}
