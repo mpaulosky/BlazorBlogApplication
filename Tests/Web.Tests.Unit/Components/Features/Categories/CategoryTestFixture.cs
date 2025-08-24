@@ -27,11 +27,15 @@ public class CategoryTestFixture : IAsyncDisposable
 
 	private IMongoDatabase MongoDatabase { get; }
 
-	private IMongoCollection<Category> CategoriesCollection { get; }
+	// Expose the collection so handler tests can configure InsertOneAsync behavior
+	public IMongoCollection<Category> CategoriesCollection { get; }
 
-	private MyBlogContext BlogContext { get; }
+	private MyBlogContext _blogContext;
 
-	private ILogger<Handler> Logger { get; }
+	// Expose the IMyBlogContext for tests similar to ArticlesTestFixture
+	public IMyBlogContext BlogContext { get; private set; }
+
+	public ILogger<Handler> Logger { get; }
 
 	public CategoryTestFixture()
 	{
@@ -40,7 +44,8 @@ public class CategoryTestFixture : IAsyncDisposable
 		CategoriesCollection = Substitute.For<IMongoCollection<Category>>();
 		MongoClient.GetDatabase(Arg.Any<string>()).Returns(MongoDatabase);
 		MongoDatabase.GetCollection<Category>(Arg.Any<string>()).Returns(CategoriesCollection);
-		BlogContext = new MyBlogContext(MongoClient);
+		_blogContext = new MyBlogContext(MongoClient);
+		BlogContext = _blogContext;
 		Logger = Substitute.For<ILogger<Handler>>();
 	}
 

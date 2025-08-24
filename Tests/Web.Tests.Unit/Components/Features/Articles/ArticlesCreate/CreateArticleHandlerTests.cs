@@ -35,7 +35,8 @@ public class CreateArticleHandlerTests
 		// Assert
 		result.Success.Should().BeTrue();
 		// Verify an Article was inserted, and PublishedOn was set (not default)
-		_ = _fixture.ArticlesCollection.Received(1).InsertOneAsync(Arg.Is<Article>(a => a.Title == dto.Title && a.Introduction == dto.Introduction && a.PublishedOn != null), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
+		_ = _fixture.ArticlesCollection
+			.Received(1).InsertOneAsync(Arg.Is<Article>(a => a.Title == dto.Title && a.Introduction == dto.Introduction && a.PublishedOn != null), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
 	}
 
 	[Fact]
