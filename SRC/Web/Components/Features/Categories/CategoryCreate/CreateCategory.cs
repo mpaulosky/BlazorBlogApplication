@@ -16,7 +16,7 @@ public static class CreateCategory
 {
 	public interface ICreateCategoryHandler
 	{
-		Task<Result> HandleAsync(CategoryDto request);
+		Task<Result> HandleAsync(CategoryDto? request);
 	}
 
 	/// <summary>
@@ -44,13 +44,13 @@ public static class CreateCategory
 		/// </summary>
 		/// <param name="request">The category DTO.</param>
 		/// <returns>A <see cref="Result"/> indicating success or failure.</returns>
-		public async Task<Result> HandleAsync(CategoryDto request)
+		public async Task<Result> HandleAsync(CategoryDto? request)
 		{
 			try
 			{
 				var category = new Category
 				{
-					CategoryName = request.CategoryName,
+					CategoryName = request!.CategoryName,
 				};
 
 				await _context.Categories.InsertOneAsync(category);
@@ -61,7 +61,7 @@ public static class CreateCategory
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Failed to create category: {CategoryName}", request.CategoryName);
+				_logger.LogError(ex, "Failed to create category: {CategoryName}", request?.CategoryName ?? string.Empty);
 				return Result.Fail(ex.Message);
 			}
 		}
