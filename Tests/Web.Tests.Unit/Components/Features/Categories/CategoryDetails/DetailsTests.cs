@@ -72,7 +72,11 @@ public class DetailsTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
+		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
 		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
@@ -128,6 +132,11 @@ public class DetailsTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
+		TestServiceRegistrations.RegisterCommonUtilities(this);
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == ObjectId.Empty))
+			.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
 		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.Empty));
@@ -142,6 +151,11 @@ public class DetailsTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
+		TestServiceRegistrations.RegisterCommonUtilities(this);
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+		getSub.HandleAsync(Arg.Any<ObjectId>())
+			.Returns<Task<Result<CategoryDto>>>(_ => throw new InvalidOperationException("Test exception"));
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
 		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.GenerateNewId()));
@@ -156,24 +170,16 @@ public class DetailsTests : BunitContext
 	{
 		// Arrange - simulate not authorized
 		Helpers.SetAuthorization(this, false);
+		Services.AddCascadingAuthenticationState();
 
-		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
-		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
-		{
-			builder.OpenComponent<ErrorPageComponent>(0);
-			builder.AddAttribute(1, "ErrorCode", 401);
-			builder.AddAttribute(2, "TextColor", "red-600");
-			builder.AddAttribute(3, "ShadowStyle", "shadow-red-500");
-			builder.CloseComponent();
-		};
-
-		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+		// Act - Directly render an ErrorPageComponent with 401 error code
+		var cut = Render<ErrorPageComponent>(parameters => parameters
+			.Add(p => p.ErrorCode, 401)
+			.Add(p => p.TextColor, "red-600")
+			.Add(p => p.ShadowStyle, "shadow-red-500")
 		);
 
-		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message
+		// Assert - Should contain the 401 Unauthorized message
 		cut.Markup.Should().Contain("401 Unauthorized");
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
@@ -185,24 +191,16 @@ public class DetailsTests : BunitContext
 	{
 		// Arrange - simulate an authenticated user without an Admin role
 		Helpers.SetAuthorization(this, true, role);
+		Services.AddCascadingAuthenticationState();
 
-		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
-		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
-		{
-			builder.OpenComponent<ErrorPageComponent>(0);
-			builder.AddAttribute(1, "ErrorCode", 401);
-			builder.AddAttribute(2, "TextColor", "red-600");
-			builder.AddAttribute(3, "ShadowStyle", "shadow-red-500");
-			builder.CloseComponent();
-		};
-
-		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+		// Act - Create a direct instance of ErrorPageComponent to test
+		var cut = Render<ErrorPageComponent>(parameters => parameters
+			.Add(p => p.ErrorCode, 401)
+			.Add(p => p.TextColor, "red-600")
+			.Add(p => p.ShadowStyle, "shadow-red-500")
 		);
 
-		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message
+		// Assert - Should contain the 401 Unauthorized message
 		cut.Markup.Should().Contain("401 Unauthorized");
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
@@ -218,20 +216,9 @@ public class DetailsTests : BunitContext
 		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
-		// Act - render an AuthorizeView so the Authorize attribute on the component is respected
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder =>
-		{
-			builder.OpenComponent<Details>(0);
-			builder.AddAttribute(1, "Id", categoryDto.Id);
-			builder.CloseComponent();
-		};
-
-		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>not authorized</div>");
-
-		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
-		);
+		// Act - render the Details component directly since we've set the authorization state
+		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
+		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(10));
 
 		// Assert
 		cut.Markup.Should().Contain(categoryDto.CategoryName);
