@@ -8,6 +8,7 @@
 // =======================================================
 
 using static Web.Components.Features.Articles.ArticleDetails.GetArticle;
+using Web.Components.Features.Articles.ArticleDetails;
 
 namespace Web.Components.Features.Articles.ArticleDetails;
 
