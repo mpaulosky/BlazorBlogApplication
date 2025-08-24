@@ -200,6 +200,55 @@ public class ListTests : BunitContext
 	}
 
 	[Fact]
+	public void Navigates_To_Edit_Page()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "Admin");
+		var nav = Services.GetRequiredService<BunitNavigationManager>();
+		var articles = FakeArticleDto.GetArticleDtos(1, true);
+		// ensure edit permission is enabled for the article
+		foreach (var a in articles) a.CanEdit = true;
+		SetupHandlerArticles(articles);
+
+		var cut = Render<List>();
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
+		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, articles.AsQueryable());
+		cut.Render();
+
+		// Act
+		cut.Find("button.btn-primary").Click();
+
+		// Assert
+		nav.Uri.Should().Contain($"/articles/edit/{articles[0].Id}");
+	}
+
+	[Fact]
+	public void Disabled_Edit_Button_Does_Not_Navigate()
+	{
+		// Arrange - user without edit rights
+		Helpers.SetAuthorization(this, true, "User");
+		var nav = Services.GetRequiredService<BunitNavigationManager>();
+		var articles = FakeArticleDto.GetArticleDtos(1, true);
+		foreach (var a in articles) a.CanEdit = false;
+		SetupHandlerArticles(articles);
+
+		var cut = Render<List>();
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
+		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, articles.AsQueryable());
+		cut.Render();
+
+		var initial = nav.Uri;
+
+		catch (InvalidOperationException)
+		{
+			// expected for disabled button in some bUnit configurations
+		}
+
+		// Assert - navigation should not have changed
+		nav.Uri.Should().Be(initial);
+	}
+
+	[Fact]
 	public void Renders_All_Table_Columns()
 	{
 		// Arrange
