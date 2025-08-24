@@ -106,7 +106,7 @@ jobs:
           path: ${{ github.workspace }}/test-results/**/*.log
 
       - name: Codecov
-        uses: codecov/codecov-action@v5.4.3
+        uses: codecov/codecov-action@v5.5.0
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
