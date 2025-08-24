@@ -3,8 +3,8 @@
 // File Name :     DetailsTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : TailwindBlog
-// Project Name :  Web.Tests.Bunit
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
 // =======================================================
 
 namespace Web.Components.Features.Categories.CategoryDetails;
@@ -29,9 +29,10 @@ public class DetailsTests : BunitContext
 	public void RendersNotFound_WhenCategoryIsNull()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
+		Helpers.SetAuthorization(this, true, "Admin");
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
+		getSub.HandleAsync(Arg.Any<ObjectId>())
+			.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -46,10 +47,12 @@ public class DetailsTests : BunitContext
 	public void RendersCategoryDetails_WhenCategoryIsPresent()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
+		Helpers.SetAuthorization(this, true, "Admin");
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		// register handler that returns the DTO for the matching id
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id)).Returns(Task.FromResult(Result.Ok(categoryDto)));
+		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id))
+			.Returns(Task.FromResult(Result.Ok(categoryDto)));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -58,7 +61,7 @@ public class DetailsTests : BunitContext
 
 		// Assert
 		cut.Markup.Should().Contain(categoryDto.CategoryName);
-		cut.Markup.Should().Contain("Created On: 1/1/2025");
+		cut.Markup.Should().Contain("CategoryCreated On: 1/1/2025");
 		cut.Markup.Should().Contain("Modified On: 1/1/2025");
 		cut.Find("button.btn-secondary").Should().NotBeNull();
 		cut.Find("button.btn-light").Should().NotBeNull();
@@ -68,11 +71,8 @@ public class DetailsTests : BunitContext
 	public void HasCorrectNavigationButtons()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
+		Helpers.SetAuthorization(this, true, "Admin");
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
-		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
 		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
@@ -87,7 +87,7 @@ public class DetailsTests : BunitContext
 	public void NavigatesToEditPage_WhenEditButtonClicked()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
+		Helpers.SetAuthorization(this, true, "Admin");
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
@@ -107,7 +107,7 @@ public class DetailsTests : BunitContext
 	public void NavigatesToListPage_WhenBackButtonClicked()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
+		Helpers.SetAuthorization(this, true, "Admin");
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
@@ -127,10 +127,7 @@ public class DetailsTests : BunitContext
 	public void HandlesEmptyObjectId()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
-		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
-		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+		Helpers.SetAuthorization(this, true, "Admin");
 
 		// Act
 		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.Empty));
@@ -144,10 +141,7 @@ public class DetailsTests : BunitContext
 	public void HandlesServiceException_Gracefully()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
-		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns<Task<Result<CategoryDto>>>(_ => throw new Exception("DB error"));
-		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+		Helpers.SetAuthorization(this, true, "Admin");
 
 		// Act
 		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.GenerateNewId()));
@@ -162,7 +156,6 @@ public class DetailsTests : BunitContext
 	{
 		// Arrange - simulate not authorized
 		Helpers.SetAuthorization(this, false);
-		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
 		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
@@ -192,7 +185,6 @@ public class DetailsTests : BunitContext
 	{
 		// Arrange - simulate an authenticated user without an Admin role
 		Helpers.SetAuthorization(this, true, role);
-		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
 		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
@@ -213,6 +205,76 @@ public class DetailsTests : BunitContext
 		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message
 		cut.Markup.Should().Contain("401 Unauthorized");
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
+	}
+
+	[Fact]
+	public void Authenticated_Admin_Can_View_Details()
+	{
+		// Arrange - simulate authenticated Admin
+		Helpers.SetAuthorization(this, true, "Admin");
+		TestServiceRegistrations.RegisterCommonUtilities(this);
+		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+
+		// Act - render an AuthorizeView so the Authorize attribute on the component is respected
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder =>
+		{
+			builder.OpenComponent<Details>(0);
+			builder.AddAttribute(1, "Id", categoryDto.Id);
+			builder.CloseComponent();
+		};
+
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>not authorized</div>");
+
+		var cut = Render<AuthorizeView>(parameters => parameters
+			.Add(p => p.Authorized, authorizedFragment)
+			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+		);
+
+		// Assert
+		cut.Markup.Should().Contain(categoryDto.CategoryName);
+		cut.Find("button.btn-secondary").Should().NotBeNull();
+		cut.Find("button.btn-light").Should().NotBeNull();
+	}
+
+	[Fact]
+	public void NonAdmin_User_Does_Not_See_Edit_Button()
+	{
+		// Arrange - simulate authenticated non-admin (User)
+		Helpers.SetAuthorization(this, true, "User");
+		TestServiceRegistrations.RegisterCommonUtilities(this);
+		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+
+		// Act - render an AuthorizeView so the Authorize attribute on the component is respected
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder =>
+		{
+			builder.OpenComponent<Details>(0);
+			builder.AddAttribute(1, "Id", categoryDto.Id);
+			builder.CloseComponent();
+		};
+
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
+		{
+			builder.OpenComponent<ErrorPageComponent>(0);
+			builder.AddAttribute(1, "ErrorCode", 401);
+			builder.AddAttribute(2, "TextColor", "red-600");
+			builder.AddAttribute(3, "ShadowStyle", "shadow-red-500");
+			builder.CloseComponent();
+		};
+
+		var cut = Render<AuthorizeView>(parameters => parameters
+			.Add(p => p.Authorized, authorizedFragment)
+			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+		);
+
+		// Assert - NotAuthorized content should show and Edit button should not be present
+		cut.Markup.Should().Contain("401 Unauthorized");
+		cut.Markup.Should().NotContain("Edit");
 	}
 
 }
