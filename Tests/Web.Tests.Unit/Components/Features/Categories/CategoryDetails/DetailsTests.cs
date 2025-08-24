@@ -3,8 +3,8 @@
 // File Name :     DetailsTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : TailwindBlog
-// Project Name :  Web.Tests.Bunit
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
 // =======================================================
 
 namespace Web.Components.Features.Categories.CategoryDetails;
@@ -58,7 +58,7 @@ public class DetailsTests : BunitContext
 
 		// Assert
 		cut.Markup.Should().Contain(categoryDto.CategoryName);
-		cut.Markup.Should().Contain("Created On: 1/1/2025");
+		cut.Markup.Should().Contain("CategoryCreated On: 1/1/2025");
 		cut.Markup.Should().Contain("Modified On: 1/1/2025");
 		cut.Find("button.btn-secondary").Should().NotBeNull();
 		cut.Find("button.btn-light").Should().NotBeNull();
@@ -213,6 +213,76 @@ public class DetailsTests : BunitContext
 		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message
 		cut.Markup.Should().Contain("401 Unauthorized");
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
+	}
+
+	[Fact]
+	public void Authenticated_Admin_Can_View_Details()
+	{
+		// Arrange - simulate authenticated Admin
+		Helpers.SetAuthorization(this, true, "Admin");
+		TestServiceRegistrations.RegisterCommonUtilities(this);
+		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+
+		// Act - render an AuthorizeView so the Authorize attribute on the component is respected
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder =>
+		{
+			builder.OpenComponent<Details>(0);
+			builder.AddAttribute(1, "Id", categoryDto.Id);
+			builder.CloseComponent();
+		};
+
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>not authorized</div>");
+
+		var cut = Render<AuthorizeView>(parameters => parameters
+			.Add(p => p.Authorized, authorizedFragment)
+			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+		);
+
+		// Assert
+		cut.Markup.Should().Contain(categoryDto.CategoryName);
+		cut.Find("button.btn-secondary").Should().NotBeNull();
+		cut.Find("button.btn-light").Should().NotBeNull();
+	}
+
+	[Fact]
+	public void NonAdmin_User_Does_Not_See_Edit_Button()
+	{
+		// Arrange - simulate authenticated non-admin (User)
+		Helpers.SetAuthorization(this, true, "User");
+		TestServiceRegistrations.RegisterCommonUtilities(this);
+		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+
+		// Act - render an AuthorizeView so the Authorize attribute on the component is respected
+		RenderFragment<AuthenticationState> authorizedFragment = _ => builder =>
+		{
+			builder.OpenComponent<Details>(0);
+			builder.AddAttribute(1, "Id", categoryDto.Id);
+			builder.CloseComponent();
+		};
+
+		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
+		{
+			builder.OpenComponent<ErrorPageComponent>(0);
+			builder.AddAttribute(1, "ErrorCode", 401);
+			builder.AddAttribute(2, "TextColor", "red-600");
+			builder.AddAttribute(3, "ShadowStyle", "shadow-red-500");
+			builder.CloseComponent();
+		};
+
+		var cut = Render<AuthorizeView>(parameters => parameters
+			.Add(p => p.Authorized, authorizedFragment)
+			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+		);
+
+		// Assert - NotAuthorized content should show and Edit button should not be present
+		cut.Markup.Should().Contain("401 Unauthorized");
+		cut.Markup.Should().NotContain("Edit");
 	}
 
 }
