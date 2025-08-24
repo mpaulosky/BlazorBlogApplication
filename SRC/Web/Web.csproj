@@ -17,6 +17,7 @@
     <PackageReference Include="Blazored.FluentValidation" />
     <PackageReference Include="Bogus" />
     <PackageReference Include="FluentValidation" />
+    <PackageReference Include="JetBrains.Annotations" />
     <PackageReference Include="Mapster" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="MongoDB.Bson" />
