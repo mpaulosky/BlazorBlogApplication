@@ -60,8 +60,8 @@ jobs:
       - name: Run all tests in all test projects
         id: run-tests
         run: |
-          # Ensure repository-level TestResults exists
-          mkdir -p "TestResults"
+          # Ensure repository-level test-results exists
+          mkdir -p "test-results"
           timestamp=$(date +%s)
 
           set -o pipefail
@@ -69,15 +69,16 @@ jobs:
           while IFS= read -r proj; do
             if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null; then
               name=$(basename "$proj" .csproj)
-              echo "Running tests for: $proj -> TestResults/${name}.trx (logs -> TestResults/${name}.coverage.log)"
+              echo "Running tests for: $proj -> test-results/${name}.trx (logs -> test-results/${name}.coverage.log)"
               set +e
               # Run tests and collect XPlat Code Coverage; quoting is safe for bash
               dotnet test "$proj" \
                 --no-build --no-restore \
                 --collect:"XPlat Code Coverage" \
                 --logger "trx;LogFileName=${name}.trx" \
+                --logger "junit;LogFileName=${name}.coverage.opencover.xml" \
                 --settings runsettings.xml \
-                --results-directory "TestResults" 2>&1 | tee "TestResults/${name}.log"
+                --results-directory "test-results" 2>&1 | tee "test-results/${name}.log"
               rc=$?
               set -e
 
@@ -97,21 +98,19 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Solution-Test-Results
-          path: TestResults
+          path: test-results
 
-      - name: Upload TestResults (fallback for debugging)
-        if: ${{ steps.check-test-results.outputs.found_trx != 'true' }}
+      - name: Upload test-results (fallback for debugging)
         uses: actions/upload-artifact@v4
         with:
-          name: TestResults-Debug
-          path: TestResults/**
+          name: test-results-Debug
+          path: test-results/**
 
       - name: Upload Test Logs
-        if: ${{ steps.check-test-results.outputs.found_logs == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: Test-Logs
-          path: ${{ github.workspace }}/TestResults/**/*.log
+          path: ${{ github.workspace }}/test-results/**/*.log
 
       - name: Codecov
         uses: codecov/codecov-action@v5.4.3
@@ -121,7 +120,7 @@ jobs:
         uses: codecov/test-results-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: TestResults/**/*.xml
+          files: test-results/**/*.xml
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -129,7 +128,9 @@ jobs:
         if: always()
         with:
           files: |
-            TestResults/**/*.trx
+            test-results/**/*.trx
+            test-results/**/*.xml
+            test-results/**/*.json
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v4.1.0
