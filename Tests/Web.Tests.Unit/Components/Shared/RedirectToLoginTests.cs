@@ -3,8 +3,8 @@
 // File Name :     RedirectToLoginTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : TailwindBlog
-// Project Name :  Web.Tests.Bunit
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
 // =======================================================
 
 namespace Web.Components.Shared;

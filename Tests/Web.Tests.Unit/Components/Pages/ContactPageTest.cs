@@ -3,8 +3,8 @@
 // File Name :     ContactPageTest.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : TailwindBlog
-// Project Name :  Web.Tests.Bunit
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
 // =======================================================
 
 namespace Web.Components.Pages;
@@ -31,17 +31,17 @@ public class ContactPageTest : BunitContext
 				  <h1 class="text-3xl font-bold tracking-tight text-gray-50">Contacts</h1>
 				</header>
 				<div class="prose max-w-2xl mx-auto text-gray-100 bg-gray-800 rounded-md shadow-md p-6 mt-6">
-				  <h2 class="text-xl font-bold mb-2">Contact - TailwindBlog</h2>
+				  <h2 class="text-xl font-bold mb-2">Contact - BlazorBlogApplication</h2>
 				  <p>
 				    For questions, support, or feedback about
-				    <b>TailwindBlog</b>, please use one of the following methods:
+				    <b>BlazorBlogApplication</b>, please use one of the following methods:
 				  </p>
 				  <ul class="list-disc pl-6 mt-2">
 				    <li>Email:
 				      <a href="mailto:mpaulosky@gmail.com" class="text-blue-400 underline">mpaulosky@gmail.com</a>
 				    </li>
 				    <li>GitHub Issues:
-				      <a href="https://github.com/mpaulosky/TailwindBlog/issues" target="_blank" class="text-blue-400 underline">github.com/mpaulosky/TailwindBlog/issues</a>
+				      <a href="https://github.com/mpaulosky/BlazorBlogApplication/issues" target="_blank" class="text-blue-400 underline">github.com/mpaulosky/BlazorBlogApplication/issues</a>
 				    </li>
 				  </ul>
 				  <p class="mt-4">

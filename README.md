@@ -135,7 +135,7 @@ This repository enforces the following rules for all .NET code (see `.editorconf
 ### Testing
 
 - **Unit, Integration, Architecture Tests**
-- **xUnit, FluentAssertions, NSubstitute, Moq, bUnit (`Tests/Web.Tests.Bunit/`), Playwright**
+- **xUnit, FluentAssertions, NSubstitute, Moq, bUnit (`Tests/Web.Tests.Unit/`), Playwright**
 
 ---
 

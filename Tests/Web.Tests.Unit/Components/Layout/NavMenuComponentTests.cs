@@ -3,8 +3,8 @@
 // File Name :     NavMenuComponentTest.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : TailwindBlog
-// Project Name :  Web.Tests.Bunit
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
 // =======================================================
 
 namespace Web.Components.Layout;
@@ -41,7 +41,7 @@ public class NavMenuComponentTests : BunitContext
 		cut.Markup.Should().Contain("Categories");
 		cut.Markup.Should().Contain("Contact");
 		cut.Markup.Should().Contain("About");
-		cut.Markup.Should().Contain("Tailwind Blogs");
+		cut.Markup.Should().Contain("Article Service");
 		cut.Markup.Should().Contain(expectedText);
 		cut.Markup.Should().Contain("p-1 hover:text-blue-700");
 
