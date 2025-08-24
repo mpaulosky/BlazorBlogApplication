@@ -239,13 +239,7 @@ public class ListTests : BunitContext
 
 		var initial = nav.Uri;
 
-		// Act - try clicking disabled button; clicking may throw for disabled elements so ignore exceptions
-		var button = cut.Find("button.btn-primary");
-		try
-		{
-			button.Click();
-		}
-		catch
+		catch (InvalidOperationException)
 		{
 			// expected for disabled button in some bUnit configurations
 		}
