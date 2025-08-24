@@ -159,11 +159,12 @@ Project Name :  ${File.ProjectName}
 
 - **Require Unit Tests:** `true` (see `Tests/`)
 - **Require Integration Tests:** `true` (see `Tests/`)
-- **Require Architecture Tests:** `true` (see `Tests/Architecture.Tests/`)
+- **Require Architecture Tests:** `true` (see `Tests/Architecture.Tests.Unit/`)
 - **Use xUnit:** `true` (see `Tests/`)
 - **Use FluentAssertions:** `true` (see `Tests/`)
 - **Use NSubstitute:** `true`
-- **Use bUnit:** `true` (see `Tests/Web.Tests.Bunit/`)
+- **Use Xunit:** `true` (see `Tests/Shared.Tests.Unit/`)
+- **Use bUnit:** `true` (see `Tests/Web.Tests.Unit/`)
 - **Use Playwright:** `true` (see `README.md`)
 
 ---
