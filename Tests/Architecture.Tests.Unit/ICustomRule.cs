@@ -3,7 +3,7 @@
 // File Name :     ICustomRule.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : TailwindBlog
+// Solution Name : BlazorBlogApplication
 // Project Name :  Architecture.Tests
 // =======================================================
 
