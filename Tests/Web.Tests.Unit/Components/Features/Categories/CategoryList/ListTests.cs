@@ -3,8 +3,8 @@
 // File Name :     ListTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : TailwindBlog
-// Project Name :  Web.Tests.Bunit
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
 // =======================================================
 
 using static Web.Components.Features.Categories.CategoryList.GetCategories;

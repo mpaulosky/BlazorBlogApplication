@@ -3,8 +3,8 @@
 // File Name :     MainLayoutTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : TailwindBlog
-// Project Name :  Web.Tests.Bunit
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
 // =======================================================
 
 namespace Web.Components.Layout;
@@ -35,7 +35,7 @@ public class MainLayoutTests : BunitContext
 		var cut = Render<MainLayout>();
 
 		// Assert
-		cut.Markup.Should().Contain("Tailwind Blogs");
+		cut.Markup.Should().Contain("Article Service");
 		cut.Markup.Should().Contain("All rights reserved");
 		cut.Markup.Should().Contain("©");
 		cut.Markup.Should().Contain("MPaulosky Co. All rights reserved.");
@@ -79,13 +79,6 @@ public class MainLayoutTests : BunitContext
 			authContext.SetAuthorized("Test User");
 
 		}
-		else
-		{
-
-			// If not authorized, set the context to not authorized
-			authContext.SetNotAuthorized();
-
-		}
 
 		// Optionally set roles if required
 		if (hasRoles)
@@ -95,6 +88,62 @@ public class MainLayoutTests : BunitContext
 
 		}
 
+	}
+
+	[Theory]
+	[InlineData("Unauthorized")]
+	[InlineData("Argument")]
+	[InlineData("NotFound")]
+	[InlineData("Generic")]
+	public void Should_Display_ErrorPage_When_Child_Throws(string throwType)
+	{
+		// Arrange
+		SetAuthorization(false);
+
+		// Act
+		RenderFragment rf = builder =>
+		{
+			builder.OpenComponent<ThrowingChild>(0);
+			builder.AddAttribute(1, nameof(ThrowingChild.ThrowType), throwType);
+			builder.CloseComponent();
+		};
+
+		var cut = Render<MainLayout>(parameters => parameters
+			.Add(p => p.Body, rf)
+		);
+
+		// Assert - the ErrorPageComponent renders a title depending on the code
+		string expectedTitle = throwType switch
+		{
+			"Unauthorized" => "401 Unauthorized",
+			"Argument" => "Unknown Error",
+			"NotFound" => "404 Not Found",
+			_ => "500 Internal Server Error",
+		};
+
+		cut.Markup.Should().Contain(expectedTitle);
+	}
+
+	[Fact]
+	public void Should_Render_Child_Content_When_No_Exception()
+	{
+		// Arrange
+		SetAuthorization(false);
+
+		// Act
+		RenderFragment rf = builder =>
+		{
+			builder.OpenComponent<ThrowingChild>(0);
+			builder.AddAttribute(1, nameof(ThrowingChild.ThrowType), "");
+			builder.CloseComponent();
+		};
+
+		var cut = Render<MainLayout>(parameters => parameters
+			.Add(p => p.Body, rf)
+		);
+
+		// Assert
+		cut.Markup.Should().Contain("Child content rendered normally");
 	}
 
 }

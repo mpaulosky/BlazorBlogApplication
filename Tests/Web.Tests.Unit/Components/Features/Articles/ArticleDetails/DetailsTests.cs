@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Bunit
+// Project Name :  Web.Tests.Unit
 // =======================================================
 
 using static Web.Components.Features.Articles.ArticleDetails.GetArticle;

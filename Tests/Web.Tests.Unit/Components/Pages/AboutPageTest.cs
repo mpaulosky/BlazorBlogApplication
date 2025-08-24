@@ -3,8 +3,8 @@
 // File Name :     AboutPageTest.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : TailwindBlog
-// Project Name :  Web.Tests.Bunit
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
 // =======================================================
 
 namespace Web.Components.Pages;
@@ -31,9 +31,9 @@ public class AboutPageTest : BunitContext
 				  <h1 class="text-3xl font-bold tracking-tight text-gray-50">About</h1>
 				</header>
 				<div class="prose max-w-2xl mx-auto text-gray-100 bg-gray-800 rounded-md shadow-md p-6 mt-6">
-				  <h2 class="text-xl font-bold mb-2">About - TailwindBlog</h2>
+				  <h2 class="text-xl font-bold mb-2">About - BlazorBlogApplication</h2>
 				  <p>
-				    <strong>TailwindBlog</strong>
+				    <strong>BlazorBlogApplication</strong>
 				    is a modern, open-source blogging platform built with
 				    <b>.NET Aspire</b>
 				    and
@@ -50,7 +50,7 @@ public class AboutPageTest : BunitContext
 				  </ul>
 				  <p class="mt-2">
 				    <b>Source code:</b>
-				    <a href="https://github.com/mpaulosky/TailwindBlog" target="_blank" class="text-blue-400 underline">github.com/mpaulosky/TailwindBlog</a>
+				    <a href="https://github.com/mpaulosky/BlazorBlogApplication" target="_blank" class="text-blue-400 underline">github.com/mpaulosky/BlazorBlogApplication</a>
 				  </p>
 				</div>
 				""";

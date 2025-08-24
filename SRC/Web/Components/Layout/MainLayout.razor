@@ -10,8 +10,8 @@
 					<ChildContent>
 						@Body
 					</ChildContent>
-					<ErrorContent>
-						<ErrorPageComponent ErrorCode="@GetErrorCode(context)"/>
+					<ErrorContent Context="ex">
+						<ErrorPageComponent ErrorCode="@GetErrorCode(ex)"/>
 					</ErrorContent>
 				</ErrorBoundary>
 			</main>
