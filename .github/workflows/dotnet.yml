@@ -129,8 +129,6 @@ jobs:
         with:
           files: |
             test-results/**/*.trx
-            test-results/**/*.xml
-            test-results/**/*.json
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v4.1.0
