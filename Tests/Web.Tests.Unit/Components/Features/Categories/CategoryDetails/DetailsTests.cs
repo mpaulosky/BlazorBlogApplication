@@ -25,14 +25,106 @@ public class DetailsTests : BunitContext
 		Services.AddCascadingAuthenticationState();
 	}
 
+	#region Helper Methods
+
+	/// <summary>
+	/// Sets up an authorized admin user for testing admin functionality.
+	/// </summary>
+	private void SetupAdminUser()
+	{
+		Helpers.SetAuthorization(this, true, "Admin");
+	}
+
+	/// <summary>
+	/// Sets up a category handler that returns a successful result with the provided category.
+	/// </summary>
+	/// <param name="categoryDto">The category to return from the handler.</param>
+	/// <returns>The configured handler substitute.</returns>
+	private GetCategory.IGetCategoryHandler SetupSuccessfulCategoryHandler(CategoryDto categoryDto)
+	{
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id))
+			.Returns(Task.FromResult(Result.Ok(categoryDto)));
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+		return getSub;
+	}
+
+	/// <summary>
+	/// Sets up a category handler that returns a failure result.
+	/// </summary>
+	/// <param name="errorMessage">The error message to return.</param>
+	/// <returns>The configured handler substitute.</returns>
+	private GetCategory.IGetCategoryHandler SetupFailedCategoryHandler(string errorMessage = "Category not found.")
+	{
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Fail<CategoryDto>(errorMessage)));
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+		return getSub;
+	}
+
+	/// <summary>
+	/// Sets up a category handler that throws an exception.
+	/// </summary>
+	/// <param name="exceptionMessage">The exception message to throw.</param>
+	/// <returns>The configured handler substitute.</returns>
+	private GetCategory.IGetCategoryHandler SetupExceptionCategoryHandler(string exceptionMessage = "DB error")
+	{
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns<Task<Result<CategoryDto>>>(_ => throw new Exception(exceptionMessage));
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+		return getSub;
+	}
+
+	#endregion
+
+	[Fact]
+	public void ShowsLoadingState_Initially()
+	{
+		// Arrange
+		SetupAdminUser();
+		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		
+		// Create a handler that will delay to allow us to check the loading state
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+		var tcs = new TaskCompletionSource<Result<CategoryDto>>();
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(tcs.Task);
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+
+		// Act
+		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
+
+		// Assert - Check that loading state is shown initially
+		cut.Markup.Should().Contain("animate-spin");
+		cut.FindComponent<LoadingComponent>().Should().NotBeNull();
+
+		// Complete the task to prevent hanging
+		tcs.SetResult(Result.Ok(categoryDto));
+	}
+
+	[Fact]
+	public void AdminUser_CanAccessComponent()
+	{
+		// Arrange
+		SetupAdminUser();
+		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		SetupSuccessfulCategoryHandler(categoryDto);
+
+		// Act
+		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
+		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+		// Assert - Admin should see the category details, not authorization error
+		cut.Markup.Should().Contain(categoryDto.CategoryName);
+		cut.Markup.Should().NotContain("401 Unauthorized");
+		cut.Markup.Should().NotContain("You are not authorized to view this page");
+	}
+
 	[Fact]
 	public void RendersNotFound_WhenCategoryIsNull()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
-		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
-		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+		SetupAdminUser();
+		SetupFailedCategoryHandler();
 
 		// Act
 		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.GenerateNewId()));
@@ -46,11 +138,9 @@ public class DetailsTests : BunitContext
 	public void RendersCategoryDetails_WhenCategoryIsPresent()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
+		SetupAdminUser();
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id)).Returns(Task.FromResult(Result.Ok(categoryDto)));
-		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+		SetupSuccessfulCategoryHandler(categoryDto);
 
 		// Act
 		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
@@ -68,11 +158,9 @@ public class DetailsTests : BunitContext
 	public void HasCorrectNavigationButtons()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
+		SetupAdminUser();
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
-		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+		SetupSuccessfulCategoryHandler(categoryDto);
 
 		// Act
 		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
@@ -87,11 +175,9 @@ public class DetailsTests : BunitContext
 	public void NavigatesToEditPage_WhenEditButtonClicked()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
+		SetupAdminUser();
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
-		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+		SetupSuccessfulCategoryHandler(categoryDto);
 		var navigationManager = Services.GetRequiredService<BunitNavigationManager>();
 
 		// Act
@@ -107,11 +193,9 @@ public class DetailsTests : BunitContext
 	public void NavigatesToListPage_WhenBackButtonClicked()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
+		SetupAdminUser();
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
-		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+		SetupSuccessfulCategoryHandler(categoryDto);
 		var navigationManager = Services.GetRequiredService<BunitNavigationManager>();
 
 		// Act
@@ -127,10 +211,8 @@ public class DetailsTests : BunitContext
 	public void HandlesEmptyObjectId()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
-		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
-		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+		SetupAdminUser();
+		SetupFailedCategoryHandler();
 
 		// Act
 		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.Empty));
@@ -144,10 +226,8 @@ public class DetailsTests : BunitContext
 	public void HandlesServiceException_Gracefully()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this);
-		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns<Task<Result<CategoryDto>>>(_ => throw new Exception("DB error"));
-		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+		SetupAdminUser();
+		SetupExceptionCategoryHandler();
 
 		// Act
 		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.GenerateNewId()));
