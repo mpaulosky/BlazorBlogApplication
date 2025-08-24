@@ -1,17 +1,23 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     ServicesConstantsTests.cs
+// File Name :     ServicesTests.cs
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Unit
+// Project Name :  Shared.Tests.Unit
 // =======================================================
+
+using System.Diagnostics.CodeAnalysis;
+
+using FluentAssertions;
+
+using JetBrains.Annotations;
 
 namespace Shared;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Services))]
-public class ServicesConstantsTests
+public class ServicesTests
 {
 	[Theory]
 	[InlineData("SERVER", "Server")]
@@ -36,7 +42,7 @@ public class ServicesConstantsTests
 
 		// Assert
 		fi.Should().NotBeNull($"Field '{fieldName}' should exist on {t.FullName}");
-		fi!.FieldType.Should().Be(typeof(string), $"Field '{fieldName}' should be a string");
+		fi.FieldType.Should().Be<string>($"Field '{fieldName}' should be a string");
 		var value = (string?)fi.GetValue(null);
 		value.Should().Be(expected, $"Field '{fieldName}' should have the expected value");
 	}
@@ -63,7 +69,7 @@ public class ServicesConstantsTests
 			val.Should().NotBeNullOrWhiteSpace($"Field '{f.Name}' must not be null/empty/whitespace");
 
 			// Assert - trimmed (no leading/trailing whitespace)
-			val!.Should().Be(val.Trim(), $"Field '{f.Name}' must not have leading or trailing whitespace");
+			val.Should().Be(val.Trim(), $"Field '{f.Name}' must not have leading or trailing whitespace");
 
 			// Assert - is compile-time const
 			f.IsLiteral.Should().BeTrue($"Field '{f.Name}' should be a const (IsLiteral == true)");
@@ -102,7 +108,7 @@ public class ServicesConstantsTests
 
 		// Assert
 		// Case-insensitive uniqueness is intentionally not enforced because some
-		// constants may differ only by case (for example, "articlesDb" vs
+		// constants may differ only by case (for example, "articlesDb" vs.
 		// "articlesdb"). This test is included but intentionally passes to document
 		// that case-insensitive uniqueness was considered but not required.
 		distinctCount.Should().BeGreaterThan(0, "There should be at least one constant");
