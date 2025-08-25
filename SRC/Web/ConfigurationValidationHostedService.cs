@@ -1,16 +1,22 @@
-using System;
+// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     ConfigurationValidationHostedService.cs
+// Company :       mpaulosky
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web
+// =======================================================
+
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 
 namespace Web;
 
 [ExcludeFromCodeCoverage]
 public sealed class ConfigurationValidationHostedService : IHostedService
 {
+
 	private readonly IConfiguration _config;
+
 	private readonly IHostApplicationLifetime _lifetime;
 
 	public ConfigurationValidationHostedService(IConfiguration config, IHostApplicationLifetime lifetime)
@@ -36,28 +42,44 @@ public sealed class ConfigurationValidationHostedService : IHostedService
 
 			// Diagnostic output to help narrow down why test-provided
 			// configuration isn't visible to the hosted service during tests.
-			Console.WriteLine($"[ConfigValidation] IConfiguration['mongoDb-connection']='{mongoConn ?? "<null>"}', ENV['mongoDb-connection']='{mongoEnv ?? "<null>"}'");
+			Console.WriteLine(
+					$"[ConfigValidation] IConfiguration['mongoDb-connection']='{mongoConn ?? "<null>"}', ENV['mongoDb-connection']='{mongoEnv ?? "<null>"}'");
 
 			if (string.IsNullOrWhiteSpace(mongoConn))
+			{
 				mongoConn = mongoEnv;
+			}
 
 			if (string.IsNullOrWhiteSpace(mongoConn))
+			{
 				throw new Exception("Required configuration 'mongoDb-connection' is missing");
+			}
 
 			var authDomain = _config["Auth0-Domain"];
 			var authClient = _config["Auth0-Client-Id"];
 
 			if (string.IsNullOrWhiteSpace(authDomain))
+			{
 				authDomain = Environment.GetEnvironmentVariable("Auth0-Domain");
+			}
+
 			if (string.IsNullOrWhiteSpace(authClient))
+			{
 				authClient = Environment.GetEnvironmentVariable("Auth0-Client-Id");
+			}
 
 			if (string.IsNullOrWhiteSpace(authDomain) || string.IsNullOrWhiteSpace(authClient))
+			{
 				throw new Exception("Required Auth0 configuration is missing");
+			}
 		});
 
 		return Task.CompletedTask;
 	}
 
-	public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+	public Task StopAsync(CancellationToken cancellationToken)
+	{
+		return Task.CompletedTask;
+	}
+
 }
