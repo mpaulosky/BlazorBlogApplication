@@ -39,7 +39,7 @@ public class HomePageTest : BunitContext
 				<h1>Welcome, You're Article Service!</h1>
 				You can only see this content if you're authenticated.
 				<br>
-				<img src="" alt="User Profile Picture" />
+				<img src="" alt="User UserProfile Picture" />
 				""";
 
 		// Act
@@ -74,7 +74,7 @@ public class HomePageTest : BunitContext
 				<h1>Welcome, test@example.com</h1>
 				You can only see this content if you're authenticated.
 				<br>
-				<img src="https://example.com/picture.jpg" alt="User Profile Picture" />
+				<img src="https://example.com/picture.jpg" alt="User UserProfile Picture" />
 				""";
 
 		// Act
