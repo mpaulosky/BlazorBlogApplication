@@ -28,7 +28,7 @@ else
 			<h2>@_category?.CategoryName</h2>
 			<p>Created On: @_category?.CreatedOn.ToString("d")</p>
 			<p>Modified On: @_category?.ModifiedOn?.ToString("d")</p>
-			<button class="btn btn-secondary" @onclick="GoToEdit" disabled="@(_canEdit ? null : true)">Edit</button>
+			<button class="btn btn-secondary" @onclick="GoToEdit" disabled="@(!_canEdit)">Edit</button>
 			<button class="btn btn-light ms-2" type="button" @onclick="GoToList">Back to List</button>
 		</div>
 	</div>
@@ -109,7 +109,7 @@ else
 
 	private async Task SetCanEditAsync()
 	{
-		// Determine edit permission based on authenticated role; default to false if auth state is unavailable
+		// Determine edit permission based on authenticated roles; default to false if auth state is unavailable
 		ClaimsPrincipal? userFromCascade = null;
 		if (AuthenticationState is not null)
 		{
@@ -128,7 +128,9 @@ else
 		var user = candidates.FirstOrDefault(u => u is not null && (u.Identity?.IsAuthenticated ?? false) && u.Claims.Any());
 		user ??= userFromCascade ?? userFromProvider;
 
-		_canEdit = user is not null && (user.IsInRole("Admin") || user.Claims.Any(c => (string.Equals(c.Type, ClaimTypes.Role, StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "role", StringComparison.OrdinalIgnoreCase)) && string.Equals(c.Value, "Admin", StringComparison.OrdinalIgnoreCase)));
+		var result = user is not null && (user.IsInRole("Admin") || user.Claims.Any(c => (string.Equals(c.Type, ClaimTypes.Role, StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "role", StringComparison.OrdinalIgnoreCase)) && string.Equals(c.Value, "Admin", StringComparison.OrdinalIgnoreCase)));
+		_canEdit = result;
+		
 	}
 
 	/// <summary>
