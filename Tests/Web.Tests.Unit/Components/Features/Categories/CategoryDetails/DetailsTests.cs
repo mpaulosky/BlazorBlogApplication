@@ -47,9 +47,9 @@ public class DetailsTests : BunitContext
 	public void RendersCategoryDetails_WhenCategoryIsPresent()
 	{
 		// Arrange
-		Helpers.SetAuthorization(this, true, "Admin");
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		// register handler that returns the DTO for the matching id
+		// register a handler that returns the DTO for the matching id
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id))
 			.Returns(Task.FromResult(Result.Ok(categoryDto)));
@@ -61,21 +61,24 @@ public class DetailsTests : BunitContext
 
 		// Assert
 		cut.Markup.Should().Contain(categoryDto.CategoryName);
-		cut.Markup.Should().Contain("CategoryCreated On: 1/1/2025");
-		cut.Markup.Should().Contain("Modified On: 1/1/2025");
+		cut.Markup.Should().Contain("Created On: 01/1/2025");
+		cut.Markup.Should().Contain("Modified On: 01/1/2025");
 		cut.Find("button.btn-secondary").Should().NotBeNull();
+		//not admin the edit button should be disabled
+		cut.Find("button.btn-secondary").HasAttribute("disabled").Should().BeTrue();
 		cut.Find("button.btn-light").Should().NotBeNull();
 	}
 
 	[Fact]
-	public void HasCorrectNavigationButtons()
+	public void RendersCategoryDetails_WhenCategoryIsPresentAndUserIsAdmin()
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		// register a handler that returns the DTO for the matching id
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
+		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id))
+			.Returns(Task.FromResult(Result.Ok(categoryDto)));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -83,7 +86,12 @@ public class DetailsTests : BunitContext
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
+		cut.Markup.Should().Contain(categoryDto.CategoryName);
+		cut.Markup.Should().Contain("Created On: 01/1/2025");
+		cut.Markup.Should().Contain("Modified On: 01/1/2025");
 		cut.Find("button.btn-secondary").Should().NotBeNull();
+		//not admin the edit button should be disabled
+		cut.Find("button.btn-secondary").HasAttribute("disabled").Should().BeFalse();
 		cut.Find("button.btn-light").Should().NotBeNull();
 	}
 
@@ -154,7 +162,7 @@ public class DetailsTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 		getSub.HandleAsync(Arg.Any<ObjectId>())
-			.Returns<Task<Result<CategoryDto>>>(_ => throw new InvalidOperationException("Test exception"));
+			.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category service failure.")));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -162,7 +170,7 @@ public class DetailsTests : BunitContext
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
-		cut.Markup.Should().Contain("Category not found");
+		cut.Markup.Should().Contain("Category service failure.");
 	}
 
 	[Fact]
@@ -172,35 +180,14 @@ public class DetailsTests : BunitContext
 		Helpers.SetAuthorization(this, false);
 		Services.AddCascadingAuthenticationState();
 
-		// Act - Directly render an ErrorPageComponent with 401 error code
+		// Act - Directly render an ErrorPageComponent with 401 error codes
 		var cut = Render<ErrorPageComponent>(parameters => parameters
 			.Add(p => p.ErrorCode, 401)
 			.Add(p => p.TextColor, "red-600")
 			.Add(p => p.ShadowStyle, "shadow-red-500")
 		);
 
-		// Assert - Should contain the 401 Unauthorized message
-		cut.Markup.Should().Contain("401 Unauthorized");
-		cut.Markup.Should().Contain("You are not authorized to view this page.");
-	}
-
-	[Theory]
-	[InlineData("User")]
-	[InlineData("Author")]
-	public void Authenticated_NonAdmin_Is_Shown_NotAuthorized(string role)
-	{
-		// Arrange - simulate an authenticated user without an Admin role
-		Helpers.SetAuthorization(this, true, role);
-		Services.AddCascadingAuthenticationState();
-
-		// Act - Create a direct instance of ErrorPageComponent to test
-		var cut = Render<ErrorPageComponent>(parameters => parameters
-			.Add(p => p.ErrorCode, 401)
-			.Add(p => p.TextColor, "red-600")
-			.Add(p => p.ShadowStyle, "shadow-red-500")
-		);
-
-		// Assert - Should contain the 401 Unauthorized message
+		// Assert - Should contain the 401 Unauthorized messages
 		cut.Markup.Should().Contain("401 Unauthorized");
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
@@ -226,42 +213,58 @@ public class DetailsTests : BunitContext
 		cut.Find("button.btn-light").Should().NotBeNull();
 	}
 
-	[Fact]
-	public void NonAdmin_User_Does_Not_See_Edit_Button()
+	[Theory]
+	[InlineData("User")]
+	[InlineData("Author")]
+	public void NonAdmin_User_WillSeeADisabledEditButton(string role)
 	{
 		// Arrange - simulate authenticated non-admin (User)
-		Helpers.SetAuthorization(this, true, "User");
+		Helpers.SetAuthorization(this, true, role);
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
-		// Act - render an AuthorizeView so the Authorize attribute on the component is respected
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder =>
-		{
-			builder.OpenComponent<Details>(0);
-			builder.AddAttribute(1, "Id", categoryDto.Id);
-			builder.CloseComponent();
-		};
+		// Act
+		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
+		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
-		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
-		{
-			builder.OpenComponent<ErrorPageComponent>(0);
-			builder.AddAttribute(1, "ErrorCode", 401);
-			builder.AddAttribute(2, "TextColor", "red-600");
-			builder.AddAttribute(3, "ShadowStyle", "shadow-red-500");
-			builder.CloseComponent();
-		};
+		// Assert
+		//not admin the edit button should be disabled
+		cut.Find("button.btn-secondary").HasAttribute("disabled").Should().BeTrue();
+	}
 
-		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
-		);
+	[Fact]
+	public async Task ShowsSpinnerWhileLoading_AndHidesAfter()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "Admin");
+		var tcs = new TaskCompletionSource<Result<CategoryDto>>();
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 
-		// Assert - NotAuthorized content should show and Edit button should not be present
-		cut.Markup.Should().Contain("401 Unauthorized");
-		cut.Markup.Should().NotContain("Edit");
+		// Return a Task that won't complete until we call TrySetResult
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(tcs.Task);
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+
+		// Act - render the component; since the handler Task is pending, _isLoading should remain true
+		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.GenerateNewId()));
+
+		// Immediately after render the spinner should be present
+		cut.Markup.Should().Contain("animate-spin");
+
+		// Now complete the handler with a failed result (use the standard message expected by other tests)
+		tcs.TrySetResult(Result.Fail<CategoryDto>("Category not found."));
+
+		// Yield to allow the rendering loop to process the completed task
+		await Task.Yield();
+
+		// Wait for the component to update (spinner removed)
+		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+		// Assert - spinner is gone and the fallback message is displayed
+		cut.Markup.Should().NotContain("animate-spin");
+		cut.Markup.Should().Contain("Category not found");
 	}
 
 }

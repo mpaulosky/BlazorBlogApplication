@@ -17,7 +17,9 @@
 }
 else if (_article is null)
 {
-	<p>Article not found.</p>
+	<ErrorAlertComponent Title="Unable to load article">
+		@(_errorMessage ?? "Article not found.")
+	</ErrorAlertComponent>
 }
 else
 {
@@ -65,7 +67,12 @@ else
 	/// </summary>
 	[Parameter]
 	public required ObjectId Id { get; set; }
-	[CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+	/// <summary>
+	/// Gets or sets the cascading authentication state.
+	/// </summary>
+	[CascadingParameter]
+	private Task<AuthenticationState>? AuthenticationState { get; set; }
 
 	/// <summary>
 	/// Indicates whether the article is currently being loaded.
@@ -90,23 +97,34 @@ else
 	/// <summary>
 	/// Initializes the component by loading the article data.
 	/// </summary>
-	protected override async Task OnInitializedAsync()
+	protected override Task OnInitializedAsync()
 	{
+		_isLoading = true;
+		_ = LoadAsync();
+		return Task.CompletedTask;
+	}
 
-		var result = await GetArticleHandler.HandleAsync(Id);
-
-		if (result.Success)
+	private async Task LoadAsync()
+	{
+		try
 		{
-			_article = result.Value ?? null;
-			_isLoading = false;
+			var result = await GetArticleHandler.HandleAsync(Id);
+
+			if (result.Success)
+			{
+				_article = result.Value ?? null;
+			}
+			else
+			{
+				Logger.LogError(result.Error ?? "An error occurred while fetching the article.");
+				_errorMessage = result.Error ?? "An error occurred while fetching the article.";
+				_article = null;
+			}
 		}
-		else
+		finally
 		{
-			Logger.LogError(result.Error ?? "An error occurred while fetching the article.");
-			_errorMessage = result.Error ?? "An error occurred while fetching the article.";
-			_article = null;
 			_isLoading = false;
-			StateHasChanged();
+			try { await InvokeAsync(StateHasChanged); } catch { }
 		}
 	}
 

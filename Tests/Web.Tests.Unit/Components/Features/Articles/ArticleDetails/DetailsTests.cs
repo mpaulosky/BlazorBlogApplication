@@ -8,7 +8,6 @@
 // =======================================================
 
 using static Web.Components.Features.Articles.ArticleDetails.GetArticle;
-using Web.Components.Features.Articles.ArticleDetails;
 
 namespace Web.Components.Features.Articles.ArticleDetails;
 
@@ -50,8 +49,8 @@ public class DetailsTests : BunitContext
 		cut.Instance.GetType().GetProperty("_article")?.SetValue(cut.Instance, null);
 		cut.Render();
 
-		// Assert
-		cut.Markup.Should().Contain("Article not found");
+	// Assert
+	cut.Markup.Should().Contain("Article not found");
 	}
 
 	[Fact]
@@ -243,8 +242,8 @@ public class DetailsTests : BunitContext
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
 		cut.Render();
 
-		// Assert
-		cut.Markup.Should().Contain("Article not found");
+	// Assert
+	cut.Markup.Should().Contain("Article not found");
 	}
 
 	[Fact]
@@ -262,7 +261,7 @@ public class DetailsTests : BunitContext
 		cut.Render();
 
 		// Assert
-		cut.Markup.Should().Contain("Article not found");
+		cut.Markup.Should().Contain("Service exception");
 	}
 
 	[Fact]
@@ -303,6 +302,29 @@ public class DetailsTests : BunitContext
 
 		// Assert: LoadingComponent contains the text 'Loading...'
 		cut.Markup.Should().Contain("Loading...");
+	}
+
+	[Fact]
+	public async Task ShowsSpinnerWhileLoading_AndHidesAfter()
+	{
+		// Arrange
+		var articleId = ObjectId.GenerateNewId();
+		var tcs = new TaskCompletionSource<Result<ArticleDto>>();
+		_mockHandler.HandleAsync(articleId).Returns(_ => tcs.Task);
+
+		// Act
+		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleId));
+
+		// Spinner should be present while the task is pending
+		cut.Markup.Should().Contain("animate-spin");
+
+		// Complete the task with a failure
+		tcs.TrySetResult(Result<ArticleDto>.Fail("Article not found"));
+		await Task.Yield();
+
+		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+		cut.Markup.Should().NotContain("animate-spin");
+		cut.Markup.Should().Contain("Article not found");
 	}
 
 	[Fact]

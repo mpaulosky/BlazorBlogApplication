@@ -7,11 +7,6 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Components.Features.Categories.CategoryCreate;
-using Web.Data.Entities;
-using Web.Components.Features.Categories; // for CategoryTestFixture
-using Microsoft.Extensions.Logging;
-
 namespace Web.Components.Features.Categories.CategoryCreate;
 
 [ExcludeFromCodeCoverage]

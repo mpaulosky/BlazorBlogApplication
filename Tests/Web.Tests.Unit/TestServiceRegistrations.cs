@@ -393,7 +393,7 @@ public static class TestServiceRegistrations
 		}
 
 		// Ensure a minimal Auth0Service is available for components that inject it.
-		if (ctx.Services.All(sd => sd.ServiceType != typeof(Web.Data.Auth0.Auth0Service)))
+		if (ctx.Services.All(sd => sd.ServiceType != typeof(Auth0Service)))
 		{
 			RegisterAuth0Service(ctx);
 		}

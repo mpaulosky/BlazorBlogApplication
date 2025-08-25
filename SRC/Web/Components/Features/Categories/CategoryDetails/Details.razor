@@ -1,36 +1,34 @@
 @page "/categories/{id:guid}"
 @using Web.Data.Models
+@using System.Security.Claims
 
 @inject NavigationManager Navigation
 @inject GetCategory.IGetCategoryHandler GetHandler
 @inject ILogger<Details> Logger
+@inject AuthenticationStateProvider AuthProvider
 
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize]
 
-<PageHeadingComponent HeaderText="Category Details" Level="1" TextColorClass="blue-500" />
+<PageHeadingComponent HeaderText="Category Details" Level="1" TextColorClass="blue-500"/>
 
 @if (_isLoading)
 {
-	<LoadingComponent />
+	<LoadingComponent/>
 }
 else if (_category is null)
 {
-	<p>Category not found.</p>
+	<ErrorAlertComponent Title="Unable to load category">
+		@(_errorMessage ?? "Category not found.")
+	</ErrorAlertComponent>
 }
 else
 {
 	<div class="card">
 		<div class="card-body">
 			<h2>@_category?.CategoryName</h2>
-			@if (_category?.CreatedOn != null)
-			{
-				<div>CategoryCreated On: @_category.CreatedOn.ToString("M/d/yyyy", CultureInfo.InvariantCulture)</div>
-			}
-			@if (_category?.ModifiedOn != null)
-			{
-				<div>Modified On: @_category.ModifiedOn?.ToString("M/d/yyyy", CultureInfo.InvariantCulture)</div>
-			}
-			<button class="btn btn-secondary" @onclick="GoToEdit">Edit</button>
+			<p>Created On: @_category?.CreatedOn.ToString("d")</p>
+			<p>Modified On: @_category?.ModifiedOn?.ToString("d")</p>
+			<button class="btn btn-secondary" @onclick="GoToEdit" disabled="@(!_canEdit)">Edit</button>
 			<button class="btn btn-light ms-2" type="button" @onclick="GoToList">Back to List</button>
 		</div>
 	</div>
@@ -43,7 +41,12 @@ else
 	/// </summary>
 	[Parameter]
 	public ObjectId Id { get; set; }
-	[CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+	/// <summary>
+	/// The authentication state of the user.
+	/// </summary>
+	[CascadingParameter]
+	private Task<AuthenticationState>? AuthenticationState { get; set; }
 
 	/// <summary>
 	/// The category data to be displayed on the page.
@@ -51,9 +54,19 @@ else
 	private CategoryDto? _category;
 
 	/// <summary>
+	/// Error message returned by the handler when loading fails. Shown in the UI.
+	/// </summary>
+	private string? _errorMessage;
+
+	/// <summary>
 	/// Indicates whether the component is currently loading data.
 	/// </summary>
 	private bool _isLoading = true;
+
+	/// <summary>
+	/// Indicates whether the current user has permission to edit the category.
+	/// </summary>
+	private bool _canEdit;
 
 	/// <summary>
 	/// Initializes the component by loading the category data using the CategoryService.
@@ -63,6 +76,8 @@ else
 		Logger.LogInformation("Loading category details for Id: {CategoryId}", Id);
 		_isLoading = true;
 
+		await SetCanEditAsync().ConfigureAwait(false);
+
 		try
 		{
 			var result = await GetHandler.HandleAsync(Id);
@@ -70,24 +85,52 @@ else
 			if (result.Success)
 			{
 				_category = result.Value;
+				_errorMessage = null;
 				Logger.LogInformation("Category loaded successfully: {CategoryId}", Id);
 			}
 			else
 			{
-				Logger.LogWarning("Failed to load category: {CategoryId}. Error: {Error}", Id, result.Error ?? "Unknown error");
 				_category = null;
+				_errorMessage = result.Error ?? "Category not found.";
+
+				Logger.LogWarning("Failed to load category: {CategoryId}. Error: {Error}", Id, _errorMessage);
 			}
-		}
-		catch (Exception ex)
-		{
-			Logger.LogError(ex, "Exception occurred while loading category: {CategoryId}", Id);
-			_category = null;
 		}
 		finally
 		{
 			_isLoading = false;
 		}
+	}
 
+	protected override async Task OnParametersSetAsync()
+	{
+		await SetCanEditAsync().ConfigureAwait(false);
+	}
+
+	private async Task SetCanEditAsync()
+	{
+		// Determine edit permission based on authenticated roles; default to false if auth state is unavailable
+		ClaimsPrincipal? userFromCascade = null;
+		if (AuthenticationState is not null)
+		{
+			var s = await AuthenticationState.ConfigureAwait(false);
+			userFromCascade = s.User;
+		}
+
+		ClaimsPrincipal? userFromProvider = null;
+		if (AuthProvider is not null)
+		{
+			var s2 = await AuthProvider.GetAuthenticationStateAsync().ConfigureAwait(false);
+			userFromProvider = s2.User;
+		}
+
+		var candidates = new[] { userFromCascade, userFromProvider };
+		var user = candidates.FirstOrDefault(u => u is not null && (u.Identity?.IsAuthenticated ?? false) && u.Claims.Any());
+		user ??= userFromCascade ?? userFromProvider;
+
+		var result = user is not null && (user.IsInRole("Admin") || user.Claims.Any(c => (string.Equals(c.Type, ClaimTypes.Role, StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "role", StringComparison.OrdinalIgnoreCase)) && string.Equals(c.Value, "Admin", StringComparison.OrdinalIgnoreCase)));
+		_canEdit = result;
+		
 	}
 
 	/// <summary>

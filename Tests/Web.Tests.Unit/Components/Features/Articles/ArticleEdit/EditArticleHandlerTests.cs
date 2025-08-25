@@ -7,21 +7,19 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Components.Features.Articles.ArticleEdit;
-using Web.Data.Entities;
-
 namespace Web.Components.Features.Articles.ArticleEdit;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(EditArticle.Handler))]
 public class EditArticleHandlerTests
 {
-	private readonly ArticlesTestFixture _fixture = new ArticlesTestFixture();
+
+	private readonly ArticlesTestFixture _fixture = new ();
+
 	[Fact]
 	public async Task HandleAsync_WithValidArticle_ReplacesArticleAndReturnsOk()
 	{
 		// Arrange
-		// Arrange - configure the fixture-backed collection to behave like a successful replace
 		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(), Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
 			.Returns(Task.FromResult<ReplaceOneResult?>(null!));
 
@@ -46,7 +44,6 @@ public class EditArticleHandlerTests
 	public async Task HandleAsync_WhenReplaceThrows_ReturnsFailWithErrorMessage()
 	{
 		// Arrange
-		// Arrange: make the fixture-backed collection throw when ReplaceOneAsync is invoked
 		_fixture.ArticlesCollection.When(c => c.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(), Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>()))
 			.Do(_ => throw new InvalidOperationException("DB error"));
 
@@ -60,7 +57,7 @@ public class EditArticleHandlerTests
 		// Assert
 		result.Failure.Should().BeTrue();
 		result.Error.Should().Contain("DB error");
-		// Verify logger received an Error-level log and exception was passed
+		// Verify logger received an Error-level log and an exception was passed
 		_fixture.EditLogger.Received(1).Log(
 				LogLevel.Error,
 				Arg.Any<EventId>(),
@@ -73,7 +70,6 @@ public class EditArticleHandlerTests
 	public async Task HandleAsync_NullRequest_ReturnsFail()
 	{
 		// Arrange
-		// Arrange - ensure ReplaceOneAsync won't throw
 		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(), Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
 			.Returns(Task.FromResult<ReplaceOneResult?>(null!));
 
@@ -82,7 +78,7 @@ public class EditArticleHandlerTests
 		// Act
 		var result = await handler.HandleAsync(null);
 
-		// Assert - handler should return a failure result indicating null request
+		// Assert - handler should return a failure result indicating a null request
 		result.Failure.Should().BeTrue();
 		result.Error.Should().Contain("Request is null");
 	}
@@ -115,7 +111,6 @@ public class EditArticleHandlerTests
 	public async Task HandleAsync_SetsModifiedOn_ToRecentUtcAndPreservesPublishedOn()
 	{
 		// Arrange
-		// Arrange - capture the replacement article via the fixture-backed collection
 		Article? captured = null;
 		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Do<Article>(a => captured = a), Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
 			.Returns(Task.FromResult<ReplaceOneResult?>(null!));

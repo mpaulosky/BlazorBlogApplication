@@ -30,8 +30,6 @@ public class CategoryTestFixture : IAsyncDisposable
 	// Expose the collection so handler tests can configure InsertOneAsync behavior
 	public IMongoCollection<Category> CategoriesCollection { get; }
 
-	private MyBlogContext _blogContext;
-
 	// Expose the IMyBlogContext for tests similar to ArticlesTestFixture
 	public IMyBlogContext BlogContext { get; private set; }
 
@@ -44,8 +42,8 @@ public class CategoryTestFixture : IAsyncDisposable
 		CategoriesCollection = Substitute.For<IMongoCollection<Category>>();
 		MongoClient.GetDatabase(Arg.Any<string>()).Returns(MongoDatabase);
 		MongoDatabase.GetCollection<Category>(Arg.Any<string>()).Returns(CategoriesCollection);
-		_blogContext = new MyBlogContext(MongoClient);
-		BlogContext = _blogContext;
+		var blogContext = new MyBlogContext(MongoClient);
+		BlogContext = blogContext;
 		Logger = Substitute.For<ILogger<Handler>>();
 	}
 
@@ -73,7 +71,7 @@ public class CategoryTestFixture : IAsyncDisposable
 	/// </summary>
 	public void SetupFindAsync(IEnumerable<Category> categories)
 	{
-		var cursor = new StubCursor<Category>(categories?.ToList() ?? new List<Category>());
+		var cursor = new StubCursor<Category>(categories.ToList());
 
 		// Match any filter/options/token so tests can call FindAsync with a filter
 		// (for example, Builders<Category>.Filter.Eq("_id", id)) and still receive
