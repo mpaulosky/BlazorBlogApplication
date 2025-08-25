@@ -61,7 +61,7 @@ public class DetailsTests : BunitContext
 
 		// Assert
 		cut.Markup.Should().Contain(categoryDto.CategoryName);
-		cut.Markup.Should().Contain("CategoryCreated On: 1/1/2025");
+		cut.Markup.Should().Contain("Created On: 1/1/2025");
 		cut.Markup.Should().Contain("Modified On: 1/1/2025");
 		cut.Find("button.btn-secondary").Should().NotBeNull();
 		cut.Find("button.btn-light").Should().NotBeNull();
