@@ -10,6 +10,7 @@
 namespace Web.Components.Shared;
 
 [ExcludeFromCodeCoverage]
+[TestSubject(typeof(ErrorAlertComponent))]
 public class ErrorAlertComponentTests : BunitContext
 {
 	[Fact]
@@ -22,7 +23,7 @@ public class ErrorAlertComponentTests : BunitContext
 		// Act
 		var cut = Render<ErrorAlertComponent>(parameters => parameters
 			.Add(p => p.Title, title)
-			.Add<RenderFragment>(p => p.ChildContent, child)
+			.Add<RenderFragment>(p => p.ChildContent!, child)
 		);
 
 		// Assert
