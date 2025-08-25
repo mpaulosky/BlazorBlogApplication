@@ -49,7 +49,7 @@ public class DetailsTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		// register handler that returns the DTO for the matching id
+		// register a handler that returns the DTO for the matching id
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id))
 			.Returns(Task.FromResult(Result.Ok(categoryDto)));
@@ -172,14 +172,14 @@ public class DetailsTests : BunitContext
 		Helpers.SetAuthorization(this, false);
 		Services.AddCascadingAuthenticationState();
 
-		// Act - Directly render an ErrorPageComponent with 401 error code
+		// Act - Directly render an ErrorPageComponent with 401 error codes
 		var cut = Render<ErrorPageComponent>(parameters => parameters
 			.Add(p => p.ErrorCode, 401)
 			.Add(p => p.TextColor, "red-600")
 			.Add(p => p.ShadowStyle, "shadow-red-500")
 		);
 
-		// Assert - Should contain the 401 Unauthorized message
+		// Assert - Should contain the 401 Unauthorized messages
 		cut.Markup.Should().Contain("401 Unauthorized");
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
@@ -200,7 +200,7 @@ public class DetailsTests : BunitContext
 			.Add(p => p.ShadowStyle, "shadow-red-500")
 		);
 
-		// Assert - Should contain the 401 Unauthorized message
+		// Assert - Should contain the 401 Unauthorized messages
 		cut.Markup.Should().Contain("401 Unauthorized");
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
@@ -259,7 +259,7 @@ public class DetailsTests : BunitContext
 			.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);
 
-		// Assert - NotAuthorized content should show and Edit button should not be present
+		// Assert - NotAuthorized content should show, and the Edit button should not be present
 		cut.Markup.Should().Contain("401 Unauthorized");
 		cut.Markup.Should().NotContain("Edit");
 	}

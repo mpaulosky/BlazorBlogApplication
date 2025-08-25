@@ -7,9 +7,7 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-namespace Web.Components.Features.UserInfo;
-
-using Microsoft.AspNetCore.Components.Authorization;
+namespace Web.Components.Features.UserInfo.Profile;
 
 /// <summary>
 ///   Unit tests for <see cref="UserOverview" /> (User Overview Page).
@@ -55,8 +53,8 @@ public class UserOverviewTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin");
 		var users = new List<AppUserDto>
 		{
-			new AppUserDto { UserName = "Alice", Email = "alice@example.com", Roles = new List<string>{"Admin"} },
-			new AppUserDto { UserName = "Bob", Email = "bob@example.com", Roles = new List<string>{"Editor"} }
+			new AppUserDto { UserName = "Alice", Email = "alice@example.com", Roles = ["Admin"] },
+			new AppUserDto { UserName = "Bob", Email = "bob@example.com", Roles = ["Editor"] }
 		};
 		var cut = Render<UserOverview>();
 		cut.Instance.GetType().GetField("_users", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, users.AsQueryable());
@@ -96,7 +94,7 @@ public class UserOverviewTests : BunitContext
 	[Fact]
 	public void Non_Admin_User_Is_Not_Authorized()
 	{
-		// Arrange - authenticated but not in Admin role
+		// Arrange - authenticated but not in the Admin role
 		Helpers.SetAuthorization(this, true, "User");
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
@@ -119,4 +117,3 @@ public class UserOverviewTests : BunitContext
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
 }
-

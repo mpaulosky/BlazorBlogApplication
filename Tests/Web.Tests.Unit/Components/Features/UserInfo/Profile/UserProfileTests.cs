@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     ProfileTests.cs
+// File Name :     UserProfileTests.cs
 // Company :       mpaulosky
 // Author :        Copilot
 // Solution Name : BlazorBlogApplications
@@ -8,18 +8,17 @@
 // =======================================================
 
 using Web.Data.Auth0;
-using Microsoft.AspNetCore.Components.Authorization;
 
-namespace Web.Components.Features.UserInfo;
+namespace Web.Components.Features.UserInfo.Profile;
 
 /// <summary>
-///   Unit tests for <see cref="Profile" /> (User Profile Page).
+///   Unit tests for <see cref="UserProfile" /> (User UserProfile Page).
 /// </summary>
 [ExcludeFromCodeCoverage]
-[TestSubject(typeof(Profile))]
-public class ProfileTests : BunitContext
+[TestSubject(typeof(UserProfile))]
+public class UserProfileTests : BunitContext
 {
-	public ProfileTests()
+	public UserProfileTests()
 	{
 		Services.AddCascadingAuthenticationState();
 		Services.AddAuthorization();
@@ -35,7 +34,7 @@ public class ProfileTests : BunitContext
 		TestServiceRegistrations.RegisterAll(this);
 
 		// Act
-		var cut = Render<Profile>();
+		var cut = Render<UserProfile>();
 		cut.Instance.GetType().GetField("_user", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, null);
 
 		// Assert
@@ -54,13 +53,13 @@ public class ProfileTests : BunitContext
 			Name = "Alice",
 			UserId = "auth0|123",
 			Email = "alice@example.com",
-			Roles = new List<string> { "Admin", "Editor" },
+			Roles = ["Admin", "Editor"],
 			EmailVerified = true,
 			CreatedAt = "2025-08-15T00:00:00Z",
 			UpdatedAt = "2025-08-15T00:00:00Z",
 			Picture = "https://example.com/pic.jpg"
 		};
-		var cut = Render<Profile>();
+		var cut = Render<UserProfile>();
 		cut.Instance.GetType().GetField("_user", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, user);
 		cut.Render();
 		cut.Markup.Should().Contain("Alice");
@@ -100,4 +99,3 @@ public class ProfileTests : BunitContext
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
 }
-

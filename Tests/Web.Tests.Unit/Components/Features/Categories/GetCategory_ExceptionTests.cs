@@ -7,16 +7,10 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using NSubstitute;
-using MongoDB.Bson;
-using Web.Components.Features.Categories.CategoryDetails;
-
 namespace Web.Components.Features.Categories;
 
 [ExcludeFromCodeCoverage]
-public class GetCategory_ExceptionTests
+public class GetCategoryExceptionTests
 {
 	[Fact]
 	public async Task HandleAsync_WhenFindThrows_ShouldReturnFailureAndLogError()
@@ -27,7 +21,7 @@ public class GetCategory_ExceptionTests
 		// Configure the CategoriesCollection to throw when FindAsync is called
 		fixture.CategoriesCollection
 				.When(x => x.FindAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<FindOptions<Category, Category>>(), Arg.Any<CancellationToken>()))
-				.Do(ci => throw new InvalidOperationException("boom"));
+				.Do(_ => throw new InvalidOperationException("boom"));
 
 		var handler = fixture.CreateGetHandler();
 

@@ -10,7 +10,7 @@
 namespace Web.Components.Features.Categories;
 
 /// <summary>
-///   Generic stub implementation of IAsyncCursor<T> for unit tests.
+///   Generic stub implementation of IAsyncCursor for unit tests.
 /// </summary>
 [ExcludeFromCodeCoverage]
 public class StubCursor<T> : IAsyncCursor<T>
@@ -23,16 +23,11 @@ public class StubCursor<T> : IAsyncCursor<T>
 	public StubCursor(List<T> items) { _items = items; }
 
 	public IEnumerable<T> Current =>
-			_index >= 0 && _index < _items.Count ? new[] { _items[_index] } : Enumerable.Empty<T>();
+			_index >= 0 && _index < _items.Count ? [ _items[_index] ] : [];
 
 	public bool MoveNext(CancellationToken cancellationToken = default)
 	{
 		return ++_index < _items.Count;
-	}
-
-	public bool MoveNext()
-	{
-		return MoveNext(default);
 	}
 
 	public void Dispose() { }
