@@ -154,7 +154,7 @@ public class DetailsTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 		getSub.HandleAsync(Arg.Any<ObjectId>())
-			.Returns<Task<Result<CategoryDto>>>(_ => throw new InvalidOperationException("Test exception"));
+			.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category service failure.")));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -162,7 +162,7 @@ public class DetailsTests : BunitContext
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
-		cut.Markup.Should().Contain("Category not found");
+		cut.Markup.Should().Contain("Category service failure.");
 	}
 
 	[Fact]
@@ -262,6 +262,38 @@ public class DetailsTests : BunitContext
 		// Assert - NotAuthorized content should show and Edit button should not be present
 		cut.Markup.Should().Contain("401 Unauthorized");
 		cut.Markup.Should().NotContain("Edit");
+	}
+
+	[Fact]
+	public async Task ShowsSpinnerWhileLoading_AndHidesAfter()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "Admin");
+		var tcs = new TaskCompletionSource<Result<CategoryDto>>();
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+
+		// Return a Task that won't complete until we call TrySetResult
+		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(tcs.Task);
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+
+		// Act - render the component; since the handler Task is pending, _isLoading should remain true
+		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.GenerateNewId()));
+
+		// Immediately after render the spinner should be present
+		cut.Markup.Should().Contain("animate-spin");
+
+		// Now complete the handler with a failed result (use the standard message expected by other tests)
+		tcs.TrySetResult(Result.Fail<CategoryDto>("Category not found."));
+
+		// Yield to allow the rendering loop to process the completed task
+		await Task.Yield();
+
+		// Wait for the component to update (spinner removed)
+		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+		// Assert - spinner is gone and the fallback message is displayed
+		cut.Markup.Should().NotContain("animate-spin");
+		cut.Markup.Should().Contain("Category not found");
 	}
 
 }

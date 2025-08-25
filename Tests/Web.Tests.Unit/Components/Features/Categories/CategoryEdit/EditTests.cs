@@ -52,6 +52,30 @@ public class EditTests : BunitContext
 	}
 
 	[Fact]
+	public async Task ShowsSpinnerWhileLoading_AndHidesAfter()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this);
+		var tcs = new TaskCompletionSource<Result<CategoryDto>>();
+		var getHandler = Substitute.For<GetCategory.IGetCategoryHandler>();
+		getHandler.HandleAsync(Arg.Any<ObjectId>()).Returns(tcs.Task);
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
+
+		// Act - render the component; since the handler Task is pending, _isLoading should remain true
+		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, ObjectId.GenerateNewId()));
+
+		// Spinner should be present while the handler is pending
+		cut.Markup.Should().Contain("animate-spin");
+
+		// Complete the handler
+		tcs.TrySetResult(Result<CategoryDto>.Ok(FakeCategoryDto.GetNewCategoryDto(true)));
+		await Task.Yield();
+
+		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+		cut.Markup.Should().NotContain("animate-spin");
+	}
+
+	[Fact]
 	public void Populates_Form_Fields_With_Category_Data()
 	{
 		// Arrange
@@ -263,8 +287,8 @@ public class EditTests : BunitContext
 		// Wait for the component to finish loading
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
-		// Assert
-		cut.Markup.Should().Contain("Category not found");
+		// Assert - ensure the error alert is shown (handler may supply a specific message)
+		cut.Markup.Should().Contain("Unable to load category");
 
 	}
 

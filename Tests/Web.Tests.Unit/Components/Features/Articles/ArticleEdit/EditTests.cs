@@ -185,6 +185,28 @@ public class EditTests : BunitContext
 	}
 
 	[Fact]
+	public async Task ShowsSpinnerWhileLoading_AndHidesAfter()
+	{
+		// Arrange
+		var id = ObjectId.GenerateNewId();
+		var tcs = new TaskCompletionSource<Result<ArticleDto>>();
+		_mockGetArticleHandler.HandleAsync(id).Returns(_ => tcs.Task);
+
+		// Act
+		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, id));
+
+		// Spinner present while pending
+		(cut.Markup.Contains("Loading") || cut.Markup.Contains("animate-spin")).Should().BeTrue();
+
+		// Complete task
+		tcs.TrySetResult(Result<ArticleDto>.Ok(FakeArticleDto.GetNewArticleDto(true)));
+		await Task.Yield();
+
+		cut.WaitForState(() => !cut.Markup.Contains("animate-spin") && !cut.Markup.Contains("Loading"), TimeSpan.FromSeconds(5));
+		cut.Markup.Should().NotContain("animate-spin").And.NotContain("Loading");
+	}
+
+	[Fact]
 	public void Populates_Fields_With_Article_Data()
 	{
 		// Arrange

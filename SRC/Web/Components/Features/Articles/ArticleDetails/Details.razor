@@ -1,8 +1,10 @@
 @page "/articles/detail/{id:guid}"
+
 @using Web.Data.Models
+@using Web.Components.Shared
 
 @inject NavigationManager Navigation
-@inject GetArticle.IGetArticleHandler ArticleHandler
+@inject GetArticle.IGetArticleHandler GetHandler
 @inject ILogger<Details> Logger
 
 @attribute [Authorize]
@@ -15,7 +17,9 @@
 }
 else if (_article is null)
 {
-	<p>Article not found.</p>
+	<ErrorAlertComponent Title="Unable to load article">
+		@(_errorMessage ?? "Article not found.")
+	</ErrorAlertComponent>
 }
 else
 {
@@ -43,7 +47,9 @@ else
 	/// </summary>
 	[Parameter]
 	public required ObjectId Id { get; set; }
-	[CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+	[CascadingParameter]
+	private Task<AuthenticationState>? AuthenticationState { get; set; }
 
 	/// <summary>
 	/// The article data to be displayed on the page.
@@ -56,32 +62,35 @@ else
 	private bool _isLoading = true;
 
 	/// <summary>
+	/// Error message returned by the handler when loading fails. Shown in the UI.
+	/// </summary>
+	private string? _errorMessage;
+
+	/// <summary>
 	/// Initializes the component by loading the article data using the ArticleHandler.
 	/// </summary>
 	protected override async Task OnInitializedAsync()
 	{
-		Logger.LogInformation("Loading article details for Id: {ArticleId}", Id);
+
+		Logger?.LogInformation("Loading article details for Id: {ArticleId}", Id);
 		_isLoading = true;
 
 		try
 		{
-			var result = await ArticleHandler.HandleAsync(Id);
+			var result = await GetHandler.HandleAsync(Id);
 
-			if (result.Success)
+			if (result is { Success: true })
 			{
 				_article = result.Value;
-				Logger.LogInformation("Article loaded successfully: {ArticleId}", Id);
+				_errorMessage = null;
+				Logger?.LogInformation("Article loaded successfully: {ArticleId}", Id);
 			}
 			else
 			{
-				Logger.LogWarning("Failed to load article: {ArticleId}. Error: {Error}", Id, result.Error ?? "Unknown error");
 				_article = null;
+				_errorMessage = result?.Error ?? "Article not found.";
+				Logger?.LogWarning("Failed to load article: {ArticleId}. Error: {Error}", Id, _errorMessage);
 			}
-		}
-		catch (Exception ex)
-		{
-			Logger.LogError(ex, "Exception occurred while loading article: {ArticleId}", Id);
-			_article = null;
 		}
 		finally
 		{
@@ -89,7 +98,6 @@ else
 		}
 
 	}
-
 
 	/// <summary>
 	/// Navigates to the edit page for the current article.

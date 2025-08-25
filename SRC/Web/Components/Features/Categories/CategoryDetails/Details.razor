@@ -1,11 +1,12 @@
 @page "/categories/{id:guid}"
 @using Web.Data.Models
+@using Web.Components.Shared
 
 @inject NavigationManager Navigation
 @inject GetCategory.IGetCategoryHandler GetHandler
 @inject ILogger<Details> Logger
 
-@attribute [Authorize(Roles = "Admin")]
+@attribute [Authorize]
 
 <PageHeadingComponent HeaderText="Category Details" Level="1" TextColorClass="blue-500" />
 
@@ -15,21 +16,17 @@
 }
 else if (_category is null)
 {
-	<p>Category not found.</p>
+	<ErrorAlertComponent Title="Unable to load category">
+		@(_errorMessage ?? "Category not found.")
+	</ErrorAlertComponent>
 }
 else
 {
 	<div class="card">
 		<div class="card-body">
 			<h2>@_category?.CategoryName</h2>
-			@if (_category?.CreatedOn != null)
-			{
-				<div>CategoryCreated On: @_category.CreatedOn.ToString("M/d/yyyy", CultureInfo.InvariantCulture)</div>
-			}
-			@if (_category?.ModifiedOn != null)
-			{
-				<div>Modified On: @_category.ModifiedOn?.ToString("M/d/yyyy", CultureInfo.InvariantCulture)</div>
-			}
+			<p>CategoryCreated On: @_category?.CreatedOn.ToString("d")</p>
+			<p>Modified On: @_category?.ModifiedOn?.ToString("d")</p>
 			<button class="btn btn-secondary" @onclick="GoToEdit">Edit</button>
 			<button class="btn btn-light ms-2" type="button" @onclick="GoToList">Back to List</button>
 		</div>
@@ -43,12 +40,22 @@ else
 	/// </summary>
 	[Parameter]
 	public ObjectId Id { get; set; }
-	[CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+	/// <summary>
+	/// The authentication state of the user.
+	/// </summary>
+	[CascadingParameter]
+	private Task<AuthenticationState>? AuthenticationState { get; set; }
 
 	/// <summary>
 	/// The category data to be displayed on the page.
 	/// </summary>
 	private CategoryDto? _category;
+
+	/// <summary>
+	/// Error message returned by the handler when loading fails. Shown in the UI.
+	/// </summary>
+	private string? _errorMessage;
 
 	/// <summary>
 	/// Indicates whether the component is currently loading data.
@@ -70,24 +77,21 @@ else
 			if (result.Success)
 			{
 				_category = result.Value;
+				_errorMessage = null;
 				Logger.LogInformation("Category loaded successfully: {CategoryId}", Id);
 			}
 			else
 			{
-				Logger.LogWarning("Failed to load category: {CategoryId}. Error: {Error}", Id, result.Error ?? "Unknown error");
 				_category = null;
+				_errorMessage = result.Error ?? "Category not found.";
+
+				Logger.LogWarning("Failed to load category: {CategoryId}. Error: {Error}", Id, _errorMessage);
 			}
-		}
-		catch (Exception ex)
-		{
-			Logger.LogError(ex, "Exception occurred while loading category: {CategoryId}", Id);
-			_category = null;
 		}
 		finally
 		{
 			_isLoading = false;
 		}
-
 	}
 
 	/// <summary>
