@@ -1,6 +1,5 @@
 @page "/categories/{id:guid}"
 @using Web.Data.Models
-@using Web.Components.Shared
 
 @inject NavigationManager Navigation
 @inject GetCategory.IGetCategoryHandler GetHandler
@@ -25,7 +24,7 @@ else
 	<div class="card">
 		<div class="card-body">
 			<h2>@_category?.CategoryName</h2>
-			<p>CategoryCreated On: @_category?.CreatedOn.ToString("d")</p>
+			<p>Created On: @_category?.CreatedOn.ToString("d")</p>
 			<p>Modified On: @_category?.ModifiedOn?.ToString("d")</p>
 			<button class="btn btn-secondary" @onclick="GoToEdit">Edit</button>
 			<button class="btn btn-light ms-2" type="button" @onclick="GoToList">Back to List</button>
