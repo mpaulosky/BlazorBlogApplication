@@ -16,7 +16,9 @@
 }
 else if (_category is null)
 {
-	<p>Category not found.</p>
+	<ErrorAlertComponent Title="Unable to load category">
+		@(_errorMessage ?? "Category not found.")
+	</ErrorAlertComponent>
 }
 else
 {
@@ -49,8 +51,11 @@ else
 
 @code {
 
-	[Parameter] public ObjectId Id { get; set; }
-	[CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+	[Parameter]
+	public ObjectId Id { get; set; }
+
+	[CascadingParameter]
+	private Task<AuthenticationState>? AuthenticationState { get; set; }
 
 	private CategoryDto? _category;
 

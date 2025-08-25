@@ -102,6 +102,28 @@ public class ListTests : BunitContext
 	}
 
 	[Fact]
+	public async Task ShowsSpinnerWhileLoading_AndHidesAfter()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "Admin", "Author");
+		var tcs = new TaskCompletionSource<Result<IEnumerable<CategoryDto>>>();
+		_mockHandler.HandleAsync(Arg.Any<bool>()).Returns(_ => tcs.Task);
+
+		// Act
+		var cut = Render<List>();
+
+		// Spinner present while pending
+		cut.Markup.Should().Contain("Loading");
+
+		// Complete task
+		tcs.TrySetResult(Result<IEnumerable<CategoryDto>>.Ok(new List<CategoryDto>()));
+		await Task.Yield();
+
+		cut.WaitForState(() => !cut.Markup.Contains("Loading"), TimeSpan.FromSeconds(5));
+		cut.Markup.Should().NotContain("Loading");
+	}
+
+	[Fact]
 	public void Renders_Error_State_When_Handler_Fails()
 	{
 		// Arrange

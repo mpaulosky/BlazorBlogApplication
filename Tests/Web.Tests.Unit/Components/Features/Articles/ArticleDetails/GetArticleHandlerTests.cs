@@ -8,7 +8,6 @@
 // =======================================================
 
 using Web.Components.Features.Categories;
-using Web.Data.Helpers;
 
 // for StubCursor
 
@@ -68,7 +67,7 @@ public class GetArticleHandlerTests
 		}
 
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
-		var handler = new GetArticle.Handler(context!, logger);
+		var handler = new GetArticle.Handler(context, logger);
 
 		var id = scenario == FailureScenario.EMPTY_ID ? ObjectId.Empty : ObjectId.GenerateNewId();
 

@@ -68,6 +68,28 @@ public class ListTests : BunitContext
 	}
 
 	[Fact]
+	public async Task ShowsSpinnerWhileLoading_AndHidesAfter()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "Admin", "Author");
+		var tcs = new TaskCompletionSource<Result<IEnumerable<ArticleDto>>>();
+		_mockHandler.HandleAsync().Returns(_ => tcs.Task);
+
+		// Act
+		var cut = Render<List>();
+
+		// Spinner present while pending
+		cut.Markup.Should().Contain("Loading");
+
+		// Complete task
+		tcs.TrySetResult(Result<IEnumerable<ArticleDto>>.Ok(new List<ArticleDto>()));
+		await Task.Yield();
+
+		cut.WaitForState(() => !cut.Markup.Contains("Loading"), TimeSpan.FromSeconds(5));
+		cut.Markup.Should().NotContain("Loading");
+	}
+
+	[Fact]
 	public void Renders_Empty_State_When_No_Articles()
 	{
 		// Arrange

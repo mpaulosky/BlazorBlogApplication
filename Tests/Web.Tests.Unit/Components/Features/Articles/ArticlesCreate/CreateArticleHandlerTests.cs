@@ -15,7 +15,7 @@ namespace Web.Components.Features.Articles.ArticlesCreate;
 [TestSubject(typeof(CreateArticle.Handler))]
 public class CreateArticleHandlerTests
 {
-	private readonly ArticlesTestFixture _fixture = new ArticlesTestFixture();
+	private readonly ArticlesTestFixture _fixture = new ();
 
 	[Fact]
 	public async Task HandleAsync_WithValidArticle_InsertsArticleAndReturnsOk()

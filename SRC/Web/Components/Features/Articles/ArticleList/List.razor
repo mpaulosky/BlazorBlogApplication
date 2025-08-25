@@ -19,7 +19,9 @@
 else if (_articles == null || !_articles.Any())
 {
 	<div class="alert alert-info">
-		No articles available.
+		<ErrorAlertComponent Title="No articles available.">
+			@(_errorMessage ?? "Articles not found.")
+		</ErrorAlertComponent>
 		<button class="btn btn-success mt-3" @onclick="GoToCreate">Create New Article</button>
 	</div>
 }
@@ -73,7 +75,12 @@ else
 	/// The list of articles to display.
 	/// </summary>
 	private IQueryable<ArticleDto>? _articles;
-	[CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+	/// <summary>
+	/// Indicates whether the page is loading data.
+	/// </summary>
+	[CascadingParameter]
+	private Task<AuthenticationState>? AuthenticationState { get; set; }
 
 	/// <summary>
 	/// Indicates whether the page is loading data.
@@ -81,45 +88,70 @@ else
 	private bool _isLoading = true;
 
 	/// <summary>
+	/// Stores error messages for display in the UI.
+	/// </summary>
+	private string? _errorMessage;
+
+	/// <summary>
 	/// Called when the component is initialized. Loads all articles for display.
 	/// Adds structured logging for success and error cases.
 	/// Determines per-article edit/delete permissions for the current user.
 	/// </summary>
-	protected override async Task OnInitializedAsync()
+	protected override Task OnInitializedAsync()
 	{
-		Logger.LogInformation("Loading articles list.");
+		_isLoading = true;
+		_ = LoadAsync();
+		return Task.CompletedTask;
+	}
 
-		var result = await ArticlesHandler.HandleAsync();
-
-		if (result.Success)
+	private async Task LoadAsync()
+	{
+		try
 		{
-			Logger.LogInformation("Articles loaded successfully. Count: {Count}", result.Value?.Count() ?? 0);
-			_articles = result.Value?.AsQueryable() ?? null;
+			Logger.LogInformation("Loading articles list.");
 
-			// Determine current user and roles
-			var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-			var user = authState.User;
-			var userId = user.FindFirst(c =>
-			c.Type is "sub" or "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
-			var isAdmin = user?.IsInRole("Admin") ?? false;
-			var isAuthor = user?.IsInRole("Author") ?? false;
+			var result = await ArticlesHandler.HandleAsync();
 
-			if (_articles is not null)
+			if (result.Success)
 			{
-				foreach (var article in _articles)
+				Logger.LogInformation("Articles loaded successfully. Count: {Count}", result.Value?.Count() ?? 0);
+				_articles = result.Value?.AsQueryable() ?? null;
+
+				// Determine current user and roles
+				var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+				var user = authState.User;
+				var userId = user.FindFirst(c =>
+				c.Type is "sub" or "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+				var isAdmin = user?.IsInRole("Admin") ?? false;
+				var isAuthor = user?.IsInRole("Author") ?? false;
+
+				if (_articles is not null)
 				{
-					article.CanEdit = isAdmin || (isAuthor && article.Author.Id == userId);
+					foreach (var article in _articles)
+					{
+						article.CanEdit = isAdmin || (isAuthor && article.Author.Id == userId);
+					}
 				}
 			}
+			else
+			{
+				_errorMessage = result.Error ?? "Failed to load articles.";
+
+				Logger.LogError("Failed to load articles. Error: {Error}", result.Error ?? "Unknown error");
+				_articles = null;
+			}
 		}
-		else
+		catch (Exception ex)
 		{
-			Logger.LogError("Failed to load articles. Error: {Error}", result.Error ?? "Unknown error");
+			_errorMessage = "Failed to load articles.";
+			Logger.LogError(ex, "Exception while loading articles list.");
 			_articles = null;
 		}
-
-		_isLoading = false;
-
+		finally
+		{
+			_isLoading = false;
+			try { await InvokeAsync(StateHasChanged); } catch { }
+		}
 	}
 
 	/// <summary>

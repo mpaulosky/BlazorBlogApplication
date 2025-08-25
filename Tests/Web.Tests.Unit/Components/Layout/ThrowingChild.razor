@@ -1,34 +1,34 @@
 @inherits ComponentBase
 
 @code {
-    [Parameter]
-    public string? ThrowType { get; set; }
+[Parameter]
+public string? ThrowType { get; set; }
 
-    protected override void BuildRenderTree(RenderTreeBuilder builder)
-    {
-        // Based on ThrowType, throw specific exceptions to exercise ErrorBoundary
-        if (string.Equals(ThrowType, "Unauthorized", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new UnauthorizedAccessException("Test unauthorized");
-        }
+protected override void BuildRenderTree(RenderTreeBuilder builder)
+{
+// Based on ThrowType, throw specific exceptions to exercise ErrorBoundary
+if (string.Equals(ThrowType, "Unauthorized", StringComparison.OrdinalIgnoreCase))
+{
+throw new UnauthorizedAccessException("Test unauthorized");
+}
 
-        if (string.Equals(ThrowType, "Argument", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new ArgumentException("Test argument");
-        }
+if (string.Equals(ThrowType, "Argument", StringComparison.OrdinalIgnoreCase))
+{
+throw new ArgumentException("Test argument");
+}
 
-        if (string.Equals(ThrowType, "NotFound", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new KeyNotFoundException("Test not found");
-        }
+if (string.Equals(ThrowType, "NotFound", StringComparison.OrdinalIgnoreCase))
+{
+throw new KeyNotFoundException("Test not found");
+}
 
-        if (string.Equals(ThrowType, "Generic", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new Exception("Test generic");
-        }
+if (string.Equals(ThrowType, "Generic", StringComparison.OrdinalIgnoreCase))
+{
+throw new Exception("Test generic");
+}
 
-        builder.OpenElement(0, "div");
-        builder.AddContent(1, "Child content rendered normally");
-        builder.CloseElement();
-    }
+builder.OpenElement(0, "div");
+builder.AddContent(1, "Child content rendered normally");
+builder.CloseElement();
+}
 }

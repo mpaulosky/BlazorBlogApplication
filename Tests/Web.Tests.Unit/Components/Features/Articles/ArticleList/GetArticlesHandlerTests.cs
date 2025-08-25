@@ -7,11 +7,6 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Components.Features.Articles.ArticleList;
-using Web.Data.Entities;
-using Mapster;
-using Web.Components.Features.Categories; // for StubCursor
-
 namespace Web.Components.Features.Articles.ArticleList;
 
 [ExcludeFromCodeCoverage]

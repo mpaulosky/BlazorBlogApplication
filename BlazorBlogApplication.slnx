@@ -1,9 +1,0 @@
-﻿<Solution>
-  <Project Path="Tests\Shared.Tests.Unit\Shared.Tests.Unit.csproj" Type="Classic C#" />
-  <Project Path="SRC\AppHost\AppHost.csproj" />
-  <Project Path="SRC\ServiceDefaults\ServiceDefaults.csproj" Type="Classic C#" />
-  <Project Path="SRC\Shared\Shared.csproj" Type="Classic C#" />
-  <Project Path="SRC\Web\Web.csproj" />
-  <Project Path="Tests\Architecture.Tests.Unit\Architecture.Tests.Unit.csproj" Type="Classic C#" />
-  <Project Path="Tests\Web.Tests.Unit\Web.Tests.Unit.csproj" Type="Classic C#" />
-</Solution>
