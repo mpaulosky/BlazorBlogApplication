@@ -47,6 +47,32 @@ public class DetailsTests : BunitContext
 	public void RendersCategoryDetails_WhenCategoryIsPresent()
 	{
 		// Arrange
+		Helpers.SetAuthorization(this);
+		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		// register a handler that returns the DTO for the matching id
+		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id))
+			.Returns(Task.FromResult(Result.Ok(categoryDto)));
+		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
+
+		// Act
+		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
+		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+		// Assert
+		cut.Markup.Should().Contain(categoryDto.CategoryName);
+		cut.Markup.Should().Contain("Created On: 1/1/2025");
+		cut.Markup.Should().Contain("Modified On: 1/1/2025");
+		cut.Find("button.btn-secondary").Should().NotBeNull();
+		//not admin the edit button should be disabled
+		cut.Find("button.btn-secondary").HasAttribute("disabled").Should().BeTrue();
+		cut.Find("button.btn-light").Should().NotBeNull();
+	}
+
+	[Fact]
+	public void RendersCategoryDetails_WhenCategoryIsPresentAndUserIsAdmin()
+	{
+		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		// register a handler that returns the DTO for the matching id
@@ -64,26 +90,8 @@ public class DetailsTests : BunitContext
 		cut.Markup.Should().Contain("Created On: 1/1/2025");
 		cut.Markup.Should().Contain("Modified On: 1/1/2025");
 		cut.Find("button.btn-secondary").Should().NotBeNull();
-		cut.Find("button.btn-light").Should().NotBeNull();
-	}
-
-	[Fact]
-	public void HasCorrectNavigationButtons()
-	{
-		// Arrange
-		Helpers.SetAuthorization(this, true, "Admin");
-		TestServiceRegistrations.RegisterCommonUtilities(this);
-		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
-		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
-
-		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
-		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-
-		// Assert
-		cut.Find("button.btn-secondary").Should().NotBeNull();
+		//not admin the edit button should be disabled
+		cut.Find("button.btn-secondary").HasAttribute("disabled").Should().BeFalse();
 		cut.Find("button.btn-light").Should().NotBeNull();
 	}
 
@@ -184,27 +192,6 @@ public class DetailsTests : BunitContext
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
 
-	[Theory]
-	[InlineData("User")]
-	[InlineData("Author")]
-	public void Authenticated_NonAdmin_Is_Shown_NotAuthorized(string role)
-	{
-		// Arrange - simulate an authenticated user without an Admin role
-		Helpers.SetAuthorization(this, true, role);
-		Services.AddCascadingAuthenticationState();
-
-		// Act - Create a direct instance of ErrorPageComponent to test
-		var cut = Render<ErrorPageComponent>(parameters => parameters
-			.Add(p => p.ErrorCode, 401)
-			.Add(p => p.TextColor, "red-600")
-			.Add(p => p.ShadowStyle, "shadow-red-500")
-		);
-
-		// Assert - Should contain the 401 Unauthorized messages
-		cut.Markup.Should().Contain("401 Unauthorized");
-		cut.Markup.Should().Contain("You are not authorized to view this page.");
-	}
-
 	[Fact]
 	public void Authenticated_Admin_Can_View_Details()
 	{
@@ -226,42 +213,26 @@ public class DetailsTests : BunitContext
 		cut.Find("button.btn-light").Should().NotBeNull();
 	}
 
-	[Fact]
-	public void NonAdmin_User_Does_Not_See_Edit_Button()
+	[Theory]
+	[InlineData("User")]
+	[InlineData("Author")]
+	public void NonAdmin_User_WillSeeADisabledEditButton(string role)
 	{
 		// Arrange - simulate authenticated non-admin (User)
-		Helpers.SetAuthorization(this, true, "User");
+		Helpers.SetAuthorization(this, true, role);
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
-		// Act - render an AuthorizeView so the Authorize attribute on the component is respected
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder =>
-		{
-			builder.OpenComponent<Details>(0);
-			builder.AddAttribute(1, "Id", categoryDto.Id);
-			builder.CloseComponent();
-		};
+		// Act
+		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
+		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
-		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
-		{
-			builder.OpenComponent<ErrorPageComponent>(0);
-			builder.AddAttribute(1, "ErrorCode", 401);
-			builder.AddAttribute(2, "TextColor", "red-600");
-			builder.AddAttribute(3, "ShadowStyle", "shadow-red-500");
-			builder.CloseComponent();
-		};
-
-		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
-		);
-
-		// Assert - NotAuthorized content should show, and the Edit button should not be present
-		cut.Markup.Should().Contain("401 Unauthorized");
-		cut.Markup.Should().NotContain("Edit");
+		// Assert
+		//not admin the edit button should be disabled
+		cut.Find("button.btn-secondary").HasAttribute("disabled").Should().BeTrue();
 	}
 
 	[Fact]
