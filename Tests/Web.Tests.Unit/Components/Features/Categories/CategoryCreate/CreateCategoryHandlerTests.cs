@@ -2,10 +2,13 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CreateCategoryHandlerTests.cs
 // Company :       mpaulosky
-// Author :        Copilot
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
+
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Web.Components.Features.Categories.CategoryCreate;
 
@@ -67,7 +70,7 @@ public class CreateCategoryHandlerTests
 		var handler = new CreateCategory.Handler(_fixture.BlogContext, logger);
 
 		// Act
-		var result = await handler.HandleAsync(null!);
+		var result = await handler.HandleAsync(null);
 
 		// Assert - should return failure and include exception information
 

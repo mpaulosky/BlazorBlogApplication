@@ -11,9 +11,11 @@ using FluentValidation;
 
 using ServiceDefaults;
 
+using Shared.Models;
+using Shared.Validators;
+
 using Web.Components.Features.Articles.ArticleDetails;
 using Web.Data.Auth0;
-using Web.Data.Validators;
 
 using static Shared.Services;
 

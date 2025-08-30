@@ -2,10 +2,13 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     UserOverviewTests.cs
 // Company :       mpaulosky
-// Author :        Copilot
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
+
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Web.Components.Features.UserInfo.Profile;
 

@@ -8,9 +8,6 @@
 // =======================================================
 
 using Microsoft.AspNetCore.Antiforgery;
-using Microsoft.Extensions.Options;
-
-using Web.Infrastructure;
 
 namespace Web.Startup;
 

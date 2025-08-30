@@ -7,6 +7,8 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
+using System.Threading.Tasks;
+
 using static Web.Components.Features.Articles.ArticleDetails.GetArticle;
 
 namespace Web.Components.Features.Articles.ArticleDetails;

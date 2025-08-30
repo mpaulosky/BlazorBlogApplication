@@ -7,6 +7,10 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Web.Components.Features.Categories.CategoryList;
 
 [ExcludeFromCodeCoverage]

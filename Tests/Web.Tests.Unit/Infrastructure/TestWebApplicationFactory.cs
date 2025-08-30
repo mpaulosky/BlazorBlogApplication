@@ -2,17 +2,13 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     TestWebApplicationFactory.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Web.Infrastructure;
 
@@ -48,7 +44,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 			if (kvp.Value is null)
 				continue;
 
-			// Preserve previous value so we can restore on dispose
+			// Preserve previous value so we can restore on disposing
 			_previousEnv[kvp.Key] = Environment.GetEnvironmentVariable(kvp.Key);
 			Environment.SetEnvironmentVariable(kvp.Key, kvp.Value);
 		}
@@ -69,7 +65,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 	{
 		builder.UseEnvironment(_environment);
 
-		builder.ConfigureAppConfiguration((ctx, cfg) =>
+		builder.ConfigureAppConfiguration((_, cfg) =>
 		{
 			cfg.AddInMemoryCollection(_config);
 		});
@@ -78,8 +74,8 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 		{
 
 			// Only replace IMongoClient with a test double when a connection string is present.
-			// If the test intends to exercise missing configuration edge-cases it will
-			// provide a config without the key and we should not hide that failure by
+			// If the test intends to exercise missing configuration edge-cases, it will
+			// provide a config without the key, and we should not hide that failure by
 			// substituting the client.
 			if (!string.IsNullOrWhiteSpace(_config.GetValueOrDefault("mongoDb-connection")))
 			{
@@ -103,7 +99,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 
 				var auth = Substitute.For<IAuthenticationService>();
 
-				// When the app issues a ChallengeAsync we want the test double
+				// When the app issues a ChallengeAsync, we want the test double
 				// to behave like a real authentication service and set a
 				// redirect-like status code so endpoint tests can assert on it.
 				auth.When(x => x.ChallengeAsync(Arg.Any<HttpContext>(), Arg.Any<string>(), Arg.Any<AuthenticationProperties>()))
@@ -115,7 +111,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 						// Use 302 Found as a canonical redirect response and
 						// set a Location header so HttpClient's redirect/cookie
 						// handlers have a valid URI to work with.
-						ctx.Response.StatusCode = (int)System.Net.HttpStatusCode.Found;
+						ctx.Response.StatusCode = (int)HttpStatusCode.Found;
 						var location = props?.RedirectUri ?? "/";
 						ctx.Response.Headers["Location"] = location;
 					});
@@ -126,7 +122,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 					.Do(ci =>
 					{
 						var ctx = ci.ArgAt<HttpContext>(0);
-						ctx.Response.StatusCode = (int)System.Net.HttpStatusCode.OK;
+						ctx.Response.StatusCode = (int)HttpStatusCode.OK;
 					});
 
 				services.AddSingleton(auth);

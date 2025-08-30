@@ -1,9 +1,9 @@
 @page "/user-overview"
 
+@using global::Shared.Models
 @using Mapster
 @using Web.Data.Auth0
 // ...existing code...
-@using Web.Data.Models
 @inject Auth0Service Auth0Service
 @rendermode @(new InteractiveServerRenderMode(false))
 

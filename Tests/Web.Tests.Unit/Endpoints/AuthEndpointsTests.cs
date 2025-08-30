@@ -2,20 +2,12 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     AuthEndpointsTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System.Net;
-
-using Auth0.AspNetCore.Authentication;
-
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
-
-using Web.Infrastructure;
+using System.Threading.Tasks;
 
 namespace Web.Endpoints;
 
@@ -34,7 +26,7 @@ public class AuthEndpointsTests : IClassFixture<TestWebApplicationFactory>
 		var authService = _factory.Services.GetRequiredService<IAuthenticationService>();
 		authService.Should().NotBeNull();
 
-		var client = _factory.CreateClient(new Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactoryClientOptions
+		var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
 		{
 			AllowAutoRedirect = false
 		});

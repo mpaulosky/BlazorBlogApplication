@@ -2,12 +2,15 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CategoryTestFixture.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Components.Features.Categories.CategoryEdit;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using static Web.Components.Features.Categories.CategoryDetails.GetCategory;
 

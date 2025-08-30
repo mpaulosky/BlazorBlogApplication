@@ -2,16 +2,15 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ArticlesTestFixture.cs
 // Company :       mpaulosky
-// Author :        Copilot
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Components.Features.Articles.ArticleList;
-using Web.Components.Features.Articles.ArticleDetails;
-using Web.Components.Features.Categories; // for StubCursor
-using static Web.Components.Features.Articles.ArticleDetails.GetArticle;
-using Web.Components.Features.Articles.ArticleEdit;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Web.Components.Features.Articles;
 
@@ -22,7 +21,7 @@ public class ArticlesTestFixture : IAsyncDisposable
 	private IMongoClient MongoClient { get; }
 	private IMongoDatabase MongoDatabase { get; }
 	public IMongoCollection<Article> ArticlesCollection { get; }
-	private MyBlogContext _blogContext;
+	private readonly MyBlogContext _blogContext;
 	public IMyBlogContext BlogContext { get; }
 	public ILogger<GetArticles.Handler> Logger { get; }
 	public ILogger<EditArticle.Handler> EditLogger { get; }
@@ -46,7 +45,7 @@ public class ArticlesTestFixture : IAsyncDisposable
 	/// </summary>
 	public void SetupFindAsync(IEnumerable<Article> articles)
 	{
-		var cursor = new StubCursor<Article>(articles?.ToList() ?? new List<Article>());
+		var cursor = new StubCursor<Article>(articles.ToList());
 
 		ArticlesCollection.FindAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<FindOptions<Article, Article>>(), Arg.Any<CancellationToken>())
 				.ReturnsForAnyArgs(Task.FromResult((IAsyncCursor<Article>)cursor));
@@ -58,7 +57,7 @@ public class ArticlesTestFixture : IAsyncDisposable
 	/// </summary>
 	public GetArticles.Handler CreateGetHandler()
 	{
-		return new GetArticles.Handler(_blogContext, Logger as ILogger<GetArticles.Handler> ?? Substitute.For<ILogger<GetArticles.Handler>>());
+		return new GetArticles.Handler(_blogContext, Logger);
 	}
 
 	/// <summary>

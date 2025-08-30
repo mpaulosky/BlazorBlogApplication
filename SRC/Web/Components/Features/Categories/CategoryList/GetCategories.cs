@@ -7,6 +7,10 @@
 // Project Name :  Web
 // =======================================================
 
+using Shared.Abstractions;
+using Shared.Entities;
+using Shared.Models;
+
 namespace Web.Components.Features.Categories.CategoryList;
 
 /// <summary>

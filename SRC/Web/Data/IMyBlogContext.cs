@@ -7,6 +7,8 @@
 // Project Name :  Web
 // =======================================================
 
+using Shared.Entities;
+
 namespace Web.Data;
 
 public interface IMyBlogContext

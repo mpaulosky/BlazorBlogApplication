@@ -2,15 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     OutputCacheTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
-
-using Microsoft.AspNetCore.OutputCaching;
-using Microsoft.Extensions.Options;
-
-using Web.Infrastructure;
 
 namespace Web.Startup;
 

@@ -2,16 +2,12 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     EnvironmentBehaviorTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System.Net;
-
-using Microsoft.AspNetCore.Mvc.Testing;
-
-using Web.Infrastructure;
+using System.Threading.Tasks;
 
 namespace Web.Startup;
 

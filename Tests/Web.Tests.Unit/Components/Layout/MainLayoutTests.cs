@@ -2,10 +2,12 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     MainLayoutTests.cs
 // Company :       mpaulosky
-// Author :        Coverage PR1
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
+
+using System.Collections.Generic;
 
 namespace Web.Components.Layout;
 

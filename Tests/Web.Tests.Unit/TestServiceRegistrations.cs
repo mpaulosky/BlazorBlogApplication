@@ -2,19 +2,18 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     TestServiceRegistrations.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
-using Web.Components.Features.Articles.ArticleDetails;
 using Web.Components.Features.Categories.CategoryCreate;
-using Web.Components.Features.Categories.CategoryDetails;
-using Web.Components.Features.Categories.CategoryEdit;
-using Web.Components.Features.Categories.CategoryList;
-using Web.Data.Auth0;
 
 namespace Web;
 
@@ -162,7 +161,7 @@ public static class TestServiceRegistrations
 			var getCategoriesSub = Substitute.For<GetCategories.IGetCategoriesHandler>();
 
 			getCategoriesSub.HandleAsync(Arg.Any<bool>())
-					.Returns(Task.FromResult(Result.Ok<IEnumerable<CategoryDto>>(new[] { sampleCategory })));
+					.Returns(Task.FromResult(Result.Ok<IEnumerable<CategoryDto>>([ sampleCategory ])));
 
 			ctx.Services.AddScoped<GetCategories.IGetCategoriesHandler>(sp =>
 			{
@@ -253,7 +252,7 @@ public static class TestServiceRegistrations
 			var getArticlesSub = Substitute.For<GetArticles.IGetArticlesHandler>();
 
 			getArticlesSub.HandleAsync(Arg.Any<bool>())
-					.Returns(Task.FromResult(Result.Ok<IEnumerable<ArticleDto>>(new[] { sampleArticle })));
+					.Returns(Task.FromResult(Result.Ok<IEnumerable<ArticleDto>>([ sampleArticle ])));
 
 			ctx.Services.AddScoped<GetArticles.IGetArticlesHandler>(sp =>
 			{
@@ -292,7 +291,7 @@ public static class TestServiceRegistrations
 
 		public SimpleCursor(IEnumerable<T> items)
 		{
-			_items = items?.ToList() ?? new List<T>();
+			_items = items?.ToList() ?? [];
 			_enumerator = _items.GetEnumerator();
 			_moved = false;
 		}

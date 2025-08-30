@@ -7,6 +7,10 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Web.Components.Features.Categories.CategoryDetails;
 
 [ExcludeFromCodeCoverage]
@@ -59,4 +63,34 @@ public class GetCategoryHandlerTests
 			Arg.Any<Exception?>(),
 			Arg.Any<Func<object, Exception?, string>>());
 	}
+
+	[Fact]
+	public async Task HandleAsync_WhenFindThrows_ShouldReturnFailureAndLogError()
+	{
+		// Arrange
+		await using var fixture = new CategoryTestFixture();
+
+		// Configure the CategoriesCollection to throw when FindAsync is called
+		fixture.CategoriesCollection
+				.When(x => x.FindAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<FindOptions<Category, Category>>(), Arg.Any<CancellationToken>()))
+				.Do(_ => throw new InvalidOperationException("boom"));
+
+		var handler = fixture.CreateGetHandler();
+
+		// Act
+		var result = await handler.HandleAsync(ObjectId.GenerateNewId());
+
+		// Assert - use Result<T> API used across the codebase
+		result.Failure.Should().BeTrue();
+		result.Error.Should().Contain("boom");
+
+		// Verify logger logged an error (signature matches other tests)
+		fixture.Logger.Received(1).Log(
+				LogLevel.Error,
+				Arg.Any<EventId>(),
+				Arg.Any<object>(),
+				Arg.Any<Exception?>(),
+				Arg.Any<Func<object, Exception?, string>>());
+	}
+
 }

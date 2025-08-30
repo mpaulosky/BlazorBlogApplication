@@ -7,6 +7,10 @@
 // Project CategoryName :  Web
 // =======================================================
 
+using Shared.Abstractions;
+using Shared.Entities;
+using Shared.Models;
+
 namespace Web.Components.Features.Articles.ArticleCreate;
 
 /// <summary>

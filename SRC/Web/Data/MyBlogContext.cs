@@ -7,6 +7,8 @@
 // Project Name :  Web
 // =======================================================
 
+using Shared.Entities;
+
 using static Shared.Services;
 
 namespace Web.Data;

@@ -2,17 +2,12 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CorsPolicyTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Http;
-
-using Web.Infrastructure;
-
-using static Shared.Services;
+using System.Threading.Tasks;
 
 namespace Web.Startup;
 

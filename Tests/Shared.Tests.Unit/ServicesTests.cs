@@ -7,12 +7,6 @@
 // Project Name :  Shared.Tests.Unit
 // =======================================================
 
-using System.Diagnostics.CodeAnalysis;
-
-using FluentAssertions;
-
-using JetBrains.Annotations;
-
 namespace Shared;
 
 [ExcludeFromCodeCoverage]

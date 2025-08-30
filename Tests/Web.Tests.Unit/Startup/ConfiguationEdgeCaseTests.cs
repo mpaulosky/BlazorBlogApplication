@@ -2,12 +2,13 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ConfigurationEdgeCaseTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Infrastructure;
+using System.Collections.Generic;
+using System.Net.Http;
 
 namespace Web.Startup;
 
@@ -27,7 +28,7 @@ public class ConfigurationEdgeCaseTests
 
 		using var factory = new TestWebApplicationFactory(config: cfg);
 
-		Func<HttpClient> act = () => factory.CreateClient();
+		var act = () => factory.CreateClient();
 
 		act.Should().Throw<Exception>();
 	}

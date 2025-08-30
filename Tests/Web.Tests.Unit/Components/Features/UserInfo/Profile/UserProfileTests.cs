@@ -2,12 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     UserProfileTests.cs
 // Company :       mpaulosky
-// Author :        Copilot
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplications
 // Project Name :  Web.Tests.Unit
 // =======================================================
-
-using Web.Data.Auth0;
 
 namespace Web.Components.Features.UserInfo.Profile;
 

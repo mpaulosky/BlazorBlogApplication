@@ -2,13 +2,12 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ProgramSmokeTests.cs
 // Company :       mpaulosky
-// Author :        Coverage PR1
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Microsoft.AspNetCore.Mvc.Testing;
-using Web.Infrastructure;
+using System.Threading.Tasks;
 
 namespace Web.Startup;
 
@@ -28,7 +27,7 @@ public class ProgramSmokeTests
 		var res = await client.GetAsync("/health", Xunit.TestContext.Current.CancellationToken);
 		res.IsSuccessStatusCode.Should().BeTrue();
 
-		var content = await res.Content.ReadAsStringAsync();
+		var content = await res.Content.ReadAsStringAsync(Xunit.TestContext.Current.CancellationToken);
 		content.Should().Contain("Healthy");
 	}
 
@@ -39,6 +38,6 @@ public class ProgramSmokeTests
 		var client = factory.CreateClient();
 
 		var res = await client.GetAsync("/", Xunit.TestContext.Current.CancellationToken);
-		res.StatusCode.Should().BeOneOf(System.Net.HttpStatusCode.OK, System.Net.HttpStatusCode.NotFound, System.Net.HttpStatusCode.Redirect);
+		res.StatusCode.Should().BeOneOf(HttpStatusCode.OK, HttpStatusCode.NotFound, HttpStatusCode.Redirect);
 	}
 }

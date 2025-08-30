@@ -2,7 +2,7 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     PageHeadingComponentTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================

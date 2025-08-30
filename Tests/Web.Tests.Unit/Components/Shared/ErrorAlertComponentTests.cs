@@ -2,7 +2,7 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ErrorAlertComponentTests.cs
 // Company :       mpaulosky
-// Author :        Automated Test
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
