@@ -16,22 +16,15 @@ namespace Shared.Entities;
 public class Article : Entity
 {
 
-	[Required]
-	[MaxLength(120)]
 	public string Title { get; set; }
 
-	[MaxLength(500)]
 	public string Introduction { get; set; }
 
-	[Required]
 	public string Content { get; set; }
 
-	[MaxLength(256)]
 	[Display(Name = "Cover Image URL")]
 	public string CoverImageUrl { get; set; }
 
-	[Required]
-	[MaxLength(120)]
 	[Display(Name = "Url Slug")]
 	public string UrlSlug { get; set; }
 
