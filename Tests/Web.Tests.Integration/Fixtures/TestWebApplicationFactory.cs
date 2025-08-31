@@ -1,11 +1,8 @@
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Driver;
-using Web.Data;
 
-namespace Web.Tests.Integration.Fixtures;
+namespace Web.Fixtures;
 
 public class TestWebApplicationFactory : WebApplicationFactory<Program>
 {

@@ -1,14 +1,11 @@
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MongoDB.Driver;
-using Shared.Fakes;
-using Shared.Entities;
+
 using Shared;
+using Shared.Entities;
+
 using Testcontainers.MongoDb;
 
-namespace Web.Tests.Integration.Fixtures;
+namespace Web.Fixtures;
 
 /// <summary>
 /// Test fixture that uses Testcontainers.MongoDb (via the Testcontainers.MongoDb package)

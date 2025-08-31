@@ -1,12 +1,15 @@
 using System.Net.Http.Json;
+
 using FluentAssertions;
+
 using MongoDB.Driver;
+
 using Shared.Entities;
 using Shared.Fakes;
-using Web.Tests.Integration.Fixtures;
-using Xunit;
 
-namespace Web.Tests.Integration;
+using Web.Fixtures;
+
+namespace Web;
 
 [Collection("IntegrationTestCollection")]
 public class ArticlesIntegrationTests : IClassFixture<MongoDbTestcontainerFixture>
@@ -26,19 +29,19 @@ public class ArticlesIntegrationTests : IClassFixture<MongoDbTestcontainerFixtur
 		// Arrange
 		await _mongoFixture.SeedArticlesAsync(0);
 
-		using var factory = CreateFactory();
+		await using var factory = CreateFactory();
 		using var client = factory.CreateClient();
 
 		var articleDto = FakeArticle.GetArticles(1, useSeed: true).First();
 		articleDto.IsArchived = true; // assert archived semantics
 
 		// Act
-		var resp = await client.PostAsJsonAsync("/api/articles", articleDto);
+		var resp = await client.PostAsJsonAsync("/api/articles", articleDto, cancellationToken: TestContext.Current.CancellationToken);
 
 		// Debug output on failure
 		if (!resp.IsSuccessStatusCode)
 		{
-			var text = await resp.Content.ReadAsStringAsync();
+			var text = await resp.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 			Console.WriteLine("/api/articles POST failed: " + resp.StatusCode + " - " + text);
 		}
 
@@ -48,9 +51,9 @@ public class ArticlesIntegrationTests : IClassFixture<MongoDbTestcontainerFixtur
 		// Verify in DB
 		var clientDb = _mongoFixture.Client.GetDatabase(Shared.Services.DATABASE);
 		var col = clientDb.GetCollection<Article>("Articles");
-		var found = await col.Find(_ => true).FirstOrDefaultAsync();
+		var found = await col.Find(_ => true).FirstOrDefaultAsync(cancellationToken: TestContext.Current.CancellationToken);
 		found.Should().NotBeNull();
-		found!.IsArchived.Should().BeTrue();
+		found.IsArchived.Should().BeTrue();
 	}
 
 	[Fact]
@@ -58,23 +61,23 @@ public class ArticlesIntegrationTests : IClassFixture<MongoDbTestcontainerFixtur
 	{
 		await _mongoFixture.SeedArticlesAsync(1, useSeed: true);
 
-		using var factory = CreateFactory();
+		await using var factory = CreateFactory();
 		using var client = factory.CreateClient();
 
-		// read first seeded article id from DB
+		// read the first seeded article id from DB
 		var db = _mongoFixture.Client.GetDatabase(Shared.Services.DATABASE);
 		var col = db.GetCollection<Article>("Articles");
-		var article = await col.Find(_ => true).FirstAsync();
+		var article = await col.Find(_ => true).FirstAsync(cancellationToken: TestContext.Current.CancellationToken);
 
-		var resp = await client.GetAsync($"/api/articles/{article.Id}");
+		var resp = await client.GetAsync($"/api/articles/{article.Id}", TestContext.Current.CancellationToken);
 		if (!resp.IsSuccessStatusCode)
 		{
-			var text = await resp.Content.ReadAsStringAsync();
+			var text = await resp.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 			Console.WriteLine($"GET /api/articles/{article.Id} failed: " + resp.StatusCode + " - " + text);
 		}
 		resp.IsSuccessStatusCode.Should().BeTrue();
 
-		var dto = await resp.Content.ReadFromJsonAsync<object>();
+		var dto = await resp.Content.ReadFromJsonAsync<object>(cancellationToken: TestContext.Current.CancellationToken);
 		dto.Should().NotBeNull();
 	}
 
@@ -83,18 +86,18 @@ public class ArticlesIntegrationTests : IClassFixture<MongoDbTestcontainerFixtur
 	{
 		await _mongoFixture.SeedArticlesAsync(3, useSeed: true);
 
-		using var factory = CreateFactory();
+		await using var factory = CreateFactory();
 		using var client = factory.CreateClient();
 
-		var resp = await client.GetAsync("/api/articles");
+		var resp = await client.GetAsync("/api/articles", TestContext.Current.CancellationToken);
 		if (!resp.IsSuccessStatusCode)
 		{
-			var text = await resp.Content.ReadAsStringAsync();
+			var text = await resp.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 			Console.WriteLine("GET /api/articles failed: " + resp.StatusCode + " - " + text);
 		}
 		resp.IsSuccessStatusCode.Should().BeTrue();
 
-		var list = await resp.Content.ReadFromJsonAsync<IEnumerable<object>>();
+		var list = await resp.Content.ReadFromJsonAsync<IEnumerable<object>>(cancellationToken: TestContext.Current.CancellationToken);
 		list.Should().NotBeNull();
 	}
 
@@ -103,24 +106,24 @@ public class ArticlesIntegrationTests : IClassFixture<MongoDbTestcontainerFixtur
 	{
 		await _mongoFixture.SeedArticlesAsync(1, useSeed: true);
 
-		using var factory = CreateFactory();
+		await using var factory = CreateFactory();
 		using var client = factory.CreateClient();
 
 		var db = _mongoFixture.Client.GetDatabase(Shared.Services.DATABASE);
 		var col = db.GetCollection<Article>("Articles");
-		var article = await col.Find(_ => true).FirstAsync();
+		var article = await col.Find(_ => true).FirstAsync(cancellationToken: TestContext.Current.CancellationToken);
 
 		var update = new { Title = article.Title + " - edited", IsArchived = !article.IsArchived };
 
-		var resp = await client.PutAsJsonAsync($"/api/articles/{article.Id}", update);
+		var resp = await client.PutAsJsonAsync($"/api/articles/{article.Id}", update, cancellationToken: TestContext.Current.CancellationToken);
 		if (!resp.IsSuccessStatusCode)
 		{
-			var text = await resp.Content.ReadAsStringAsync();
+			var text = await resp.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 			Console.WriteLine($"PUT /api/articles/{article.Id} failed: " + resp.StatusCode + " - " + text);
 		}
 		resp.IsSuccessStatusCode.Should().BeTrue();
 
-		var updated = await col.Find(a => a.Id == article.Id).FirstAsync();
+		var updated = await col.Find(a => a.Id == article.Id).FirstAsync(cancellationToken: TestContext.Current.CancellationToken);
 		updated.Title.Should().Contain("edited");
 		updated.IsArchived.Should().Be(update.IsArchived);
 	}
