@@ -51,11 +51,11 @@ public static class FakeCategoryDto
 		const int seed = 621;
 
 		var fake = new Faker<CategoryDto>()
-				.RuleFor(x => x.Id, ObjectId.GenerateNewId())
-				.RuleFor(x => x.CategoryName, _ => Helpers.Helpers.GetRandomCategoryName())
-				.RuleFor(x => x.IsArchived, f => f.Random.Bool())
-				.RuleFor(x => x.CreatedOn, _ => Helpers.Helpers.GetStaticDate())
-				.RuleFor(f => f.ModifiedOn, _ => Helpers.Helpers.GetStaticDate());
+			.RuleFor(x => x.Id, f => ObjectId.GenerateNewId())
+					.RuleFor(x => x.CategoryName, _ => Helpers.Helpers.GetRandomCategoryName())
+					.RuleFor(x => x.IsArchived, f => f.Random.Bool())
+					.RuleFor(x => x.CreatedOn, _ => Helpers.Helpers.GetStaticDate())
+					.RuleFor(f => f.ModifiedOn, _ => Helpers.Helpers.GetStaticDate());
 
 		return useSeed ? fake.UseSeed(seed) : fake;
 

@@ -29,6 +29,9 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 				["Auth0-Client-Id"] = "test-client"
 			};
 
+			// Allow tests to disable antiforgery middleware
+			dict["Disable-AntiForgery"] = "true";
+
 			conf.AddInMemoryCollection(dict);
 		});
 

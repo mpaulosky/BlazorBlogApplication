@@ -60,19 +60,19 @@ public static class FakeArticle
 	internal static Faker<Article> GenerateFake(bool useSeed = false)
 	{
 		var fake = new Faker<Article>()
-				.RuleFor(f => f.Id, ObjectId.GenerateNewId())
-				.RuleFor(f => f.Title, f => f.WaffleTitle())
-				.RuleFor(f => f.Introduction, f => f.Lorem.Sentence())
-				.RuleFor(f => f.Content, f => f.WaffleMarkdown(5))
-				.RuleFor(f => f.UrlSlug, (_, f) => f.Title.GetSlug())
-				.RuleFor(f => f.CoverImageUrl, f => f.Image.PicsumUrl())
-				.RuleFor(f => f.CreatedOn, _ => Helpers.Helpers.GetStaticDate())
-				.RuleFor(f => f.ModifiedOn, _ => Helpers.Helpers.GetStaticDate())
-				.RuleFor(f => f.IsPublished, f => f.Random.Bool())
-				.RuleFor(f => f.PublishedOn, (_, f) => f.IsPublished ? Helpers.Helpers.GetStaticDate() : null)
-				.RuleFor(f => f.IsArchived, f => f.Random.Bool())
-				.RuleFor(f => f.Category, _ => FakeCategoryDto.GetNewCategoryDto(useSeed))
-				.RuleFor(f => f.Author, _ => FakeAppUserDto.GetNewAppUserDto(useSeed));
+			.RuleFor(f => f.Id, f => ObjectId.GenerateNewId())
+					.RuleFor(f => f.Title, f => f.WaffleTitle())
+					.RuleFor(f => f.Introduction, f => f.Lorem.Sentence())
+					.RuleFor(f => f.Content, f => f.WaffleMarkdown(5))
+					.RuleFor(f => f.UrlSlug, (_, f) => f.Title.GetSlug())
+					.RuleFor(f => f.CoverImageUrl, f => f.Image.PicsumUrl())
+					.RuleFor(f => f.CreatedOn, _ => Helpers.Helpers.GetStaticDate())
+					.RuleFor(f => f.ModifiedOn, _ => Helpers.Helpers.GetStaticDate())
+					.RuleFor(f => f.IsPublished, f => f.Random.Bool())
+					.RuleFor(f => f.PublishedOn, (_, f) => f.IsPublished ? Helpers.Helpers.GetStaticDate() : null)
+					.RuleFor(f => f.IsArchived, f => f.Random.Bool())
+					.RuleFor(f => f.Category, f => FakeCategoryDto.GetNewCategoryDto(useSeed))
+					.RuleFor(f => f.Author, f => FakeAppUserDto.GetNewAppUserDto(useSeed));
 
 
 		const int seed = 621;

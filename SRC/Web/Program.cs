@@ -16,6 +16,14 @@ using Shared.Validators;
 
 using Web.Components.Features.Articles.ArticleDetails;
 using Web.Data.Auth0;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using Web.Components.Features.Articles.ArticleCreate;
+using Web.Components.Features.Articles.ArticleList;
+using Web.Components.Features.Articles.ArticleEdit;
+using Web.Components.Features.Categories.CategoryCreate;
+using Web.Components.Features.Categories.CategoryList;
+using Web.Components.Features.Categories.CategoryDetails;
 
 using static Shared.Services;
 
@@ -152,7 +160,11 @@ app.UseRouting();
 
 app.UseCors(DEFAULT_CORS_POLICY);
 
-app.UseAntiforgery();
+// Allow tests to disable antiforgery via configuration (TestWebApplicationFactory sets this key).
+if (app.Configuration["Disable-AntiForgery"] != "true")
+{
+	app.UseAntiforgery();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -187,6 +199,163 @@ app.MapGet("/account/logout", async (HttpContext httpContext) =>
 });
 
 app.MapHealthChecks("/health");
+
+// Minimal HTTP API endpoints used by integration tests
+app.MapPost("/api/articles", async (ArticleDto dto, IMyBlogContext ctx) =>
+{
+	try
+	{
+		if (dto is null) return Results.BadRequest("Invalid payload");
+
+		var article = new Shared.Entities.Article
+		{
+			Title = dto.Title,
+			Introduction = dto.Introduction,
+			Content = dto.Content,
+			CoverImageUrl = dto.CoverImageUrl,
+			UrlSlug = dto.UrlSlug,
+			Author = dto.Author,
+			Category = dto.Category,
+			IsPublished = dto.IsPublished,
+			PublishedOn = dto.PublishedOn,
+			IsArchived = dto.IsArchived
+		};
+
+		await ctx.Articles.InsertOneAsync(article);
+		return Results.Ok();
+	}
+	catch (Exception ex)
+	{
+		return Results.Problem(detail: ex.ToString());
+	}
+});
+
+app.MapGet("/api/articles/{id}", async (string id, IMyBlogContext ctx) =>
+{
+	try
+	{
+		if (!ObjectId.TryParse(id, out var oid)) return Results.BadRequest("Invalid id");
+		var article = await ctx.Articles.Find(a => a.Id == oid).FirstOrDefaultAsync();
+		return article is null ? Results.NotFound() : Results.Ok(Shared.Models.ArticleDto.FromEntity(article));
+	}
+	catch (Exception ex)
+	{
+		return Results.Problem(detail: ex.ToString());
+	}
+});
+
+app.MapGet("/api/articles", async (IMyBlogContext ctx) =>
+{
+	try
+	{
+		var articles = await ctx.Articles.Find(FilterDefinition<Shared.Entities.Article>.Empty).ToListAsync();
+		var dtos = articles.Select(a => Shared.Models.ArticleDto.FromEntity(a));
+		return Results.Ok(dtos);
+	}
+	catch (Exception ex)
+	{
+		return Results.Problem(detail: ex.ToString());
+	}
+});
+
+app.MapPut("/api/articles/{id}", async (string id, System.Text.Json.JsonElement body, IMyBlogContext ctx) =>
+{
+	try
+	{
+		if (!ObjectId.TryParse(id, out var oid)) return Results.BadRequest("Invalid id");
+		var col = ctx.Articles;
+		var article = await col.Find(a => a.Id == oid).FirstOrDefaultAsync();
+		if (article is null) return Results.NotFound();
+
+		if (body.TryGetProperty("Title", out var title)) article.Title = title.GetString() ?? article.Title;
+		if (body.TryGetProperty("Introduction", out var intro)) article.Introduction = intro.GetString() ?? article.Introduction;
+		if (body.TryGetProperty("Content", out var content)) article.Content = content.GetString() ?? article.Content;
+		if (body.TryGetProperty("IsArchived", out var isArchived) && (isArchived.ValueKind == System.Text.Json.JsonValueKind.True || isArchived.ValueKind == System.Text.Json.JsonValueKind.False))
+		{
+			article.IsArchived = isArchived.GetBoolean();
+		}
+
+		await col.ReplaceOneAsync(a => a.Id == oid, article, new ReplaceOptions { IsUpsert = false });
+		return Results.Ok();
+	}
+	catch (Exception ex)
+	{
+		return Results.Problem(detail: ex.ToString());
+	}
+});
+
+// Categories
+app.MapPost("/api/categories", async (System.Text.Json.JsonElement body, IMyBlogContext ctx) =>
+{
+	try
+	{
+		if (!body.TryGetProperty("CategoryName", out var name)) return Results.BadRequest("Missing CategoryName");
+		var cat = new Shared.Entities.Category
+		{
+			CategoryName = name.GetString() ?? string.Empty,
+			IsArchived = body.TryGetProperty("IsArchived", out var arch) && arch.GetBoolean()
+		};
+
+		await ctx.Categories.InsertOneAsync(cat);
+		return Results.Ok();
+	}
+	catch (Exception ex)
+	{
+		return Results.Problem(detail: ex.ToString());
+	}
+});
+
+app.MapGet("/api/categories/{id}", async (string id, IMyBlogContext ctx) =>
+{
+	try
+	{
+		if (!ObjectId.TryParse(id, out var oid)) return Results.BadRequest("Invalid id");
+		var cat = await ctx.Categories.Find(c => c.Id == oid).FirstOrDefaultAsync();
+		return cat is null ? Results.NotFound() : Results.Ok(Shared.Models.CategoryDto.FromEntity(cat));
+	}
+	catch (Exception ex)
+	{
+		return Results.Problem(detail: ex.ToString());
+	}
+});
+
+app.MapGet("/api/categories", async (IMyBlogContext ctx) =>
+{
+	try
+	{
+		var cats = await ctx.Categories.Find(FilterDefinition<Shared.Entities.Category>.Empty).ToListAsync();
+		var dtos = cats.Select(c => Shared.Models.CategoryDto.FromEntity(c));
+		return Results.Ok(dtos);
+	}
+	catch (Exception ex)
+	{
+		return Results.Problem(detail: ex.ToString());
+	}
+});
+
+app.MapPut("/api/categories/{id}", async (string id, System.Text.Json.JsonElement body, IMyBlogContext ctx) =>
+{
+	try
+	{
+		if (!ObjectId.TryParse(id, out var oid)) return Results.BadRequest("Invalid id");
+		var col = ctx.Categories;
+		var cat = await col.Find(c => c.Id == oid).FirstOrDefaultAsync();
+		if (cat is null) return Results.NotFound();
+
+		if (body.TryGetProperty("CategoryName", out var nm)) cat.CategoryName = nm.GetString() ?? cat.CategoryName;
+		if (body.TryGetProperty("IsArchived", out var ia) && (ia.ValueKind == System.Text.Json.JsonValueKind.True || ia.ValueKind == System.Text.Json.JsonValueKind.False))
+		{
+			cat.IsArchived = ia.GetBoolean();
+		}
+
+		await col.ReplaceOneAsync(c => c.Id == oid, cat, new ReplaceOptions { IsUpsert = false });
+		return Results.Ok();
+	}
+	catch (Exception ex)
+	{
+		return Results.Problem(detail: ex.ToString());
+	}
+});
 
 app.Run();
 
