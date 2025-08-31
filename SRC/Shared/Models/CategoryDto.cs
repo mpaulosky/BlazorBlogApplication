@@ -27,19 +27,19 @@ public class CategoryDto
 	/// <param name="categoryName"></param>
 	/// <param name="createdOn"></param>
 	/// <param name="modifiedOn"></param>
-	/// <param name="archived">Indicates whether the category is archived.</param>
+	/// <param name="IsArchived">Indicates whether the category is archived.</param>
 	private CategoryDto(
 		ObjectId id,
 		string categoryName,
 		DateTime createdOn,
 		DateTime? modifiedOn,
-		bool archived = false)
+		bool IsArchived = false)
 	{
 		Id = id;
 		CategoryName = categoryName;
 		CreatedOn = createdOn;
 		ModifiedOn = modifiedOn;
-		Archived = archived;
+		Archived = IsArchived;
 	}
 
 	/// <summary>
@@ -82,13 +82,13 @@ public class CategoryDto
 	///   Gets or sets a value indicating whether the article is marked as deleted.
 	/// </summary>
 	[BsonRepresentation(BsonType.Boolean)]
-	[BsonElement("archived")]
-	public bool Archived { get; set; }
+	[BsonElement("isArchived")]
+	public bool IsArchived { get; set; }
 
 	/// <summary>
 	///   Gets an empty singleton category instance.
 	/// </summary>
-	private static readonly CategoryDto _empty = new(ObjectId.Empty, string.Empty, DateTime.UtcNow, null);
+	private static readonly CategoryDto _empty = new(ObjectId.Empty, string.Empty, DateTime.UtcNow, null, false);
 	public static CategoryDto Empty => _empty;
 
 }
