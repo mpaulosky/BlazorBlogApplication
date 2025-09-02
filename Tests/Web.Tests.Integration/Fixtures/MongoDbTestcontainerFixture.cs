@@ -19,15 +19,11 @@ public sealed class MongoDbTestcontainerFixture : IAsyncLifetime
 
 	public MongoClient Client { get; private set; } = null!;
 
-	public MongoDbTestcontainerFixture()
-	{
-	}
-
 	public async ValueTask InitializeAsync()
 	{
 		// Build and start a MongoDB testcontainer
 		_container = new MongoDbBuilder()
-			.WithImage("mongo:6.0")
+			.WithImage("mongo:8.0")
 			.Build();
 
 		await _container.StartAsync();
@@ -72,11 +68,15 @@ public sealed class MongoDbTestcontainerFixture : IAsyncLifetime
 	{
 		var db = Client.GetDatabase(Services.DATABASE);
 		// Ensure a clean collection for deterministic tests
-		try { await db.DropCollectionAsync("Articles", CancellationToken.None); } catch { }
+		try { await db.DropCollectionAsync("Articles", CancellationToken.None); }
+		catch (Exception)
+		{
+			// ignored
+		}
 
 		var articles = Shared.Fakes.FakeArticle.GetArticles(count, useSeed);
 		var col = db.GetCollection<Article>("Articles");
-		if (articles?.Any() == true)
+		if (articles.Any() == true)
 		{
 			await col.InsertManyAsync(articles, null, CancellationToken.None);
 		}

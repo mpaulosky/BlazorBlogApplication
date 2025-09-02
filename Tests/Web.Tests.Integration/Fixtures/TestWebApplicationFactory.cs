@@ -21,7 +21,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 			var dict = new Dictionary<string, string?>
 			{
 				["mongoDb-connection"] = _mongoConnectionString,
-				// Provide safe Auth0 values for tests; some tests may still rely on validation so provide placeholders
+				// Provide safe Auth0 values for tests; some tests may still rely on validation, so provide placeholders
 				["Auth0-Domain"] = "test.local",
 				["Auth0-Client-Id"] = "test-client"
 			};
@@ -35,7 +35,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 		// Optionally override DI - leave MongoClient registration to normal DI since Program.cs reads configuration when creating it.
 		builder.ConfigureServices(services =>
 		{
-			// No-op for now; most tests will use the configured IMongoClient from Program which will pick up the in-memory config.
+			// No-op for now; most tests will use the configured IMongoClient from Program, which will pick up the in-memory config.
 		});
 	}
 }
