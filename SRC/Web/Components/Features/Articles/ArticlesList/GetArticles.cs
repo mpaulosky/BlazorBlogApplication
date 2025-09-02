@@ -11,7 +11,7 @@ using Shared.Abstractions;
 using Shared.Entities;
 using Shared.Models;
 
-namespace Web.Components.Features.Articles.ArticleList;
+namespace Web.Components.Features.Articles.ArticlesList;
 
 /// <summary>
 /// Static class providing functionality for article creation.
