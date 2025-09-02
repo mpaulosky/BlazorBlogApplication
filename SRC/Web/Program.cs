@@ -14,16 +14,7 @@ using ServiceDefaults;
 using Shared.Models;
 using Shared.Validators;
 
-using Web.Components.Features.Articles.ArticleDetails;
 using Web.Data.Auth0;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using Web.Components.Features.Articles.ArticleCreate;
-using Web.Components.Features.Articles.ArticleList;
-using Web.Components.Features.Articles.ArticleEdit;
-using Web.Components.Features.Categories.CategoryCreate;
-using Web.Components.Features.Categories.CategoryList;
-using Web.Components.Features.Categories.CategoryDetails;
 
 using static Shared.Services;
 
@@ -31,7 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 
-// Note: we validate required configuration after the WebApplication is
+// Note: we validate the required configuration after the WebApplication is
 // built below so that test-host builders (TestWebApplicationFactory) which
 // call ConfigureAppConfiguration can inject their in-memory values and the
 // final IConfiguration is visible when we validate.
@@ -45,8 +36,8 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services
 		.AddAuth0WebAppAuthentication(options =>
 		{
-			options.Domain = configuration["Auth0-Domain"]!;
-			options.ClientId = configuration["Auth0-Client-Id"]!;
+			options.Domain = configuration["Auth0-Domain"];
+			options.ClientId = configuration["Auth0-Client-Id"];
 		});
 
 
@@ -88,6 +79,8 @@ builder.Services.AddScoped<GetArticle.IGetArticleHandler, GetArticle.Handler>();
 builder.Services.AddScoped<EditArticle.IEditArticleHandler, EditArticle.Handler>();
 builder.Services.AddScoped<GetArticles.IGetArticlesHandler, GetArticles.Handler>();
 builder.Services.AddScoped<CreateArticle.ICreateArticleHandler, CreateArticle.Handler>();
+builder.Services.AddScoped<CreateCategory.ICreateCategoryHandler, CreateCategory.Handler>();
+builder.Services.AddScoped<GetCategories.IGetCategoriesHandler, GetCategories.Handler>();
 builder.Services.AddScoped<EditCategory.IEditCategoryHandler, EditCategory.Handler>();
 builder.Services.AddScoped<GetCategory.IGetCategoryHandler, GetCategory.Handler>();
 
@@ -97,7 +90,7 @@ builder.Services.AddScoped<IValidator<CategoryDto>, CategoryDtoValidator>();
 
 // Register the MongoDB client. Defer reading the connection string until
 // the service provider is built to ensure test configuration (in-memory
-// or environment overrides applied by the test host) are visible.
+// or environment overrides applied by the test host) is visible.
 builder.Services.AddSingleton<IMongoClient>(sp =>
 {
 	var cfg = sp.GetRequiredService<IConfiguration>();
@@ -109,7 +102,7 @@ builder.Services.AddSingleton<IMongoClient>(sp =>
 
 	// Do not throw here during DI registration; some test scenarios rely on
 	// the host being built so that a hosted validation service can run and
-	// assert that required configuration is present. Use a safe default
+	// assert that the required configuration is present. Use a safe default
 	// fallback for local test execution so DI can complete, while the
 	// ConfigurationValidationHostedService will still fail the app if the
 	// configuration is intentionally missing for an edge-case test.
@@ -132,7 +125,7 @@ builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
-// Validate required configuration now that the final IConfiguration is
+// Validate the required configuration now that the final IConfiguration is
 // available (this ensures test-provided in-memory config is visible).
 var finalCfg = app.Configuration;
 var mongoVal = finalCfg["mongoDb-connection"] ?? Environment.GetEnvironmentVariable("mongoDb-connection");
@@ -236,7 +229,7 @@ app.MapGet("/api/articles/{id}", async (string id, IMyBlogContext ctx) =>
 	{
 		if (!ObjectId.TryParse(id, out var oid)) return Results.BadRequest("Invalid id");
 		var article = await ctx.Articles.Find(a => a.Id == oid).FirstOrDefaultAsync();
-		return article is null ? Results.NotFound() : Results.Ok(Shared.Models.ArticleDto.FromEntity(article));
+		return article is null ? Results.NotFound() : Results.Ok(ArticleDto.FromEntity(article));
 	}
 	catch (Exception ex)
 	{
@@ -249,7 +242,7 @@ app.MapGet("/api/articles", async (IMyBlogContext ctx) =>
 	try
 	{
 		var articles = await ctx.Articles.Find(FilterDefinition<Shared.Entities.Article>.Empty).ToListAsync();
-		var dtos = articles.Select(a => Shared.Models.ArticleDto.FromEntity(a));
+		var dtos = articles.Select(ArticleDto.FromEntity);
 		return Results.Ok(dtos);
 	}
 	catch (Exception ex)
@@ -311,7 +304,7 @@ app.MapGet("/api/categories/{id}", async (string id, IMyBlogContext ctx) =>
 	{
 		if (!ObjectId.TryParse(id, out var oid)) return Results.BadRequest("Invalid id");
 		var cat = await ctx.Categories.Find(c => c.Id == oid).FirstOrDefaultAsync();
-		return cat is null ? Results.NotFound() : Results.Ok(Shared.Models.CategoryDto.FromEntity(cat));
+		return cat is null ? Results.NotFound() : Results.Ok(CategoryDto.FromEntity(cat));
 	}
 	catch (Exception ex)
 	{
@@ -324,7 +317,7 @@ app.MapGet("/api/categories", async (IMyBlogContext ctx) =>
 	try
 	{
 		var cats = await ctx.Categories.Find(FilterDefinition<Shared.Entities.Category>.Empty).ToListAsync();
-		var dtos = cats.Select(c => Shared.Models.CategoryDto.FromEntity(c));
+		var dtos = cats.Select(CategoryDto.FromEntity);
 		return Results.Ok(dtos);
 	}
 	catch (Exception ex)

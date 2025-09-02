@@ -7,8 +7,6 @@
 // Project Name :  Web
 // =======================================================
 
-global using System.ComponentModel.DataAnnotations;
-
 global using Auth0.AspNetCore.Authentication;
 
 global using Mapster;
@@ -21,15 +19,13 @@ global using MongoDB.Driver;
 
 global using Web.Components;
 
-global using Web.Components.Features.Articles.ArticleList;
+global using Web.Components.Features.Articles.ArticlesList;
 global using Web.Components.Features.Articles.ArticleCreate;
+global using Web.Components.Features.Articles.ArticleDetails;
 global using Web.Components.Features.Articles.ArticleEdit;
-
+global using Web.Components.Features.Categories.CategoryCreate;
 global using Web.Components.Features.Categories.CategoryEdit;
 global using Web.Components.Features.Categories.CategoryList;
 global using Web.Components.Features.Categories.CategoryDetails;
 
 global using Web.Data;
-
-global using static Shared.Helpers.Helpers;
-global using static Shared.Helpers.MyCategories;

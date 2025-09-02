@@ -44,7 +44,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Fixtures\" />
+	  <Folder Include="Components\Features\Articles\ArticleCreate\" />
+	  <Folder Include="Components\Features\Articles\ArticleDetails\" />
+	  <Folder Include="Components\Features\Articles\ArticleEdit\" />
+	  <Folder Include="Components\Features\Articles\ArticlesList\" />
+	  <Folder Include="Components\Features\Categories\CategoryCreate\" />
+	  <Folder Include="Components\Features\Categories\CategoryDetails\" />
+	  <Folder Include="Components\Features\Categories\CategoryEdit\" />
+	  <Folder Include="Components\Features\Categories\CategoriesList\" />
 	</ItemGroup>
 
 </Project>
