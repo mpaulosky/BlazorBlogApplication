@@ -7,6 +7,8 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
+using Web.Components.Features.Articles.ArticlesList;
+
 namespace Web.Startup;
 
 [ExcludeFromCodeCoverage]

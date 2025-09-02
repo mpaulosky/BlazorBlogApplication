@@ -12,6 +12,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Web.Components.Features.Articles.ArticlesList;
+
 namespace Web.Components.Features.Articles;
 
 [CollectionDefinition(nameof(ArticlesTestFixture), DisableParallelization = true)]

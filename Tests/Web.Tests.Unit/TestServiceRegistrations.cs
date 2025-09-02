@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Web.Components.Features.Articles.ArticlesList;
 using Web.Components.Features.Categories.CategoryCreate;
 
 namespace Web;
@@ -150,7 +151,10 @@ public static class TestServiceRegistrations
 						return asInterface;
 					}
 				}
-				catch { }
+				catch
+				{
+					// ignored
+				}
 
 				return getCategorySub;
 			});
@@ -174,7 +178,10 @@ public static class TestServiceRegistrations
 						return asInterface;
 					}
 				}
-				catch { }
+				catch
+				{
+					// ignored
+				}
 
 				return getCategoriesSub;
 			});
@@ -196,7 +203,10 @@ public static class TestServiceRegistrations
 						return asInterface;
 					}
 				}
-				catch { }
+				catch
+				{
+					// ignored
+				}
 
 				return createCategorySub;
 			});
@@ -218,7 +228,10 @@ public static class TestServiceRegistrations
 						return asInterface;
 					}
 				}
-				catch { }
+				catch
+				{
+					// ignored
+				}
 
 				return editCategorySub;
 			});
@@ -241,7 +254,10 @@ public static class TestServiceRegistrations
 						return asInterface;
 					}
 				}
-				catch { }
+				catch (Exception)
+				{
+					// ignored
+				}
 
 				return getArticleSub;
 			});
@@ -265,7 +281,10 @@ public static class TestServiceRegistrations
 						return asInterface;
 					}
 				}
-				catch { }
+				catch
+				{
+					// ignored
+				}
 
 				return getArticlesSub;
 			});
