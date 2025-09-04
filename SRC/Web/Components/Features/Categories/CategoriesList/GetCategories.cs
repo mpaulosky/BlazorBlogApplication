@@ -11,7 +11,7 @@ using Shared.Abstractions;
 using Shared.Entities;
 using Shared.Models;
 
-namespace Web.Components.Features.Categories.CategoryList;
+namespace Web.Components.Features.Categories.CategoriesList;
 
 /// <summary>
 /// Static class providing functionality for category creation.

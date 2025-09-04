@@ -52,7 +52,7 @@ public static class EditCategory
 					ModifiedOn = DateTime.UtcNow,
 				};
 
-				var context = await _contextFactory.CreateAsync();
+				var context = _contextFactory.CreateContext();
 				await context.Categories.ReplaceOneAsync(
 					Builders<Category>.Filter.Eq(x => x.Id, request.Id),
 					category,
