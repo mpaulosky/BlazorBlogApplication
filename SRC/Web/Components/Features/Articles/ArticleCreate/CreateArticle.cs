@@ -1,10 +1,10 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File CategoryName :     CategoryGet.cs
+// File :          CategoryGet.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution CategoryName : BlazorApp
-// Project CategoryName :  Web
+// Solution :      BlazorApp
+// Project :       Web
 // =======================================================
 
 using Shared.Abstractions;
@@ -24,7 +24,9 @@ public static class CreateArticle
 	/// </summary>
 	public interface ICreateArticleHandler
 	{
+
 		Task<Result> HandleAsync(ArticleDto request);
+
 	}
 
 	/// <summary>
@@ -33,17 +35,18 @@ public static class CreateArticle
 	public class Handler : ICreateArticleHandler
 	{
 
-		private readonly IMyBlogContext _context;
+		private readonly IMyBlogContextFactory _factory;
+
 		private readonly ILogger<Handler> _logger;
 
 		/// <summary>
 		///   Initializes a new instance of the <see cref="Handler"/> class.
 		/// </summary>
-		/// <param name="context">The database context.</param>
+		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContext context, ILogger<Handler> logger)
+		public Handler(IMyBlogContextFactory factory, ILogger<Handler> logger)
 		{
-			_context = context;
+			_factory = factory;
 			_logger = logger;
 		}
 
@@ -54,23 +57,31 @@ public static class CreateArticle
 		/// <returns>A <see cref="Result"/> indicating success or failure.</returns>
 		public async Task<Result> HandleAsync(ArticleDto? request)
 		{
+
+			if (request is null)
+				return Result.Fail("The request is null.");
+
 			try
 			{
-				var article = new Article
-				{
-					Title = request!.Title,
-					Introduction = request.Introduction,
-					Content = request.Content,
-					CoverImageUrl = request.CoverImageUrl,
-					UrlSlug = request.UrlSlug,
-					Author = request.Author,
-					Category = request.Category,
-					IsPublished = request.IsPublished,
-					PublishedOn = request.PublishedOn ?? DateTime.UtcNow,
-					Archived = request.IsArchived
-				};
+				var context = _factory.CreateContext();
 
-				await _context.Articles.InsertOneAsync(article);
+				var article = request.Adapt<Article>();
+
+				// var article = new Article
+				// {
+				// 	Title = request!.Title,
+				// 	Introduction = request.Introduction,
+				// 	Content = request.Content,
+				// 	CoverImageUrl = request.CoverImageUrl,
+				// 	UrlSlug = request.UrlSlug,
+				// 	Author = request.Author,
+				// 	Category = request.Category,
+				// 	IsPublished = request.IsPublished,
+				// 	PublishedOn = request.PublishedOn ?? DateTime.UtcNow,
+				// 	Archived = request.IsArchived
+				// };
+
+				await context.Articles.InsertOneAsync(article);
 
 				_logger.LogInformation("Category created successfully: {Title}", request.Title);
 
@@ -79,9 +90,12 @@ public static class CreateArticle
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Failed to create category");
+
 				return Result.Fail(ex.Message);
 			}
+
 		}
+
 	}
 
 }
