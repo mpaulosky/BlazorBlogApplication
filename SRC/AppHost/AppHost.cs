@@ -35,6 +35,9 @@ public static class AppHostEntryPoint
 		var auth0Client = builder.AddParameter("auth0-client-id", secret: true)
 				.WithDescription("The Auth0 client ID for authentication.");
 
+		var auth0ClientSecret = builder.AddParameter("auth0-client-secret", secret: true)
+				.WithDescription("The Auth0 client secret for authentication.");
+
 		var mongoDbConnection = builder.AddParameter("mongoDb-connection", secret: true)
 				.WithDescription("The MongoDB connection string.");
 
@@ -51,7 +54,8 @@ public static class AppHostEntryPoint
 			.WaitFor(database)
 			.WithEnvironment("mongoDb-connection", mongoDbConnection)
 			.WithEnvironment("auth0-domain", auth0Domain)
-			.WithEnvironment("auth0-client-id", auth0Client);
+			.WithEnvironment("auth0-client-id", auth0Client)
+			.WithEnvironment("auth0-client-secret", auth0ClientSecret);
 
 		builder.Build().Run();
 	}
