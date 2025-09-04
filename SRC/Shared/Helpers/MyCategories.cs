@@ -4,11 +4,14 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorApp
-// Project Name :  Web
+// Project Name :  Shared
 // =======================================================
 
 namespace Shared.Helpers;
 
+/// <summary>
+///   Contains predefined category names for the blog system.
+/// </summary>
 public static class MyCategories
 {
 

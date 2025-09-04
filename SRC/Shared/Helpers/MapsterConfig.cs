@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Copilot
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web
+// Project Name :  Shared
 // =======================================================
 
 using Mapster;

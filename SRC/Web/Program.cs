@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication.sln
-// Project Name :  Web
+// Project Name :  Shared
 // =======================================================
 
 using ServiceDefaults;
@@ -26,6 +26,8 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseSecurityHeaders();
 
 app.UseOutputCache();
 

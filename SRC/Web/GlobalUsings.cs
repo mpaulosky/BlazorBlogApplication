@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web
+// Project Name :  Shared
 // =======================================================
 
 global using Auth0.AspNetCore.Authentication;

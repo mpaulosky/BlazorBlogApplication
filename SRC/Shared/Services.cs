@@ -1,4 +1,8 @@
 ﻿namespace Shared;
+
+/// <summary>
+///   Contains constants for service names and configuration values.
+/// </summary>
 public static class Services
 {
 

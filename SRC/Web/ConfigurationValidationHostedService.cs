@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web
+// Project Name :  Shared
 // =======================================================
 
 using System.Diagnostics.CodeAnalysis;

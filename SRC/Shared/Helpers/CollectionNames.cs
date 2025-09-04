@@ -3,8 +3,8 @@
 // File Name :     CollectionNames.cs
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared
 // =============================================
 
 namespace Shared.Helpers;
