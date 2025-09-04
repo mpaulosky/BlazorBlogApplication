@@ -7,8 +7,6 @@
 // Project Name :  Web.Tests.Integration
 // =============================================
 
-using Web.Fixtures;
-
 namespace Web;
 
 [CollectionDefinition("Test Collection")]

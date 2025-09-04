@@ -7,6 +7,7 @@
 		<RootNamespace>Web</RootNamespace>
 		<TargetFramework>net9.0</TargetFramework>
 		<IsTestProject>true</IsTestProject>
+		<UserSecretsId>995b89ba-8d76-49f6-8ce2-6d50098f6daa</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -32,6 +33,7 @@
 		<PackageReference Include="NSubstitute.Analyzers.CSharp" />
 		<PackageReference Include="Testcontainers" />
 		<PackageReference Include="Testcontainers.MongoDb" />
+		<PackageReference Include="Testcontainers.XunitV3" />
 		<PackageReference Include="xunit.v3" />
 		<PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
 	</ItemGroup>
@@ -48,7 +50,6 @@
 	  <Folder Include="Components\Features\Articles\ArticleDetails\" />
 	  <Folder Include="Components\Features\Articles\ArticleEdit\" />
 	  <Folder Include="Components\Features\Articles\ArticlesList\" />
-	  <Folder Include="Components\Features\Categories\CategoryCreate\" />
 	  <Folder Include="Components\Features\Categories\CategoryDetails\" />
 	  <Folder Include="Components\Features\Categories\CategoryEdit\" />
 	  <Folder Include="Components\Features\Categories\CategoriesList\" />

@@ -7,17 +7,12 @@
 // Project Name :  Web.Tests.Integration
 // =============================================
 
-using System.Diagnostics.CodeAnalysis;
-
 using JetBrains.Annotations;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-
-using MongoDB.Driver;
 
 using Testcontainers.MongoDb;
 
@@ -46,6 +41,7 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 			builder.AddConsole();
 			builder.SetMinimumLevel(LogLevel.Debug);
 		});
+
 		_logger = loggerFactory.CreateLogger<WebTestFactory>();
 
 		// Initialize a shared container if not already done
@@ -57,7 +53,7 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 				{
 					_port = new Random().Next(27018, 28000);
 					_sharedContainer = new MongoDbBuilder()
-						.WithImage("mongo:latest")
+						.WithImage("mongo:8.0")
 						.WithPortBinding(_port, 27017)
 						.WithEnvironment("MONGO_INITDB_ROOT_USERNAME", "admin")
 						.WithEnvironment("MONGO_INITDB_ROOT_PASSWORD", "password")
@@ -73,7 +69,7 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		{
 			config.AddInMemoryCollection(new Dictionary<string, string?>
 			{
-				["ConnectionStrings:MongoDB"] = $"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin",
+				["ConnectionStrings:mongoDb-connection"] = $"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin",
 				["DatabaseName"] = _databaseName
 			});
 		});
@@ -94,7 +90,7 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		try
 		{
 			_logger.LogInformation("Starting MongoDB container...");
-			await _sharedContainer.StartAsync(_cts.Token);
+			await _sharedContainer!.StartAsync(_cts.Token);
 			_logger.LogInformation("MongoDB container started successfully");
 
 			// Wait for MongoDB to be ready
@@ -195,9 +191,5 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 			_dbLock.Release();
 		}
 	}
-	//
-	// Task IAsyncLifetime.DisposeAsync()
-	// {
-	// 	return DisposeAsync().AsTask();
-	// }
+
 }
