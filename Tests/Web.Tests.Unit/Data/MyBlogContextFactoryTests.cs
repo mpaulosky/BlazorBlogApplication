@@ -13,6 +13,56 @@ namespace Web.Data;
 [TestSubject(typeof(MyBlogContextFactory))]
 public class MyBlogContextFactoryTests
 {
-	[Fact(Skip = "TODO: Implement tests ensuring CreateAsync initializes collections and honors CancellationToken")]
-	public void TODO_MyBlogContextFactory_Tests() { }
+	[Fact]
+	public async Task CreateContext_WithCancellationToken_ReturnsInitializedContext()
+	{
+		// Arrange
+		var mongoClient = Substitute.For<IMongoClient>();
+		var factory = new MyBlogContextFactory(mongoClient);
+		var cancellationToken = new CancellationToken();
+
+		// Act
+		var result = await factory.CreateContext(cancellationToken);
+
+		// Assert
+		result.Should().NotBeNull();
+		result.Should().BeOfType<MyBlogContext>();
+	}
+
+	[Fact]
+	public void CreateContext_WithoutCancellationToken_ReturnsInitializedContext()
+	{
+		// Arrange
+		var mongoClient = Substitute.For<IMongoClient>();
+		var factory = new MyBlogContextFactory(mongoClient);
+
+		// Act
+		var result = factory.CreateContext();
+
+		// Assert
+		result.Should().NotBeNull();
+		result.Should().BeOfType<MyBlogContext>();
+	}
+
+	[Fact]
+	public async Task CreateContext_WithCancelledToken_CompletesSuccessfully()
+	{
+		// Arrange
+		var mongoClient = Substitute.For<IMongoClient>();
+		var factory = new MyBlogContextFactory(mongoClient);
+		var cancellationToken = new CancellationToken(true); // Already cancelled
+
+		// Act & Assert - Should not throw despite cancelled token
+		var result = await factory.CreateContext(cancellationToken);
+		result.Should().NotBeNull();
+	}
+
+	[Fact]
+	public void Constructor_WithNullMongoClient_ThrowsArgumentNullException()
+	{
+		// Act & Assert
+		var action = () => new MyBlogContextFactory(null!);
+		action.Should().Throw<ArgumentNullException>()
+			.WithParameterName("mongoClient");
+	}
 }

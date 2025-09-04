@@ -3,7 +3,7 @@
 // File Name :     UserProfileTests.cs
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
-// Solution Name : BlazorBlogApplications
+// Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 

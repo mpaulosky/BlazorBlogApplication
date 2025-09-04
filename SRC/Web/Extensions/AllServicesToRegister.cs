@@ -1,11 +1,11 @@
-﻿// ============================================
-// Copyright (c) 2023. All rights reserved.
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
 // File Name :     AllServicesToRegister.cs
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
-// Project Name :  IssueTracker.UI
-// =============================================
+// Project Name :  Web
+// =======================================================
 
 using System.Diagnostics.CodeAnalysis;
 

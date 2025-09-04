@@ -27,6 +27,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseSecurityHeaders();
+
 app.UseOutputCache();
 
 app.MapStaticAssets();
