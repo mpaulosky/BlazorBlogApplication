@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web
+// Project Name :  Shared
 // =============================================
 
 namespace Web;

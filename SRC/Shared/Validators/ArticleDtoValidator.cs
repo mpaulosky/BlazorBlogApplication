@@ -3,12 +3,15 @@
 // File Name :     ArticleDtoValidator.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : MyBlog
-// Project Name :  Web
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared
 // =======================================================
 
 namespace Shared.Validators;
 
+/// <summary>
+///   Validator for the <see cref="ArticleDto" /> model.
+/// </summary>
 public class ArticleDtoValidator : AbstractValidator<ArticleDto>
 {
 

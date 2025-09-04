@@ -3,24 +3,36 @@
 // File Name :     Helpers.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : MyBlog
-// Project Name :  Web
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared
 // =======================================================
 
 using System.Web;
 
 namespace Shared.Helpers;
 
+/// <summary>
+///   Provides helper methods for common operations.
+/// </summary>
 public static partial class Helpers
 {
 
 	private static readonly DateTime _staticDate = new(2025, 1, 1);
 
+	/// <summary>
+	///   Gets a static date for testing purposes.
+	/// </summary>
+	/// <returns>A static date of January 1, 2025.</returns>
 	public static DateTime GetStaticDate()
 	{
 		return _staticDate;
 	}
 
+	/// <summary>
+	///   Converts a string to a URL-friendly slug.
+	/// </summary>
+	/// <param name="item">The string to convert to a slug.</param>
+	/// <returns>A URL-encoded slug.</returns>
 	public static string GetSlug(this string item)
 	{
 
@@ -33,7 +45,10 @@ public static partial class Helpers
 	[System.Text.RegularExpressions.GeneratedRegex(@"[^a-z0-9]+")]
 	private static partial System.Text.RegularExpressions.Regex MyRegex();
 
-
+	/// <summary>
+	///   Gets a random category name from predefined categories.
+	/// </summary>
+	/// <returns>A random category name.</returns>
 	public static string GetRandomCategoryName()
 	{
 

@@ -3,12 +3,15 @@
 // File Name :     ArticleValidator.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : MyBlog
-// Project Name :  Web
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared
 // =======================================================
 
 namespace Shared.Validators;
 
+/// <summary>
+///   Validator for the <see cref="Article" /> entity.
+/// </summary>
 public class ArticleValidator : AbstractValidator<Article>
 {
 

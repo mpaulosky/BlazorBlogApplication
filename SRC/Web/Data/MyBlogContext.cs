@@ -3,8 +3,8 @@
 // File Name :     MyBlogContext.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : MyBlogApp
-// Project Name :  Web
+// Solution Name : BlazorBlogApplicationApp
+// Project Name :  Shared
 // =======================================================
 
 using Shared.Entities;

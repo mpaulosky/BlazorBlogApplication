@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorApp
-// Project Name :  Web
+// Project Name :  Shared
 // =======================================================
 
 using Shared.Abstractions;

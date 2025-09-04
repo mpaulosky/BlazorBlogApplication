@@ -3,8 +3,8 @@
 // File Name :     Entity.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : MyBlog
-// Project Name :  Web
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared
 // =======================================================
 
 namespace Shared.Abstractions;
