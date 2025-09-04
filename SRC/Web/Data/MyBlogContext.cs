@@ -9,8 +9,6 @@
 
 using Shared.Entities;
 
-using static Shared.Services;
-
 namespace Web.Data;
 
 /// <summary>
@@ -23,11 +21,11 @@ public class MyBlogContext : IMyBlogContext
 
 	public MyBlogContext(IMongoClient mongoClient)
 	{
-		const string databaseName = DATABASE;
-		_database = mongoClient.GetDatabase(databaseName);
+		_database = mongoClient.GetDatabase(DATABASE);
 	}
 
 	public IMongoCollection<Article> Articles => _database.GetCollection<Article>("Articles");
 	public IMongoCollection<Category> Categories => _database.GetCollection<Category>("Categories");
 
+	// No disposal required for this lightweight wrapper around IMongoDatabase.
 }

@@ -23,8 +23,13 @@ public class MyBlogContextFactory : IMyBlogContextFactory
 		_mongoClient = mongoClient ?? throw new ArgumentNullException(nameof(mongoClient));
 	}
 
-	/// <inheritdoc />
-	public Task<IMyBlogContext> CreateAsync(CancellationToken cancellationToken = default)
+	public MyBlogContext CreateContext()
+	{
+		var context = new MyBlogContext(_mongoClient);
+		return context;
+	}
+
+	public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
 	{
 		IMyBlogContext context = new MyBlogContext(_mongoClient);
 		return Task.FromResult(context);
