@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Web.Components.Features.Articles.ArticlesList;
+using Web.Components.Features.Categories.CategoriesList;
 using Web.Components.Features.Categories.CategoryCreate;
 
 namespace Web;
@@ -165,7 +166,7 @@ public static class TestServiceRegistrations
 			var getCategoriesSub = Substitute.For<GetCategories.IGetCategoriesHandler>();
 
 			getCategoriesSub.HandleAsync(Arg.Any<bool>())
-					.Returns(Task.FromResult(Result.Ok<IEnumerable<CategoryDto>>([ sampleCategory ])));
+					.Returns(Task.FromResult(Result.Ok<IEnumerable<CategoryDto>>([sampleCategory])));
 
 			ctx.Services.AddScoped<GetCategories.IGetCategoriesHandler>(sp =>
 			{
@@ -268,7 +269,7 @@ public static class TestServiceRegistrations
 			var getArticlesSub = Substitute.For<GetArticles.IGetArticlesHandler>();
 
 			getArticlesSub.HandleAsync(Arg.Any<bool>())
-					.Returns(Task.FromResult(Result.Ok<IEnumerable<ArticleDto>>([ sampleArticle ])));
+					.Returns(Task.FromResult(Result.Ok<IEnumerable<ArticleDto>>([sampleArticle])));
 
 			ctx.Services.AddScoped<GetArticles.IGetArticlesHandler>(sp =>
 			{
@@ -497,9 +498,14 @@ public static class TestServiceRegistrations
 			_ctx = ctx;
 		}
 
-		public Task<IMyBlogContext> CreateAsync(CancellationToken cancellationToken = default)
+		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
 		{
 			return Task.FromResult(_ctx);
+		}
+
+		public MyBlogContext CreateContext()
+		{
+			return (MyBlogContext)_ctx;
 		}
 
 	}

@@ -8,6 +8,7 @@
 // =======================================================
 
 using Web.Components.Features.Articles.ArticlesList;
+using Web.Components.Features.Categories.CategoriesList;
 
 namespace Web.Startup;
 

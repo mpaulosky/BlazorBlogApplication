@@ -10,13 +10,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Web.Components.Features.Articles.ArticlesCreate;
+namespace Web.Components.Features.Articles.ArticleCreate;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(CreateArticle.Handler))]
 public class CreateArticleHandlerTests
 {
-	private readonly ArticlesTestFixture _fixture = new ();
+	private readonly ArticlesTestFixture _fixture = new();
+	private readonly CancellationToken _cancellationToken = Xunit.TestContext.Current.CancellationToken;
 
 	[Fact]
 	public async Task HandleAsync_WithValidArticle_InsertsArticleAndReturnsOk()
@@ -26,7 +27,10 @@ public class CreateArticleHandlerTests
 			.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
-		var handler = new CreateArticle.Handler(_fixture.BlogContext, logger);
+		var factory = Substitute.For<IMyBlogContextFactory>();
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		factory.CreateContext(_cancellationToken).Returns((MyBlogContext)_fixture.BlogContext);
+		var handler = new CreateArticle.Handler(factory, logger);
 
 		var dto = FakeArticleDto.GetNewArticleDto(true);
 
@@ -48,7 +52,10 @@ public class CreateArticleHandlerTests
 			.Do(_ => throw new InvalidOperationException("DB error"));
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
-		var handler = new CreateArticle.Handler(_fixture.BlogContext, logger);
+		var factory = Substitute.For<IMyBlogContextFactory>();
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		factory.CreateContext(_cancellationToken).Returns((MyBlogContext)_fixture.BlogContext);
+		var handler = new CreateArticle.Handler(factory, logger);
 
 		var dto = new ArticleDto { Title = "T" };
 
@@ -68,7 +75,10 @@ public class CreateArticleHandlerTests
 			.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
-		var handler = new CreateArticle.Handler(_fixture.BlogContext, logger);
+		var factory = Substitute.For<IMyBlogContextFactory>();
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		factory.CreateContext(_cancellationToken).Returns((MyBlogContext)_fixture.BlogContext);
+		var handler = new CreateArticle.Handler(factory, logger);
 
 		var provided = DateTime.UtcNow.AddDays(-1);
 		var dto = new ArticleDto { Title = "T", PublishedOn = provided };
@@ -89,7 +99,10 @@ public class CreateArticleHandlerTests
 			.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
-		var handler = new CreateArticle.Handler(_fixture.BlogContext, logger);
+		var factory = Substitute.For<IMyBlogContextFactory>();
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		factory.CreateContext(_cancellationToken).Returns((MyBlogContext)_fixture.BlogContext);
+		var handler = new CreateArticle.Handler(factory, logger);
 
 		var dto = new ArticleDto { Title = "LoggingTest" };
 
@@ -115,7 +128,10 @@ public class CreateArticleHandlerTests
 			.Do(_ => throw new InvalidOperationException("DB error"));
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
-		var handler = new CreateArticle.Handler(_fixture.BlogContext, logger);
+		var factory = Substitute.For<IMyBlogContextFactory>();
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		factory.CreateContext(_cancellationToken).Returns((MyBlogContext)_fixture.BlogContext);
+		var handler = new CreateArticle.Handler(factory, logger);
 
 		var dto = new ArticleDto { Title = "T" };
 
@@ -140,7 +156,10 @@ public class CreateArticleHandlerTests
 		_fixture.ArticlesCollection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
-		var handler = new CreateArticle.Handler(_fixture.BlogContext, logger);
+		var factory = Substitute.For<IMyBlogContextFactory>();
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		factory.CreateContext(_cancellationToken).Returns((MyBlogContext)_fixture.BlogContext);
+		var handler = new CreateArticle.Handler(factory, logger);
 
 		// Act
 		var result = await handler.HandleAsync(null);

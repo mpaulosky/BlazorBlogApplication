@@ -28,7 +28,7 @@ public class EditCategoryHandlerTests
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateAsync(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
 		var dto = new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "Updated Name" };
@@ -62,7 +62,7 @@ public class EditCategoryHandlerTests
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateAsync(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
 		var dto = new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "DoesNotExist" };
@@ -96,7 +96,7 @@ public class EditCategoryHandlerTests
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateAsync(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
 		var dto = new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "Any" };
@@ -125,7 +125,7 @@ public class EditCategoryHandlerTests
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateAsync(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
 		// Act

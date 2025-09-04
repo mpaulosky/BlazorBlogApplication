@@ -13,7 +13,7 @@ using System.Linq;
 namespace Web.Infrastructure;
 
 [ExcludeFromCodeCoverage]
-public class TestWebApplicationFactory : WebApplicationFactory<Program>
+public class TestWebApplicationFactory : WebApplicationFactory<IAppMarker>
 {
 	private readonly Dictionary<string, string?> _config;
 	private readonly string _environment;
@@ -47,6 +47,20 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 			// Preserve previous value so we can restore on disposing
 			_previousEnv[kvp.Key] = Environment.GetEnvironmentVariable(kvp.Key);
 			Environment.SetEnvironmentVariable(kvp.Key, kvp.Value);
+		}
+
+		// Ensure missing known keys are cleared so edge-case tests behave deterministically
+		var knownKeys = new[] { "Auth0-Domain", "Auth0-Client-Id", "mongoDb-connection" };
+		foreach (var key in knownKeys)
+		{
+			if (!_config.ContainsKey(key) || string.IsNullOrWhiteSpace(_config[key]))
+			{
+				if (!_previousEnv.ContainsKey(key))
+				{
+					_previousEnv[key] = Environment.GetEnvironmentVariable(key);
+				}
+				Environment.SetEnvironmentVariable(key, null);
+			}
 		}
 	}
 

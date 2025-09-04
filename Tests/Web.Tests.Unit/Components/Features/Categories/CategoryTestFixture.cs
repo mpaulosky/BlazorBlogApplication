@@ -61,9 +61,14 @@ public class CategoryTestFixture : IAsyncDisposable
 			_ctx = ctx;
 		}
 
-		public Task<IMyBlogContext> CreateAsync(CancellationToken cancellationToken = default)
+		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
 		{
 			return Task.FromResult(_ctx);
+		}
+
+		public MyBlogContext CreateContext()
+		{
+			return (MyBlogContext)_ctx;
 		}
 
 	}
