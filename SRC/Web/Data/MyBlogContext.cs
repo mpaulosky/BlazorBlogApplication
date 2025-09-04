@@ -3,7 +3,7 @@
 // File Name :     MyBlogContext.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : BlazorBlogApplicationApp
+// Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
 
