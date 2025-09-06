@@ -1,26 +1,22 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File :          CategoryGet.cs
+// File Name :     CreateArticle.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution :      BlazorApp
-// Project :       Web
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web
 // =======================================================
-
-using Shared.Abstractions;
-using Shared.Entities;
-using Shared.Models;
 
 namespace Web.Components.Features.Articles.ArticleCreate;
 
 /// <summary>
-/// Static class providing functionality for category creation.
+///   Static class providing functionality for category creation.
 /// </summary>
 public static class CreateArticle
 {
 
 	/// <summary>
-	/// Interface for creating articles in the database.
+	///   Interface for creating articles in the database.
 	/// </summary>
 	public interface ICreateArticleHandler
 	{
@@ -30,7 +26,7 @@ public static class CreateArticle
 	}
 
 	/// <summary>
-	/// Represents a handler for creating new categories in the database.
+	///   Represents a handler for creating new categories in the database.
 	/// </summary>
 	public class Handler : ICreateArticleHandler
 	{
@@ -40,7 +36,7 @@ public static class CreateArticle
 		private readonly ILogger<Handler> _logger;
 
 		/// <summary>
-		///   Initializes a new instance of the <see cref="Handler"/> class.
+		///   Initializes a new instance of the <see cref="Handler" /> class.
 		/// </summary>
 		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
@@ -54,44 +50,45 @@ public static class CreateArticle
 		///   Handles the creation of a new category asynchronously.
 		/// </summary>
 		/// <param name="request">The category DTO.</param>
-		/// <returns>A <see cref="Result"/> indicating success or failure.</returns>
+		/// <returns>A <see cref="Result" /> indicating success or failure.</returns>
 		public async Task<Result> HandleAsync(ArticleDto? request)
 		{
 
 			if (request is null)
+			{
 				return Result.Fail("The request is null.");
+			}
 
 			try
 			{
-				var context = _factory.CreateContext();
+				var context = await _factory.CreateContext(CancellationToken.None);
 
-				var article = request.Adapt<Article>();
+				// Manually map DTO to an entity to avoid relying on Mapster in unit tests
+				var article = new Article(
+						request.Title,
+						request.Introduction,
+						request.Content,
+						request.CoverImageUrl,
+						request.UrlSlug,
+						request.Author,
+						request.Category,
+						request.IsPublished,
+						request.PublishedOn,
+						request.IsArchived);
 
-				// var article = new Article
-				// {
-				// 	Title = request!.Title,
-				// 	Introduction = request.Introduction,
-				// 	Content = request.Content,
-				// 	CoverImageUrl = request.CoverImageUrl,
-				// 	UrlSlug = request.UrlSlug,
-				// 	Author = request.Author,
-				// 	Category = request.Category,
-				// 	IsPublished = request.IsPublished,
-				// 	PublishedOn = request.PublishedOn ?? DateTime.UtcNow,
-				// 	Archived = request.IsArchived
-				// };
+				await context.Articles.InsertOneAsync(article, new InsertOneOptions(), CancellationToken.None);
 
-				await context.Articles.InsertOneAsync(article);
-
-				_logger.LogInformation("Category created successfully: {Title}", request.Title);
+				_logger.LogInformation("Article created successfully: {Title}", request.Title);
 
 				return Result.Ok();
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Failed to create category");
 
-				return Result.Fail(ex.Message);
+				_logger.LogError(ex, "Failed to create article");
+
+				return Result.Fail("An error occurred while creating the article: " + ex.Message);
+
 			}
 
 		}

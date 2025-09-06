@@ -1,18 +1,11 @@
-﻿// ============================================
-// Copyright (c) 2023. All rights reserved.
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
 // File Name :     RegisterServicesCollections.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name : Web
-// =============================================
-
-using FluentValidation;
-
-using Shared.Models;
-using Shared.Validators;
-
-using Web.Components.Features.Categories.CategoriesList;
+// Project Name :  Web
+// =======================================================
 
 namespace Web.Extensions;
 
@@ -21,6 +14,7 @@ namespace Web.Extensions;
 /// </summary>
 public static partial class ServiceCollectionExtensions
 {
+
 	/// <summary>
 	///   Register DI Collections
 	/// </summary>
@@ -46,4 +40,5 @@ public static partial class ServiceCollectionExtensions
 		services.AddScoped<IValidator<CategoryDto>, CategoryDtoValidator>();
 
 	}
+
 }

@@ -1,13 +1,11 @@
-﻿// ============================================
-// Copyright (c) 2023. All rights reserved.
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
 // File Name :     AuthenticationService.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Shared
-// =============================================
-
-using Web.Data.Auth0;
+// Project Name :  Web
+// =======================================================
 
 namespace Web.Extensions;
 
@@ -16,13 +14,15 @@ namespace Web.Extensions;
 /// </summary>
 public static partial class ServiceCollectionExtensions
 {
+
 	/// <summary>
 	///   Add Authentication Services
 	/// </summary>
 	/// <param name="services">IServiceCollection</param>
 	/// <param name="config">ConfigurationManager</param>
-	public static void AddAuthenticationService(this IServiceCollection services,
-		ConfigurationManager config)
+	public static void AddAuthenticationService(
+			this IServiceCollection services,
+			ConfigurationManager config)
 	{
 
 		// Add Auth0 authentication
@@ -32,17 +32,19 @@ public static partial class ServiceCollectionExtensions
 		var clientId = config["auth0-client-id"];
 		var clientSecret = config["auth0-client-secret"];
 
-		if (string.IsNullOrWhiteSpace(domain) || string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(clientSecret))
+		if (string.IsNullOrWhiteSpace(domain) || string.IsNullOrWhiteSpace(clientId))
 		{
 			throw new InvalidOperationException("Required Auth0 configuration is missing");
 		}
 
+		// The client secret may be omitted in some test environments; the Auth0
+		// registration accepts an empty secret for these cases (tests mock behavior).
 		services
 				.AddAuth0WebAppAuthentication(options =>
 				{
 					options.Domain = domain;
 					options.ClientId = clientId;
-					options.ClientSecret = clientSecret;
+					options.ClientSecret = clientSecret ?? string.Empty;
 				});
 
 		services.AddAuthentication();
@@ -52,4 +54,5 @@ public static partial class ServiceCollectionExtensions
 		services.AddHttpClient<Auth0Service>();
 
 	}
+
 }

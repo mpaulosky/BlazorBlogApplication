@@ -2,15 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     Program.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : BlazorBlogApplication.sln
-// Project Name :  Shared
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web
 // =======================================================
-
-using ServiceDefaults;
-
-using Web.Data.Auth0;
-using Web.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +17,7 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-	app.UseExceptionHandler("/Error", createScopeForErrors: true);
+	app.UseExceptionHandler("/Error", true);
 }
 
 app.UseHttpsRedirection();
@@ -60,7 +55,7 @@ app.MapGet("/account/login", async (HttpContext httpContext, string returnUrl = 
 	await httpContext.ChallengeAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
 });
 
-app.MapGet("/account/logout", async (HttpContext httpContext) =>
+app.MapGet("/account/logout", async  httpContext =>
 {
 	var authenticationProperties = new LogoutAuthenticationPropertiesBuilder()
 			.WithRedirectUri("/")

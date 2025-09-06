@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Shared
+// Project Name :  Web
 // =======================================================
 
 namespace Web.Data;
@@ -12,10 +12,11 @@ namespace Web.Data;
 /// <inheritdoc />
 public class MyBlogContextFactory : IMyBlogContextFactory
 {
+
 	private readonly IMongoClient _mongoClient;
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="MyBlogContextFactory"/> class.
+	///   Initializes a new instance of the <see cref="MyBlogContextFactory" /> class.
 	/// </summary>
 	/// <param name="mongoClient">The MongoDB client.</param>
 	public MyBlogContextFactory(IMongoClient mongoClient)
@@ -26,12 +27,15 @@ public class MyBlogContextFactory : IMyBlogContextFactory
 	public MyBlogContext CreateContext()
 	{
 		var context = new MyBlogContext(_mongoClient);
+
 		return context;
 	}
 
 	public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
 	{
 		IMyBlogContext context = new MyBlogContext(_mongoClient);
+
 		return Task.FromResult(context);
 	}
+
 }

@@ -1,15 +1,17 @@
 ﻿@page "/"
+@using System.Security.Claims
 
-<PageHeadingComponent Level="1" HeaderText="@_pageTitle" />
+<PageHeadingComponent Level="1" HeaderText="@_pageTitle"/>
 
 <h1>Welcome, @_username</h1>
 You can only see this content if you're authenticated.
 <br>
-<img src="@_picture" alt="User UserProfile Picture" />
+<img src="@_picture" alt="User UserProfile Picture"/>
 
 @code {
 
 	private const string _pageTitle = "Home - Article Service";
+
 	private string _username = "You're Article Service!";
 
 	private string _picture = "";
@@ -24,14 +26,14 @@ You can only see this content if you're authenticated.
 
 			// Prefer email for greeting if available, fall back to identity name
 			_username = state.User.Claims
-			.Where(c => c.Type == System.Security.Claims.ClaimTypes.Email)
-			.Select(c => c.Value)
-			.FirstOrDefault() ?? state.User.Identity?.Name ?? string.Empty;
+				.Where(c => c.Type == ClaimTypes.Email)
+				.Select(c => c.Value)
+				.FirstOrDefault() ?? state.User.Identity?.Name ?? string.Empty;
 
 			_picture = state.User.Claims
-			.Where(c => c.Type.Equals("picture"))
-			.Select(c => c.Value)
-			.FirstOrDefault() ?? string.Empty;
+				.Where(c => c.Type.Equals("picture"))
+				.Select(c => c.Value)
+				.FirstOrDefault() ?? string.Empty;
 		}
 
 		await base.OnInitializedAsync();

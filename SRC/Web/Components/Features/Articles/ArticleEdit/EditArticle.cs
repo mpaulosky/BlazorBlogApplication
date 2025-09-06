@@ -1,47 +1,45 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     CategoryEdit.cs
+// File Name :     EditArticle.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : BlazorApp
-// Project Name :  Shared
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web
 // =======================================================
-
-using Shared.Abstractions;
-using Shared.Entities;
-using Shared.Models;
 
 namespace Web.Components.Features.Articles.ArticleEdit;
 
 /// <summary>
-/// Contains functionality for editing an article within the system.
+///   Contains functionality for editing an article within the system.
 /// </summary>
 public static class EditArticle
 {
 
 	/// <summary>
-	/// Interface for editing articles in the database.
+	///   Interface for editing articles in the database.
 	/// </summary>
 	public interface IEditArticleHandler
 	{
+
 		Task<Result> HandleAsync(ArticleDto? request);
+
 	}
 
 	public class Handler : IEditArticleHandler
 	{
 
-		private readonly IMyBlogContext _context;
+		private readonly IMyBlogContextFactory _factory;
 
 		private readonly ILogger<Handler> _logger;
 
 		/// <summary>
-		///   Initializes a new instance of the <see cref="Handler"/> class.
+		///   Initializes a new instance of the <see cref="Handler" /> class.
 		/// </summary>
-		/// <param name="context">The database context.</param>
+		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContext context, ILogger<Handler> logger)
+		public Handler(IMyBlogContextFactory factory, ILogger<Handler> logger)
 		{
-			_context = context;
+			_factory = factory;
 			_logger = logger;
 		}
 
@@ -50,28 +48,34 @@ public static class EditArticle
 
 			if (request is null)
 			{
-				return Result.Fail("Request is null.");
+
+				_logger.LogError("The request is null.");
+
+				return Result.Fail("The request is null.");
+
 			}
 
 			try
 			{
 
+				var context = await _factory.CreateContext(CancellationToken.None);
+
 				var category = new Article
 				{
-					Title = request.Title,
-					Introduction = request.Introduction,
-					Content = request.Content,
-					CoverImageUrl = request.CoverImageUrl,
-					UrlSlug = request.UrlSlug,
-					Author = request.Author,
-					Category = request.Category,
-					IsPublished = request.IsPublished,
-					PublishedOn = request.PublishedOn,
-					IsArchived = request.IsArchived,
-					ModifiedOn = DateTime.UtcNow
+						Title = request.Title,
+						Introduction = request.Introduction,
+						Content = request.Content,
+						CoverImageUrl = request.CoverImageUrl,
+						UrlSlug = request.UrlSlug,
+						Author = request.Author,
+						Category = request.Category,
+						IsPublished = request.IsPublished,
+						PublishedOn = request.PublishedOn,
+						IsArchived = request.IsArchived,
+						ModifiedOn = DateTime.UtcNow
 				};
 
-				await _context.Articles.ReplaceOneAsync(
+				await context.Articles.ReplaceOneAsync(
 						Builders<Article>.Filter.Eq(x => x.Id, request.Id),
 						category,
 						new ReplaceOptions { IsUpsert = false }
@@ -85,8 +89,8 @@ public static class EditArticle
 			catch (Exception ex)
 			{
 
-				// Avoid dereferencing request in the error path (it may be null).
-				_logger.LogError(ex, "Failed to update category: {Title}", request?.Title);
+				// Avoid dereferencing the request in the error path (it may be null).
+				_logger.LogError(ex, "Failed to update category: {Title}", request.Title);
 
 				return Result.Fail(ex.Message);
 

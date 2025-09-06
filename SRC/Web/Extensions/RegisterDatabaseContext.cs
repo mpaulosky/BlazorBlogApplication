@@ -1,11 +1,11 @@
-﻿// ============================================
-// Copyright (c) 2023. All rights reserved.
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
 // File Name :     RegisterDatabaseContext.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Shared
-// =============================================
+// Project Name :  Web
+// =======================================================
 
 namespace Web.Extensions;
 
@@ -28,9 +28,9 @@ public static partial class ServiceCollectionExtensions
 		// ConnectionStrings section. Also allow overriding via environment variable
 		// for CI or DevOps pipelines.
 		var mongoConn = configuration["mongoDb-connection"]
-						?? configuration.GetConnectionString("mongoDb-connection")
-						?? configuration["ConnectionStrings:mongoDb-connection"]
-						?? Environment.GetEnvironmentVariable("mongoDb-connection");
+										?? configuration.GetConnectionString("mongoDb-connection")
+										?? configuration["ConnectionStrings:mongoDb-connection"]
+										?? Environment.GetEnvironmentVariable("mongoDb-connection");
 
 		if (string.IsNullOrWhiteSpace(mongoConn))
 		{
@@ -49,6 +49,7 @@ public static partial class ServiceCollectionExtensions
 		services.AddScoped<IMyBlogContext>(sp =>
 		{
 			var factory = sp.GetRequiredService<IMyBlogContextFactory>();
+
 			return factory.CreateContext();
 		});
 
@@ -61,4 +62,5 @@ public static partial class ServiceCollectionExtensions
 		// });
 
 	}
+
 }

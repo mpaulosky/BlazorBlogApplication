@@ -37,39 +37,39 @@ else
 @code {
 
 	/// <summary>
-	/// The unique identifier of the category to display.
+	///   The unique identifier of the category to display.
 	/// </summary>
 	[Parameter]
 	public ObjectId Id { get; set; }
 
 	/// <summary>
-	/// The authentication state of the user.
+	///   The authentication state of the user.
 	/// </summary>
 	[CascadingParameter]
 	private Task<AuthenticationState>? AuthenticationState { get; set; }
 
 	/// <summary>
-	/// The category data to be displayed on the page.
+	///   The category data to be displayed on the page.
 	/// </summary>
 	private CategoryDto? _category;
 
 	/// <summary>
-	/// Error message returned by the handler when loading fails. Shown in the UI.
+	///   Error message returned by the handler when loading fails. Shown in the UI.
 	/// </summary>
 	private string? _errorMessage;
 
 	/// <summary>
-	/// Indicates whether the component is currently loading data.
+	///   Indicates whether the component is currently loading data.
 	/// </summary>
 	private bool _isLoading = true;
 
 	/// <summary>
-	/// Indicates whether the current user has permission to edit the category.
+	///   Indicates whether the current user has permission to edit the category.
 	/// </summary>
 	private bool _canEdit;
 
 	/// <summary>
-	/// Initializes the component by loading the category data using the CategoryService.
+	///   Initializes the component by loading the category data using the CategoryService.
 	/// </summary>
 	protected override async Task OnInitializedAsync()
 	{
@@ -111,6 +111,7 @@ else
 	{
 		// Determine edit permission based on authenticated roles; default to false if auth state is unavailable
 		ClaimsPrincipal? userFromCascade = null;
+
 		if (AuthenticationState is not null)
 		{
 			var s = await AuthenticationState.ConfigureAwait(false);
@@ -118,6 +119,7 @@ else
 		}
 
 		ClaimsPrincipal? userFromProvider = null;
+
 		if (AuthProvider is not null)
 		{
 			var s2 = await AuthProvider.GetAuthenticationStateAsync().ConfigureAwait(false);
@@ -130,11 +132,11 @@ else
 
 		var result = user is not null && (user.IsInRole("Admin") || user.Claims.Any(c => (string.Equals(c.Type, ClaimTypes.Role, StringComparison.OrdinalIgnoreCase) || string.Equals(c.Type, "role", StringComparison.OrdinalIgnoreCase)) && string.Equals(c.Value, "Admin", StringComparison.OrdinalIgnoreCase)));
 		_canEdit = result;
-		
+
 	}
 
 	/// <summary>
-	/// Navigates to the edit page for the current category.
+	///   Navigates to the edit page for the current category.
 	/// </summary>
 	private void GoToEdit()
 	{
@@ -142,7 +144,7 @@ else
 	}
 
 	/// <summary>
-	/// Navigates back to the category list page.
+	///   Navigates back to the category list page.
 	/// </summary>
 	private void GoToList()
 	{

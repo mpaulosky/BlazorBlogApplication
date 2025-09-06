@@ -4,10 +4,8 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Shared
+// Project Name :  Web
 // =======================================================
-
-using Shared.Entities;
 
 namespace Web.Data;
 
@@ -25,7 +23,9 @@ public class MyBlogContext : IMyBlogContext
 	}
 
 	public IMongoCollection<Article> Articles => _database.GetCollection<Article>("Articles");
+
 	public IMongoCollection<Category> Categories => _database.GetCollection<Category>("Categories");
 
 	// No disposal required for this lightweight wrapper around IMongoDatabase.
+
 }

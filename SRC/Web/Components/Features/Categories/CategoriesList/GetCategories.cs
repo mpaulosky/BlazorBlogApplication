@@ -1,78 +1,86 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     CategoryGet.cs
+// File Name :     GetCategories.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : BlazorApp
-// Project Name :  Shared
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web
 // =======================================================
-
-using Shared.Abstractions;
-using Shared.Entities;
-using Shared.Models;
 
 namespace Web.Components.Features.Categories.CategoriesList;
 
 /// <summary>
-/// Static class providing functionality for category creation.
+///   Static class providing functionality for category creation.
 /// </summary>
 public static class GetCategories
 {
+
 	/// <summary>
-	/// Represents a handler for retrieving categories from the database.
+	///   Represents a handler for retrieving categories from the database.
 	/// </summary>
 	public interface IGetCategoriesHandler
 	{
+
 		Task<Result<IEnumerable<CategoryDto>>> HandleAsync(bool excludeArchived = false);
+
 	}
 
 	public class Handler : IGetCategoriesHandler
 	{
-		private readonly IMyBlogContext _context;
+
+		private readonly IMyBlogContextFactory _factory;
+
 		private readonly ILogger<Handler> _logger;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="Handler"/> class.
+		///   Initializes a new instance of the <see cref="Handler" /> class.
 		/// </summary>
-		/// <param name="context">The database context.</param>
+		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContext context, ILogger<Handler> logger)
+		public Handler(IMyBlogContextFactory factory, ILogger<Handler> logger)
 		{
-			_context = context;
+			_factory = factory;
 			_logger = logger;
 		}
 
 		/// <summary>
-		/// Handles retrieving all categories asynchronously, with an option to exclude archived categories.
+		///   Handles retrieving all categories asynchronously, with an option to exclude archived categories.
 		/// </summary>
 		/// <param name="excludeArchived">If true, excludes categories where Archived is true.</param>
-		/// <returns>A <see cref="Result"/> representing the outcome of the operation.</returns>
+		/// <returns>A <see cref="Result" /> representing the outcome of the operation.</returns>
 		public async Task<Result<IEnumerable<CategoryDto>>> HandleAsync(bool excludeArchived = false)
 		{
 			try
 			{
-				var filter = excludeArchived
-					? Builders<Category>.Filter.Eq(x => x.Archived, false)
-					: Builders<Category>.Filter.Empty;
 
-				var categoriesCursor = await _context.Categories.FindAsync(filter);
+				var context = await _factory.CreateContext(CancellationToken.None);
+
+				var filter = excludeArchived
+						? Builders<Category>.Filter.Eq(x => x.Archived, false)
+						: Builders<Category>.Filter.Empty;
+
+				var categoriesCursor = await context.Categories.FindAsync(filter);
 				var categories = await categoriesCursor.ToListAsync();
 
 				if (categories is null || categories.Count == 0)
 				{
 					_logger.LogWarning("No categories found.");
+
 					return Result<IEnumerable<CategoryDto>>.Fail("No categories found.");
 				}
 
 				_logger.LogInformation("Categories retrieved successfully. Count: {Count}", categories.Count);
+
 				return Result<IEnumerable<CategoryDto>>.Ok(categories.Adapt<IEnumerable<CategoryDto>>());
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Failed to retrieve categories.");
+
 				return Result<IEnumerable<CategoryDto>>.Fail(ex.Message);
 			}
 		}
+
 	}
 
 }

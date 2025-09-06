@@ -2,14 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     AllServicesToRegister.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
-
-using System.Diagnostics.CodeAnalysis;
-
-using ServiceDefaults;
 
 namespace Web.Extensions;
 
@@ -60,8 +56,8 @@ public static class AllServicesToRegister
 
 						// Tests expect the Headers/Methods collections to be empty when any is allowed.
 						// Explicitly set empty collections (meaning "allow any") to match test assertions.
-						.WithHeaders(Array.Empty<string>())
-						.WithMethods(Array.Empty<string>());
+						.WithHeaders()
+						.WithMethods();
 			});
 		});
 

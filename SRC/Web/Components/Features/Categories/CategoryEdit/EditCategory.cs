@@ -1,38 +1,38 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     CategoryEdit.cs
+// File Name :     EditCategory.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : BlazorApp
-// Project Name :  Shared
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web
 // =======================================================
-
-using Shared.Abstractions;
-using Shared.Entities;
-using Shared.Models;
 
 namespace Web.Components.Features.Categories.CategoryEdit;
 
 /// <summary>
-/// Contains functionality for editing a category within the system.
+///   Contains functionality for editing a category within the system.
 /// </summary>
 public static class EditCategory
 {
+
 	public interface IEditCategoryHandler
 	{
-		Task<Result> HandleAsync(CategoryDto request);
+
+		Task<Result> HandleAsync(CategoryDto? request);
+
 	}
 
 	public class Handler : IEditCategoryHandler
 	{
 
 		private readonly IMyBlogContextFactory _contextFactory;
+
 		private readonly ILogger<Handler> _logger;
 
 		/// <summary>
-		///   Initializes a new instance of the <see cref="Handler"/> class.
+		///   Initializes a new instance of the <see cref="Handler" /> class.
 		/// </summary>
-		/// <param name="context">The database context.</param>
+		/// <param name="contextFactory"></param>
 		/// <param name="logger">The logger instance.</param>
 		public Handler(IMyBlogContextFactory contextFactory, ILogger<Handler> logger)
 		{
@@ -40,23 +40,33 @@ public static class EditCategory
 			_logger = logger;
 		}
 
-		public async Task<Result> HandleAsync(CategoryDto request)
+		public async Task<Result> HandleAsync(CategoryDto? request)
 		{
+
+			if (request is null)
+			{
+				_logger.LogError("The request is null.");
+
+				return Result.Fail("The request is null.");
+			}
 
 			try
 			{
 
+				var context = await _contextFactory.CreateContext(CancellationToken.None);
+
 				var category = new Category
 				{
-					CategoryName = request.CategoryName,
-					ModifiedOn = DateTime.UtcNow,
+						CategoryName = request.CategoryName,
+						ModifiedOn = DateTime.UtcNow
 				};
 
-				var context = _contextFactory.CreateContext();
+
 				await context.Categories.ReplaceOneAsync(
-					Builders<Category>.Filter.Eq(x => x.Id, request.Id),
-					category,
-					new ReplaceOptions { IsUpsert = false }
+						Builders<Category>.Filter.Eq(x => x.Id, request.Id),
+						category,
+						new ReplaceOptions { IsUpsert = false },
+						CancellationToken.None
 				);
 
 				_logger.LogInformation("Category updated successfully: {CategoryName}", request.CategoryName);

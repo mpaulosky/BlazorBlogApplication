@@ -1,14 +1,12 @@
-﻿// ============================================
-// Copyright (c) 2023. All rights reserved.
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
 // File Name :     IAppMarker.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Shared
-// =============================================
+// Project Name :  Web
+// =======================================================
 
 namespace Web;
 
-public interface IAppMarker
-{
-}
+public interface IAppMarker { }

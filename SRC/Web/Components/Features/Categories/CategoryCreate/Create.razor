@@ -7,18 +7,18 @@
 
 @attribute [Authorize(Roles = "Admin")]
 
-<PageHeadingComponent HeaderText="Create Category" Level="1" TextColorClass="blue-500" />
+<PageHeadingComponent HeaderText="Create Category" Level="1" TextColorClass="blue-500"/>
 
 <EditForm Model="_category" OnValidSubmit="HandleValidSubmit">
-	<FluentValidationValidator />
-	<ValidationSummary />
+	<FluentValidationValidator/>
+	<ValidationSummary/>
 	@if (!string.IsNullOrEmpty(_errorMessage))
 	{
 		<div class="alert alert-danger">@_errorMessage</div>
 	}
 	<div class="mb-3">
 		<label for="name">CategoryName</label>
-		<InputText id="name" class="form-control" @bind-Value="_category.CategoryName" />
+		<InputText id="name" class="form-control" @bind-Value="_category.CategoryName"/>
 	</div>
 	<button class="btn btn-success" type="submit" disabled="@_isSubmitting">
 		@(_isSubmitting ? "Creating..." : "Save Changes")
@@ -29,23 +29,24 @@
 @code {
 
 	/// <summary>
-	/// The category model bound to the form.
+	///   The category model bound to the form.
 	/// </summary>
 	private readonly CategoryDto _category = new();
+
 	[CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 
 	/// <summary>
-	/// Stores the error message to display in the UI.
+	///   Stores the error message to display in the UI.
 	/// </summary>
 	private string? _errorMessage;
 
 	/// <summary>
-	/// Indicates whether the form is currently submitting.
+	///   Indicates whether the form is currently submitting.
 	/// </summary>
 	private bool _isSubmitting;
 
 	/// <summary>
-	/// Handles the valid form submission event for creating a category.
+	///   Handles the valid form submission event for creating a category.
 	/// </summary>
 	/// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
 	private async Task HandleValidSubmit()
@@ -78,7 +79,7 @@
 	}
 
 	/// <summary>
-	/// Navigates to the category list page.
+	///   Navigates to the category list page.
 	/// </summary>
 	private void GoToList()
 	{

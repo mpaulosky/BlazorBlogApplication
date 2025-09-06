@@ -4,10 +4,8 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Shared
+// Project Name :  Web
 // =======================================================
-
-using Shared.Entities;
 
 namespace Web.Data;
 
