@@ -1,20 +1,11 @@
-﻿// ============================================
-// Copyright (c) 2023. All rights reserved.
-// File Name :     IssueTrackerTestFactory.cs
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     WebTestFactory.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Integration
-// =============================================
-
-using JetBrains.Annotations;
-
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-
-using Testcontainers.MongoDb;
+// =======================================================
 
 namespace Web.Fixtures;
 
@@ -23,12 +14,19 @@ namespace Web.Fixtures;
 [UsedImplicitly]
 public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 {
+
 	private readonly ILogger<WebTestFactory> _logger;
+
 	private readonly string _databaseName;
+
 	private readonly CancellationTokenSource _cts;
+
 	private static MongoDbContainer? _sharedContainer;
+
 	private static readonly Lock _lock = new();
+
 	private static int _port;
+
 	private static readonly SemaphoreSlim _dbLock = new(1, 1);
 
 	public WebTestFactory()
@@ -52,12 +50,13 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 				if (_sharedContainer == null)
 				{
 					_port = new Random().Next(27018, 28000);
+
 					_sharedContainer = new MongoDbBuilder()
-						.WithImage("mongo:8.0")
-						.WithPortBinding(_port, 27017)
-						.WithEnvironment("MONGO_INITDB_ROOT_USERNAME", "admin")
-						.WithEnvironment("MONGO_INITDB_ROOT_PASSWORD", "password")
-						.Build();
+							.WithImage("mongo:8.0")
+							.WithPortBinding(_port, 27017)
+							.WithEnvironment("MONGO_INITDB_ROOT_USERNAME", "admin")
+							.WithEnvironment("MONGO_INITDB_ROOT_PASSWORD", "password")
+							.Build();
 				}
 			}
 		}
@@ -69,8 +68,9 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		{
 			config.AddInMemoryCollection(new Dictionary<string, string?>
 			{
-				["ConnectionStrings:mongoDb-connection"] = $"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin",
-				["DatabaseName"] = _databaseName
+					["ConnectionStrings:mongoDb-connection"] =
+							$"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin",
+					["DatabaseName"] = _databaseName
 			});
 		});
 
@@ -80,6 +80,7 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 			{
 				var connectionString = $"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin";
 				_logger.LogInformation("Using MongoDB connection string: {ConnectionString}", connectionString);
+
 				return new MongoClient(connectionString);
 			});
 		});
@@ -95,19 +96,22 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 
 			// Wait for MongoDB to be ready
 			var client = new MongoClient($"mongodb://admin:password@localhost:{_port}/?authSource=admin");
-			var maxRetries = 30;
-			var retryDelayMs = 1000;
-			for (int i = 0; i < maxRetries; i++)
+			const int maxRetries = 30;
+			const int retryDelayMs = 1000;
+
+			for (var i = 0; i < maxRetries; i++)
 			{
 				try
 				{
 					await (await client.ListDatabaseNamesAsync()).FirstOrDefaultAsync(_cts.Token);
 					_logger.LogInformation("Successfully connected to MongoDB");
+
 					break;
 				}
 				catch (Exception ex)
 				{
 					_logger.LogWarning(ex, "Failed to connect to MongoDB (attempt {Attempt}/{MaxRetries})", i + 1, maxRetries);
+
 					if (i < maxRetries - 1)
 					{
 						await Task.Delay(retryDelayMs, _cts.Token);
@@ -118,11 +122,13 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		catch (OperationCanceledException)
 		{
 			_logger.LogError("MongoDB container startup timed out after 5 minutes");
+
 			throw;
 		}
 		catch (Exception ex)
 		{
 			_logger.LogError(ex, "Failed to start MongoDB container");
+
 			throw;
 		}
 	}
@@ -143,6 +149,7 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		catch (Exception ex)
 		{
 			_logger.LogError(ex, "Error disposing MongoDB container");
+
 			throw;
 		}
 		finally
@@ -164,6 +171,7 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		catch (Exception ex)
 		{
 			_logger.LogError(ex, "Error dropping database");
+
 			throw;
 		}
 		finally
@@ -184,6 +192,7 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		catch (Exception ex)
 		{
 			_logger.LogError(ex, "Error resetting collection {CollectionName}", collectionName);
+
 			throw;
 		}
 		finally

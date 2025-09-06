@@ -1,28 +1,11 @@
-﻿// ============================================
-// Copyright (c) 2023. All rights reserved.
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
 // File Name :     CreateCategoryTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Integration
-// =============================================
-
-using System.Diagnostics.CodeAnalysis;
-using System.Threading;
-using System.Threading.Tasks;
-
-using FluentAssertions;
-
-using Microsoft.Extensions.DependencyInjection;
-
-using MongoDB.Bson;
-using MongoDB.Driver;
-
-using Shared.Fakes;
-using Shared.Models;
-
-using Web.Data;
-using Web.Fixtures;
+// =======================================================
 
 namespace Web.Components.Features.Categories.CategoryCreate;
 
@@ -30,15 +13,19 @@ namespace Web.Components.Features.Categories.CategoryCreate;
 [Collection("Test Collection")]
 public class CreateCategoryTests : IAsyncLifetime
 {
+
 	private const string CLEANUP_VALUE = "Categories";
 
 	private readonly WebTestFactory _factory;
+
 	private readonly IServiceScope _scope;
+
 	private readonly CreateCategory.ICreateCategoryHandler _sut;
 
 	public CreateCategoryTests(WebTestFactory factory)
 	{
 		_factory = factory;
+
 		// Create a scope here so scoped services (like IMyBlogContextFactory) are resolved correctly.
 		_scope = _factory.Services.CreateScope();
 		_sut = _scope.ServiceProvider.GetRequiredService<CreateCategory.ICreateCategoryHandler>();
@@ -80,7 +67,7 @@ public class CreateCategoryTests : IAsyncLifetime
 		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
 
 		var inserted = await ctx.Categories.Find(c => c.CategoryName == expected.CategoryName)
-			.FirstOrDefaultAsync(CancellationToken.None);
+				.FirstOrDefaultAsync(CancellationToken.None);
 
 		inserted.Should().NotBeNull();
 		inserted.Id.Should().NotBe(ObjectId.Empty);

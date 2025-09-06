@@ -7,7 +7,7 @@ Requirements:
 
 How to run locally:
 
-1. From repository root run:
+1. From the repository root run:
 
 ```powershell
 dotnet test tests\Web.Tests.Integration\Web.Tests.Integration.csproj -v minimal
@@ -21,18 +21,20 @@ Notes:
 CI / Docker notes:
 
 - These tests rely on Docker to run Testcontainers; ensure Docker is available in your CI runner.
-- Example GitHub Actions step that runs the tests (ensure services: docker is enabled or use hosted runners with Docker):
+- Example GitHub Actions step that runs the tests (ensure services: docker is enabled or use hosted runners with
+  Docker):
 
 ```yaml
-# example - run in a job that has Docker available
+# for example - run in a job that has Docker available
 steps:
-- uses: actions/checkout@v4
-- name: Setup .NET
-	uses: actions/setup-dotnet@v4
-	with:
-		dotnet-version: '9.0.x'
-- name: Run Integration Tests
-	run: dotnet test tests\Web.Tests.Integration\Web.Tests.Integration.csproj -v minimal
+  - uses: actions/checkout@v4
+  - name: Setup .NET
+    uses: actions/setup-dotnet@v4
+    with:
+      dotnet-version: '9.0.x'
+  - name: Run Integration Tests
+    run: dotnet test tests\Web.Tests.Integration\Web.Tests.Integration.csproj -v minimal
 ```
 
-If your CI does not support Docker, you can run a standalone MongoDB instance and set the `mongoDb-connection` environment variable to point to it before running the tests.
+If your CI does not support Docker, you can run a standalone MongoDB instance and set the `mongoDb-connection`
+environment variable to point to it before running the tests.
