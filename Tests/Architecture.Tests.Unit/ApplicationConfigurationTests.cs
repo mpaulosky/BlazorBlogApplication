@@ -1,7 +1,10 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name:     ApplicationConfigurationTests.cs
-// Project Name:  Architecture.Tests
+// File Name :     ApplicationConfigurationTests.cs
+// Company :       mpaulosky
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Architecture.Tests.Unit
 // =======================================================
 
 namespace Architecture;
@@ -16,7 +19,7 @@ public class ApplicationConfigurationTests
 		// Arrange
 		var assemblies = new[]
 		{
-				AssemblyReference.Web,
+				AssemblyReference.Web
 		};
 
 		// Act
@@ -39,7 +42,7 @@ public class ApplicationConfigurationTests
 		// Arrange
 		var assemblies = new[]
 		{
-				AssemblyReference.Web,
+				AssemblyReference.Web
 		};
 
 		// Act

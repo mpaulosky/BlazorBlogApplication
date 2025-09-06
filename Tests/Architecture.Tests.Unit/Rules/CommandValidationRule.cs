@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Architecture.Tests
+// Project Name :  Architecture.Tests.Unit
 // =======================================================
 
 namespace Architecture.Rules;
