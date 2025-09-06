@@ -7,8 +7,6 @@
 // Project Name :  Shared
 // =======================================================
 
-using System.Web;
-
 namespace Shared.Helpers;
 
 /// <summary>
@@ -42,8 +40,7 @@ public static partial class Helpers
 		return HttpUtility.UrlEncode(slug);
 	}
 
-	[System.Text.RegularExpressions.GeneratedRegex(@"[^a-z0-9]+")]
-	private static partial System.Text.RegularExpressions.Regex MyRegex();
+	[GeneratedRegex(@"[^a-z0-9]+")] private static partial Regex MyRegex();
 
 	/// <summary>
 	///   Gets a random category name from predefined categories.

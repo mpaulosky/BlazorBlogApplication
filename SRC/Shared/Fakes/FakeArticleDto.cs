@@ -7,8 +7,6 @@
 // Project Name :  Shared
 // =======================================================
 
-using Shared.Helpers;
-
 namespace Shared.Fakes;
 
 /// <summary>
@@ -56,10 +54,10 @@ public static class FakeArticleDto
 				.RuleFor(f => f.Content, f => f.WaffleMarkdown(5))
 				.RuleFor(f => f.UrlSlug, (_, f) => f.Title.GetSlug())
 				.RuleFor(f => f.CoverImageUrl, f => f.Image.PicsumUrl() ?? string.Empty)
-				.RuleFor(f => f.CreatedOn, _ => Helpers.Helpers.GetStaticDate())
-				.RuleFor(f => f.ModifiedOn, _ => Helpers.Helpers.GetStaticDate())
+				.RuleFor(f => f.CreatedOn, _ => GetStaticDate())
+				.RuleFor(f => f.ModifiedOn, _ => GetStaticDate())
 				.RuleFor(f => f.IsPublished, f => f.Random.Bool())
-				.RuleFor(f => f.PublishedOn, (_, f) => f.IsPublished ? Helpers.Helpers.GetStaticDate() : null)
+				.RuleFor(f => f.PublishedOn, (_, f) => f.IsPublished ? GetStaticDate() : null)
 				.RuleFor(f => f.IsArchived, f => f.Random.Bool())
 				.RuleFor(f => f.Category, _ => FakeCategoryDto.GetNewCategoryDto(useSeed))
 				.RuleFor(f => f.Author, _ => FakeAppUserDto.GetNewAppUserDto(useSeed));

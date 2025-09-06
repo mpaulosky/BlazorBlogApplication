@@ -14,8 +14,9 @@ namespace Shared.Entities;
 /// </summary>
 public class AppUser
 {
+
 	/// <summary>
-	/// Parameterless constructor for serialization and test data generation.
+	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
 	public AppUser() : this(string.Empty, string.Empty, string.Empty, []) { }
 

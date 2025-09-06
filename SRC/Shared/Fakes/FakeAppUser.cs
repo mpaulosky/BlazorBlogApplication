@@ -7,7 +7,11 @@
 // Project Name :  Shared
 // =======================================================
 
+#region
+
 using Shared.Enums;
+
+#endregion
 
 namespace Shared.Fakes;
 

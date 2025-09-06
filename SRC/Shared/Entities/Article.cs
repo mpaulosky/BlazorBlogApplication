@@ -22,32 +22,29 @@ public class Article : Entity
 
 	public string Content { get; set; }
 
-	[Display(Name = "Cover Image URL")]
-	public string CoverImageUrl { get; set; }
+	[Display(Name = "Cover Image URL")] public string CoverImageUrl { get; set; }
 
-	[Display(Name = "Url Slug")]
-	public string UrlSlug { get; set; }
+	[Display(Name = "Url Slug")] public string UrlSlug { get; set; }
 
 	public AppUserDto Author { get; set; }
 
 	public CategoryDto Category { get; set; }
 
-	[Display(Name = "Is Published")]
-	public bool IsPublished { get; set; }
+	[Display(Name = "Is Published")] public bool IsPublished { get; set; }
 
 	/// <summary>
-	/// Indicates whether the article is archived.
+	///   Indicates whether the article is archived.
 	/// </summary>
 	[Display(Name = "Is Archived")]
 	public bool IsArchived { get; set; }
 
-	[Display(Name = "Published On")]
-	public DateTime? PublishedOn { get; set; }
+	[Display(Name = "Published On")] public DateTime? PublishedOn { get; set; }
 
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public Article() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty) { }
+	public Article() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty,
+			CategoryDto.Empty) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="Article" /> class.
@@ -66,16 +63,16 @@ public class Article : Entity
 	///   This constructor is used to create a new article instance with all required properties.
 	/// </remarks>
 	public Article(
-		string title,
-		string introduction,
-		string content,
-		string coverImageUrl,
-		string urlSlug,
-		AppUserDto author,
-		CategoryDto category,
-		bool isPublished = false,
-		DateTime? publishedOn = null,
-		bool isArchived = false)
+			string title,
+			string introduction,
+			string content,
+			string coverImageUrl,
+			string urlSlug,
+			AppUserDto author,
+			CategoryDto category,
+			bool isPublished = false,
+			DateTime? publishedOn = null,
+			bool isArchived = false)
 	{
 		Title = title;
 		Introduction = introduction;
@@ -105,15 +102,15 @@ public class Article : Entity
 	///   This method is used to update the article's properties.
 	/// </remarks>
 	public void Update(
-				string title,
-				string introduction,
-				string content,
-				string coverImageUrl,
-				string urlSlug,
-				CategoryDto category,
-				bool isPublished,
-				DateTime? publishedOn,
-				bool isArchived)
+			string title,
+			string introduction,
+			string content,
+			string coverImageUrl,
+			string urlSlug,
+			CategoryDto category,
+			bool isPublished,
+			DateTime? publishedOn,
+			bool isArchived)
 	{
 		Title = title;
 		Introduction = introduction;
@@ -144,13 +141,13 @@ public class Article : Entity
 	///   Gets an empty article instance.
 	/// </summary>
 	public static Article Empty { get; } = new(
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			AppUserDto.Empty,
-			CategoryDto.Empty)
-	{ Id = ObjectId.Empty };
+					string.Empty,
+					string.Empty,
+					string.Empty,
+					string.Empty,
+					string.Empty,
+					AppUserDto.Empty,
+					CategoryDto.Empty)
+			{ Id = ObjectId.Empty };
 
 }

@@ -3,7 +3,7 @@
 // File Name :     MyCategories.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : BlazorApp
+// Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
 

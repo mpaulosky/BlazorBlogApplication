@@ -33,7 +33,8 @@ public abstract class Entity
 	public DateTime CreatedOn { get; protected init; } = DateTime.UtcNow;
 
 	/// <summary>
-	///   Gets or sets the date and time when this entity was la/// </summary>
+	///   Gets or sets the date and time when this entity was la///
+	/// </summary>
 	[Display(Name = "Modified On")]
 	[BsonElement("modifiedOn")]
 	[BsonIgnoreIfNull]

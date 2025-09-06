@@ -1,10 +1,10 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File CategoryName :     Categories.cs
+// File Name :     Category.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution CategoryName : MyBlog
-// Project CategoryName :  Web
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared
 // =======================================================
 
 namespace Shared.Entities;
@@ -17,13 +17,13 @@ public class Category : Entity
 {
 
 	/// <summary>
-	/// The name of the category.
+	///   The name of the category.
 	/// </summary>
 	[MaxLength(80)]
 	public string CategoryName { get; set; }
 
 	/// <summary>
-	/// Indicates whether the article is archived.
+	///   Indicates whether the article is archived.
 	/// </summary>
 	[Display(Name = "Is Archived")]
 	public bool IsArchived { get; set; }
@@ -46,10 +46,11 @@ public class Category : Entity
 	/// <summary>
 	///   Gets an empty category instance.
 	/// </summary>
-	public static Category Empty => new(string.Empty, false)
-	{
-		Id = ObjectId.Empty,
-		IsArchived = false
-	};
+	public static Category Empty =>
+			new(string.Empty, false)
+			{
+					Id = ObjectId.Empty,
+					IsArchived = false
+			};
 
 }

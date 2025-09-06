@@ -29,16 +29,17 @@ public class CategoryDto
 	/// <param name="modifiedOn"></param>
 	/// <param name="IsArchived">Indicates whether the category is archived.</param>
 	private CategoryDto(
-		ObjectId id,
-		string categoryName,
-		DateTime createdOn,
-		DateTime? modifiedOn,
-		bool IsArchived = false)
+			ObjectId id,
+			string categoryName,
+			DateTime createdOn,
+			DateTime? modifiedOn,
+			bool IsArchived = false)
 	{
 		Id = id;
 		CategoryName = categoryName;
 		CreatedOn = createdOn;
 		ModifiedOn = modifiedOn;
+
 		// store into the primary IsArchived property
 		this.IsArchived = IsArchived;
 	}
@@ -62,7 +63,8 @@ public class CategoryDto
 
 	/// <summary>
 	///   Gets the date and time when this entity was created.
-	/// </summary>)]
+	/// </summary>
+	/// )]
 	[Display(Name = "Created On")]
 	[BsonElement("createdOn")]
 	[BsonRequired]
@@ -87,32 +89,33 @@ public class CategoryDto
 	public bool IsArchived { get; set; }
 
 	/// <summary>
-	/// Backwards-compatible alias used throughout tests and UI code.
-	/// Some code expects a property named 'Archived' on DTOs; expose it as an alias.
-	/// This property is ignored by BSON serializers to avoid duplicate mapping.
+	///   Backwards-compatible alias used throughout tests and UI code.
+	///   Some code expects a property named 'Archived' on DTOs; expose it as an alias.
+	///   This property is ignored by BSON serializers to avoid duplicate mapping.
 	/// </summary>
 	[BsonIgnore]
-	public bool Archived
-	{
+	public bool Archived {
 		get => IsArchived;
+
 		set => IsArchived = value;
 	}
 
 	/// <summary>
 	///   Gets an empty singleton category instance.
 	/// </summary>
-	private static readonly CategoryDto _empty = new(ObjectId.Empty, string.Empty, DateTime.UtcNow, null, false);
+	private static readonly CategoryDto _empty = new(ObjectId.Empty, string.Empty, DateTime.UtcNow, null);
+
 	public static CategoryDto Empty => _empty;
 
-	public static CategoryDto FromEntity(Shared.Entities.Category c)
+	public static CategoryDto FromEntity(Category c)
 	{
 		return new CategoryDto
 		{
-			Id = c.Id,
-			CategoryName = c.CategoryName,
-			CreatedOn = c.CreatedOn,
-			ModifiedOn = c.ModifiedOn,
-			IsArchived = c.IsArchived
+				Id = c.Id,
+				CategoryName = c.CategoryName,
+				CreatedOn = c.CreatedOn,
+				ModifiedOn = c.ModifiedOn,
+				IsArchived = c.IsArchived
 		};
 	}
 

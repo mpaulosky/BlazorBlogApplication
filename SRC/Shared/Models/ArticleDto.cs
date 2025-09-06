@@ -7,8 +7,6 @@
 // Project Name :  Shared
 // =======================================================
 
-using Shared.Validators;
-
 namespace Shared.Models;
 
 /// <summary>
@@ -21,7 +19,8 @@ public sealed class ArticleDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public ArticleDto() : this(ObjectId.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false) { }
+	public ArticleDto() : this(ObjectId.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+			AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="ArticleDto" /> class.
@@ -41,20 +40,20 @@ public sealed class ArticleDto
 	/// <param name="isArchived">Gets or sets the archived status of the entity.</param>
 	/// <param name="canEdit"></param>
 	private ArticleDto(
-		ObjectId id,
-		string title,
-		string introduction,
-		string content,
-		string coverImageUrl,
-		string urlSlug,
-		AppUserDto author,
-		CategoryDto category,
-		DateTime createdOn,
-		DateTime? modifiedOn,
-		bool isPublished,
-		DateTime? publishedOn = null,
-		bool isArchived = false,
-		bool canEdit = false)
+			ObjectId id,
+			string title,
+			string introduction,
+			string content,
+			string coverImageUrl,
+			string urlSlug,
+			AppUserDto author,
+			CategoryDto category,
+			DateTime createdOn,
+			DateTime? modifiedOn,
+			bool isPublished,
+			DateTime? publishedOn = null,
+			bool isArchived = false,
+			bool canEdit = false)
 	{
 		Id = id;
 		Title = title;
@@ -143,7 +142,8 @@ public sealed class ArticleDto
 
 	/// <summary>
 	///   Gets the date and time when this entity was created.
-	/// </summary>)]
+	/// </summary>
+	/// )]
 	[Display(Name = "Created On")]
 	[BsonElement("createdOn")]
 	[BsonRequired]
@@ -197,37 +197,37 @@ public sealed class ArticleDto
 	/// </summary>
 	public static ArticleDto Empty { get; } =
 		new(
-			ObjectId.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			AppUserDto.Empty,
-			CategoryDto.Empty,
-			DateTime.MinValue,
-			null,
-			false
+				ObjectId.Empty,
+				string.Empty,
+				string.Empty,
+				string.Empty,
+				string.Empty,
+				string.Empty,
+				AppUserDto.Empty,
+				CategoryDto.Empty,
+				DateTime.MinValue,
+				null,
+				false
 		);
 
 	public static ArticleDto FromEntity(Article article)
 	{
 		return new ArticleDto
 		{
-			Id = article.Id,
-			Title = article.Title,
-			Introduction = article.Introduction,
-			Content = article.Content,
-			CoverImageUrl = article.CoverImageUrl,
-			UrlSlug = article.UrlSlug,
-			Author = article.Author,
-			Category = article.Category,
-			CreatedOn = article.CreatedOn,
-			ModifiedOn = article.ModifiedOn,
-			IsPublished = article.IsPublished,
-			PublishedOn = article.PublishedOn,
-			IsArchived = article.IsArchived,
-			CanEdit = false
+				Id = article.Id,
+				Title = article.Title,
+				Introduction = article.Introduction,
+				Content = article.Content,
+				CoverImageUrl = article.CoverImageUrl,
+				UrlSlug = article.UrlSlug,
+				Author = article.Author,
+				Category = article.Category,
+				CreatedOn = article.CreatedOn,
+				ModifiedOn = article.ModifiedOn,
+				IsPublished = article.IsPublished,
+				PublishedOn = article.PublishedOn,
+				IsArchived = article.IsArchived,
+				CanEdit = false
 		};
 	}
 
