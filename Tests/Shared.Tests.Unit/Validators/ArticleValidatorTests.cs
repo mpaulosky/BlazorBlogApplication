@@ -2,9 +2,9 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ArticleValidatorTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web.Tests.Unit
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Validators;
@@ -13,6 +13,7 @@ namespace Shared.Validators;
 [TestSubject(typeof(ArticleValidator))]
 public class ArticleValidatorTests
 {
+
 	private readonly ArticleValidator _validator = new();
 
 	[Fact]
@@ -30,4 +31,5 @@ public class ArticleValidatorTests
 		var result = _validator.TestValidate(article);
 		result.ShouldNotHaveValidationErrorFor(x => x.Title);
 	}
+
 }

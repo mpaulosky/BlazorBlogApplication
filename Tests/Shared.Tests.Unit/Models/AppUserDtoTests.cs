@@ -2,20 +2,21 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     AppUserDtoTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web.Tests.Unit
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Models;
 
 /// <summary>
-///   Unit tests for the <see cref="AppUserDto"/> class.
+///   Unit tests for the <see cref="AppUserDto" /> class.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(AppUserDto))]
 public class AppUserDtoTests
 {
+
 	[Fact]
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
@@ -37,4 +38,5 @@ public class AppUserDtoTests
 		dto.Roles.Should().NotBeNull();
 		dto.Roles.Should().BeEmpty();
 	}
+
 }

@@ -2,20 +2,21 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CategoryTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web.Tests.Unit
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Entities;
 
 /// <summary>
-///   Unit tests for the <see cref="Category"/> class.
+///   Unit tests for the <see cref="Category" /> class.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Category))]
 public class CategoryTests
 {
+
 	[Fact]
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
@@ -31,11 +32,12 @@ public class CategoryTests
 	public void ParameterizedConstructor_ShouldSetAllProperties()
 	{
 		var expected = FakeCategory.GetNewCategory(true);
+
 		var category = new Category
 		{
-			CategoryName = expected.CategoryName,
-			ModifiedOn = expected.ModifiedOn,
-			Archived = expected.Archived
+				CategoryName = expected.CategoryName,
+				ModifiedOn = expected.ModifiedOn,
+				Archived = expected.Archived
 		};
 
 		category.CategoryName.Should().Be(expected.CategoryName);
@@ -51,4 +53,5 @@ public class CategoryTests
 		category.ModifiedOn.Should().BeNull();
 		category.Archived.Should().BeFalse();
 	}
+
 }

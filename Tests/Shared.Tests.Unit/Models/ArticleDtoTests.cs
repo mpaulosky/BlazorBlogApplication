@@ -2,20 +2,21 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ArticleDtoTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web.Tests.Unit
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Models;
 
 /// <summary>
-///   Unit tests for the <see cref="ArticleDto"/> class.
+///   Unit tests for the <see cref="ArticleDto" /> class.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(ArticleDto))]
 public class ArticleDtoTests
 {
+
 	[Fact]
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
@@ -49,4 +50,5 @@ public class ArticleDtoTests
 		dto.IsArchived.Should().BeFalse();
 		dto.CanEdit.Should().BeFalse();
 	}
+
 }

@@ -2,21 +2,22 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeAppUserDtoTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Unit
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Fakes;
 
 /// <summary>
-/// Unit tests for the <see cref="FakeAppUserDto"/> fake data generator for <see cref="AppUserDto"/>.
-/// Covers validity, collection counts, zero-request behavior and seed-related determinism.
+///   Unit tests for the <see cref="FakeAppUserDto" /> fake data generator for <see cref="AppUserDto" />.
+///   Covers validity, collection counts, zero-request behavior and seed-related determinism.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(FakeAppUserDto))]
 public class FakeAppUserDtoTests
 {
+
 	[Fact]
 	public void GetNewAppUserDto_ShouldReturnValidDto()
 	{
@@ -31,7 +32,7 @@ public class FakeAppUserDtoTests
 		dto.Email.Should().Contain("@");
 		dto.Roles.Should().NotBeNull();
 		dto.Roles!.Should().NotBeEmpty();
-		Enum.TryParse<Roles>(dto.Roles![0], ignoreCase: true, out _).Should().BeTrue();
+		Enum.TryParse<Roles>(dto.Roles![0], true, out _).Should().BeTrue();
 	}
 
 	[Fact]
@@ -50,6 +51,7 @@ public class FakeAppUserDtoTests
 		list.Should().OnlyContain(u => !string.IsNullOrWhiteSpace(u.Id));
 		list.Should().OnlyContain(u => !string.IsNullOrWhiteSpace(u.UserName));
 		list.Should().OnlyContain(u => !string.IsNullOrWhiteSpace(u.Email) && u.Email.Contains("@"));
+
 		foreach (var u in list)
 		{
 			u.Roles.Should().NotBeNull();
@@ -78,7 +80,7 @@ public class FakeAppUserDtoTests
 
 		// Assert - deterministic except for Id, which is generated via ObjectId.NewId()
 		a.Should().BeEquivalentTo(b, opts => opts
-			.Excluding(x => x.Id));
+				.Excluding(x => x.Id));
 	}
 
 	[Fact]
@@ -94,9 +96,11 @@ public class FakeAppUserDtoTests
 		// Assert
 		r1.Should().HaveCount(count);
 		r2.Should().HaveCount(count);
+
 		for (var i = 0; i < count; i++)
 		{
 			r1[i].Should().BeEquivalentTo(r2[i], opts => opts.Excluding(x => x.Id));
+
 			// Email is derived from UserName; if usernames are equal under seed, emails should be equal too
 			r1[i].Email.Should().Be(r2[i].Email);
 		}
@@ -118,7 +122,7 @@ public class FakeAppUserDtoTests
 		dto.Email.Should().Contain("@");
 		dto.Roles.Should().NotBeNull();
 		dto.Roles!.Should().NotBeEmpty();
-		Enum.TryParse<Roles>(dto.Roles![0], ignoreCase: true, out _).Should().BeTrue();
+		Enum.TryParse<Roles>(dto.Roles![0], true, out _).Should().BeTrue();
 	}
 
 	[Fact]
@@ -143,4 +147,5 @@ public class FakeAppUserDtoTests
 		a1.UserName.Should().NotBe(a2.UserName);
 		a1.Email.Should().NotBe(a2.Email);
 	}
+
 }

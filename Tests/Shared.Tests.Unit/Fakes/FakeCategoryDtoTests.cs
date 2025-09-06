@@ -2,21 +2,22 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeCategoryDtoTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Unit
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Fakes;
 
 /// <summary>
-/// Unit tests for the <see cref="FakeCategoryDto"/> fake data generator for <see cref="CategoryDto"/>.
-/// Tests cover validity, collection counts, zero-request behavior and seed-related determinism.
+///   Unit tests for the <see cref="FakeCategoryDto" /> fake data generator for <see cref="CategoryDto" />.
+///   Tests cover validity, collection counts, zero-request behavior and seed-related determinism.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(FakeCategoryDto))]
 public class FakeCategoryDtoTests
 {
+
 	[Fact]
 	public void GetNewCategoryDto_ShouldReturnValidDto()
 	{
@@ -43,6 +44,7 @@ public class FakeCategoryDtoTests
 		// Assert
 		list.Should().NotBeNull();
 		list.Should().HaveCount(requested);
+
 		foreach (var dto in list)
 		{
 			dto.CategoryName.Should().NotBeNullOrWhiteSpace();
@@ -72,8 +74,8 @@ public class FakeCategoryDtoTests
 
 		// Assert - deterministic except for Id and CategoryName
 		a.Should().BeEquivalentTo(b, opts => opts
-			.Excluding(x => x.Id)
-			.Excluding(x => x.CategoryName));
+				.Excluding(x => x.Id)
+				.Excluding(x => x.CategoryName));
 	}
 
 	[Theory]
@@ -108,11 +110,13 @@ public class FakeCategoryDtoTests
 		// Assert
 		r1.Should().HaveCount(count);
 		r2.Should().HaveCount(count);
+
 		for (var i = 0; i < count; i++)
 		{
 			r1[i].Should().BeEquivalentTo(r2[i], opts => opts
-				.Excluding(x => x.Id)
-				.Excluding(x => x.CategoryName));
+					.Excluding(x => x.Id)
+					.Excluding(x => x.CategoryName));
+
 			r1[i].CreatedOn.Should().Be(r2[i].CreatedOn);
 			r1[i].ModifiedOn.Should().Be(r2[i].ModifiedOn);
 		}
@@ -143,8 +147,8 @@ public class FakeCategoryDtoTests
 
 		// Assert
 		dto2.Should().BeEquivalentTo(dto1, opts => opts
-			.Excluding(x => x.Id)
-			.Excluding(x => x.CategoryName));
+				.Excluding(x => x.Id)
+				.Excluding(x => x.CategoryName));
 	}
 
 	[Fact]
@@ -157,4 +161,5 @@ public class FakeCategoryDtoTests
 		// Assert
 		dto1.Should().NotBeEquivalentTo(dto2, opts => opts.Excluding(x => x.CategoryName));
 	}
+
 }

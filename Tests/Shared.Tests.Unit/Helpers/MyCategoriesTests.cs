@@ -2,20 +2,21 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     MyCategoriesTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web.Tests.Unit
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Helpers;
 
 /// <summary>
-///   Unit tests for the <see cref="MyCategories"/> class.
+///   Unit tests for the <see cref="MyCategories" /> class.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(MyCategories))]
 public class MyCategoriesTests
 {
+
 	[Fact]
 	public void MyCategories_ShouldContainExpectedCategoryNames()
 	{
@@ -52,4 +53,5 @@ public class MyCategoriesTests
 		eighth.Should().Be(expectedEighth);
 		ninth.Should().Be(expectedNinth);
 	}
+
 }

@@ -2,20 +2,21 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ResultTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web.Tests.Unit
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Abstractions;
 
 /// <summary>
-///   Unit tests for the <see cref="Result"/> and <see cref="Result{T}"/> classes.
+///   Unit tests for the <see cref="Result" /> and <see cref="Result{T}" /> classes.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Result))]
 public class ResultTests
 {
+
 	[Theory]
 	[InlineData(true, null)]
 	[InlineData(false, "error")]
@@ -88,6 +89,7 @@ public class ResultTests
 
 		// Assert
 		result.Success.Should().Be(expectedSuccess);
+
 		if (expectedSuccess)
 		{
 			result.Value.Should().Be(input);
@@ -99,4 +101,5 @@ public class ResultTests
 			result.Error.Should().Contain("null");
 		}
 	}
+
 }

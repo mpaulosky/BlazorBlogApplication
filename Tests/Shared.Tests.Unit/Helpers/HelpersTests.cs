@@ -2,20 +2,21 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     HelpersTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web.Tests.Unit
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Helpers;
 
 /// <summary>
-///   Unit tests for the <see cref="Shared.Helpers.Helpers"/> class.
+///   Unit tests for the <see cref="Shared.Helpers.Helpers" /> class.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Helpers))]
 public class HelpersTests
 {
+
 	[Fact]
 	public void SomeHelperMethod_ShouldReturnExpectedResult()
 	{
@@ -24,4 +25,5 @@ public class HelpersTests
 		// result.Should().Be(expected);
 		Assert.True(true); // Placeholder
 	}
+
 }

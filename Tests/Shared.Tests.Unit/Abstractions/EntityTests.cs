@@ -2,20 +2,21 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     EntityTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web.Tests.Unit
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Abstractions;
 
 /// <summary>
-///   Unit tests for the <see cref="Entity"/> base class.
+///   Unit tests for the <see cref="Entity" /> base class.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Entity))]
 public class EntityTests
 {
+
 	private class TestEntity : Entity { }
 
 	[Fact]
@@ -46,4 +47,5 @@ public class EntityTests
 		entity.ModifiedOn.Should().Be(now);
 		entity.Archived.Should().BeTrue();
 	}
+
 }

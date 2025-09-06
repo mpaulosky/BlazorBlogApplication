@@ -2,20 +2,21 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CollectionNamesTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web.Tests.Unit
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Helpers;
 
 /// <summary>
-///   Unit tests for the <see cref="CollectionNames"/> class.
+///   Unit tests for the <see cref="CollectionNames" /> class.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(CollectionNames))]
 public class CollectionNamesTests
 {
+
 	[Fact]
 	public void GetCollectionName_ShouldReturnExpectedValues()
 	{
@@ -31,4 +32,5 @@ public class CollectionNamesTests
 		invalidResult.Success.Should().BeFalse();
 		invalidResult.Error.Should().Contain("Invalid entity name");
 	}
+
 }

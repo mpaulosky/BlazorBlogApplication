@@ -2,20 +2,21 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ArticleTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web.Tests.Unit
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Entities;
 
 /// <summary>
-///   Unit tests for the <see cref="Article"/> class.
+///   Unit tests for the <see cref="Article" /> class.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Article))]
 public class ArticleTests
 {
+
 	[Fact]
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
@@ -43,16 +44,16 @@ public class ArticleTests
 
 		// Act
 		var article = new Article(
-			fake.Title,
-			fake.Introduction,
-			fake.Content,
-			fake.CoverImageUrl,
-			fake.UrlSlug,
-			fake.Author,
-			fake.Category,
-			fake.IsPublished,
-			fake.PublishedOn,
-			fake.IsArchived);
+				fake.Title,
+				fake.Introduction,
+				fake.Content,
+				fake.CoverImageUrl,
+				fake.UrlSlug,
+				fake.Author,
+				fake.Category,
+				fake.IsPublished,
+				fake.PublishedOn,
+				fake.IsArchived);
 
 		// Assert
 		article.Title.Should().Be(fake.Title);
@@ -83,7 +84,8 @@ public class ArticleTests
 		const bool newArchived = true;
 
 		// Act
-		article.Update(newTitle, newIntro, newContent, newCover, newSlug, newCategory, newPublished, newPublishedOn, newArchived);
+		article.Update(newTitle, newIntro, newContent, newCover, newSlug, newCategory, newPublished, newPublishedOn,
+				newArchived);
 
 		// Assert
 		article.Title.Should().Be(newTitle);
@@ -147,4 +149,5 @@ public class ArticleTests
 		empty.PublishedOn.Should().BeNull();
 		empty.IsArchived.Should().BeFalse();
 	}
+
 }

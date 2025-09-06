@@ -2,16 +2,16 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeCategoryTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Unit
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Fakes;
 
 /// <summary>
-/// Unit tests for the <see cref="FakeCategory"/> fake data generator.
-/// Tests cover basic validity, collection counts, zero-request behavior and seed-related behavior.
+///   Unit tests for the <see cref="FakeCategory" /> fake data generator.
+///   Tests cover basic validity, collection counts, zero-request behavior and seed-related behavior.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(FakeCategory))]
@@ -19,8 +19,8 @@ public class FakeCategoryTests
 {
 
 	/// <summary>
-	/// Verifies that <see cref="FakeCategory.GetNewCategory"/> returns a valid <see cref="Category"/>
-	/// with non-empty name, a non-empty Id and static CreatedOn/ModifiedOn values provided by <see cref="GetStaticDate"/>.
+	///   Verifies that <see cref="FakeCategory.GetNewCategory" /> returns a valid <see cref="Category" />
+	///   with non-empty name, a non-empty Id and static CreatedOn/ModifiedOn values provided by <see cref="GetStaticDate" />.
 	/// </summary>
 	[Fact]
 	public void GetNewCategory_ShouldReturnValidCategory()
@@ -37,8 +37,8 @@ public class FakeCategoryTests
 	}
 
 	/// <summary>
-	/// Verifies that requesting multiple categories returns the requested count, and each
-	/// generated item contains valid fields.
+	///   Verifies that requesting multiple categories returns the requested count, and each
+	///   generated item contains valid fields.
 	/// </summary>
 	[Fact]
 	public void GetCategories_ShouldReturnRequestedCount()
@@ -63,7 +63,7 @@ public class FakeCategoryTests
 	}
 
 	/// <summary>
-	/// Verifies that requesting zero categories returns an empty list (edge case handling).
+	///   Verifies that requesting zero categories returns an empty list (edge case handling).
 	/// </summary>
 	[Fact]
 	public void GetCategories_ZeroRequested_ShouldReturnEmptyList()
@@ -77,17 +77,17 @@ public class FakeCategoryTests
 	}
 
 	/// <summary>
-	/// Uses the seeded generator to ensure generated items still have valid static fields.
-	/// Note: Because CategoryName uses Helpers.GetRandomCategoryName and Id generation may
-	/// depend on ObjectId generation, equality of those fields is not asserted here — only
-	/// that static date fields and basic validity are present for seeded calls.
+	///   Uses the seeded generator to ensure generated items still have valid static fields.
+	///   Note: Because CategoryName uses Helpers.GetRandomCategoryName and Id generation may
+	///   depend on ObjectId generation, equality of those fields is not asserted here — only
+	///   that static date fields and basic validity are present for seeded calls.
 	/// </summary>
 	[Fact]
 	public void GetNewCategory_WithSeed_ShouldReturnConsistentStaticFields()
 	{
 		// Act
-		var a = FakeCategory.GetNewCategory(useSeed: true);
-		var b = FakeCategory.GetNewCategory(useSeed: true);
+		var a = FakeCategory.GetNewCategory(true);
+		var b = FakeCategory.GetNewCategory(true);
 
 		// Assert: static date fields should be equal (Helpers provides a static date)
 		a.CreatedOn.Should().Be(GetStaticDate());
@@ -110,8 +110,8 @@ public class FakeCategoryTests
 	}
 
 	/// <summary>
-	/// Data-driven test that ensures <see cref="FakeCategory.GetCategories(int, bool)"/> returns the
-	/// requested number of categories and that each item is a valid <see cref="Category"/>.
+	///   Data-driven test that ensures <see cref="FakeCategory.GetCategories(int, bool)" /> returns the
+	///   requested number of categories and that each item is a valid <see cref="Category" />.
 	/// </summary>
 	[Theory]
 	[InlineData(1)]
@@ -135,8 +135,8 @@ public class FakeCategoryTests
 	}
 
 	/// <summary>
-	/// Verifies that calling <see cref="FakeCategory.GetCategories(int,bool)"/> with a seed
-	/// produces deterministic results.
+	///   Verifies that calling <see cref="FakeCategory.GetCategories(int,bool)" /> with a seed
+	///   produces deterministic results.
 	/// </summary>
 	[Fact]
 	public void GetCategories_WithSeed_ShouldReturnDeterministicResults()
@@ -171,8 +171,8 @@ public class FakeCategoryTests
 	}
 
 	/// <summary>
-	/// Verifies that the <see cref="FakeCategory.GenerateFake"/> configuration produces
-	/// valid <see cref="Category"/> instances when used directly.
+	///   Verifies that the <see cref="FakeCategory.GenerateFake" /> configuration produces
+	///   valid <see cref="Category" /> instances when used directly.
 	/// </summary>
 	[Fact]
 	public void GenerateFake_ShouldConfigureFakerCorrectly()
@@ -192,8 +192,8 @@ public class FakeCategoryTests
 	}
 
 	/// <summary>
-	/// Verifies that supplying the seed to <see cref="FakeCategory.GenerateFake(bool)"/> applies
-	/// the seed such that two separate Faker instances with the same seed produce the same results.
+	///   Verifies that supplying the seed to <see cref="FakeCategory.GenerateFake(bool)" /> applies
+	///   the seed such that two separate Faker instances with the same seed produce the same results.
 	/// </summary>
 	[Fact]
 	public void GenerateFake_WithSeed_ShouldApplySeed()
@@ -218,8 +218,8 @@ public class FakeCategoryTests
 	}
 
 	/// <summary>
-	/// Verifies that calling <see cref="FakeCategory.GetNewCategory(bool)"/> with seed produces deterministic
-	/// CategoryName values across calls.
+	///   Verifies that calling <see cref="FakeCategory.GetNewCategory(bool)" /> with seed produces deterministic
+	///   CategoryName values across calls.
 	/// </summary>
 	[Fact]
 	public void GetNewCategory_WithSeed_ShouldReturnDeterministicResult()
@@ -241,8 +241,8 @@ public class FakeCategoryTests
 	}
 
 	/// <summary>
-	/// Verifies that when seed is not applied, two Faker instances produce different results.
-	/// This confirms that seeding is optional and influences determinism.
+	///   Verifies that when seed is not applied, two Faker instances produce different results.
+	///   This confirms that seeding is optional and influences determinism.
 	/// </summary>
 	[Fact]
 	public void GenerateFake_WithSeedFalse_ShouldNotApplySeed()

@@ -2,20 +2,21 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     AppUserTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web.Tests.Unit
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Entities;
 
 /// <summary>
-///   Unit tests for the <see cref="AppUser"/> class.
+///   Unit tests for the <see cref="AppUser" /> class.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(AppUser))]
 public class AppUserTests
 {
+
 	[Fact]
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
@@ -50,4 +51,5 @@ public class AppUserTests
 		user.Roles.Should().NotBeNull();
 		user.Roles.Should().BeEmpty();
 	}
+
 }

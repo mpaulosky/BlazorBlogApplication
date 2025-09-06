@@ -2,21 +2,22 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeArticleDtoTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Unit
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Fakes;
 
 /// <summary>
-/// Unit tests for the <see cref="FakeArticleDto"/> fake data generator for <see cref="ArticleDto"/>.
-/// Covers validity, collection counts, zero-request behavior and seed-related determinism.
+///   Unit tests for the <see cref="FakeArticleDto" /> fake data generator for <see cref="ArticleDto" />.
+///   Covers validity, collection counts, zero-request behavior and seed-related determinism.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(FakeArticleDto))]
 public class FakeArticleDtoTests
 {
+
 	[Fact]
 	public void GetNewArticleDto_ShouldReturnValidDto()
 	{
@@ -30,6 +31,7 @@ public class FakeArticleDtoTests
 		dto.Introduction.Should().NotBeNullOrWhiteSpace();
 		dto.Content.Should().NotBeNullOrWhiteSpace();
 		dto.UrlSlug.Should().Be(dto.Title.GetSlug());
+
 		// CoverImageUrl is generated with Picsum and falls back to empty string; ensure it's not null
 		dto.CoverImageUrl.Should().NotBeNull();
 		dto.CreatedOn.Should().Be(GetStaticDate());
@@ -59,6 +61,7 @@ public class FakeArticleDtoTests
 		// Assert
 		list.Should().NotBeNull();
 		list.Should().HaveCount(requested);
+
 		foreach (var dto in list)
 		{
 			dto.Id.Should().NotBe(ObjectId.Empty);
@@ -71,6 +74,7 @@ public class FakeArticleDtoTests
 			dto.ModifiedOn.Should().Be(GetStaticDate());
 			dto.Category.Should().NotBeNull();
 			dto.Author.Should().NotBeNull();
+
 			if (dto.IsPublished)
 			{
 				dto.PublishedOn.Should().Be(GetStaticDate());
@@ -102,14 +106,14 @@ public class FakeArticleDtoTests
 
 		// Assert - deterministic except for Id and some external random URL fields and nested complex types
 		a.Should().BeEquivalentTo(b, opts => opts
-			.Excluding(x => x.Id)
-			.Excluding(x => x.Title)
-			.Excluding(x => x.Introduction)
-			.Excluding(x => x.Content)
-			.Excluding(x => x.UrlSlug)
-			.Excluding(x => x.CoverImageUrl)
-			.Excluding(x => x.Category)
-			.Excluding(x => x.Author));
+				.Excluding(x => x.Id)
+				.Excluding(x => x.Title)
+				.Excluding(x => x.Introduction)
+				.Excluding(x => x.Content)
+				.Excluding(x => x.UrlSlug)
+				.Excluding(x => x.CoverImageUrl)
+				.Excluding(x => x.Category)
+				.Excluding(x => x.Author));
 	}
 
 	[Theory]
@@ -144,20 +148,23 @@ public class FakeArticleDtoTests
 		// Assert
 		r1.Should().HaveCount(count);
 		r2.Should().HaveCount(count);
+
 		for (var i = 0; i < count; i++)
 		{
 			r1[i].Should().BeEquivalentTo(r2[i], opts => opts
-				.Excluding(x => x.Id)
-				.Excluding(x => x.Title)
-				.Excluding(x => x.Introduction)
-				.Excluding(x => x.Content)
-				.Excluding(x => x.UrlSlug)
-				.Excluding(x => x.CoverImageUrl)
-				.Excluding(x => x.Category)
-				.Excluding(x => x.Author));
+					.Excluding(x => x.Id)
+					.Excluding(x => x.Title)
+					.Excluding(x => x.Introduction)
+					.Excluding(x => x.Content)
+					.Excluding(x => x.UrlSlug)
+					.Excluding(x => x.CoverImageUrl)
+					.Excluding(x => x.Category)
+					.Excluding(x => x.Author));
+
 			// Dates should always match
 			r1[i].CreatedOn.Should().Be(r2[i].CreatedOn);
 			r1[i].ModifiedOn.Should().Be(r2[i].ModifiedOn);
+
 			// PublishedOn should match under seeded generation
 			(r1[i].PublishedOn == r2[i].PublishedOn).Should().BeTrue();
 		}
@@ -191,14 +198,14 @@ public class FakeArticleDtoTests
 
 		// Assert
 		a2.Should().BeEquivalentTo(a1, opts => opts
-			.Excluding(x => x.Id)
-			.Excluding(x => x.Title)
-			.Excluding(x => x.Introduction)
-			.Excluding(x => x.Content)
-			.Excluding(x => x.UrlSlug)
-			.Excluding(x => x.CoverImageUrl)
-			.Excluding(x => x.Category)
-			.Excluding(x => x.Author));
+				.Excluding(x => x.Id)
+				.Excluding(x => x.Title)
+				.Excluding(x => x.Introduction)
+				.Excluding(x => x.Content)
+				.Excluding(x => x.UrlSlug)
+				.Excluding(x => x.CoverImageUrl)
+				.Excluding(x => x.Category)
+				.Excluding(x => x.Author));
 	}
 
 	[Fact]
@@ -212,4 +219,5 @@ public class FakeArticleDtoTests
 		a1.Title.Should().NotBe(a2.Title);
 		a1.Introduction.Should().NotBe(a2.Introduction);
 	}
+
 }

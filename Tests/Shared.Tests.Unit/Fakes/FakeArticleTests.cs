@@ -2,16 +2,16 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeArticleTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Unit
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Fakes;
 
 /// <summary>
-/// Unit tests for the <see cref="FakeArticle"/> fake data generator for <see cref="Article"/>.
-/// Covers validity, collection counts, zero-request behavior and seed-related determinism.
+///   Unit tests for the <see cref="FakeArticle" /> fake data generator for <see cref="Article" />.
+///   Covers validity, collection counts, zero-request behavior and seed-related determinism.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(FakeArticle))]

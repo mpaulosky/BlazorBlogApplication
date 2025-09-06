@@ -2,9 +2,9 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CategoryDtoValidatorTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : MyBlog
-// Project Name :  Web.Tests.Unit
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
 // =======================================================
 
 namespace Shared.Validators;
@@ -13,6 +13,7 @@ namespace Shared.Validators;
 [TestSubject(typeof(CategoryDtoValidator))]
 public class CategoryDtoValidatorTests
 {
+
 	private readonly CategoryDtoValidator _validator = new();
 
 	[Fact]
@@ -30,4 +31,5 @@ public class CategoryDtoValidatorTests
 		var result = _validator.TestValidate(dto);
 		result.ShouldNotHaveValidationErrorFor(x => x.CategoryName);
 	}
+
 }
