@@ -2,9 +2,9 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     Auth0ServiceTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Shared.Tests.Unit
+// Project Name :  Web.Tests.Unit
 // =======================================================
 
 namespace Web.Data.Auth0;
@@ -13,12 +13,13 @@ namespace Web.Data.Auth0;
 [TestSubject(typeof(Auth0Service))]
 public class Auth0ServiceTests
 {
+
 	[Theory]
 	[InlineData("user_name", "username")]
 	[InlineData("first_name", "firstname")]
 	[InlineData("last_name", "lastname")]
-	[InlineData("email_verified", "emailverified")]
-	[InlineData("created_at", "createdat")]
+	[InlineData("email_verified", "email-verified")]
+	[InlineData("created_at", "creaedat")]
 	[InlineData("updated_at", "updatedat")]
 	[InlineData("nameWithoutUnderscore", "nameWithoutUnderscore")]
 	[InlineData("", "")]
@@ -28,7 +29,7 @@ public class Auth0ServiceTests
 		var auth0ServiceType = typeof(Auth0Service);
 		var namingPolicyType = auth0ServiceType.GetNestedType("IgnoreUnderscoreNamingPolicy", BindingFlags.NonPublic);
 		namingPolicyType.Should().NotBeNull("IgnoreUnderscoreNamingPolicy should be a nested type");
-		
+
 		var instance = Activator.CreateInstance(namingPolicyType);
 		var convertNameMethod = namingPolicyType.GetMethod("ConvertName");
 		convertNameMethod.Should().NotBeNull("ConvertName method should exist");
@@ -42,4 +43,5 @@ public class Auth0ServiceTests
 
 	[Fact(Skip = "TODO: Implement GetAccessTokenAsync failure tests with HttpMessageHandler stubs for 401/500 responses")]
 	public void TODO_GetAccessTokenAsync_Failure_Branches() { }
+
 }

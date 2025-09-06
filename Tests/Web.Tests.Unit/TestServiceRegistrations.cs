@@ -2,19 +2,13 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     TestServiceRegistrations.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
-using Web.Components.Features.Articles.ArticlesList;
-using Web.Components.Features.Categories.CategoriesList;
 using Web.Components.Features.Categories.CategoryCreate;
 
 namespace Web;
@@ -109,26 +103,26 @@ public static class TestServiceRegistrations
 		// Prepare sample data shared by multiple default substitutes
 		var sampleCategory = new CategoryDto
 		{
-			Id = ObjectId.GenerateNewId(),
-			CategoryName = "General Programming"
+				Id = ObjectId.GenerateNewId(),
+				CategoryName = "General Programming"
 		};
 
 		var sampleArticle = new ArticleDto
 		{
-			Id = ObjectId.GenerateNewId(),
-			Title = "The Empathy Of Mission Contemplation",
-			Introduction = "Intro",
-			Content = "Sample article content",
-			CoverImageUrl = string.Empty,
-			UrlSlug = "the-empathy-of-mission-contemplation",
-			Author = AppUserDto.Empty,
-			Category = sampleCategory,
-			CreatedOn = DateTime.UtcNow,
-			ModifiedOn = null,
-			IsPublished = true,
-			PublishedOn = DateTime.UtcNow,
-			IsArchived = false,
-			CanEdit = true
+				Id = ObjectId.GenerateNewId(),
+				Title = "The Empathy Of Mission Contemplation",
+				Introduction = "Intro",
+				Content = "Sample article content",
+				CoverImageUrl = string.Empty,
+				UrlSlug = "the-empathy-of-mission-contemplation",
+				Author = AppUserDto.Empty,
+				Category = sampleCategory,
+				CreatedOn = DateTime.UtcNow,
+				ModifiedOn = null,
+				IsPublished = true,
+				PublishedOn = DateTime.UtcNow,
+				IsArchived = false,
+				CanEdit = true
 		};
 
 		if (!IsEitherRegistered(typeof(GetCategory.IGetCategoryHandler), typeof(GetCategory.Handler)))
@@ -293,10 +287,16 @@ public static class TestServiceRegistrations
 
 		return;
 
-		bool IsEitherRegistered(Type iface, Type concrete) => IsRegistered(iface) || IsRegistered(concrete);
+		bool IsEitherRegistered(Type iface, Type concrete)
+		{
+			return IsRegistered(iface) || IsRegistered(concrete);
+		}
 
 		// Categories
-		bool IsRegistered(Type t) => ctx.Services.Any(sd => sd.ServiceType == t);
+		bool IsRegistered(Type t)
+		{
+			return ctx.Services.Any(sd => sd.ServiceType == t);
+		}
 	}
 
 	// Simple IAsyncCursor<T> implementation used for default FindAsync responses in tests
@@ -311,7 +311,7 @@ public static class TestServiceRegistrations
 
 		public SimpleCursor(IEnumerable<T> items)
 		{
-			_items = items?.ToList() ?? [];
+			_items = items.ToList();
 			_enumerator = _items.GetEnumerator();
 			_moved = false;
 		}

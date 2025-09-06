@@ -2,7 +2,7 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ErrorAlertComponentTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -13,6 +13,7 @@ namespace Web.Components.Shared;
 [TestSubject(typeof(ErrorAlertComponent))]
 public class ErrorAlertComponentTests : BunitContext
 {
+
 	[Fact]
 	public void RendersTitleAndChildContent_WhenChildProvided()
 	{
@@ -22,8 +23,8 @@ public class ErrorAlertComponentTests : BunitContext
 
 		// Act
 		var cut = Render<ErrorAlertComponent>(parameters => parameters
-			.Add(p => p.Title, title)
-			.Add<RenderFragment>(p => p.ChildContent!, child)
+				.Add(p => p.Title, title)
+				.Add<RenderFragment>(p => p.ChildContent!, child)
 		);
 
 		// Assert
@@ -40,8 +41,8 @@ public class ErrorAlertComponentTests : BunitContext
 
 		// Act
 		var cut = Render<ErrorAlertComponent>(parameters => parameters
-			.Add(p => p.Title, title)
-			.Add(p => p.Message, message)
+				.Add(p => p.Title, title)
+				.Add(p => p.Message, message)
 		);
 
 		// Assert
@@ -58,8 +59,8 @@ public class ErrorAlertComponentTests : BunitContext
 
 		// Act
 		var cut = Render<ErrorAlertComponent>(parameters => parameters
-			.Add(p => p.Title, title)
-			.Add(p => p.Message, message)
+				.Add(p => p.Title, title)
+				.Add(p => p.Message, message)
 		);
 
 		// Assert - ensure the tailwind container and header are present
@@ -67,4 +68,5 @@ public class ErrorAlertComponentTests : BunitContext
 		cut.Markup.Should().Contain("text-red-800");
 		cut.Markup.Should().Contain(title);
 	}
+
 }

@@ -2,14 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     GetCategoryHandlerTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
-
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Web.Components.Features.Categories.CategoryDetails;
 
@@ -17,6 +13,7 @@ namespace Web.Components.Features.Categories.CategoryDetails;
 [TestSubject(typeof(GetCategory.Handler))]
 public class GetCategoryHandlerTests
 {
+
 	private readonly CategoryTestFixture _fixture = new ();
 
 	[Fact]
@@ -57,11 +54,11 @@ public class GetCategoryHandlerTests
 
 		// Verify an error was logged
 		_fixture.Logger.Received(1).Log(
-			LogLevel.Error,
-			Arg.Any<EventId>(),
-			Arg.Any<object>(),
-			Arg.Any<Exception?>(),
-			Arg.Any<Func<object, Exception?, string>>());
+				LogLevel.Error,
+				Arg.Any<EventId>(),
+				Arg.Any<object>(),
+				Arg.Any<Exception?>(),
+				Arg.Any<Func<object, Exception?, string>>());
 	}
 
 	[Fact]
@@ -72,7 +69,8 @@ public class GetCategoryHandlerTests
 
 		// Configure the CategoriesCollection to throw when FindAsync is called
 		fixture.CategoriesCollection
-				.When(x => x.FindAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<FindOptions<Category, Category>>(), Arg.Any<CancellationToken>()))
+				.When(x => x.FindAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<FindOptions<Category, Category>>(),
+						Arg.Any<CancellationToken>()))
 				.Do(_ => throw new InvalidOperationException("boom"));
 
 		var handler = fixture.CreateGetHandler();

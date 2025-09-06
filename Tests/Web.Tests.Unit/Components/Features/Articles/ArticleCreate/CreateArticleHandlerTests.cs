@@ -2,20 +2,18 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CreateArticleHandlerTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
-
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Web.Components.Features.Articles.ArticleCreate;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(CreateArticle.Handler))]
-public class CreateArticleHandlerTests
+public class CreateArticleHandlerTests : BunitContext
 {
+
 	private readonly ArticlesTestFixture _fixture = new();
 	private readonly CancellationToken _cancellationToken = Xunit.TestContext.Current.CancellationToken;
 
@@ -23,8 +21,9 @@ public class CreateArticleHandlerTests
 	public async Task HandleAsync_WithValidArticle_InsertsArticleAndReturnsOk()
 	{
 		// Arrange - use fixture-backed collection
-		_fixture.ArticlesCollection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
-			.Returns(Task.CompletedTask);
+		_fixture.ArticlesCollection
+				.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
+				.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
@@ -39,17 +38,22 @@ public class CreateArticleHandlerTests
 
 		// Assert
 		result.Success.Should().BeTrue();
+
 		// Verify an Article was inserted, and PublishedOn was set (not default)
 		_ = _fixture.ArticlesCollection
-			.Received(1).InsertOneAsync(Arg.Is<Article>(a => a.Title == dto.Title && a.Introduction == dto.Introduction && a.PublishedOn != null), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
+				.Received(1)
+				.InsertOneAsync(
+						Arg.Is<Article>(a => a.Title == dto.Title && a.Introduction == dto.Introduction && a.PublishedOn != null),
+						Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
 	}
 
 	[Fact]
 	public async Task HandleAsync_WhenInsertThrows_ReturnsFailWithErrorMessage()
 	{
 		// Arrange
-		_fixture.ArticlesCollection.When(c => c.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()))
-			.Do(_ => throw new InvalidOperationException("DB error"));
+		_fixture.ArticlesCollection.When(c =>
+						c.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()))
+				.Do(_ => throw new InvalidOperationException("DB error"));
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
@@ -71,8 +75,9 @@ public class CreateArticleHandlerTests
 	public async Task HandleAsync_PublishedOnProvided_UsesProvidedPublishedOn()
 	{
 		// Arrange
-		_fixture.ArticlesCollection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
-			.Returns(Task.CompletedTask);
+		_fixture.ArticlesCollection
+				.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
+				.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
@@ -88,15 +93,19 @@ public class CreateArticleHandlerTests
 
 		// Assert
 		result.Success.Should().BeTrue();
-		_ = _fixture.ArticlesCollection.Received(1).InsertOneAsync(Arg.Is<Article>(a => a.PublishedOn == provided && a.Title == dto.Title), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
+
+		_ = _fixture.ArticlesCollection.Received(1).InsertOneAsync(
+				Arg.Is<Article>(a => a.PublishedOn == provided && a.Title == dto.Title), Arg.Any<InsertOneOptions>(),
+				Arg.Any<CancellationToken>());
 	}
 
 	[Fact]
 	public async Task HandleAsync_LogsInformation_OnSuccess()
 	{
 		// Arrange
-		_fixture.ArticlesCollection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
-			.Returns(Task.CompletedTask);
+		_fixture.ArticlesCollection
+				.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
+				.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
@@ -111,6 +120,7 @@ public class CreateArticleHandlerTests
 
 		// Assert
 		result.Success.Should().BeTrue();
+
 		// Verify logger received an Information-level log containing the expected text
 		logger.Received(1).Log(
 				LogLevel.Information,
@@ -124,8 +134,9 @@ public class CreateArticleHandlerTests
 	public async Task HandleAsync_LogsError_OnException()
 	{
 		// Arrange
-		_fixture.ArticlesCollection.When(c => c.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()))
-			.Do(_ => throw new InvalidOperationException("DB error"));
+		_fixture.ArticlesCollection.When(c =>
+						c.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()))
+				.Do(_ => throw new InvalidOperationException("DB error"));
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
@@ -140,6 +151,7 @@ public class CreateArticleHandlerTests
 
 		// Assert
 		result.Failure.Should().BeTrue();
+
 		// Verify logger received an Error-level log and an exception was passed through
 		logger.Received(1).Log(
 				LogLevel.Error,
@@ -153,7 +165,9 @@ public class CreateArticleHandlerTests
 	public async Task HandleAsync_NullRequest_ReturnsFail()
 	{
 		// Arrange
-		_fixture.ArticlesCollection.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+		_fixture.ArticlesCollection
+				.InsertOneAsync(Arg.Any<Article>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
+				.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateArticle.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();

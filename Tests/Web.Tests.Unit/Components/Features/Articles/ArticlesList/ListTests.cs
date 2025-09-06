@@ -2,18 +2,12 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ListTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Web.Components.Features.Articles.ArticlesList;
-
-namespace Web.Components.Features.Articles.ArticleList;
+namespace Web.Components.Features.Articles.ArticlesList;
 
 /// <summary>
 ///   Unit tests for <see cref="List" /> (Articles List).
@@ -22,7 +16,9 @@ namespace Web.Components.Features.Articles.ArticleList;
 [TestSubject(typeof(List))]
 public class ListTests : BunitContext
 {
+
 	private readonly IValidator<ArticleDto> _articleDtoValidator = Substitute.For<IValidator<ArticleDto>>();
+
 	private readonly GetArticles.IGetArticlesHandler _mockHandler;
 
 	public ListTests()
@@ -53,6 +49,7 @@ public class ListTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		var articles = FakeArticleDto.GetArticleDtos(2, true);
 		SetupHandlerArticles(articles);
+
 		// Act
 		var cut = Render<List>();
 		cut.Markup.Should().Contain(articles[0].Title);
@@ -66,7 +63,10 @@ public class ListTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		SetupHandlerArticles(new List<ArticleDto>());
 		var cut = Render<List>();
-		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, true);
+
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, true);
+
 		cut.Render();
 		cut.Markup.Should().Contain("Loading");
 	}
@@ -100,7 +100,10 @@ public class ListTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		SetupHandlerArticles(null);
 		var cut = Render<List>();
-		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
+
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, false);
+
 		cut.Render();
 		cut.Markup.Should().Contain("No articles available");
 	}
@@ -113,9 +116,15 @@ public class ListTests : BunitContext
 		var articles = FakeArticleDto.GetArticleDtos(2, true);
 		SetupHandlerArticles(articles);
 		var cut = Render<List>();
-		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, articles.AsQueryable());
+
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, false);
+
+		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, articles.AsQueryable());
+
 		cut.Render();
+
 		foreach (var article in articles)
 		{
 			cut.Markup.Should().Contain(article.Title);
@@ -132,7 +141,9 @@ public class ListTests : BunitContext
 		var articles = FakeArticleDto.GetArticleDtos(2, true);
 		SetupHandlerArticles(articles);
 		var cut = Render<List>();
-		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
+
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, false);
 
 		cut.Render();
 		cut.Find("button.btn-success").Click();
@@ -167,8 +178,13 @@ public class ListTests : BunitContext
 
 		// Act
 		var cut = Render<List>();
-		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, articles.AsQueryable());
+
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, false);
+
+		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, articles.AsQueryable());
+
 		cut.Render();
 
 		// Assert
@@ -183,10 +199,14 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
-		SetupHandlerArticles(null, success: false, error: "Failed to load articles");
+		SetupHandlerArticles(null, false, "Failed to load articles");
 		var cut = Render<List>();
-		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
+
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, false);
+
 		cut.Render();
+
 		// The component shows the empty-state markup when the handler fails (no articles available)
 		cut.Markup.Should().Contain("No articles available");
 	}
@@ -197,12 +217,23 @@ public class ListTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
 		var articles = FakeArticleDto.GetArticleDtos(2, true);
-		foreach (var article in articles) article.CanEdit = true;
+
+		foreach (var article in articles)
+		{
+			article.CanEdit = true;
+		}
+
 		SetupHandlerArticles(articles);
 		var cut = Render<List>();
-		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, articles.AsQueryable());
+
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, false);
+
+		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, articles.AsQueryable());
+
 		cut.Render();
+
 		foreach (var button in cut.FindAll("button.btn-primary"))
 		{
 			button.HasAttribute("disabled").Should().BeFalse();
@@ -218,8 +249,13 @@ public class ListTests : BunitContext
 		var articles = FakeArticleDto.GetArticleDtos(1, true);
 		SetupHandlerArticles(articles);
 		var cut = Render<List>();
-		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, articles.AsQueryable());
+
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, false);
+
+		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, articles.AsQueryable());
+
 		cut.Render();
 		cut.Find("button.btn-info").Click();
 		nav.Uri.Should().Contain($"/articles/details/{articles[0].Id}");
@@ -232,13 +268,23 @@ public class ListTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin");
 		var nav = Services.GetRequiredService<BunitNavigationManager>();
 		var articles = FakeArticleDto.GetArticleDtos(1, true);
+
 		// ensure edit permission is enabled for the article
-		foreach (var a in articles) a.CanEdit = true;
+		foreach (var a in articles)
+		{
+			a.CanEdit = true;
+		}
+
 		SetupHandlerArticles(articles);
 
 		var cut = Render<List>();
-		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, articles.AsQueryable());
+
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, false);
+
+		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, articles.AsQueryable());
+
 		cut.Render();
 
 		// Act
@@ -255,12 +301,22 @@ public class ListTests : BunitContext
 		Helpers.SetAuthorization(this, true, "User");
 		var nav = Services.GetRequiredService<BunitNavigationManager>();
 		var articles = FakeArticleDto.GetArticleDtos(1, true);
-		foreach (var a in articles) a.CanEdit = false;
+
+		foreach (var a in articles)
+		{
+			a.CanEdit = false;
+		}
+
 		SetupHandlerArticles(articles);
 
 		var cut = Render<List>();
-		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, articles.AsQueryable());
+
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, false);
+
+		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, articles.AsQueryable());
+
 		cut.Render();
 
 		var initial = nav.Uri;
@@ -277,10 +333,21 @@ public class ListTests : BunitContext
 		var articles = FakeArticleDto.GetArticleDtos(1, true);
 		SetupHandlerArticles(articles);
 		var cut = Render<List>();
-		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(cut.Instance, articles.AsQueryable());
+
+		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, false);
+
+		cut.Instance.GetType().GetField("_articles", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, articles.AsQueryable());
+
 		cut.Render();
-		var expectedHeaders = new[] { "Title", "Release Date", "Content", "Author", "Category", "Created On", "Modified On", "Published", "Published On", "Archived", "Actions" };
+
+		var expectedHeaders = new[]
+		{
+				"Title", "Release Date", "Content", "Author", "Category", "Created On", "Modified On", "Published",
+				"Published On", "Archived", "Actions"
+		};
+
 		foreach (var header in expectedHeaders)
 		{
 			cut.Markup.Should().Contain(header);
@@ -295,7 +362,9 @@ public class ListTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> authorizedFragment =
+				_ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+
 		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
@@ -306,8 +375,8 @@ public class ListTests : BunitContext
 		};
 
 		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+				.Add(p => p.Authorized, authorizedFragment)
+				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);
 
 		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message

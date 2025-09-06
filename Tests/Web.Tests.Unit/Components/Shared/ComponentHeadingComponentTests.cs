@@ -2,7 +2,7 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ComponentHeadingComponentTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -20,7 +20,11 @@ public class ComponentHeadingComponentTests : BunitContext
 	[InlineData("3", "Test Heading 3", "text-gray-30", "text-lg")]
 	[InlineData("4", "Test Heading 4", "text-gray-40", "text-md")]
 	[InlineData("5", "Test Heading 5", "text-gray-50", "text-sm")]
-	public void Should_Render_Correct_Heading_Level(string level, string headerText, string headerColor, string expectedHtml)
+	public void Should_Render_Correct_Heading_Level(
+			string level,
+			string headerText,
+			string headerColor,
+			string expectedHtml)
 	{
 
 		// Arrange & Act

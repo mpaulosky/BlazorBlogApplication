@@ -2,12 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     AuthEndpointsTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
-
-using System.Threading.Tasks;
 
 namespace Web.Endpoints;
 
@@ -15,9 +13,15 @@ namespace Web.Endpoints;
 [TestSubject(typeof(Program))]
 public class AuthEndpointsTests : IClassFixture<TestWebApplicationFactory>
 {
-	private readonly TestWebApplicationFactory _factory;
 
-	public AuthEndpointsTests(TestWebApplicationFactory factory) => _factory = factory;
+	private readonly TestWebApplicationFactory _factory;
+	private readonly CancellationToken _cancellationToken = Xunit.TestContext.Current.CancellationToken;
+
+
+	public AuthEndpointsTests(TestWebApplicationFactory factory)
+	{
+		_factory = factory;
+	}
 
 	[Fact]
 	public async Task Login_Endpoint_Issues_Challenge_On_Auth0_Scheme()
@@ -28,11 +32,11 @@ public class AuthEndpointsTests : IClassFixture<TestWebApplicationFactory>
 
 		var client = _factory.CreateClient(new WebApplicationFactoryClientOptions
 		{
-			AllowAutoRedirect = false
+				AllowAutoRedirect = false
 		});
 
 		// Act
-		var res = await client.GetAsync("/account/login", Xunit.TestContext.Current.CancellationToken);
+		var res = await client.GetAsync("/account/login", _cancellationToken);
 
 		// Assert: Status should be redirect-like due to challenge
 		res.StatusCode.Should().BeOneOf(
@@ -59,7 +63,7 @@ public class AuthEndpointsTests : IClassFixture<TestWebApplicationFactory>
 		var client = _factory.CreateClient();
 
 		// Act
-		var res = await client.GetAsync("/account/logout", Xunit.TestContext.Current.CancellationToken);
+		var res = await client.GetAsync("/account/logout", _cancellationToken);
 
 		// Assert
 		res.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -74,4 +78,5 @@ public class AuthEndpointsTests : IClassFixture<TestWebApplicationFactory>
 				Arg.Is(CookieAuthenticationDefaults.AuthenticationScheme),
 				Arg.Any<AuthenticationProperties>());
 	}
+
 }

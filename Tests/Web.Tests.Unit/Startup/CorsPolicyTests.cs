@@ -2,12 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CorsPolicyTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
-
-using System.Threading.Tasks;
 
 namespace Web.Startup;
 
@@ -15,9 +13,13 @@ namespace Web.Startup;
 [TestSubject(typeof(Program))]
 public class CorsPolicyTests : IClassFixture<TestWebApplicationFactory>
 {
+
 	private readonly TestWebApplicationFactory _factory;
 
-	public CorsPolicyTests(TestWebApplicationFactory factory) => _factory = factory;
+	public CorsPolicyTests(TestWebApplicationFactory factory)
+	{
+		_factory = factory;
+	}
 
 	[Fact]
 	public async Task DefaultCorsPolicy_Exists_And_Has_Expected_Origins()
@@ -30,7 +32,7 @@ public class CorsPolicyTests : IClassFixture<TestWebApplicationFactory>
 
 		policy.Should().NotBeNull();
 
-		policy!.Origins.Should().Contain([
+		policy.Origins.Should().Contain([
 				"https://yourdomain.com",
 				"https://localhost:7157"
 		]);
@@ -39,4 +41,5 @@ public class CorsPolicyTests : IClassFixture<TestWebApplicationFactory>
 		policy.Headers.Should().BeEmpty();
 		policy.Methods.Should().BeEmpty();
 	}
+
 }

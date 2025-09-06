@@ -7,11 +7,6 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace Web;
 
 [ExcludeFromCodeCoverage]
@@ -47,10 +42,11 @@ public static class Helpers
 
 			// Build claims: include email and a sample profile picture URL as string, and optional roles
 			const string testEmail = "test@example.com";
+
 			var claims = new List<Claim>
 			{
-				new(ClaimTypes.Email, testEmail),
-				new("picture", "https://example.com/picture.jpg")
+					new(ClaimTypes.Email, testEmail),
+					new("picture", "https://example.com/picture.jpg")
 			};
 
 			if (roles.Length > 0)

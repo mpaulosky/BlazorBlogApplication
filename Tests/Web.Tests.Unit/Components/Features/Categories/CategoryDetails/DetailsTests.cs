@@ -2,12 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     DetailsTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
-
-using System.Threading.Tasks;
 
 namespace Web.Components.Features.Categories.CategoryDetails;
 
@@ -18,6 +16,7 @@ namespace Web.Components.Features.Categories.CategoryDetails;
 [TestSubject(typeof(Details))]
 public class DetailsTests : BunitContext
 {
+
 	private readonly IValidator<CategoryDto> _categoryDtoValidator = Substitute.For<IValidator<CategoryDto>>();
 
 	public DetailsTests()
@@ -33,8 +32,10 @@ public class DetailsTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+
 		getSub.HandleAsync(Arg.Any<ObjectId>())
-			.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
+				.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
+
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -51,10 +52,13 @@ public class DetailsTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+
 		// register a handler that returns the DTO for the matching id
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+
 		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id))
-			.Returns(Task.FromResult(Result.Ok(categoryDto)));
+				.Returns(Task.FromResult(Result.Ok(categoryDto)));
+
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -66,6 +70,7 @@ public class DetailsTests : BunitContext
 		cut.Markup.Should().Contain("Created On: 1/1/2025");
 		cut.Markup.Should().Contain("Modified On: 1/1/2025");
 		cut.Find("button.btn-secondary").Should().NotBeNull();
+
 		//not admin the edit button should be disabled
 		cut.Find("button.btn-secondary").HasAttribute("disabled").Should().BeTrue();
 		cut.Find("button.btn-light").Should().NotBeNull();
@@ -77,10 +82,13 @@ public class DetailsTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+
 		// register a handler that returns the DTO for the matching id
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+
 		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id))
-			.Returns(Task.FromResult(Result.Ok(categoryDto)));
+				.Returns(Task.FromResult(Result.Ok(categoryDto)));
+
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -92,6 +100,7 @@ public class DetailsTests : BunitContext
 		cut.Markup.Should().Contain("Created On: 1/1/2025");
 		cut.Markup.Should().Contain("Modified On: 1/1/2025");
 		cut.Find("button.btn-secondary").Should().NotBeNull();
+
 		//not admin the edit button should be disabled
 		cut.Find("button.btn-secondary").HasAttribute("disabled").Should().BeFalse();
 		cut.Find("button.btn-light").Should().NotBeNull();
@@ -144,8 +153,10 @@ public class DetailsTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin");
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+
 		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == ObjectId.Empty))
-			.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
+				.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
+
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -163,8 +174,10 @@ public class DetailsTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin");
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
+
 		getSub.HandleAsync(Arg.Any<ObjectId>())
-			.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category service failure.")));
+				.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category service failure.")));
+
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -184,9 +197,9 @@ public class DetailsTests : BunitContext
 
 		// Act - Directly render an ErrorPageComponent with 401 error codes
 		var cut = Render<ErrorPageComponent>(parameters => parameters
-			.Add(p => p.ErrorCode, 401)
-			.Add(p => p.TextColor, "red-600")
-			.Add(p => p.ShadowStyle, "shadow-red-500")
+				.Add(p => p.ErrorCode, 401)
+				.Add(p => p.TextColor, "red-600")
+				.Add(p => p.ShadowStyle, "shadow-red-500")
 		);
 
 		// Assert - Should contain the 401 Unauthorized messages

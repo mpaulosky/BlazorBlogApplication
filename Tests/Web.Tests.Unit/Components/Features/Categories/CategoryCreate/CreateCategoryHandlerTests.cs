@@ -2,13 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CreateCategoryHandlerTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
-
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Web.Components.Features.Categories.CategoryCreate;
 
@@ -16,15 +13,16 @@ namespace Web.Components.Features.Categories.CategoryCreate;
 [TestSubject(typeof(CreateCategory.Handler))]
 public class CreateCategoryHandlerTests
 {
-	private readonly CategoryTestFixture _fixture = new CategoryTestFixture();
+
+	private readonly CategoryTestFixture _fixture = new ();
 
 	[Fact]
 	public async Task HandleAsync_InsertsCategoryAndReturnsOk()
 	{
 		// Arrange - ensure insert returns completed task
 		_fixture.CategoriesCollection
-			.InsertOneAsync(Arg.Any<Category>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
-			.Returns(Task.CompletedTask);
+				.InsertOneAsync(Arg.Any<Category>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
+				.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateCategory.Handler>>();
 		var handler = new CreateCategory.Handler(_fixture.BlogContext, logger);
@@ -36,16 +34,19 @@ public class CreateCategoryHandlerTests
 
 		// Assert
 		result.Success.Should().BeTrue();
+
 		_ = _fixture.CategoriesCollection.Received(1)
-			.InsertOneAsync(Arg.Is<Category>(c => c.CategoryName == dto.CategoryName), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
+				.InsertOneAsync(Arg.Is<Category>(c => c.CategoryName == dto.CategoryName), Arg.Any<InsertOneOptions>(),
+						Arg.Any<CancellationToken>());
 	}
 
 	[Fact]
 	public async Task HandleAsync_ReturnsFail_WhenInsertThrows()
 	{
 		// Arrange - make the collection throw on insert
-		_fixture.CategoriesCollection.When(c => c.InsertOneAsync(Arg.Any<Category>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()))
-			.Do(_ => throw new InvalidOperationException("DB error"));
+		_fixture.CategoriesCollection.When(c =>
+						c.InsertOneAsync(Arg.Any<Category>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()))
+				.Do(_ => throw new InvalidOperationException("DB error"));
 
 		var logger = Substitute.For<ILogger<CreateCategory.Handler>>();
 		var handler = new CreateCategory.Handler(_fixture.BlogContext, logger);
@@ -58,14 +59,19 @@ public class CreateCategoryHandlerTests
 		// Assert
 		result.Failure.Should().BeTrue();
 		result.Error.Should().Contain("DB error");
-		logger.Received(1).Log(LogLevel.Error, Arg.Any<EventId>(), Arg.Any<object>(), Arg.Any<Exception?>(), Arg.Any<Func<object, Exception?, string>>());
+
+		logger.Received(1).Log(LogLevel.Error, Arg.Any<EventId>(), Arg.Any<object>(), Arg.Any<Exception?>(),
+				Arg.Any<Func<object, Exception?, string>>());
 	}
 
 	[Fact]
 	public async Task HandleAsync_NullRequest_ReturnsFail()
 	{
 		// Arrange
-		_fixture.CategoriesCollection.InsertOneAsync(Arg.Any<Category>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+		_fixture.CategoriesCollection
+				.InsertOneAsync(Arg.Any<Category>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
+				.Returns(Task.CompletedTask);
+
 		var logger = Substitute.For<ILogger<CreateCategory.Handler>>();
 		var handler = new CreateCategory.Handler(_fixture.BlogContext, logger);
 
@@ -82,8 +88,9 @@ public class CreateCategoryHandlerTests
 	public async Task HandleAsync_EmptyName_InsertsEmptyAndReturnsOk()
 	{
 		// Arrange - ensure insert returns completed task
-		_fixture.CategoriesCollection.InsertOneAsync(Arg.Any<Category>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
-			.Returns(Task.CompletedTask);
+		_fixture.CategoriesCollection
+				.InsertOneAsync(Arg.Any<Category>(), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>())
+				.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateCategory.Handler>>();
 		var handler = new CreateCategory.Handler(_fixture.BlogContext, logger);
@@ -94,7 +101,10 @@ public class CreateCategoryHandlerTests
 
 		// Assert - current handler will accept empty names; ensure insert called and success returned
 		result.Success.Should().BeTrue();
-		_ = _fixture.CategoriesCollection.Received(1).InsertOneAsync(Arg.Is<Category>(c => c.CategoryName == dto.CategoryName), Arg.Any<InsertOneOptions>(), Arg.Any<CancellationToken>());
+
+		_ = _fixture.CategoriesCollection.Received(1).InsertOneAsync(
+				Arg.Is<Category>(c => c.CategoryName == dto.CategoryName), Arg.Any<InsertOneOptions>(),
+				Arg.Any<CancellationToken>());
 
 	}
 

@@ -2,13 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     EditArticleHandlerTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
-
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Web.Components.Features.Articles.ArticleEdit;
 
@@ -23,8 +20,9 @@ public class EditArticleHandlerTests
 	public async Task HandleAsync_WithValidArticle_ReplacesArticleAndReturnsOk()
 	{
 		// Arrange
-		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(), Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
-			.Returns(Task.FromResult<ReplaceOneResult?>(null!));
+		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(),
+						Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
+				.Returns(Task.FromResult<ReplaceOneResult?>(null!));
 
 		var handler = _fixture.CreateEditHandler();
 
@@ -35,6 +33,7 @@ public class EditArticleHandlerTests
 
 		// Assert
 		result.Success.Should().BeTrue();
+
 		// Verify ReplaceOneAsync was called and ModifiedOn was set on the replacement Article
 		_ = _fixture.ArticlesCollection.Received(1).ReplaceOneAsync(
 				Arg.Any<FilterDefinition<Article>>(),
@@ -47,8 +46,9 @@ public class EditArticleHandlerTests
 	public async Task HandleAsync_WhenReplaceThrows_ReturnsFailWithErrorMessage()
 	{
 		// Arrange
-		_fixture.ArticlesCollection.When(c => c.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(), Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>()))
-			.Do(_ => throw new InvalidOperationException("DB error"));
+		_fixture.ArticlesCollection.When(c => c.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(),
+						Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>()))
+				.Do(_ => throw new InvalidOperationException("DB error"));
 
 		var handler = _fixture.CreateEditHandler();
 
@@ -60,6 +60,7 @@ public class EditArticleHandlerTests
 		// Assert
 		result.Failure.Should().BeTrue();
 		result.Error.Should().Contain("DB error");
+
 		// Verify logger received an Error-level log and an exception was passed
 		_fixture.EditLogger.Received(1).Log(
 				LogLevel.Error,
@@ -73,8 +74,9 @@ public class EditArticleHandlerTests
 	public async Task HandleAsync_NullRequest_ReturnsFail()
 	{
 		// Arrange
-		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(), Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
-			.Returns(Task.FromResult<ReplaceOneResult?>(null!));
+		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(),
+						Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
+				.Returns(Task.FromResult<ReplaceOneResult?>(null!));
 
 		var handler = _fixture.CreateEditHandler();
 
@@ -90,8 +92,9 @@ public class EditArticleHandlerTests
 	public async Task HandleAsync_LogsInformation_OnSuccess()
 	{
 		// Arrange
-		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(), Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
-			.Returns(Task.FromResult<ReplaceOneResult?>(null!));
+		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(),
+						Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
+				.Returns(Task.FromResult<ReplaceOneResult?>(null!));
 
 		var handler = _fixture.CreateEditHandler();
 
@@ -102,12 +105,13 @@ public class EditArticleHandlerTests
 
 		// Assert
 		result.Success.Should().BeTrue();
+
 		_fixture.EditLogger.Received(1).Log(
-			LogLevel.Information,
-			Arg.Any<EventId>(),
-			Arg.Is<object>(o => o != null && o.ToString()!.Contains("Article updated successfully")),
-			Arg.Any<Exception?>(),
-			Arg.Any<Func<object, Exception?, string>>());
+				LogLevel.Information,
+				Arg.Any<EventId>(),
+				Arg.Is<object>(o => o != null && o.ToString()!.Contains("Article updated successfully")),
+				Arg.Any<Exception?>(),
+				Arg.Any<Func<object, Exception?, string>>());
 	}
 
 	[Fact]
@@ -115,8 +119,10 @@ public class EditArticleHandlerTests
 	{
 		// Arrange
 		Article? captured = null;
-		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Do<Article>(a => captured = a), Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
-			.Returns(Task.FromResult<ReplaceOneResult?>(null!));
+
+		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(),
+						Arg.Do<Article>(a => captured = a), Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
+				.Returns(Task.FromResult<ReplaceOneResult?>(null!));
 
 		var handler = _fixture.CreateEditHandler();
 
@@ -131,8 +137,9 @@ public class EditArticleHandlerTests
 		result.Success.Should().BeTrue();
 		captured.Should().NotBeNull();
 		captured!.PublishedOn.Should().Be(providedPublished);
+
 		// ModifiedOn should be set to a recent UTC time
-		(captured.ModifiedOn.HasValue).Should().BeTrue();
+		captured.ModifiedOn.HasValue.Should().BeTrue();
 		var delta = DateTime.UtcNow - captured.ModifiedOn!.Value;
 		delta.TotalSeconds.Should().BeLessThan(10);
 	}

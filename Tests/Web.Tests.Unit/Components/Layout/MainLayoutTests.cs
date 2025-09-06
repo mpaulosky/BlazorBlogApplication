@@ -2,12 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     MainLayoutTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
-
-using System.Collections.Generic;
 
 namespace Web.Components.Layout;
 
@@ -15,6 +13,7 @@ namespace Web.Components.Layout;
 [TestSubject(typeof(MainLayout))]
 public class MainLayoutTests
 {
+
 	private static int InvokeGetErrorCode(Exception? ex)
 	{
 		var type = typeof(MainLayout);
@@ -22,6 +21,7 @@ public class MainLayoutTests
 		mi.Should().NotBeNull("private static method should exist on MainLayout");
 		var result = mi.Invoke(null, [ ex ]);
 		result.Should().BeOfType<int>();
+
 		return (int)result;
 	}
 
@@ -55,4 +55,5 @@ public class MainLayoutTests
 	{
 		InvokeGetErrorCode(new Exception("boom")).Should().Be(500);
 	}
+
 }

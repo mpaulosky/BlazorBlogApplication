@@ -2,25 +2,19 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     GetArticlesHandlerTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-using Web.Components.Features.Articles.ArticlesList;
-
-namespace Web.Components.Features.Articles.ArticleList;
+namespace Web.Components.Features.Articles.ArticlesList;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(GetArticles.Handler))]
 public class GetArticlesHandlerTests
 {
-	private readonly ArticlesTestFixture _fixture = new ArticlesTestFixture();
+
+	private readonly ArticlesTestFixture _fixture = new ();
 
 	[Fact]
 	public async Task HandleAsync_ReturnsArticles_WhenFound()
@@ -30,6 +24,7 @@ public class GetArticlesHandlerTests
 
 		_fixture.SetupFindAsync(articles);
 		var handler = _fixture.CreateGetHandler();
+
 		// Act
 		var result = await handler.HandleAsync();
 
@@ -73,7 +68,9 @@ public class GetArticlesHandlerTests
 		// Assert
 		result.Failure.Should().BeTrue();
 		result.Error.Should().Contain("No articles found");
-		_fixture.Logger.Received(1).Log(LogLevel.Warning, Arg.Any<EventId>(), Arg.Any<object>(), Arg.Any<Exception?>(), Arg.Any<Func<object, Exception?, string>>());
+
+		_fixture.Logger.Received(1).Log(LogLevel.Warning, Arg.Any<EventId>(), Arg.Any<object>(), Arg.Any<Exception?>(),
+				Arg.Any<Func<object, Exception?, string>>());
 	}
 
 	[Fact]
@@ -82,21 +79,26 @@ public class GetArticlesHandlerTests
 		// Arrange
 		// Arrange - simulate exception during FindAsync via collection substitute
 		var collection = Substitute.For<IMongoCollection<Article>>();
-		collection.When(c => c.FindAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<FindOptions<Article, Article>>(), Arg.Any<CancellationToken>()))
-			.Do(_ => throw new InvalidOperationException("Find failed"));
+
+		collection.When(c => c.FindAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<FindOptions<Article, Article>>(),
+						Arg.Any<CancellationToken>()))
+				.Do(_ => throw new InvalidOperationException("Find failed"));
 
 		var context = Substitute.For<IMyBlogContext>();
 		context.Articles.Returns(collection);
 
 		var logger = Substitute.For<ILogger<GetArticles.Handler>>();
 		var handler = new GetArticles.Handler(context, logger);
+
 		// Act
 		var result = await handler.HandleAsync();
 
 		// Assert
 		result.Failure.Should().BeTrue();
 		result.Error.Should().Contain("Find failed");
-		logger.Received(1).Log(LogLevel.Error, Arg.Any<EventId>(), Arg.Any<object>(), Arg.Any<Exception?>(), Arg.Any<Func<object, Exception?, string>>());
+
+		logger.Received(1).Log(LogLevel.Error, Arg.Any<EventId>(), Arg.Any<object>(), Arg.Any<Exception?>(),
+				Arg.Any<Func<object, Exception?, string>>());
 	}
 
 }

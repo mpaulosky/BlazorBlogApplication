@@ -2,9 +2,9 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     MyBlogContextFactoryTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
-// Project Name :  Shared.Tests.Unit
+// Project Name :  Web.Tests.Unit
 // =======================================================
 
 namespace Web.Data;
@@ -13,16 +13,18 @@ namespace Web.Data;
 [TestSubject(typeof(MyBlogContextFactory))]
 public class MyBlogContextFactoryTests
 {
+
+	private readonly CancellationToken _cancellationToken = Xunit.TestContext.Current.CancellationToken;
+
 	[Fact]
 	public async Task CreateContext_WithCancellationToken_ReturnsInitializedContext()
 	{
 		// Arrange
 		var mongoClient = Substitute.For<IMongoClient>();
 		var factory = new MyBlogContextFactory(mongoClient);
-		var cancellationToken = new CancellationToken();
 
 		// Act
-		var result = await factory.CreateContext(cancellationToken);
+		var result = await factory.CreateContext(_cancellationToken);
 
 		// Assert
 		result.Should().NotBeNull();
@@ -37,7 +39,7 @@ public class MyBlogContextFactoryTests
 		var factory = new MyBlogContextFactory(mongoClient);
 
 		// Act
-		var result = factory.CreateContext();
+		var result = factory.CreateContext(_cancellationToken);
 
 		// Assert
 		result.Should().NotBeNull();
@@ -50,10 +52,9 @@ public class MyBlogContextFactoryTests
 		// Arrange
 		var mongoClient = Substitute.For<IMongoClient>();
 		var factory = new MyBlogContextFactory(mongoClient);
-		var cancellationToken = new CancellationToken(true); // Already cancelled
 
-		// Act & Assert - Should not throw despite cancelled token
-		var result = await factory.CreateContext(cancellationToken);
+		// Act & Assert - Should not throw despite canceled token
+		var result = await factory.CreateContext(_cancellationToken);
 		result.Should().NotBeNull();
 	}
 
@@ -62,7 +63,9 @@ public class MyBlogContextFactoryTests
 	{
 		// Act & Assert
 		var action = () => new MyBlogContextFactory(null!);
+
 		action.Should().Throw<ArgumentNullException>()
-			.WithParameterName("mongoClient");
+				.WithParameterName("mongoClient");
 	}
+
 }

@@ -2,7 +2,7 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ErrorPageTest.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -65,7 +65,7 @@ public class ErrorPageTest : BunitContext
 		// Arrange
 		var httpContext = new DefaultHttpContext
 		{
-			TraceIdentifier = "Test-Trace-Id"
+				TraceIdentifier = "Test-Trace-Id"
 		};
 
 		// Act

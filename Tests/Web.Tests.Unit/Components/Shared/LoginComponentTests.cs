@@ -1,8 +1,8 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     AccessControlComponentTests.cs
+// File Name :     LoginComponentTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================

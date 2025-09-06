@@ -2,13 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     StartupRegistrationTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
-
-using Web.Components.Features.Articles.ArticlesList;
-using Web.Components.Features.Categories.CategoriesList;
 
 namespace Web.Startup;
 
@@ -19,7 +16,10 @@ public class StartupRegistrationTests : IClassFixture<TestWebApplicationFactory>
 
 	private readonly TestWebApplicationFactory _factory;
 
-	public StartupRegistrationTests(TestWebApplicationFactory factory) => _factory = factory;
+	public StartupRegistrationTests(TestWebApplicationFactory factory)
+	{
+		_factory = factory;
+	}
 
 	[Fact]
 	public void Validators_Are_Registered()

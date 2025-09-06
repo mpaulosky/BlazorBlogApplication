@@ -2,16 +2,12 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CreateTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System.Threading.Tasks;
-
-using static Web.Components.Features.Articles.ArticleCreate.CreateArticle;
-
-namespace Web.Components.Features.Articles.ArticlesCreate;
+namespace Web.Components.Features.Articles.ArticleCreate;
 
 /// <summary>
 ///   Unit tests for <see cref="Create" /> (Articles Create Page).
@@ -21,18 +17,19 @@ namespace Web.Components.Features.Articles.ArticlesCreate;
 public class CreateTests : BunitContext
 {
 
-	private readonly ICreateArticleHandler _mockHandler;
+	private readonly CreateArticle.ICreateArticleHandler _mockHandler;
 
 	public CreateTests()
 	{
-		_mockHandler = Substitute.For<ICreateArticleHandler>();
+		_mockHandler = Substitute.For<CreateArticle.ICreateArticleHandler>();
 		var mockLogger = Substitute.For<ILogger<Create>>();
 		Services.AddScoped(_ => _mockHandler);
 		Services.AddScoped(_ => mockLogger);
-		Services.AddScoped<ICreateArticleHandler>(_ => _mockHandler);
+		Services.AddScoped<CreateArticle.ICreateArticleHandler>(_ => _mockHandler);
 		Services.AddCascadingAuthenticationState();
 		Services.AddAuthorization();
 	}
+
 	//
 	// public CreateTests(ILogger<Create> mockLogger) {
 	// 	_mockLogger = mockLogger;
@@ -161,6 +158,7 @@ public class CreateTests : BunitContext
 
 		// Assert
 		submitButton.HasAttribute("disabled").Should().BeTrue();
+
 		// Complete the handler to finish submission
 		tcs.SetResult(Result.Ok());
 		await submitTask;
@@ -190,7 +188,9 @@ public class CreateTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> authorizedFragment =
+				_ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+
 		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
@@ -201,8 +201,8 @@ public class CreateTests : BunitContext
 		};
 
 		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+				.Add(p => p.Authorized, authorizedFragment)
+				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);
 
 		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message
@@ -218,7 +218,9 @@ public class CreateTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> authorizedFragment =
+				_ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+
 		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
@@ -229,8 +231,8 @@ public class CreateTests : BunitContext
 		};
 
 		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+				.Add(p => p.Authorized, authorizedFragment)
+				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);
 
 		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message

@@ -2,23 +2,18 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     GetCategoriesHandlerTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-
-using Web.Components.Features.Categories.CategoriesList;
-
-namespace Web.Components.Features.Categories.CategoryList;
+namespace Web.Components.Features.Categories.CategoriesList;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(GetCategories.Handler))]
 public class GetCategoriesHandlerTests
 {
+
 	private readonly CategoryTestFixture _fixture = new ();
 
 	[Fact]
@@ -53,7 +48,9 @@ public class GetCategoriesHandlerTests
 		// Assert
 		result.Failure.Should().BeTrue();
 		result.Error.Should().Contain("No categories found");
-		logger.Received(1).Log(LogLevel.Warning, Arg.Any<EventId>(), Arg.Any<object>(), Arg.Any<Exception?>(), Arg.Any<Func<object, Exception?, string>>());
+
+		logger.Received(1).Log(LogLevel.Warning, Arg.Any<EventId>(), Arg.Any<object>(), Arg.Any<Exception?>(),
+				Arg.Any<Func<object, Exception?, string>>());
 	}
 
 	[Fact]
@@ -61,9 +58,11 @@ public class GetCategoriesHandlerTests
 	{
 		// Arrange - simulate exception during FindAsync via collection substitute
 		var collection = Substitute.For<IMongoCollection<Category>>();
+
 		collection
-			.When(c => c.FindAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<FindOptions<Category, Category>>(), Arg.Any<CancellationToken>()))
-			.Do(_ => throw new InvalidOperationException("Find failed"));
+				.When(c => c.FindAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<FindOptions<Category, Category>>(),
+						Arg.Any<CancellationToken>()))
+				.Do(_ => throw new InvalidOperationException("Find failed"));
 
 		var context = Substitute.For<IMyBlogContext>();
 		context.Categories.Returns(collection);
@@ -77,6 +76,9 @@ public class GetCategoriesHandlerTests
 		// Assert
 		result.Failure.Should().BeTrue();
 		result.Error.Should().Contain("Find failed");
-		logger.Received(1).Log(LogLevel.Error, Arg.Any<EventId>(), Arg.Any<object>(), Arg.Any<Exception?>(), Arg.Any<Func<object, Exception?, string>>());
+
+		logger.Received(1).Log(LogLevel.Error, Arg.Any<EventId>(), Arg.Any<object>(), Arg.Any<Exception?>(),
+				Arg.Any<Func<object, Exception?, string>>());
 	}
+
 }
