@@ -49,7 +49,7 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 			{
 				if (_sharedContainer == null)
 				{
-					_port = new Random().Next(27018, 28000);
+					_port = new Random().Next(28000, 29000);
 
 					_sharedContainer = new MongoDbBuilder()
 							.WithImage("mongo:8.0")
@@ -68,9 +68,9 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		{
 			config.AddInMemoryCollection(new Dictionary<string, string?>
 			{
-					["ConnectionStrings:mongoDb-connection"] =
+				["ConnectionStrings:mongoDb-connection"] =
 							$"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin",
-					["DatabaseName"] = _databaseName
+				["DatabaseName"] = _databaseName
 			});
 		});
 
@@ -164,13 +164,27 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		try
 		{
 			await _dbLock.WaitAsync();
-			var client = Services.GetRequiredService<IMongoClient>();
+			var connectionString = $"mongodb://admin:password@localhost:{_port}/admin?authSource=admin";
+			var client = new MongoClient(connectionString);
+
+			// Drop the entire database
 			await client.DropDatabaseAsync(_databaseName);
-			_logger.LogInformation("Database {DatabaseName} dropped successfully", _databaseName);
+
+			// Verify the database was dropped by listing databases and checking
+			var databases = await client.ListDatabaseNamesAsync();
+			var dbList = await databases.ToListAsync();
+			if (dbList.Contains(_databaseName))
+			{
+				_logger.LogWarning("Database {DatabaseName} still exists after drop attempt", _databaseName);
+			}
+			else
+			{
+				_logger.LogInformation("Database {DatabaseName} successfully dropped and verified", _databaseName);
+			}
 		}
 		catch (Exception ex)
 		{
-			_logger.LogError(ex, "Error dropping database");
+			_logger.LogError(ex, "Error clearing database");
 
 			throw;
 		}
@@ -185,7 +199,8 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		try
 		{
 			await _dbLock.WaitAsync();
-			var client = Services.GetRequiredService<IMongoClient>();
+			var connectionString = $"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin";
+			var client = new MongoClient(connectionString);
 			var database = client.GetDatabase(_databaseName);
 			await database.DropCollectionAsync(collectionName);
 		}

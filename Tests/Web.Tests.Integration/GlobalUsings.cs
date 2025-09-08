@@ -23,8 +23,12 @@ global using MongoDB.Bson;
 global using MongoDB.Driver;
 
 global using Shared.Fakes;
+global using static Shared.Helpers.Helpers;
 
 global using Testcontainers.MongoDb;
 
 global using Web.Data;
 global using Web.Fixtures;
+global using Shared.Entities;
+global using Shared.Helpers;
+global using Shared.Models;
