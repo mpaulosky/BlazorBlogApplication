@@ -29,7 +29,7 @@ public class CategoryTestFixture : IAsyncDisposable
 	// Expose the IMyBlogContext for tests similar to ArticlesTestFixture
 	public IMyBlogContext BlogContext { get; private set; }
 
-	public ILogger<Handler> Logger { get; }
+	public ILogger<GetCategories.Handler> Logger { get; }
 
 	public CategoryTestFixture()
 	{
@@ -40,7 +40,7 @@ public class CategoryTestFixture : IAsyncDisposable
 		MongoDatabase.GetCollection<Category>(Arg.Any<string>()).Returns(CategoriesCollection);
 		var blogContext = new MyBlogContext(MongoClient);
 		BlogContext = blogContext;
-		Logger = Substitute.For<ILogger<Handler>>();
+		Logger = Substitute.For<ILogger<GetCategories.Handler>>();
 	}
 
 	// Lightweight IMyBlogContextFactory stub used by EditCategory.Handler in tests
@@ -87,9 +87,19 @@ public class CategoryTestFixture : IAsyncDisposable
 	///   Create a concrete GetCategory.Handler wired to the fixture's MyBlogContext and logger.
 	///   Tests can register this into a bUnit TestContext or the test DI container.
 	/// </summary>
-	public Handler CreateGetHandler()
+	public GetCategory.Handler CreateGetCategoryHandler()
 	{
-		return new Handler(BlogContext, Logger);
+		var categoryLogger = Substitute.For<ILogger<GetCategory.Handler>>();
+		return new GetCategory.Handler(new TestMyBlogContextFactory(BlogContext), categoryLogger);
+	}
+
+	/// <summary>
+	///   Create a concrete GetCategories.Handler wired to the fixture's MyBlogContext and logger.
+	///   Tests can register this into a bUnit TestContext or the test DI container.
+	/// </summary>
+	public GetCategories.Handler CreateGetCategoriesHandler()
+	{
+		return new GetCategories.Handler(new TestMyBlogContextFactory(BlogContext), Logger);
 	}
 
 	/// <summary>
@@ -104,11 +114,11 @@ public class CategoryTestFixture : IAsyncDisposable
 		}
 
 		// Register the concrete handler (components may resolve concrete handler types)
-		var getHandler = CreateGetHandler();
+		var getHandler = CreateGetCategoriesHandler();
 		ctx.Services.AddScoped(_ => getHandler);
 
 		// Also, register the handler interface so components injecting interfaces are satisfied
-		ctx.Services.AddScoped<IGetCategoryHandler>(_ => getHandler);
+		ctx.Services.AddScoped<GetCategories.IGetCategoriesHandler>(_ => getHandler);
 
 		// Register Edit handler concrete type wired to the fixture's context via a factory stub
 		var editHandler = CreateEditHandler();
@@ -143,11 +153,11 @@ public class CategoryTestFixture : IAsyncDisposable
 	/// <summary>
 	///   Convenience: configure the categories returned and return a handler already wired to the fixture context.
 	/// </summary>
-	public Handler ConfigureGetHandler(IEnumerable<Category> categories)
+	public GetCategories.Handler ConfigureGetHandler(IEnumerable<Category> categories)
 	{
 		SetupFindAsync(categories);
 
-		return CreateGetHandler();
+		return CreateGetCategoriesHandler();
 	}
 
 	/// <summary>

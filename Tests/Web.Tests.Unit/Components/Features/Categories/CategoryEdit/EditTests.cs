@@ -37,7 +37,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -86,7 +86,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
 
@@ -110,7 +110,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
@@ -140,7 +140,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		_editHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
 
@@ -172,7 +172,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		_editHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Fail("Update failed")));
 
@@ -202,7 +202,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var tcs = new TaskCompletionSource<Result>();
 		_editHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(_ => tcs.Task);
@@ -236,7 +236,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 
 		var cut = Render<Edit>(parameters => parameters
@@ -262,7 +262,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
 
@@ -283,7 +283,7 @@ public class EditTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this);
 		_fixture.SetupFindAsync(new List<Category>());
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, ObjectId.Empty));
 
@@ -305,7 +305,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
 
@@ -330,7 +330,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		_editHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
@@ -356,7 +356,7 @@ public class EditTests : BunitContext
 		Helpers.SetAuthorization(this, true, "admin", "editor");
 		var categoryId = ObjectId.GenerateNewId();
 		_fixture.SetupFindAsync(new List<Category>());
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryId));
 
@@ -380,7 +380,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		_editHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
 		var navManager = Services.GetRequiredService<BunitNavigationManager>();

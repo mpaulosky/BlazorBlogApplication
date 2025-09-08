@@ -60,7 +60,7 @@ public class ArticlesTestFixture : IAsyncDisposable
 	/// </summary>
 	public GetArticles.Handler CreateGetHandler()
 	{
-		return new GetArticles.Handler(_blogContext, Logger);
+		return new GetArticles.Handler(new TestMyBlogContextFactory(_blogContext), Logger);
 	}
 
 	/// <summary>
@@ -69,7 +69,7 @@ public class ArticlesTestFixture : IAsyncDisposable
 	/// </summary>
 	public EditArticle.Handler CreateEditHandler()
 	{
-		return new EditArticle.Handler(_blogContext, EditLogger);
+		return new EditArticle.Handler(new TestMyBlogContextFactory(_blogContext), EditLogger);
 	}
 
 	/// <summary>
@@ -104,6 +104,29 @@ public class ArticlesTestFixture : IAsyncDisposable
 	public ValueTask DisposeAsync()
 	{
 		return ValueTask.CompletedTask;
+	}
+
+	// Lightweight IMyBlogContextFactory stub used by handlers in tests
+	private class TestMyBlogContextFactory : IMyBlogContextFactory
+	{
+
+		private readonly IMyBlogContext _ctx;
+
+		public TestMyBlogContextFactory(IMyBlogContext ctx)
+		{
+			_ctx = ctx;
+		}
+
+		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
+		{
+			return Task.FromResult(_ctx);
+		}
+
+		public MyBlogContext CreateContext()
+		{
+			return (MyBlogContext)_ctx;
+		}
+
 	}
 
 }

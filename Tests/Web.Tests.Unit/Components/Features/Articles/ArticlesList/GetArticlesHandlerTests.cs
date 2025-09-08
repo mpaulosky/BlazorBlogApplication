@@ -14,7 +14,7 @@ namespace Web.Components.Features.Articles.ArticlesList;
 public class GetArticlesHandlerTests
 {
 
-	private readonly ArticlesTestFixture _fixture = new ();
+	private readonly ArticlesTestFixture _fixture = new();
 
 	[Fact]
 	public async Task HandleAsync_ReturnsArticles_WhenFound()
@@ -88,7 +88,7 @@ public class GetArticlesHandlerTests
 		context.Articles.Returns(collection);
 
 		var logger = Substitute.For<ILogger<GetArticles.Handler>>();
-		var handler = new GetArticles.Handler(context, logger);
+		var handler = new GetArticles.Handler(new TestMyBlogContextFactory(context), logger);
 
 		// Act
 		var result = await handler.HandleAsync();
@@ -99,6 +99,29 @@ public class GetArticlesHandlerTests
 
 		logger.Received(1).Log(LogLevel.Error, Arg.Any<EventId>(), Arg.Any<object>(), Arg.Any<Exception?>(),
 				Arg.Any<Func<object, Exception?, string>>());
+	}
+
+	// Lightweight IMyBlogContextFactory stub used by handlers in tests
+	private class TestMyBlogContextFactory : IMyBlogContextFactory
+	{
+
+		private readonly IMyBlogContext _ctx;
+
+		public TestMyBlogContextFactory(IMyBlogContext ctx)
+		{
+			_ctx = ctx;
+		}
+
+		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
+		{
+			return Task.FromResult(_ctx);
+		}
+
+		public MyBlogContext CreateContext()
+		{
+			return (MyBlogContext)_ctx;
+		}
+
 	}
 
 }

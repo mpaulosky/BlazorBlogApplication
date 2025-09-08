@@ -19,7 +19,7 @@ public class GetArticleHandlerTests
 		MapsterConfig.RegisterMappings();
 	}
 
-	private readonly ArticlesTestFixture _fixture = new ();
+	private readonly ArticlesTestFixture _fixture = new();
 
 	public enum FailureScenario
 	{
@@ -82,7 +82,7 @@ public class GetArticleHandlerTests
 		}
 
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
-		var handler = new GetArticle.Handler(context, logger);
+		var handler = new GetArticle.Handler(new TestMyBlogContextFactory(context), logger);
 
 		var id = scenario == FailureScenario.EMPTY_ID ? ObjectId.Empty : ObjectId.GenerateNewId();
 
@@ -114,7 +114,7 @@ public class GetArticleHandlerTests
 		context.Articles.Returns(collection);
 
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
-		var handler = new GetArticle.Handler(context, logger);
+		var handler = new GetArticle.Handler(new TestMyBlogContextFactory(context), logger);
 
 		//var id = ObjectId.GenerateNewId();
 
@@ -145,7 +145,7 @@ public class GetArticleHandlerTests
 		context.Articles.Returns(collection);
 
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
-		var handler = new GetArticle.Handler(context, logger);
+		var handler = new GetArticle.Handler(new TestMyBlogContextFactory(context), logger);
 
 		// Act
 		var result = await handler.HandleAsync(ObjectId.Empty);
@@ -178,7 +178,7 @@ public class GetArticleHandlerTests
 		context.Articles.Returns(collection);
 
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
-		var handler = new GetArticle.Handler(context, logger);
+		var handler = new GetArticle.Handler(new TestMyBlogContextFactory(context), logger);
 
 		var id = ObjectId.GenerateNewId();
 
@@ -211,7 +211,7 @@ public class GetArticleHandlerTests
 		context.Articles.Returns(collection);
 
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
-		var handler = new GetArticle.Handler(context, logger);
+		var handler = new GetArticle.Handler(new TestMyBlogContextFactory(context), logger);
 
 		var id = ObjectId.GenerateNewId();
 
@@ -258,6 +258,29 @@ public class GetArticleHandlerTests
 
 		found.Should().NotBeNull();
 		found.Id.Should().Be(article.Id);
+	}
+
+	// Lightweight IMyBlogContextFactory stub used by handlers in tests
+	private class TestMyBlogContextFactory : IMyBlogContextFactory
+	{
+
+		private readonly IMyBlogContext _ctx;
+
+		public TestMyBlogContextFactory(IMyBlogContext ctx)
+		{
+			_ctx = ctx;
+		}
+
+		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
+		{
+			return Task.FromResult(_ctx);
+		}
+
+		public MyBlogContext CreateContext()
+		{
+			return (MyBlogContext)_ctx;
+		}
+
 	}
 
 }

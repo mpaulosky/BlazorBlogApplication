@@ -14,7 +14,7 @@ namespace Web.Components.Features.Categories.CategoryCreate;
 public class CreateCategoryHandlerTests
 {
 
-	private readonly CategoryTestFixture _fixture = new ();
+	private readonly CategoryTestFixture _fixture = new();
 
 	[Fact]
 	public async Task HandleAsync_InsertsCategoryAndReturnsOk()
@@ -25,7 +25,7 @@ public class CreateCategoryHandlerTests
 				.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateCategory.Handler>>();
-		var handler = new CreateCategory.Handler(_fixture.BlogContext, logger);
+		var handler = new CreateCategory.Handler(new TestMyBlogContextFactory(_fixture.BlogContext), logger);
 
 		var dto = new CategoryDto { CategoryName = "Test Cat" };
 
@@ -49,7 +49,7 @@ public class CreateCategoryHandlerTests
 				.Do(_ => throw new InvalidOperationException("DB error"));
 
 		var logger = Substitute.For<ILogger<CreateCategory.Handler>>();
-		var handler = new CreateCategory.Handler(_fixture.BlogContext, logger);
+		var handler = new CreateCategory.Handler(new TestMyBlogContextFactory(_fixture.BlogContext), logger);
 
 		var dto = new CategoryDto { CategoryName = "T" };
 
@@ -73,7 +73,7 @@ public class CreateCategoryHandlerTests
 				.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateCategory.Handler>>();
-		var handler = new CreateCategory.Handler(_fixture.BlogContext, logger);
+		var handler = new CreateCategory.Handler(new TestMyBlogContextFactory(_fixture.BlogContext), logger);
 
 		// Act
 		var result = await handler.HandleAsync(null);
@@ -93,7 +93,7 @@ public class CreateCategoryHandlerTests
 				.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateCategory.Handler>>();
-		var handler = new CreateCategory.Handler(_fixture.BlogContext, logger);
+		var handler = new CreateCategory.Handler(new TestMyBlogContextFactory(_fixture.BlogContext), logger);
 		var dto = new CategoryDto { CategoryName = string.Empty };
 
 		// Act
@@ -105,6 +105,29 @@ public class CreateCategoryHandlerTests
 		_ = _fixture.CategoriesCollection.Received(1).InsertOneAsync(
 				Arg.Is<Category>(c => c.CategoryName == dto.CategoryName), Arg.Any<InsertOneOptions>(),
 				Arg.Any<CancellationToken>());
+
+	}
+
+	// Lightweight IMyBlogContextFactory stub used by handlers in tests
+	private class TestMyBlogContextFactory : IMyBlogContextFactory
+	{
+
+		private readonly IMyBlogContext _ctx;
+
+		public TestMyBlogContextFactory(IMyBlogContext ctx)
+		{
+			_ctx = ctx;
+		}
+
+		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
+		{
+			return Task.FromResult(_ctx);
+		}
+
+		public MyBlogContext CreateContext()
+		{
+			return (MyBlogContext)_ctx;
+		}
 
 	}
 

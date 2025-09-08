@@ -14,7 +14,7 @@ namespace Web.Components.Features.Categories.CategoryDetails;
 public class GetCategoryHandlerTests
 {
 
-	private readonly CategoryTestFixture _fixture = new ();
+	private readonly CategoryTestFixture _fixture = new();
 
 	[Fact]
 	public async Task HandleAsync_ReturnsCategory_WhenFound()
@@ -22,7 +22,7 @@ public class GetCategoryHandlerTests
 		// Arrange
 		var category = FakeCategory.GetNewCategory(true);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var handler = _fixture.CreateGetHandler();
+		var handler = _fixture.CreateGetCategoryHandler();
 
 		// Act
 		var result = await handler.HandleAsync(category.Id);
@@ -37,7 +37,10 @@ public class GetCategoryHandlerTests
 	public async Task HandleAsync_ReturnsFail_WhenIdIsEmpty()
 	{
 		// Arrange
-		var handler = _fixture.CreateGetHandler();
+		var logger = Substitute.For<ILogger<GetCategory.Handler>>();
+		var factory = Substitute.For<IMyBlogContextFactory>();
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var handler = new GetCategory.Handler(factory, logger);
 
 		// Act
 		var result = await handler.HandleAsync(ObjectId.Empty);
@@ -53,7 +56,7 @@ public class GetCategoryHandlerTests
 				Arg.Any<CancellationToken>());
 
 		// Verify an error was logged
-		_fixture.Logger.Received(1).Log(
+		logger.Received(1).Log(
 				LogLevel.Error,
 				Arg.Any<EventId>(),
 				Arg.Any<object>(),
@@ -65,15 +68,16 @@ public class GetCategoryHandlerTests
 	public async Task HandleAsync_WhenFindThrows_ShouldReturnFailureAndLogError()
 	{
 		// Arrange
-		await using var fixture = new CategoryTestFixture();
+		var logger = Substitute.For<ILogger<GetCategory.Handler>>();
+		var factory = Substitute.For<IMyBlogContextFactory>();
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var handler = new GetCategory.Handler(factory, logger);
 
 		// Configure the CategoriesCollection to throw when FindAsync is called
-		fixture.CategoriesCollection
+		_fixture.CategoriesCollection
 				.When(x => x.FindAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<FindOptions<Category, Category>>(),
 						Arg.Any<CancellationToken>()))
 				.Do(_ => throw new InvalidOperationException("boom"));
-
-		var handler = fixture.CreateGetHandler();
 
 		// Act
 		var result = await handler.HandleAsync(ObjectId.GenerateNewId());
@@ -83,7 +87,7 @@ public class GetCategoryHandlerTests
 		result.Error.Should().Contain("boom");
 
 		// Verify logger logged an error (signature matches other tests)
-		fixture.Logger.Received(1).Log(
+		logger.Received(1).Log(
 				LogLevel.Error,
 				Arg.Any<EventId>(),
 				Arg.Any<object>(),

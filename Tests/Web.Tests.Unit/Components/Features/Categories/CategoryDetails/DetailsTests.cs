@@ -52,6 +52,8 @@ public class DetailsTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		categoryDto.CreatedOn = GetStaticDate();
+		categoryDto.ModifiedOn = GetStaticDate();
 
 		// register a handler that returns the DTO for the matching id
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
@@ -82,6 +84,8 @@ public class DetailsTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		categoryDto.CreatedOn = GetStaticDate();
+		categoryDto.ModifiedOn = GetStaticDate();
 
 		// register a handler that returns the DTO for the matching id
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();

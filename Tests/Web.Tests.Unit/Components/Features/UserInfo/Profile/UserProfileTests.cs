@@ -52,14 +52,14 @@ public class UserProfileTests : BunitContext
 
 		var user = new UserResponse
 		{
-				Name = "Alice",
-				UserId = "auth0|123",
-				Email = "alice@example.com",
-				Roles = ["Admin", "Editor"],
-				EmailVerified = true,
-				CreatedAt = "2025-08-15T00:00:00Z",
-				UpdatedAt = "2025-08-15T00:00:00Z",
-				Picture = "https://example.com/pic.jpg"
+			Name = "Alice",
+			UserId = "auth0|123",
+			Email = "alice@example.com",
+			Roles = ["Admin", "Editor"],
+			EmailVerified = true,
+			CreatedAt = "2025-08-15T00:00:00Z",
+			UpdatedAt = "2025-08-15T00:00:00Z",
+			Picture = "https://example.com/pic.jpg"
 		};
 
 		var cut = Render<UserProfile>();
@@ -76,6 +76,162 @@ public class UserProfileTests : BunitContext
 
 		// The component renders the email verified boolean as 'True' or 'False'
 		cut.Markup.Should().Contain("Your email verified: True");
+	}
+
+	[Fact]
+	public void Renders_User_Profile_With_No_Roles()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "User");
+		TestServiceRegistrations.RegisterAll(this);
+
+		var user = new UserResponse
+		{
+			Name = "Bob",
+			UserId = "auth0|456",
+			Email = "bob@example.com",
+			Roles = null, // No roles assigned
+			EmailVerified = false,
+			Picture = "https://example.com/bob.jpg"
+		};
+
+		var cut = Render<UserProfile>();
+
+		cut.Instance.GetType().GetField("_user", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, user);
+
+		cut.Render();
+		cut.Markup.Should().Contain("Bob");
+		cut.Markup.Should().Contain("No roles assigned");
+		cut.Markup.Should().Contain("Your email verified: False");
+	}
+
+	[Fact]
+	public void Renders_User_Profile_With_Empty_Roles()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "User");
+		TestServiceRegistrations.RegisterAll(this);
+
+		var user = new UserResponse
+		{
+			Name = "Charlie",
+			UserId = "auth0|789",
+			Email = "charlie@example.com",
+			Roles = [], // Empty roles list
+			EmailVerified = true,
+			Picture = "https://example.com/charlie.jpg"
+		};
+
+		var cut = Render<UserProfile>();
+
+		cut.Instance.GetType().GetField("_user", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, user);
+
+		cut.Render();
+		cut.Markup.Should().Contain("Charlie");
+		// Empty roles array renders as empty string after string.Join
+		cut.Markup.Should().Contain("Your roles: ");
+	}
+
+	[Fact]
+	public void Renders_User_Profile_With_Special_Characters()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "User");
+		TestServiceRegistrations.RegisterAll(this);
+
+		var user = new UserResponse
+		{
+			Name = "José María & Sons",
+			UserId = "auth0|special",
+			Email = "jose.maria@example.com",
+			Roles = ["Admin", "Test Role"],
+			EmailVerified = true,
+			Picture = "https://example.com/jose.jpg"
+		};
+
+		var cut = Render<UserProfile>();
+
+		cut.Instance.GetType().GetField("_user", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, user);
+
+		cut.Render();
+		cut.Markup.Should().Contain("José María &amp; Sons"); // HTML encoded
+		cut.Markup.Should().Contain("Test Role");
+	}
+
+	[Fact]
+	public void Handles_Error_When_User_Data_Is_Null()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "User");
+		TestServiceRegistrations.RegisterAll(this);
+
+		var cut = Render<UserProfile>();
+
+		// Set _user to null to simulate error state
+		cut.Instance.GetType().GetField("_user", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, null);
+
+		cut.Render();
+		cut.Markup.Should().Contain("Loading user information...");
+	}
+
+	[Fact]
+	public void Handles_User_With_Missing_Email()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "User");
+		TestServiceRegistrations.RegisterAll(this);
+
+		var user = new UserResponse
+		{
+			Name = "Test User",
+			UserId = "auth0|test",
+			Email = "", // Empty email
+			Roles = ["User"],
+			EmailVerified = false,
+			Picture = "https://example.com/test.jpg"
+		};
+
+		var cut = Render<UserProfile>();
+
+		cut.Instance.GetType().GetField("_user", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, user);
+
+		cut.Render();
+		cut.Markup.Should().Contain("Test User");
+		cut.Markup.Should().Contain("auth0|test");
+		cut.Markup.Should().Contain("Your email: "); // Empty email renders as empty string
+	}
+
+	[Fact]
+	public void Handles_User_With_Very_Long_Name()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "User");
+		TestServiceRegistrations.RegisterAll(this);
+
+		var longName = new string('A', 200); // Very long name
+		var user = new UserResponse
+		{
+			Name = longName,
+			UserId = "auth0|long",
+			Email = "long@example.com",
+			Roles = ["User"],
+			EmailVerified = true,
+			Picture = "https://example.com/long.jpg"
+		};
+
+		var cut = Render<UserProfile>();
+
+		cut.Instance.GetType().GetField("_user", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, user);
+
+		cut.Render();
+		cut.Markup.Should().Contain(longName);
+		cut.Markup.Should().Contain("long@example.com");
 	}
 
 	[Fact]

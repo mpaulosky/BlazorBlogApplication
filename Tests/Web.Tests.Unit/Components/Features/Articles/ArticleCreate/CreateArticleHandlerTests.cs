@@ -125,7 +125,7 @@ public class CreateArticleHandlerTests : BunitContext
 		logger.Received(1).Log(
 				LogLevel.Information,
 				Arg.Any<EventId>(),
-				Arg.Is<object>(o => o != null && o.ToString()!.Contains("Category created successfully")),
+				Arg.Is<object>(o => o != null && o.ToString()!.Contains("Article created successfully")),
 				Arg.Any<Exception?>(),
 				Arg.Any<Func<object, Exception?, string>>());
 	}
@@ -156,7 +156,7 @@ public class CreateArticleHandlerTests : BunitContext
 		logger.Received(1).Log(
 				LogLevel.Error,
 				Arg.Any<EventId>(),
-				Arg.Is<object>(o => o != null && o.ToString()!.Contains("Failed to create category")),
+				Arg.Is<object>(o => o != null && o.ToString()!.Contains("Failed to create article")),
 				Arg.Is<Exception>(e => e is InvalidOperationException && e.Message.Contains("DB error")),
 				Arg.Any<Func<object, Exception?, string>>());
 	}

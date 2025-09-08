@@ -120,7 +120,59 @@ public class EditCategoryHandlerTests
 	}
 
 	[Fact]
-	public async Task HandleAsync_NullRequest_CurrentlyThrowsNullReferenceException()
+	public async Task HandleAsync_EmptyCategoryName_ReturnsFail()
+	{
+		// Arrange
+		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
+		var factory = Substitute.For<IMyBlogContextFactory>();
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var handler = new EditCategory.Handler(factory, logger);
+
+		var dto = new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "" };
+
+		// Act
+		var result = await handler.HandleAsync(dto);
+
+		// Assert
+		result.Failure.Should().BeTrue();
+		result.Error.Should().Contain("Category name cannot be empty");
+
+		// Ensure no database call was performed
+		await _fixture.CategoriesCollection.DidNotReceive().ReplaceOneAsync(
+				Arg.Any<FilterDefinition<Category>>(),
+				Arg.Any<Category>(),
+				Arg.Any<ReplaceOptions>(),
+				Arg.Any<CancellationToken>());
+	}
+
+	[Fact]
+	public async Task HandleAsync_WhitespaceCategoryName_ReturnsFail()
+	{
+		// Arrange
+		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
+		var factory = Substitute.For<IMyBlogContextFactory>();
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var handler = new EditCategory.Handler(factory, logger);
+
+		var dto = new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "   " };
+
+		// Act
+		var result = await handler.HandleAsync(dto);
+
+		// Assert
+		result.Failure.Should().BeTrue();
+		result.Error.Should().Contain("Category name cannot be empty");
+
+		// Ensure no database call was performed
+		await _fixture.CategoriesCollection.DidNotReceive().ReplaceOneAsync(
+				Arg.Any<FilterDefinition<Category>>(),
+				Arg.Any<Category>(),
+				Arg.Any<ReplaceOptions>(),
+				Arg.Any<CancellationToken>());
+	}
+
+	[Fact]
+	public async Task HandleAsync_VeryLongCategoryName_StillProcessesSuccessfully()
 	{
 		// Arrange
 		_fixture.CategoriesCollection
@@ -133,19 +185,76 @@ public class EditCategoryHandlerTests
 		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
+		var longName = new string('A', 500); // Very long category name
+		var dto = new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = longName };
+
 		// Act
-		var act = async () => await handler.HandleAsync(null!);
+		var result = await handler.HandleAsync(dto);
 
-		// Assert - document current behavior: a NullReferenceException bubbles due to logging request.CategoryName in catch
-		await act.Should().ThrowAsync<NullReferenceException>();
+		// Assert
+		result.Success.Should().BeTrue();
 
-		// Ensure no Information log was written
-		logger.DidNotReceive().Log(
-				LogLevel.Information,
-				Arg.Any<EventId>(),
-				Arg.Any<object>(),
-				Arg.Any<Exception?>(),
-				Arg.Any<Func<object, Exception?, string>>());
+		_ = _fixture.CategoriesCollection.Received(1).ReplaceOneAsync(
+				Arg.Any<FilterDefinition<Category>>(),
+				Arg.Is<Category>(c => c.CategoryName == longName && c.ModifiedOn.HasValue),
+				Arg.Any<ReplaceOptions>(),
+				Arg.Any<CancellationToken>());
+	}
+
+	[Fact]
+	public async Task HandleAsync_CategoryNameWithSpecialCharacters_ProcessesSuccessfully()
+	{
+		// Arrange
+		_fixture.CategoriesCollection
+				.ReplaceOneAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<Category>(), Arg.Any<ReplaceOptions>(),
+						Arg.Any<CancellationToken>())
+				.Returns(Task.FromResult<ReplaceOneResult?>(null!));
+
+		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
+		var factory = Substitute.For<IMyBlogContextFactory>();
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var handler = new EditCategory.Handler(factory, logger);
+
+		var specialName = "Test & Category < > \" ' ";
+		var dto = new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = specialName };
+
+		// Act
+		var result = await handler.HandleAsync(dto);
+
+		// Assert
+		result.Success.Should().BeTrue();
+
+		_ = _fixture.CategoriesCollection.Received(1).ReplaceOneAsync(
+				Arg.Any<FilterDefinition<Category>>(),
+				Arg.Is<Category>(c => c.CategoryName == specialName && c.ModifiedOn.HasValue),
+				Arg.Any<ReplaceOptions>(),
+				Arg.Any<CancellationToken>());
+	}
+
+	[Fact]
+	public async Task HandleAsync_EmptyObjectId_ReturnsFail()
+	{
+		// Arrange
+		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
+		var factory = Substitute.For<IMyBlogContextFactory>();
+		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var handler = new EditCategory.Handler(factory, logger);
+
+		var dto = new CategoryDto { Id = ObjectId.Empty, CategoryName = "Test Category" };
+
+		// Act
+		var result = await handler.HandleAsync(dto);
+
+		// Assert
+		result.Failure.Should().BeTrue();
+		result.Error.Should().Contain("ID");
+
+		// Ensure no database call was performed
+		await _fixture.CategoriesCollection.DidNotReceive().ReplaceOneAsync(
+				Arg.Any<FilterDefinition<Category>>(),
+				Arg.Any<Category>(),
+				Arg.Any<ReplaceOptions>(),
+				Arg.Any<CancellationToken>());
 	}
 
 }

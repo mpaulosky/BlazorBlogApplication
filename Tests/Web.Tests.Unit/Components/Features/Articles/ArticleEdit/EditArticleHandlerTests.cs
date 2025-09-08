@@ -14,12 +14,33 @@ namespace Web.Components.Features.Articles.ArticleEdit;
 public class EditArticleHandlerTests
 {
 
-	private readonly ArticlesTestFixture _fixture = new ();
+	private readonly ArticlesTestFixture _fixture = new();
 
 	[Fact]
 	public async Task HandleAsync_WithValidArticle_ReplacesArticleAndReturnsOk()
 	{
 		// Arrange
+		var existingArticle = new Article(
+			"Original Title",
+			"Original Introduction",
+			"Original Content",
+			"https://example.com/original.jpg",
+			"original_article",
+			FakeAppUserDto.GetNewAppUserDto(true),
+			FakeCategoryDto.GetNewCategoryDto(true),
+			false,
+			null,
+			false);
+
+		// Use reflection to set Id and CreatedOn since they have protected init setters
+		var idProperty = typeof(Entity).GetProperty("Id");
+		idProperty?.SetValue(existingArticle, ObjectId.GenerateNewId());
+
+		var createdOnProperty = typeof(Entity).GetProperty("CreatedOn");
+		createdOnProperty?.SetValue(existingArticle, DateTime.UtcNow.AddDays(-1));
+
+		_fixture.SetupFindAsync([existingArticle]);
+
 		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(),
 						Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
 				.Returns(Task.FromResult<ReplaceOneResult?>(null!));
@@ -27,6 +48,7 @@ public class EditArticleHandlerTests
 		var handler = _fixture.CreateEditHandler();
 
 		var dto = FakeArticleDto.GetNewArticleDto(true);
+		dto.Id = existingArticle.Id; // Use the same ID as the existing article
 
 		// Act
 		var result = await handler.HandleAsync(dto);
@@ -46,6 +68,27 @@ public class EditArticleHandlerTests
 	public async Task HandleAsync_WhenReplaceThrows_ReturnsFailWithErrorMessage()
 	{
 		// Arrange
+		var existingArticle = new Article(
+			"Original Title",
+			"Original Introduction",
+			"Original Content",
+			"https://example.com/original.jpg",
+			"original_article",
+			FakeAppUserDto.GetNewAppUserDto(true),
+			FakeCategoryDto.GetNewCategoryDto(true),
+			false,
+			null,
+			false);
+
+		// Use reflection to set Id and CreatedOn since they have protected init setters
+		var idProperty = typeof(Entity).GetProperty("Id");
+		idProperty?.SetValue(existingArticle, ObjectId.GenerateNewId());
+
+		var createdOnProperty = typeof(Entity).GetProperty("CreatedOn");
+		createdOnProperty?.SetValue(existingArticle, DateTime.UtcNow.AddDays(-1));
+
+		_fixture.SetupFindAsync([existingArticle]);
+
 		_fixture.ArticlesCollection.When(c => c.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(),
 						Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>()))
 				.Do(_ => throw new InvalidOperationException("DB error"));
@@ -53,6 +96,7 @@ public class EditArticleHandlerTests
 		var handler = _fixture.CreateEditHandler();
 
 		var dto = new ArticleDto { Title = "T" };
+		dto.Id = existingArticle.Id; // Use the same ID as the existing article
 
 		// Act
 		var result = await handler.HandleAsync(dto);
@@ -85,13 +129,34 @@ public class EditArticleHandlerTests
 
 		// Assert - handler should return a failure result indicating a null request
 		result.Failure.Should().BeTrue();
-		result.Error.Should().Contain("Request is null");
+		result.Error.Should().Contain("The request is null");
 	}
 
 	[Fact]
 	public async Task HandleAsync_LogsInformation_OnSuccess()
 	{
 		// Arrange
+		var existingArticle = new Article(
+			"Original Title",
+			"Original Introduction",
+			"Original Content",
+			"https://example.com/original.jpg",
+			"original_article",
+			FakeAppUserDto.GetNewAppUserDto(true),
+			FakeCategoryDto.GetNewCategoryDto(true),
+			false,
+			null,
+			false);
+
+		// Use reflection to set Id and CreatedOn since they have protected init setters
+		var idProperty = typeof(Entity).GetProperty("Id");
+		idProperty?.SetValue(existingArticle, ObjectId.GenerateNewId());
+
+		var createdOnProperty = typeof(Entity).GetProperty("CreatedOn");
+		createdOnProperty?.SetValue(existingArticle, DateTime.UtcNow.AddDays(-1));
+
+		_fixture.SetupFindAsync([existingArticle]);
+
 		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(), Arg.Any<Article>(),
 						Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>())
 				.Returns(Task.FromResult<ReplaceOneResult?>(null!));
@@ -99,6 +164,7 @@ public class EditArticleHandlerTests
 		var handler = _fixture.CreateEditHandler();
 
 		var dto = FakeArticleDto.GetNewArticleDto(true);
+		dto.Id = existingArticle.Id; // Use the same ID as the existing article
 
 		// Act
 		var result = await handler.HandleAsync(dto);
@@ -118,6 +184,27 @@ public class EditArticleHandlerTests
 	public async Task HandleAsync_SetsModifiedOn_ToRecentUtcAndPreservesPublishedOn()
 	{
 		// Arrange
+		var existingArticle = new Article(
+			"Original Title",
+			"Original Introduction",
+			"Original Content",
+			"https://example.com/original.jpg",
+			"original_article",
+			FakeAppUserDto.GetNewAppUserDto(true),
+			FakeCategoryDto.GetNewCategoryDto(true),
+			false,
+			null,
+			false);
+
+		// Use reflection to set Id and CreatedOn since they have protected init setters
+		var idProperty = typeof(Entity).GetProperty("Id");
+		idProperty?.SetValue(existingArticle, ObjectId.GenerateNewId());
+
+		var createdOnProperty = typeof(Entity).GetProperty("CreatedOn");
+		createdOnProperty?.SetValue(existingArticle, DateTime.UtcNow.AddDays(-1));
+
+		_fixture.SetupFindAsync([existingArticle]);
+
 		Article? captured = null;
 
 		_fixture.ArticlesCollection.ReplaceOneAsync(Arg.Any<FilterDefinition<Article>>(),
@@ -127,6 +214,7 @@ public class EditArticleHandlerTests
 		var handler = _fixture.CreateEditHandler();
 
 		var dto = FakeArticleDto.GetNewArticleDto(true);
+		dto.Id = existingArticle.Id; // Use the same ID as the existing article
 		var providedPublished = DateTime.UtcNow.AddDays(-2);
 		dto.PublishedOn = providedPublished;
 

@@ -133,4 +133,122 @@ public class UserOverviewTests : BunitContext
 		cut.Markup.Should().Contain("You are not authorized to view this page.");
 	}
 
+	[Fact]
+	public void Handles_Users_With_No_Roles()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "Admin");
+
+		var users = new List<AppUserDto>
+		{
+				new()  { UserName = "Alice", Email = "alice@example.com", Roles = null },
+				new()  { UserName = "Bob", Email = "bob@example.com", Roles = [] }
+		};
+
+		var cut = Render<UserOverview>();
+
+		cut.Instance.GetType().GetField("_users", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, users.AsQueryable());
+
+		cut.Render();
+		cut.Markup.Should().Contain("Alice");
+		cut.Markup.Should().Contain("Bob");
+		cut.Markup.Should().Contain("No roles");
+	}
+
+	[Fact]
+	public void Handles_Users_With_Special_Characters()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "Admin");
+
+		var users = new List<AppUserDto>
+		{
+				new()  { UserName = "José María", Email = "jose@example.com", Roles = ["Admin"] },
+				new()  { UserName = "Test & Co", Email = "test@example.com", Roles = ["User"] }
+		};
+
+		var cut = Render<UserOverview>();
+
+		cut.Instance.GetType().GetField("_users", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, users.AsQueryable());
+
+		cut.Render();
+		cut.Markup.Should().Contain("José María");
+		cut.Markup.Should().Contain("Test &amp; Co");
+	}
+
+	[Fact]
+	public void Handles_Large_User_List()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "Admin");
+
+		var users = new List<AppUserDto>();
+		for (int i = 1; i <= 100; i++)
+		{
+			users.Add(new AppUserDto
+			{
+				UserName = $"User{i}",
+				Email = $"user{i}@example.com",
+				Roles = ["User"]
+			});
+		}
+
+		var cut = Render<UserOverview>();
+
+		cut.Instance.GetType().GetField("_users", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, users.AsQueryable());
+
+		cut.Render();
+		cut.Markup.Should().Contain("User1");
+		cut.Markup.Should().Contain("User100");
+		cut.Markup.Should().Contain("user1@example.com");
+		cut.Markup.Should().Contain("user100@example.com");
+	}
+
+	[Fact]
+	public void Handles_Users_With_Empty_Email()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "Admin");
+
+		var users = new List<AppUserDto>
+		{
+				new()  { UserName = "Test User", Email = "", Roles = ["User"] }
+		};
+
+		var cut = Render<UserOverview>();
+
+		cut.Instance.GetType().GetField("_users", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, users.AsQueryable());
+
+		cut.Render();
+		cut.Markup.Should().Contain("Test User");
+		// Empty email renders as empty cell in table
+		cut.Markup.Should().Contain("<td class=\"px-6 py-4 whitespace-nowrap text-sm text-gray-500\"></td>");
+	}
+
+	[Fact]
+	public void Handles_Users_With_Very_Long_Names()
+	{
+		// Arrange
+		Helpers.SetAuthorization(this, true, "Admin");
+
+		var longName = new string('A', 200);
+		var users = new List<AppUserDto>
+		{
+				new()  { UserName = longName, Email = "long@example.com", Roles = ["User"] }
+		};
+
+		var cut = Render<UserOverview>();
+
+		cut.Instance.GetType().GetField("_users", BindingFlags.NonPublic | BindingFlags.Instance)
+				?.SetValue(cut.Instance, users.AsQueryable());
+
+		cut.Render();
+		cut.Markup.Should().Contain(longName);
+		cut.Markup.Should().Contain("long@example.com");
+	}
+
 }
