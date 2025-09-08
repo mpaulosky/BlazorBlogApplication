@@ -9,6 +9,10 @@
 
 namespace Web.Data.Auth0;
 
+using System.Net;
+using System.Net.Http;
+using System.Text.Json;
+
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Auth0Service))]
 public class Auth0ServiceTests
@@ -18,8 +22,8 @@ public class Auth0ServiceTests
 	[InlineData("user_name", "username")]
 	[InlineData("first_name", "firstname")]
 	[InlineData("last_name", "lastname")]
-	[InlineData("email_verified", "email-verified")]
-	[InlineData("created_at", "creaedat")]
+	[InlineData("email_verified", "emailverified")]
+	[InlineData("created_at", "createdat")]
 	[InlineData("updated_at", "updatedat")]
 	[InlineData("nameWithoutUnderscore", "nameWithoutUnderscore")]
 	[InlineData("", "")]
@@ -41,7 +45,57 @@ public class Auth0ServiceTests
 		result.Should().Be(expected);
 	}
 
-	[Fact(Skip = "TODO: Implement GetAccessTokenAsync failure tests with HttpMessageHandler stubs for 401/500 responses")]
-	public void TODO_GetAccessTokenAsync_Failure_Branches() { }
+	[Fact]
+	public async Task GetUsersAsync_WhenHttpClientFails_ThrowsException()
+	{
+		// Arrange
+		var handler = new MockHttpMessageHandler(HttpStatusCode.InternalServerError, "Server error");
+		var mockHttpClient = new HttpClient(handler);
+		var mockConfiguration = Substitute.For<IConfiguration>();
+		mockConfiguration["Auth0:Domain"].Returns("test.auth0.com");
+
+		var auth0Service = new Auth0Service(mockHttpClient, mockConfiguration);
+
+		// Act & Assert
+		var act = async () => await auth0Service.GetUsersAsync();
+		await act.Should().ThrowAsync<HttpRequestException>();
+	}
+
+	[Fact]
+	public async Task GetUsersAsync_WhenAuth0ReturnsInvalidJson_HandlesGracefully()
+	{
+		// Arrange
+		var handler = new MockHttpMessageHandler(HttpStatusCode.OK, "invalid json");
+		var mockHttpClient = new HttpClient(handler);
+		var mockConfiguration = Substitute.For<IConfiguration>();
+		mockConfiguration["Auth0:Domain"].Returns("test.auth0.com");
+
+		var auth0Service = new Auth0Service(mockHttpClient, mockConfiguration);
+
+		// Act & Assert
+		var act = async () => await auth0Service.GetUsersAsync();
+		await act.Should().ThrowAsync<JsonException>();
+	}
+
+	private class MockHttpMessageHandler : HttpMessageHandler
+	{
+		private readonly HttpStatusCode _statusCode;
+		private readonly string _content;
+
+		public MockHttpMessageHandler(HttpStatusCode statusCode, string content)
+		{
+			_statusCode = statusCode;
+			_content = content;
+		}
+
+		protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+		{
+			var response = new HttpResponseMessage(_statusCode)
+			{
+				Content = new StringContent(_content)
+			};
+			return Task.FromResult(response);
+		}
+	}
 
 }

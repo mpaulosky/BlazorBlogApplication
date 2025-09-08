@@ -7,6 +7,8 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
+using System.Threading.Tasks;
+
 namespace Web.Data;
 
 [ExcludeFromCodeCoverage]
@@ -14,7 +16,12 @@ namespace Web.Data;
 public class MyBlogContextFactoryTests
 {
 
-	private readonly CancellationToken _cancellationToken = Xunit.TestContext.Current.CancellationToken;
+	private readonly CancellationToken _cancellationToken;
+
+	public MyBlogContextFactoryTests()
+	{
+		_cancellationToken = Xunit.TestContext.Current.CancellationToken;
+	}
 
 	[Fact]
 	public async Task CreateContext_WithCancellationToken_ReturnsInitializedContext()
