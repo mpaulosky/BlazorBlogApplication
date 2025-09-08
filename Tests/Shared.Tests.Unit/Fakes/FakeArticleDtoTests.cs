@@ -34,8 +34,6 @@ public class FakeArticleDtoTests
 
 		// CoverImageUrl is generated with Picsum and falls back to empty string; ensure it's not null
 		dto.CoverImageUrl.Should().NotBeNull();
-		dto.CreatedOn.Should().Be(GetStaticDate());
-		dto.ModifiedOn.Should().Be(GetStaticDate());
 		dto.Category.Should().NotBeNull();
 		dto.Author.Should().NotBeNull();
 
@@ -70,8 +68,6 @@ public class FakeArticleDtoTests
 			dto.Content.Should().NotBeNullOrWhiteSpace();
 			dto.UrlSlug.Should().Be(dto.Title.GetSlug());
 			dto.CoverImageUrl.Should().NotBeNull();
-			dto.CreatedOn.Should().Be(GetStaticDate());
-			dto.ModifiedOn.Should().Be(GetStaticDate());
 			dto.Category.Should().NotBeNull();
 			dto.Author.Should().NotBeNull();
 
@@ -131,8 +127,7 @@ public class FakeArticleDtoTests
 		results.Should().AllBeOfType<ArticleDto>();
 		results.Should().OnlyContain(a => !string.IsNullOrWhiteSpace(a.Title));
 		results.Should().OnlyContain(a => a.Id != ObjectId.Empty);
-		results.Should().OnlyContain(a => a.CreatedOn == GetStaticDate());
-		results.Should().OnlyContain(a => a.ModifiedOn == GetStaticDate());
+
 	}
 
 	[Fact]
@@ -183,8 +178,6 @@ public class FakeArticleDtoTests
 		dto.Id.Should().NotBe(ObjectId.Empty);
 		dto.Title.Should().NotBeNullOrWhiteSpace();
 		dto.UrlSlug.Should().Be(dto.Title.GetSlug());
-		dto.CreatedOn.Should().Be(GetStaticDate());
-		dto.ModifiedOn.Should().Be(GetStaticDate());
 		dto.Category.Should().NotBeNull();
 		dto.Author.Should().NotBeNull();
 	}

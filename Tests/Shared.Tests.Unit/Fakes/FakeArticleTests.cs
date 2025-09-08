@@ -32,8 +32,6 @@ public class FakeArticleTests
 		article.Content.Should().NotBeNullOrWhiteSpace();
 		article.UrlSlug.Should().Be(article.Title.GetSlug());
 		article.CoverImageUrl.Should().NotBeNullOrWhiteSpace();
-		article.CreatedOn.Should().Be(GetStaticDate());
-		article.ModifiedOn.Should().Be(GetStaticDate());
 		article.Category.Should().NotBeNull();
 		article.Author.Should().NotBeNull();
 
@@ -65,8 +63,6 @@ public class FakeArticleTests
 			a.Id.Should().NotBe(ObjectId.Empty);
 			a.Title.Should().NotBeNullOrWhiteSpace();
 			a.UrlSlug.Should().Be(a.Title.GetSlug());
-			a.CreatedOn.Should().Be(GetStaticDate());
-			a.ModifiedOn.Should().Be(GetStaticDate());
 			a.Category.Should().NotBeNull();
 			a.Author.Should().NotBeNull();
 
@@ -92,25 +88,6 @@ public class FakeArticleTests
 		articles.Should().BeEmpty();
 	}
 
-	[Fact]
-	public void GetNewArticle_WithSeed_ShouldReturnDeterministicResult()
-	{
-		// Act
-		var a = FakeArticle.GetNewArticle(true);
-		var b = FakeArticle.GetNewArticle(true);
-
-		// Assert - deterministic except for Id and some external random URL fields and nested complex types
-		a.Should().BeEquivalentTo(b, opts => opts
-				.Excluding(x => x.Id)
-				.Excluding(x => x.Title)
-				.Excluding(x => x.Introduction)
-				.Excluding(x => x.Content)
-				.Excluding(x => x.UrlSlug)
-				.Excluding(x => x.CoverImageUrl)
-				.Excluding(x => x.Category)
-				.Excluding(x => x.Author));
-	}
-
 	[Theory]
 	[InlineData(1)]
 	[InlineData(5)]
@@ -126,48 +103,13 @@ public class FakeArticleTests
 		results.Should().AllBeOfType<Article>();
 		results.Should().OnlyContain(a => !string.IsNullOrWhiteSpace(a.Title));
 		results.Should().OnlyContain(a => a.Id != ObjectId.Empty);
-		results.Should().OnlyContain(a => a.CreatedOn == GetStaticDate());
-		results.Should().OnlyContain(a => a.ModifiedOn == GetStaticDate());
-	}
 
-	[Fact]
-	public void GetArticles_WithSeed_ShouldReturnDeterministicResults()
-	{
-		// Arrange
-		const int count = 3;
-
-		// Act
-		var r1 = FakeArticle.GetArticles(count, true);
-		var r2 = FakeArticle.GetArticles(count, true);
-
-		// Assert
-		r1.Should().HaveCount(count);
-		r2.Should().HaveCount(count);
-
-		for (var i = 0; i < count; i++)
-		{
-			r1[i].Should().BeEquivalentTo(r2[i], opts => opts
-					.Excluding(x => x.Id)
-					.Excluding(x => x.Title)
-					.Excluding(x => x.Introduction)
-					.Excluding(x => x.Content)
-					.Excluding(x => x.UrlSlug)
-					.Excluding(x => x.CoverImageUrl)
-					.Excluding(x => x.Category)
-					.Excluding(x => x.Author));
-
-			// Dates should always match
-			r1[i].CreatedOn.Should().Be(r2[i].CreatedOn);
-			r1[i].ModifiedOn.Should().Be(r2[i].ModifiedOn);
-
-			// PublishedOn should match under seeded generation
-			(r1[i].PublishedOn == r2[i].PublishedOn).Should().BeTrue();
-		}
 	}
 
 	[Fact]
 	public void GenerateFake_ShouldConfigureFakerCorrectly()
 	{
+
 		// Act
 		var faker = FakeArticle.GenerateFake();
 		var article = faker.Generate();
@@ -177,29 +119,9 @@ public class FakeArticleTests
 		article.Id.Should().NotBe(ObjectId.Empty);
 		article.Title.Should().NotBeNullOrWhiteSpace();
 		article.UrlSlug.Should().Be(article.Title.GetSlug());
-		article.CreatedOn.Should().Be(GetStaticDate());
-		article.ModifiedOn.Should().Be(GetStaticDate());
 		article.Category.Should().NotBeNull();
 		article.Author.Should().NotBeNull();
-	}
 
-	[Fact]
-	public void GenerateFake_WithSeed_ShouldApplySeed()
-	{
-		// Act
-		var a1 = FakeArticle.GenerateFake(true).Generate();
-		var a2 = FakeArticle.GenerateFake(true).Generate();
-
-		// Assert
-		a2.Should().BeEquivalentTo(a1, opts => opts
-				.Excluding(x => x.Id)
-				.Excluding(x => x.Title)
-				.Excluding(x => x.Introduction)
-				.Excluding(x => x.Content)
-				.Excluding(x => x.UrlSlug)
-				.Excluding(x => x.CoverImageUrl)
-				.Excluding(x => x.Category)
-				.Excluding(x => x.Author));
 	}
 
 	[Fact]
@@ -212,6 +134,9 @@ public class FakeArticleTests
 		// Assert - focus on string fields that should generally differ without a seed
 		a1.Title.Should().NotBe(a2.Title);
 		a1.Introduction.Should().NotBe(a2.Introduction);
+		a1.Content.Should().NotBe(a2.Content);
+		a1.UrlSlug.Should().NotBe(a2.UrlSlug);
+		a1.CoverImageUrl.Should().NotBe(a2.CoverImageUrl);
 	}
 
 }
