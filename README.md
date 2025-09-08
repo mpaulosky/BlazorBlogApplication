@@ -34,7 +34,7 @@ Web               -- Blazor Server UI (main entrypoint, interactive server rende
 AppHost           -- Aspire App Host (orchestration, resource wiring, environment config)
 ServiceDefaults   -- Shared service defaults (OpenTelemetry, health checks, DI, resilience)
 Shared            -- Shared contracts, constants, and service/resource names
-Tests             -- Unit, integration, and architecture tests (xUnit, bUnit, Playwright)
+tests             -- Unit, integration, and architecture tests (xUnit, bUnit, Playwright)
 ```
 
 ---
@@ -89,7 +89,7 @@ This repository enforces the following rules for all .NET code (see `.editorconf
 
 - **SOLID, Dependency Injection, Async/Await, Strongly Typed Config, CQRS, Vertical Slice, Aspire**
 - **Centralized NuGet Package Versions:** All versions managed in `Directory.Packages.props` at repo root.
-- **Unit, Integration, Architecture Tests:** See `Tests/` and `Tests/Architecture.Tests/`
+- **Unit, Integration, Architecture Tests:** See `tests/` and `tests/Architecture.Tests.Unit/`
 
 ### Blazor
 
@@ -109,7 +109,7 @@ This repository enforces the following rules for all .NET code (see `.editorconf
 ### Database
 
 - **Entity Framework Core, MongoDB (see `Persistence.MongoDb/`), SQL Server**
-- **Async Operations, TestContainers for Integration Testing (`Tests/Article Service.Persistence.MongoDb.Tests.Integration/`), Change Tracking, DbContext Pooling**
+- **Async Operations, TestContainers for Integration Testing (`tests/Article Service.Persistence.MongoDb.Tests.Integration/`), Change Tracking, DbContext Pooling**
 
 ### Versioning & Caching
 
@@ -135,7 +135,7 @@ This repository enforces the following rules for all .NET code (see `.editorconf
 ### Testing
 
 - **Unit, Integration, Architecture Tests**
-- **xUnit, FluentAssertions, NSubstitute, Moq, bUnit (`Tests/Web.Tests.Unit/`), Playwright**
+- **xUnit, FluentAssertions, NSubstitute, Moq, bUnit (`tests/Web.Tests.Unit/`), Playwright**
 
 ---
 
@@ -168,7 +168,7 @@ This application uses Auth0 for authentication. To configure Auth0:
 2. **Run the App:**
    - `dotnet run --project AppHost` (or use Visual Studio/Rider launch)
 3. **Browse:** Navigate to the provided endpoint (see console output)
-4. **Tests:**
+4. **tests:**
    - `dotnet test` (runs all unit/integration/architecture tests)
 
 ---
