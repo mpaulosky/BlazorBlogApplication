@@ -2,13 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ProgramSmokeTests.cs
 // Company :       mpaulosky
-// Author :        Coverage PR1
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
-
-using Microsoft.AspNetCore.Mvc.Testing;
-using Web.Infrastructure;
 
 namespace Web.Startup;
 
@@ -16,19 +13,23 @@ namespace Web.Startup;
 [TestSubject(typeof(Program))]
 public class ProgramSmokeTests
 {
+
+	private readonly CancellationToken _cancellationToken = Xunit.TestContext.Current.CancellationToken;
+
 	[Fact]
 	public async Task App_Starts_And_Health_Endpoint_Works()
 	{
 		await using var factory = new TestWebApplicationFactory();
+
 		var client = factory.CreateClient(new WebApplicationFactoryClientOptions
 		{
-			AllowAutoRedirect = true
+				AllowAutoRedirect = true
 		});
 
-		var res = await client.GetAsync("/health", Xunit.TestContext.Current.CancellationToken);
+		var res = await client.GetAsync("/health", _cancellationToken);
 		res.IsSuccessStatusCode.Should().BeTrue();
 
-		var content = await res.Content.ReadAsStringAsync();
+		var content = await res.Content.ReadAsStringAsync(_cancellationToken);
 		content.Should().Contain("Healthy");
 	}
 
@@ -38,7 +39,8 @@ public class ProgramSmokeTests
 		await using var factory = new TestWebApplicationFactory();
 		var client = factory.CreateClient();
 
-		var res = await client.GetAsync("/", Xunit.TestContext.Current.CancellationToken);
-		res.StatusCode.Should().BeOneOf(System.Net.HttpStatusCode.OK, System.Net.HttpStatusCode.NotFound, System.Net.HttpStatusCode.Redirect);
+		var res = await client.GetAsync("/", _cancellationToken);
+		res.StatusCode.Should().BeOneOf(HttpStatusCode.OK, HttpStatusCode.NotFound, HttpStatusCode.Redirect);
 	}
+
 }

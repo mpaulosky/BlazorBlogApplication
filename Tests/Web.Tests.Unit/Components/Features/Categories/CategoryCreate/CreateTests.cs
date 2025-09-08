@@ -18,11 +18,13 @@ public class CreateTests : BunitContext
 {
 
 	private readonly IValidator<CategoryDto> _validator = Substitute.For<IValidator<CategoryDto>>();
+
 	private readonly CreateCategory.ICreateCategoryHandler _createHandlerMock;
 
 	public CreateTests()
 	{
 		_createHandlerMock = Substitute.For<CreateCategory.ICreateCategoryHandler>();
+
 		// Default handler behavior: return success to avoid awaiting null Tasks
 		_createHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
 		Services.AddScoped(_ => _createHandlerMock);
@@ -75,6 +77,7 @@ public class CreateTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this);
 		var navMan = Services.GetRequiredService<BunitNavigationManager>();
+
 		// Ensure the handler returns success so the component navigates
 		_createHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
 		var cut = Render<Create>();
@@ -163,7 +166,9 @@ public class CreateTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> authorizedFragment =
+				_ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+
 		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
@@ -174,8 +179,8 @@ public class CreateTests : BunitContext
 		};
 
 		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+				.Add(p => p.Authorized, authorizedFragment)
+				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);
 
 		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message
@@ -193,7 +198,9 @@ public class CreateTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> authorizedFragment =
+				_ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+
 		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
@@ -204,8 +211,8 @@ public class CreateTests : BunitContext
 		};
 
 		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+				.Add(p => p.Authorized, authorizedFragment)
+				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);
 
 		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message

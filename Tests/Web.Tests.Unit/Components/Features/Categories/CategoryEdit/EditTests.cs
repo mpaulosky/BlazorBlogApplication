@@ -7,21 +7,22 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Components.Features.Categories.CategoryDetails;
-
 namespace Web.Components.Features.Categories.CategoryEdit;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Edit))]
 public class EditTests : BunitContext
 {
+
 	private readonly EditCategory.IEditCategoryHandler _editHandlerMock;
+
 	private readonly CategoryTestFixture _fixture;
 
 	public EditTests()
 	{
 		_editHandlerMock = Substitute.For<EditCategory.IEditCategoryHandler>();
 		_fixture = new CategoryTestFixture();
+
 		// Ensure common test services and handler substitutes are registered
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 		Services.AddScoped(_ => _editHandlerMock);
@@ -36,10 +37,11 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
 		// Assert
 		cut.Markup.Should().Contain("Edit Category");
 		cut.Markup.Should().Contain("Category Name");
@@ -84,7 +86,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
 
@@ -103,11 +105,12 @@ public class EditTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+
 		// Ensure GetHandler returns an existing category so the form renders
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
@@ -137,7 +140,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		_editHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
 
@@ -169,7 +172,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		_editHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Fail("Update failed")));
 
@@ -199,7 +202,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var tcs = new TaskCompletionSource<Result>();
 		_editHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(_ => tcs.Task);
@@ -233,7 +236,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 
 		var cut = Render<Edit>(parameters => parameters
@@ -259,7 +262,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
 
@@ -280,7 +283,7 @@ public class EditTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this);
 		_fixture.SetupFindAsync(new List<Category>());
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, ObjectId.Empty));
 
@@ -302,7 +305,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
 
@@ -327,7 +330,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		_editHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
@@ -353,7 +356,7 @@ public class EditTests : BunitContext
 		Helpers.SetAuthorization(this, true, "admin", "editor");
 		var categoryId = ObjectId.GenerateNewId();
 		_fixture.SetupFindAsync(new List<Category>());
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryId));
 
@@ -361,6 +364,7 @@ public class EditTests : BunitContext
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		await Task.Yield();
+
 		// Act & Assert - Should not throw exception when trying to submit with null model
 		// The component should handle this gracefully and not call the service
 		await _editHandlerMock.DidNotReceive().HandleAsync(Arg.Any<CategoryDto>());
@@ -376,7 +380,7 @@ public class EditTests : BunitContext
 		var category = new Category { CategoryName = categoryDto.CategoryName, ModifiedOn = DateTime.UtcNow };
 		typeof(Category).GetProperty("Id")?.SetValue(category, categoryDto.Id);
 		_fixture.SetupFindAsync(new List<Category> { category });
-		var getHandler = _fixture.CreateGetHandler();
+		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 		_editHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
 		var navManager = Services.GetRequiredService<BunitNavigationManager>();
@@ -386,6 +390,7 @@ public class EditTests : BunitContext
 		var form = cut.Find("form");
 		await cut.InvokeAsync(() => nameInput.Change("Updated Name"));
 		await cut.InvokeAsync(() => form.Submit());
+
 		// Assert: NavigationManager should be called to navigate
 		navManager.Uri.Should().Contain("categories");
 	}
@@ -398,7 +403,9 @@ public class EditTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> authorizedFragment =
+				_ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+
 		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
@@ -409,8 +416,8 @@ public class EditTests : BunitContext
 		};
 
 		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+				.Add(p => p.Authorized, authorizedFragment)
+				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);
 
 		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message
@@ -428,7 +435,9 @@ public class EditTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> authorizedFragment =
+				_ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+
 		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
@@ -439,8 +448,8 @@ public class EditTests : BunitContext
 		};
 
 		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+				.Add(p => p.Authorized, authorizedFragment)
+				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);
 
 		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message

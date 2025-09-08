@@ -7,77 +7,72 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Web.Components.Features.Articles.ArticleCreate;
-using Web.Components.Features.Articles.ArticleDetails;
-using Web.Components.Features.Articles.ArticleEdit;
-using Web.Components.Features.Categories.CategoryDetails;
-using Web.Components.Features.Categories.CategoryEdit;
-using Web.Components.Features.Categories.CategoryList;
-using Web.Data.Validators;
-using Web.Infrastructure;
-
 namespace Web.Startup;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Program))]
 public class StartupRegistrationTests : IClassFixture<TestWebApplicationFactory>
 {
-  private readonly TestWebApplicationFactory _factory;
 
-  public StartupRegistrationTests(TestWebApplicationFactory factory)
-    => _factory = factory;
+	private readonly TestWebApplicationFactory _factory;
 
-  [Fact]
-  public void Validators_Are_Registered()
-  {
-    using var scope = _factory.Services.CreateScope();
-    var sp = scope.ServiceProvider;
+	public StartupRegistrationTests(TestWebApplicationFactory factory)
+	{
+		_factory = factory;
+	}
 
-    sp.GetRequiredService<IValidator<ArticleDto>>()
-      .Should().BeOfType<ArticleDtoValidator>();
+	[Fact]
+	public void Validators_Are_Registered()
+	{
+		using var scope = _factory.Services.CreateScope();
+		var sp = scope.ServiceProvider;
 
-    sp.GetRequiredService<IValidator<CategoryDto>>()
-      .Should().BeOfType<CategoryDtoValidator>();
-  }
+		sp.GetRequiredService<IValidator<ArticleDto>>()
+				.Should().BeOfType<ArticleDtoValidator>();
 
-  [Fact]
-  public void Feature_Handlers_Are_Registered()
-  {
-    using var scope = _factory.Services.CreateScope();
-    var sp = scope.ServiceProvider;
+		sp.GetRequiredService<IValidator<CategoryDto>>()
+				.Should().BeOfType<CategoryDtoValidator>();
+	}
 
-    sp.GetRequiredService<GetArticles.Handler>().Should().NotBeNull();
-    sp.GetRequiredService<GetCategories.Handler>().Should().NotBeNull();
-    sp.GetRequiredService<GetArticle.IGetArticleHandler>().Should().BeOfType<GetArticle.Handler>();
-    sp.GetRequiredService<EditArticle.IEditArticleHandler>().Should().BeOfType<EditArticle.Handler>();
-    sp.GetRequiredService<GetArticles.IGetArticlesHandler>().Should().BeOfType<GetArticles.Handler>();
-    sp.GetRequiredService<CreateArticle.ICreateArticleHandler>().Should().BeOfType<CreateArticle.Handler>();
-    sp.GetRequiredService<EditCategory.IEditCategoryHandler>().Should().BeOfType<EditCategory.Handler>();
-    sp.GetRequiredService<GetCategory.IGetCategoryHandler>().Should().BeOfType<GetCategory.Handler>();
-  }
+	[Fact]
+	public void Feature_Handlers_Are_Registered()
+	{
+		using var scope = _factory.Services.CreateScope();
+		var sp = scope.ServiceProvider;
 
-  [Fact]
-  public void Mongo_Registrations_And_Lifetimes_Are_Correct()
-  {
-    using var scopeRoot = _factory.Services.CreateScope();
-    var spRoot = scopeRoot.ServiceProvider;
+		sp.GetRequiredService<GetArticles.Handler>().Should().NotBeNull();
+		sp.GetRequiredService<GetCategories.Handler>().Should().NotBeNull();
+		sp.GetRequiredService<GetArticle.IGetArticleHandler>().Should().BeOfType<GetArticle.Handler>();
+		sp.GetRequiredService<EditArticle.IEditArticleHandler>().Should().BeOfType<EditArticle.Handler>();
+		sp.GetRequiredService<GetArticles.IGetArticlesHandler>().Should().BeOfType<GetArticles.Handler>();
+		sp.GetRequiredService<CreateArticle.ICreateArticleHandler>().Should().BeOfType<CreateArticle.Handler>();
+		sp.GetRequiredService<EditCategory.IEditCategoryHandler>().Should().BeOfType<EditCategory.Handler>();
+		sp.GetRequiredService<GetCategory.IGetCategoryHandler>().Should().BeOfType<GetCategory.Handler>();
+	}
 
-    // IMongoClient is singleton
-    var client1 = spRoot.GetRequiredService<IMongoClient>();
-    var client2 = spRoot.GetRequiredService<IMongoClient>();
-    client1.Should().BeSameAs(client2);
+	[Fact]
+	public void Mongo_Registrations_And_Lifetimes_Are_Correct()
+	{
+		using var scopeRoot = _factory.Services.CreateScope();
+		var spRoot = scopeRoot.ServiceProvider;
 
-    // IMyBlogContext is scoped: same within a scope, different across scopes
-    var ctxFactory = spRoot.GetRequiredService<IMyBlogContextFactory>();
-    ctxFactory.Should().NotBeNull();
+		// IMongoClient is a singleton
+		var client1 = spRoot.GetRequiredService<IMongoClient>();
+		var client2 = spRoot.GetRequiredService<IMongoClient>();
+		client1.Should().BeSameAs(client2);
 
-    var ctx1a = spRoot.GetRequiredService<IMyBlogContext>();
-    var ctx1b = spRoot.GetRequiredService<IMyBlogContext>();
-    ctx1a.Should().BeSameAs(ctx1b);
+		// IMyBlogContext is scoped: same within a scope, different across scopes
+		var ctxFactory = spRoot.GetRequiredService<IMyBlogContextFactory>();
+		ctxFactory.Should().NotBeNull();
 
-    using var scope2 = _factory.Services.CreateScope();
-    var sp2 = scope2.ServiceProvider;
-    var ctx2 = sp2.GetRequiredService<IMyBlogContext>();
-    ctx2.Should().NotBeSameAs(ctx1a);
-  }
+		var ctx1A = spRoot.GetRequiredService<IMyBlogContext>();
+		var ctx1B = spRoot.GetRequiredService<IMyBlogContext>();
+		ctx1A.Should().BeSameAs(ctx1B);
+
+		using var scope2 = _factory.Services.CreateScope();
+		var sp2 = scope2.ServiceProvider;
+		var ctx2 = sp2.GetRequiredService<IMyBlogContext>();
+		ctx2.Should().NotBeSameAs(ctx1A);
+	}
+
 }

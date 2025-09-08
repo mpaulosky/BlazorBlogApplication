@@ -12,6 +12,8 @@ namespace Web.Infrastructure;
 [ExcludeFromCodeCoverage]
 public sealed class BrokenConfigWebApplicationFactory : TestWebApplicationFactory
 {
+
 	public BrokenConfigWebApplicationFactory()
-			: base(environment: "Development", config: new Dictionary<string, string?>()) { }
+			: base("Development", new Dictionary<string, string?>()) { }
+
 }

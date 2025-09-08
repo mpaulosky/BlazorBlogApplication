@@ -7,8 +7,6 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Microsoft.AspNetCore.Http;
-
 namespace Web.Components.Pages;
 
 /// <summary>
@@ -67,7 +65,7 @@ public class ErrorPageTest : BunitContext
 		// Arrange
 		var httpContext = new DefaultHttpContext
 		{
-			TraceIdentifier = "Test-Trace-Id"
+				TraceIdentifier = "Test-Trace-Id"
 		};
 
 		// Act

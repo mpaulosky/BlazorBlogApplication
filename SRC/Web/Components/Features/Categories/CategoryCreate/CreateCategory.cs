@@ -1,41 +1,45 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File CategoryName :     CategoryGet.cs
+// File Name :     CreateCategory.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution CategoryName : BlazorApp
-// Project CategoryName :  Web
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web
 // =======================================================
 
 namespace Web.Components.Features.Categories.CategoryCreate;
 
 /// <summary>
-/// Static class providing functionality for category creation.
+///   Static class providing functionality for category creation.
 /// </summary>
 public static class CreateCategory
 {
+
 	public interface ICreateCategoryHandler
 	{
+
 		Task<Result> HandleAsync(CategoryDto? request);
+
 	}
 
 	/// <summary>
-	/// Represents a handler for creating new categories in the database.
+	///   Represents a handler for creating new categories in the database.
 	/// </summary>
 	public class Handler : ICreateCategoryHandler
 	{
 
-		private readonly IMyBlogContext _context;
+		private readonly IMyBlogContextFactory _factory;
+
 		private readonly ILogger<Handler> _logger;
 
 		/// <summary>
-		///   Initializes a new instance of the <see cref="Handler"/> class.
+		///   Initializes a new instance of the <see cref="Handler" /> class.
 		/// </summary>
-		/// <param name="context">The database context.</param>
+		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContext context, ILogger<Handler> logger)
+		public Handler(IMyBlogContextFactory factory, ILogger<Handler> logger)
 		{
-			_context = context;
+			_factory = factory;
 			_logger = logger;
 		}
 
@@ -43,17 +47,27 @@ public static class CreateCategory
 		///   Handles the creation of a new category asynchronously.
 		/// </summary>
 		/// <param name="request">The category DTO.</param>
-		/// <returns>A <see cref="Result"/> indicating success or failure.</returns>
+		/// <returns>A <see cref="Result" /> indicating success or failure.</returns>
 		public async Task<Result> HandleAsync(CategoryDto? request)
 		{
+
+			if (request is null)
+			{
+				_logger.LogError("The request is null.");
+				return Result.Fail("The request is null.");
+			}
+
 			try
 			{
+
+				var context = await _factory.CreateContext(CancellationToken.None);
+
 				var category = new Category
 				{
-					CategoryName = request!.CategoryName,
+						CategoryName = request.CategoryName
 				};
 
-				await _context.Categories.InsertOneAsync(category);
+				await context.Categories.InsertOneAsync(category);
 
 				_logger.LogInformation("Category created successfully: {CategoryName}", request.CategoryName);
 
@@ -61,10 +75,14 @@ public static class CreateCategory
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Failed to create category: {CategoryName}", request?.CategoryName ?? string.Empty);
-				return Result.Fail(ex.Message);
+
+				_logger.LogError(ex, "Failed to create category: {CategoryName}", request.CategoryName);
+
+				return Result.Fail("An error occurred while creating the category: " + ex.Message);
+
 			}
 		}
+
 	}
 
 }

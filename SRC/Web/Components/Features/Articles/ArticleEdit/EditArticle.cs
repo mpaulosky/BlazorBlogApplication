@@ -1,43 +1,45 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     CategoryEdit.cs
+// File Name :     EditArticle.cs
 // Company :       mpaulosky
 // Author :        Matthew
-// Solution Name : BlazorApp
+// Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
 
 namespace Web.Components.Features.Articles.ArticleEdit;
 
 /// <summary>
-/// Contains functionality for editing an article within the system.
+///   Contains functionality for editing an article within the system.
 /// </summary>
 public static class EditArticle
 {
 
 	/// <summary>
-	/// Interface for editing articles in the database.
+	///   Interface for editing articles in the database.
 	/// </summary>
 	public interface IEditArticleHandler
 	{
+
 		Task<Result> HandleAsync(ArticleDto? request);
+
 	}
 
 	public class Handler : IEditArticleHandler
 	{
 
-		private readonly IMyBlogContext _context;
+		private readonly IMyBlogContextFactory _factory;
 
 		private readonly ILogger<Handler> _logger;
 
 		/// <summary>
-		///   Initializes a new instance of the <see cref="Handler"/> class.
+		///   Initializes a new instance of the <see cref="Handler" /> class.
 		/// </summary>
-		/// <param name="context">The database context.</param>
+		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContext context, ILogger<Handler> logger)
+		public Handler(IMyBlogContextFactory factory, ILogger<Handler> logger)
 		{
-			_context = context;
+			_factory = factory;
 			_logger = logger;
 		}
 
@@ -46,31 +48,46 @@ public static class EditArticle
 
 			if (request is null)
 			{
-				return Result.Fail("Request is null.");
+
+				_logger.LogError("The request is null.");
+
+				return Result.Fail("The request is null.");
+
 			}
 
 			try
 			{
 
-				var category = new Article
-				{
-					Title = request.Title,
-					Introduction = request.Introduction,
-					Content = request.Content,
-					CoverImageUrl = request.CoverImageUrl,
-					UrlSlug = request.UrlSlug,
-					Author = request.Author,
-					Category = request.Category,
-					IsPublished = request.IsPublished,
-					PublishedOn = request.PublishedOn,
-					IsArchived = request.IsArchived,
-					ModifiedOn = DateTime.UtcNow
-				};
+				var context = await _factory.CreateContext(CancellationToken.None);
 
-				await _context.Articles.ReplaceOneAsync(
-						Builders<Article>.Filter.Eq(x => x.Id, request.Id),
-						category,
-						new ReplaceOptions { IsUpsert = false }
+				// First check if the article exists
+				var existingArticle = await context.Articles.Find(
+					Builders<Article>.Filter.Eq(x => x.Id, request.Id)
+				).FirstOrDefaultAsync();
+
+				if (existingArticle is null)
+				{
+					_logger.LogWarning("Article not found for update: {ArticleId}", request.Id);
+					return Result.Fail("Article not found.");
+				}
+
+				// Update the existing article
+				existingArticle.Title = request.Title;
+				existingArticle.Introduction = request.Introduction;
+				existingArticle.Content = request.Content;
+				existingArticle.CoverImageUrl = request.CoverImageUrl;
+				existingArticle.UrlSlug = request.UrlSlug;
+				existingArticle.Author = request.Author;
+				existingArticle.Category = request.Category;
+				existingArticle.IsPublished = request.IsPublished;
+				existingArticle.PublishedOn = request.PublishedOn;
+				existingArticle.IsArchived = request.IsArchived;
+				existingArticle.ModifiedOn = DateTime.UtcNow;
+
+				await context.Articles.ReplaceOneAsync(
+					Builders<Article>.Filter.Eq(x => x.Id, request.Id),
+					existingArticle,
+					new ReplaceOptions { IsUpsert = false }
 				);
 
 				_logger.LogInformation("Article updated successfully: {Title}", request.Title);
@@ -81,8 +98,8 @@ public static class EditArticle
 			catch (Exception ex)
 			{
 
-				// Avoid dereferencing request in the error path (it may be null).
-				_logger.LogError(ex, "Failed to update category: {Title}", request?.Title);
+				// Avoid dereferencing the request in the error path (it may be null).
+				_logger.LogError(ex, "Failed to update article: {Title}", request?.Title ?? "Unknown");
 
 				return Result.Fail(ex.Message);
 

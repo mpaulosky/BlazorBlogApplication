@@ -1,15 +1,13 @@
 @page "/user-overview"
-
-@using Mapster
+@using global::Shared.Models
 @using Web.Data.Auth0
 // ...existing code...
-@using Web.Data.Models
 @inject Auth0Service Auth0Service
 @rendermode @(new InteractiveServerRenderMode(false))
 
 @attribute [Authorize(Roles = "Admin")]
 
-<PageHeadingComponent Level="2" HeaderText="User Over View" />
+<PageHeadingComponent Level="2" HeaderText="User Over View"/>
 
 <p>Hello @_username!</p>
 
@@ -28,34 +26,34 @@
 		<div class="overflow-x-auto">
 			<table class="min-w-full divide-y divide-gray-200">
 				<thead class="bg-gray-50">
-					<tr>
-						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-						<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Roles</th>
-					</tr>
+				<tr>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Roles</th>
+				</tr>
 				</thead>
 				<tbody class="bg-white divide-y divide-gray-200">
-					@foreach (var user in _users!)
-					{
-						<tr>
-							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@user.UserName</td>
-							<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@user.Email</td>
-							<td class="px-6 py-4 whitespace-nowrap text-sm">
-								@if (user.Roles is not null && user.Roles.Any())
+				@foreach (var user in _users!)
+				{
+					<tr>
+						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@user.UserName</td>
+						<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">@user.Email</td>
+						<td class="px-6 py-4 whitespace-nowrap text-sm">
+							@if (user.Roles is not null && user.Roles.Any())
+							{
+								foreach (var role in user.Roles)
 								{
-									foreach (var role in user.Roles)
-									{
-										<span
-											class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">@role</span>
-									}
+									<span
+										class="inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">@role</span>
 								}
-								else
-								{
-									<span class="text-gray-400 text-xs">No roles</span>
-								}
-							</td>
-						</tr>
-					}
+							}
+							else
+							{
+								<span class="text-gray-400 text-xs">No roles</span>
+							}
+						</td>
+					</tr>
+				}
 				</tbody>
 			</table>
 		</div>
@@ -66,7 +64,7 @@
 @code {
 
 	/// <summary>
-	/// The current authentication state.
+	///   The current authentication state.
 	/// </summary>
 	[CascadingParameter]
 	private Task<AuthenticationState>? AuthenticationState { get; set; }

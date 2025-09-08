@@ -7,14 +7,9 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Microsoft.Extensions.Configuration;
+using System.Net.Http;
 
-using Web.Components.Features.Articles.ArticleDetails;
 using Web.Components.Features.Categories.CategoryCreate;
-using Web.Components.Features.Categories.CategoryDetails;
-using Web.Components.Features.Categories.CategoryEdit;
-using Web.Components.Features.Categories.CategoryList;
-using Web.Data.Auth0;
 
 namespace Web;
 
@@ -151,7 +146,10 @@ public static class TestServiceRegistrations
 						return asInterface;
 					}
 				}
-				catch { }
+				catch
+				{
+					// ignored
+				}
 
 				return getCategorySub;
 			});
@@ -162,7 +160,7 @@ public static class TestServiceRegistrations
 			var getCategoriesSub = Substitute.For<GetCategories.IGetCategoriesHandler>();
 
 			getCategoriesSub.HandleAsync(Arg.Any<bool>())
-					.Returns(Task.FromResult(Result.Ok<IEnumerable<CategoryDto>>(new[] { sampleCategory })));
+					.Returns(Task.FromResult(Result.Ok<IEnumerable<CategoryDto>>([sampleCategory])));
 
 			ctx.Services.AddScoped<GetCategories.IGetCategoriesHandler>(sp =>
 			{
@@ -175,7 +173,10 @@ public static class TestServiceRegistrations
 						return asInterface;
 					}
 				}
-				catch { }
+				catch
+				{
+					// ignored
+				}
 
 				return getCategoriesSub;
 			});
@@ -197,7 +198,10 @@ public static class TestServiceRegistrations
 						return asInterface;
 					}
 				}
-				catch { }
+				catch
+				{
+					// ignored
+				}
 
 				return createCategorySub;
 			});
@@ -219,7 +223,10 @@ public static class TestServiceRegistrations
 						return asInterface;
 					}
 				}
-				catch { }
+				catch
+				{
+					// ignored
+				}
 
 				return editCategorySub;
 			});
@@ -242,7 +249,10 @@ public static class TestServiceRegistrations
 						return asInterface;
 					}
 				}
-				catch { }
+				catch (Exception)
+				{
+					// ignored
+				}
 
 				return getArticleSub;
 			});
@@ -253,7 +263,7 @@ public static class TestServiceRegistrations
 			var getArticlesSub = Substitute.For<GetArticles.IGetArticlesHandler>();
 
 			getArticlesSub.HandleAsync(Arg.Any<bool>())
-					.Returns(Task.FromResult(Result.Ok<IEnumerable<ArticleDto>>(new[] { sampleArticle })));
+					.Returns(Task.FromResult(Result.Ok<IEnumerable<ArticleDto>>([sampleArticle])));
 
 			ctx.Services.AddScoped<GetArticles.IGetArticlesHandler>(sp =>
 			{
@@ -266,7 +276,10 @@ public static class TestServiceRegistrations
 						return asInterface;
 					}
 				}
-				catch { }
+				catch
+				{
+					// ignored
+				}
 
 				return getArticlesSub;
 			});
@@ -274,10 +287,16 @@ public static class TestServiceRegistrations
 
 		return;
 
-		bool IsEitherRegistered(Type iface, Type concrete) => IsRegistered(iface) || IsRegistered(concrete);
+		bool IsEitherRegistered(Type iface, Type concrete)
+		{
+			return IsRegistered(iface) || IsRegistered(concrete);
+		}
 
 		// Categories
-		bool IsRegistered(Type t) => ctx.Services.Any(sd => sd.ServiceType == t);
+		bool IsRegistered(Type t)
+		{
+			return ctx.Services.Any(sd => sd.ServiceType == t);
+		}
 	}
 
 	// Simple IAsyncCursor<T> implementation used for default FindAsync responses in tests
@@ -292,7 +311,7 @@ public static class TestServiceRegistrations
 
 		public SimpleCursor(IEnumerable<T> items)
 		{
-			_items = items?.ToList() ?? new List<T>();
+			_items = items.ToList();
 			_enumerator = _items.GetEnumerator();
 			_moved = false;
 		}
@@ -329,7 +348,7 @@ public static class TestServiceRegistrations
 		var context = RegisterMyBlogContext(ctx);
 
 		var loggerGet = Substitute.For<ILogger<GetCategory.Handler>>();
-		var getHandler = new GetCategory.Handler(context, loggerGet);
+		var getHandler = new GetCategory.Handler(new TestMyBlogContextFactory(context), loggerGet);
 		ctx.Services.AddScoped(_ => getHandler);
 		ctx.Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 
@@ -479,9 +498,14 @@ public static class TestServiceRegistrations
 			_ctx = ctx;
 		}
 
-		public Task<IMyBlogContext> CreateAsync(CancellationToken cancellationToken = default)
+		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
 		{
 			return Task.FromResult(_ctx);
+		}
+
+		public MyBlogContext CreateContext()
+		{
+			return (MyBlogContext)_ctx;
 		}
 
 	}

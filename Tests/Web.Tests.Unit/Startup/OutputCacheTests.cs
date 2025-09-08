@@ -7,20 +7,19 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Microsoft.AspNetCore.OutputCaching;
-using Microsoft.Extensions.Options;
-
-using Web.Infrastructure;
-
 namespace Web.Startup;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Program))]
 public class OutputCacheTests : IClassFixture<TestWebApplicationFactory>
 {
+
 	private readonly TestWebApplicationFactory _factory;
 
-	public OutputCacheTests(TestWebApplicationFactory factory) => _factory = factory;
+	public OutputCacheTests(TestWebApplicationFactory factory)
+	{
+		_factory = factory;
+	}
 
 	[Fact]
 	public void OutputCache_Services_Are_Registered()
@@ -31,4 +30,5 @@ public class OutputCacheTests : IClassFixture<TestWebApplicationFactory>
 		sp.GetService<IOutputCacheStore>().Should().NotBeNull();
 		sp.GetService<IOptions<OutputCacheOptions>>().Should().NotBeNull();
 	}
+
 }

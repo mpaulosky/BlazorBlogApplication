@@ -7,11 +7,6 @@
 // Project Name :  Web
 // =======================================================
 
-using System.Net.Http.Headers;
-using System.Text.Json;
-
-using RestSharp;
-
 namespace Web.Data.Auth0;
 
 public class Auth0Service
@@ -40,7 +35,7 @@ public class Auth0Service
 
 		var response = await client.ExecuteAsync(request);
 
-		if (!response.IsSuccessful || response.StatusCode != System.Net.HttpStatusCode.OK)
+		if (!response.IsSuccessful || response.StatusCode != HttpStatusCode.OK)
 		{
 			throw new Exception($"Error getting access token: {response.Content}");
 		}
@@ -54,8 +49,8 @@ public class Auth0Service
 
 	private static readonly JsonSerializerOptions _userResponseJsonOptions = new()
 	{
-		PropertyNameCaseInsensitive = true,
-		PropertyNamingPolicy = new IgnoreUnderscoreNamingPolicy()
+			PropertyNameCaseInsensitive = true,
+			PropertyNamingPolicy = new IgnoreUnderscoreNamingPolicy()
 	};
 
 	public async Task<List<UserResponse>?> GetUsersAsync()
@@ -93,10 +88,12 @@ public class Auth0Service
 
 	private class IgnoreUnderscoreNamingPolicy : JsonNamingPolicy
 	{
+
 		public override string ConvertName(string name)
 		{
 			return name.Replace("_", string.Empty);
 		}
+
 	}
 
 	private async Task<List<string>> GetUserRolesAsync(string userId)

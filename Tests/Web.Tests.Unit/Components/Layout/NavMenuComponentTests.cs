@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     NavMenuComponentTest.cs
+// File Name :     NavMenuComponentTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorBlogApplication

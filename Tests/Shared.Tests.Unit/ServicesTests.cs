@@ -2,16 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ServicesTests.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
+// Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
-
-using System.Diagnostics.CodeAnalysis;
-
-using FluentAssertions;
-
-using JetBrains.Annotations;
 
 namespace Shared;
 
@@ -19,6 +13,7 @@ namespace Shared;
 [TestSubject(typeof(Services))]
 public class ServicesTests
 {
+
 	[Theory]
 	[InlineData("SERVER", "Server")]
 	[InlineData("DATABASE", "articlesDb")]
@@ -38,7 +33,7 @@ public class ServicesTests
 		var t = typeof(Services);
 
 		// Act
-		var fi = t.GetField(fieldName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy);
+		var fi = t.GetField(fieldName, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
 
 		// Assert
 		fi.Should().NotBeNull($"Field '{fieldName}' should exist on {t.FullName}");
@@ -52,7 +47,8 @@ public class ServicesTests
 	{
 		// Arrange
 		var t = typeof(Services);
-		var fields = t.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy)
+
+		var fields = t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
 				.Where(f => f.FieldType == typeof(string))
 				.ToArray();
 
@@ -81,7 +77,8 @@ public class ServicesTests
 	{
 		// Arrange
 		var t = typeof(Services);
-		var values = t.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy)
+
+		var values = t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
 				.Where(f => f.FieldType == typeof(string))
 				.Select(f => (string?)f.GetValue(null))
 				.ToArray();
@@ -98,7 +95,8 @@ public class ServicesTests
 	{
 		// Arrange
 		var t = typeof(Services);
-		var values = t.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy)
+
+		var values = t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
 				.Where(f => f.FieldType == typeof(string))
 				.Select(f => ((string?)f.GetValue(null))?.ToLowerInvariant())
 				.ToArray();
@@ -119,15 +117,18 @@ public class ServicesTests
 	{
 		// Arrange
 		var t = typeof(Services);
-		var fields = t.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy)
-			.Where(f => f.FieldType == typeof(string))
-			.ToArray();
+
+		var fields = t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+				.Where(f => f.FieldType == typeof(string))
+				.ToArray();
 
 		// Act & Assert
 		foreach (var f in fields)
 		{
 			// Only allow uppercase letters, digits and underscore in constant names
-			f.Name.Should().MatchRegex("^[A-Z0-9_]+$", $"Field name '{f.Name}' should be uppercase and contain only A-Z, 0-9, or underscore");
+			f.Name.Should().MatchRegex("^[A-Z0-9_]+$",
+					$"Field name '{f.Name}' should be uppercase and contain only A-Z, 0-9, or underscore");
 		}
 	}
+
 }

@@ -1,4 +1,17 @@
-﻿namespace Shared;
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     Services.cs
+// Company :       mpaulosky
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared
+// =======================================================
+
+namespace Shared;
+
+/// <summary>
+///   Contains constants for service names and configuration values.
+/// </summary>
 public static class Services
 {
 

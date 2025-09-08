@@ -7,9 +7,11 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System.Net;
+#region
 
-using Web.Infrastructure;
+using TestContext = Xunit.TestContext;
+
+#endregion
 
 namespace Web.Endpoints;
 
@@ -17,18 +19,23 @@ namespace Web.Endpoints;
 [TestSubject(typeof(Program))]
 public class HealthEndpointTests : IClassFixture<TestWebApplicationFactory>
 {
+
 	private readonly TestWebApplicationFactory _factory;
 
-	public HealthEndpointTests(TestWebApplicationFactory factory) => _factory = factory;
+	public HealthEndpointTests(TestWebApplicationFactory factory)
+	{
+		_factory = factory;
+	}
 
 	[Fact]
 	public async Task Health_Returns_Healthy_Text()
 	{
 		var client = _factory.CreateClient();
-		var res = await client.GetAsync("/health", Xunit.TestContext.Current.CancellationToken);
+		var res = await client.GetAsync("/health", TestContext.Current.CancellationToken);
 		res.StatusCode.Should().Be(HttpStatusCode.OK);
 
-		var body = await res.Content.ReadAsStringAsync(Xunit.TestContext.Current.CancellationToken);
+		var body = await res.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 		body.Should().Be("Healthy");
 	}
+
 }

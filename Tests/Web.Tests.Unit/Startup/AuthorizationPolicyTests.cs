@@ -7,22 +7,19 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
-
-using Web.Infrastructure;
-
-using static Shared.Services;
-
 namespace Web.Startup;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Program))]
 public class AuthorizationPolicyTests : IClassFixture<TestWebApplicationFactory>
 {
+
 	private readonly TestWebApplicationFactory _factory;
 
-	public AuthorizationPolicyTests(TestWebApplicationFactory factory) => _factory = factory;
+	public AuthorizationPolicyTests(TestWebApplicationFactory factory)
+	{
+		_factory = factory;
+	}
 
 	[Fact]
 	public async Task AdminOnly_Policy_Requires_Admin_Role()
@@ -37,4 +34,5 @@ public class AuthorizationPolicyTests : IClassFixture<TestWebApplicationFactory>
 				.SelectMany(r => r.AllowedRoles)
 				.Should().Contain("admin");
 	}
+
 }

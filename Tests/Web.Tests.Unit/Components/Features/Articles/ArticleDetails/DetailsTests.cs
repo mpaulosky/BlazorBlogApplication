@@ -7,8 +7,6 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using static Web.Components.Features.Articles.ArticleDetails.GetArticle;
-
 namespace Web.Components.Features.Articles.ArticleDetails;
 
 /// <summary>
@@ -19,12 +17,12 @@ namespace Web.Components.Features.Articles.ArticleDetails;
 public class DetailsTests : BunitContext
 {
 
-	private readonly IGetArticleHandler _mockHandler;
+	private readonly GetArticle.IGetArticleHandler _mockHandler;
 
 	public DetailsTests()
 	{
 		// Arrange: Register all required services for ArticleHandler
-		_mockHandler = Substitute.For<IGetArticleHandler>();
+		_mockHandler = Substitute.For<GetArticle.IGetArticleHandler>();
 		Services.AddScoped(_ => _mockHandler);
 		Services.AddScoped<ILogger<Details>, Logger<Details>>();
 		Services.AddCascadingAuthenticationState();
@@ -49,8 +47,8 @@ public class DetailsTests : BunitContext
 		cut.Instance.GetType().GetProperty("_article")?.SetValue(cut.Instance, null);
 		cut.Render();
 
-	// Assert
-	cut.Markup.Should().Contain("Article not found");
+		// Assert
+		cut.Markup.Should().Contain("Article not found");
 	}
 
 	[Fact]
@@ -196,7 +194,7 @@ public class DetailsTests : BunitContext
 
 		// Act
 		var cut = Render<Details>(parameters => parameters
-						.Add(p => p.Id, articleDto.Id));
+				.Add(p => p.Id, articleDto.Id));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -218,7 +216,7 @@ public class DetailsTests : BunitContext
 
 		// Act
 		var cut = Render<Details>(parameters => parameters
-						.Add(p => p.Id, articleDto.Id));
+				.Add(p => p.Id, articleDto.Id));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -242,8 +240,8 @@ public class DetailsTests : BunitContext
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
 		cut.Render();
 
-	// Assert
-	cut.Markup.Should().Contain("Article not found");
+		// Assert
+		cut.Markup.Should().Contain("Article not found");
 	}
 
 	[Fact]
@@ -297,7 +295,8 @@ public class DetailsTests : BunitContext
 		// Simulate loading state
 		// Directly set the private field so the component renders the LoadingComponent
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
-			?.SetValue(cut.Instance, true);
+				?.SetValue(cut.Instance, true);
+
 		cut.Render();
 
 		// Assert: LoadingComponent contains the text 'Loading...'
@@ -373,7 +372,9 @@ public class DetailsTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 
 		// Act - render an AuthorizeView with NotAuthorized content to avoid pulling in the whole Router
-		RenderFragment<AuthenticationState> authorizedFragment = _ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+		RenderFragment<AuthenticationState> authorizedFragment =
+				_ => builder => builder.AddMarkupContent(0, "<div>authorized</div>");
+
 		RenderFragment<AuthenticationState> notAuthorizedFragment = _ => builder =>
 		{
 			builder.OpenComponent<ErrorPageComponent>(0);
@@ -384,8 +385,8 @@ public class DetailsTests : BunitContext
 		};
 
 		var cut = Render<AuthorizeView>(parameters => parameters
-			.Add(p => p.Authorized, authorizedFragment)
-			.Add(p => p.NotAuthorized, notAuthorizedFragment)
+				.Add(p => p.Authorized, authorizedFragment)
+				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);
 
 		// Assert - NotAuthorized content should show the 401 ErrorPageComponent message

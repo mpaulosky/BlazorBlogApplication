@@ -7,22 +7,19 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Http;
-
-using Web.Infrastructure;
-
-using static Shared.Services;
-
 namespace Web.Startup;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Program))]
 public class CorsPolicyTests : IClassFixture<TestWebApplicationFactory>
 {
+
 	private readonly TestWebApplicationFactory _factory;
 
-	public CorsPolicyTests(TestWebApplicationFactory factory) => _factory = factory;
+	public CorsPolicyTests(TestWebApplicationFactory factory)
+	{
+		_factory = factory;
+	}
 
 	[Fact]
 	public async Task DefaultCorsPolicy_Exists_And_Has_Expected_Origins()
@@ -35,7 +32,7 @@ public class CorsPolicyTests : IClassFixture<TestWebApplicationFactory>
 
 		policy.Should().NotBeNull();
 
-		policy!.Origins.Should().Contain([
+		policy.Origins.Should().Contain([
 				"https://yourdomain.com",
 				"https://localhost:7157"
 		]);
@@ -44,4 +41,5 @@ public class CorsPolicyTests : IClassFixture<TestWebApplicationFactory>
 		policy.Headers.Should().BeEmpty();
 		policy.Methods.Should().BeEmpty();
 	}
+
 }

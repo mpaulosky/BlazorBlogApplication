@@ -7,29 +7,34 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System.Net;
-
-using Microsoft.AspNetCore.Mvc.Testing;
-
-using Web.Infrastructure;
-
 namespace Web.Startup;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Program))]
-public class EnvironmentBehaviorTests
+public class EnvironmentBehaviorTests : BunitContext
 {
+
+	private readonly CancellationToken _cancellationToken = Xunit.TestContext.Current.CancellationToken;
+
 	[Fact]
 	public async Task Production_Uses_ExceptionHandler()
 	{
-		await using var factory = new TestWebApplicationFactory(environment: "Production");
+
+		// Arrange
+		Helpers.SetAuthorization(this);
+		await using var factory = new TestWebApplicationFactory("Production");
+
 		var client = factory.CreateClient(new WebApplicationFactoryClientOptions
 		{
 				AllowAutoRedirect = false
 		});
 
-		var res = await client.GetAsync("/", Xunit.TestContext.Current.CancellationToken);
+		// Act
+		var res = await client.GetAsync("/", _cancellationToken);
 
+		// Assert
 		res.StatusCode.Should().BeOneOf(HttpStatusCode.OK, HttpStatusCode.Redirect, HttpStatusCode.NotFound);
+
 	}
+
 }
