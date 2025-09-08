@@ -7,6 +7,8 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
+using System.Threading.Tasks;
+
 namespace Web.Extensions;
 
 /// <summary>
@@ -17,7 +19,7 @@ namespace Web.Extensions;
 public class SecurityHeadersExtensionsTests
 {
 
-	private readonly CancellationToken _cancellationToken = Xunit.TestContext.Current.CancellationToken;
+	private CancellationToken _cancellationToken = Xunit.TestContext.Current.CancellationToken;
 
 	[Fact]
 	public async Task UseSecurityHeaders_AddsRequiredSecurityHeaders()
