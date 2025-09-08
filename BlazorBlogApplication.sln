@@ -1,21 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost", "SRC\AppHost\AppHost.csproj", "{BB9C41FD-1395-49AC-C085-55B269795333}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppHost", "src\AppHost\AppHost.csproj", "{BB9C41FD-1395-49AC-C085-55B269795333}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Architecture.Tests.Unit", "Tests\Architecture.Tests.Unit\Architecture.Tests.Unit.csproj", "{D82852BA-775D-9440-0032-94E1B4177870}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Architecture.Tests.Unit", "tests\Architecture.Tests.Unit\Architecture.Tests.Unit.csproj", "{D82852BA-775D-9440-0032-94E1B4177870}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDefaults", "SRC\ServiceDefaults\ServiceDefaults.csproj", "{E3C0E21B-371B-ACD5-5FF0-77C353D89E20}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDefaults", "src\ServiceDefaults\ServiceDefaults.csproj", "{E3C0E21B-371B-ACD5-5FF0-77C353D89E20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "SRC\Shared\Shared.csproj", "{99507BA0-BB0B-3FD9-D8E2-2AE9B409CB73}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "src\Shared\Shared.csproj", "{99507BA0-BB0B-3FD9-D8E2-2AE9B409CB73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Tests.Unit", "Tests\Shared.Tests.Unit\Shared.Tests.Unit.csproj", "{31C563F4-7F62-93F9-A994-B515543DC6B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Tests.Unit", "tests\Shared.Tests.Unit\Shared.Tests.Unit.csproj", "{31C563F4-7F62-93F9-A994-B515543DC6B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "SRC\Web\Web.csproj", "{E5706BEE-C3FB-E7BE-641A-413C1A61D716}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "src\Web\Web.csproj", "{E5706BEE-C3FB-E7BE-641A-413C1A61D716}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Tests.Unit", "Tests\Web.Tests.Unit\Web.Tests.Unit.csproj", "{076FDF68-1ADB-FDFC-51FE-E164EF5517F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Tests.Unit", "tests\Web.Tests.Unit\Web.Tests.Unit.csproj", "{076FDF68-1ADB-FDFC-51FE-E164EF5517F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Tests.Integration", "Tests\Web.Tests.Integration\Web.Tests.Integration.csproj", "{E4891819-A913-46EB-932A-BDBE7DE197DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Tests.Integration", "tests\Web.Tests.Integration\Web.Tests.Integration.csproj", "{E4891819-A913-46EB-932A-BDBE7DE197DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

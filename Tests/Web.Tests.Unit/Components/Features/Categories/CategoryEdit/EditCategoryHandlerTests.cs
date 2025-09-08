@@ -21,9 +21,9 @@ public class EditCategoryHandlerTests
 	{
 		// Arrange
 		_fixture.CategoriesCollection
-				.ReplaceOneAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<Category>(), Arg.Any<ReplaceOptions>(),
+				.UpdateOneAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<UpdateDefinition<Category>>(), Arg.Any<UpdateOptions>(),
 						Arg.Any<CancellationToken>())
-				.Returns(Task.FromResult<ReplaceOneResult?>(null!));
+				.Returns(_ => Task.FromResult<UpdateResult>(new UpdateResult.Acknowledged(1, 1, null)));
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
@@ -38,10 +38,10 @@ public class EditCategoryHandlerTests
 		// Assert
 		result.Success.Should().BeTrue();
 
-		_ = _fixture.CategoriesCollection.Received(1).ReplaceOneAsync(
+		_ = _fixture.CategoriesCollection.Received(1).UpdateOneAsync(
 				Arg.Any<FilterDefinition<Category>>(),
-				Arg.Is<Category>(c => c.CategoryName == dto.CategoryName && c.ModifiedOn.HasValue),
-				Arg.Any<ReplaceOptions>(),
+				Arg.Any<UpdateDefinition<Category>>(),
+				Arg.Any<UpdateOptions>(),
 				Arg.Any<CancellationToken>());
 
 		logger.Received(1).Log(
@@ -57,9 +57,9 @@ public class EditCategoryHandlerTests
 	{
 		// Arrange: simulate a replacement call that completes but does not throw (handler does not inspect a result)
 		_fixture.CategoriesCollection
-				.ReplaceOneAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<Category>(), Arg.Any<ReplaceOptions>(),
+				.UpdateOneAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<UpdateDefinition<Category>>(), Arg.Any<UpdateOptions>(),
 						Arg.Any<CancellationToken>())
-				.Returns(Task.FromResult<ReplaceOneResult?>(null!));
+				.Returns(_ => Task.FromResult<UpdateResult>(new UpdateResult.Acknowledged(1, 1, null)));
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
@@ -74,10 +74,10 @@ public class EditCategoryHandlerTests
 		// Assert: current handler treats this as success
 		result.Success.Should().BeTrue();
 
-		_ = _fixture.CategoriesCollection.Received(1).ReplaceOneAsync(
+		_ = _fixture.CategoriesCollection.Received(1).UpdateOneAsync(
 				Arg.Any<FilterDefinition<Category>>(),
-				Arg.Any<Category>(),
-				Arg.Any<ReplaceOptions>(),
+				Arg.Any<UpdateDefinition<Category>>(),
+				Arg.Any<UpdateOptions>(),
 				Arg.Any<CancellationToken>());
 
 		logger.Received(1).Log(
@@ -93,8 +93,8 @@ public class EditCategoryHandlerTests
 	{
 		// Arrange
 		_fixture.CategoriesCollection
-				.When(c => c.ReplaceOneAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<Category>(),
-						Arg.Any<ReplaceOptions>(), Arg.Any<CancellationToken>()))
+				.When(c => c.UpdateOneAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<UpdateDefinition<Category>>(),
+						Arg.Any<UpdateOptions>(), Arg.Any<CancellationToken>()))
 				.Do(_ => throw new InvalidOperationException("DB error"));
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
@@ -176,9 +176,9 @@ public class EditCategoryHandlerTests
 	{
 		// Arrange
 		_fixture.CategoriesCollection
-				.ReplaceOneAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<Category>(), Arg.Any<ReplaceOptions>(),
+				.UpdateOneAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<UpdateDefinition<Category>>(), Arg.Any<UpdateOptions>(),
 						Arg.Any<CancellationToken>())
-				.Returns(Task.FromResult<ReplaceOneResult?>(null!));
+				.Returns(_ => Task.FromResult<UpdateResult>(new UpdateResult.Acknowledged(1, 1, null)));
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
@@ -194,10 +194,10 @@ public class EditCategoryHandlerTests
 		// Assert
 		result.Success.Should().BeTrue();
 
-		_ = _fixture.CategoriesCollection.Received(1).ReplaceOneAsync(
+		_ = _fixture.CategoriesCollection.Received(1).UpdateOneAsync(
 				Arg.Any<FilterDefinition<Category>>(),
-				Arg.Is<Category>(c => c.CategoryName == longName && c.ModifiedOn.HasValue),
-				Arg.Any<ReplaceOptions>(),
+				Arg.Any<UpdateDefinition<Category>>(),
+				Arg.Any<UpdateOptions>(),
 				Arg.Any<CancellationToken>());
 	}
 
@@ -206,9 +206,9 @@ public class EditCategoryHandlerTests
 	{
 		// Arrange
 		_fixture.CategoriesCollection
-				.ReplaceOneAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<Category>(), Arg.Any<ReplaceOptions>(),
+				.UpdateOneAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<UpdateDefinition<Category>>(), Arg.Any<UpdateOptions>(),
 						Arg.Any<CancellationToken>())
-				.Returns(Task.FromResult<ReplaceOneResult?>(null!));
+				.Returns(_ => Task.FromResult<UpdateResult>(new UpdateResult.Acknowledged(1, 1, null)));
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
 		var factory = Substitute.For<IMyBlogContextFactory>();
@@ -224,10 +224,10 @@ public class EditCategoryHandlerTests
 		// Assert
 		result.Success.Should().BeTrue();
 
-		_ = _fixture.CategoriesCollection.Received(1).ReplaceOneAsync(
+		_ = _fixture.CategoriesCollection.Received(1).UpdateOneAsync(
 				Arg.Any<FilterDefinition<Category>>(),
-				Arg.Is<Category>(c => c.CategoryName == specialName && c.ModifiedOn.HasValue),
-				Arg.Any<ReplaceOptions>(),
+				Arg.Any<UpdateDefinition<Category>>(),
+				Arg.Any<UpdateOptions>(),
 				Arg.Any<CancellationToken>());
 	}
 

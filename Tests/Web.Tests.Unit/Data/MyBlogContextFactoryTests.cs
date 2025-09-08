@@ -39,14 +39,14 @@ public class MyBlogContextFactoryTests
 	}
 
 	[Fact]
-	public void CreateContext_WithoutCancellationToken_ReturnsInitializedContext()
+	public async Task CreateContext_WithoutCancellationToken_ReturnsInitializedContext()
 	{
 		// Arrange
 		var mongoClient = Substitute.For<IMongoClient>();
 		var factory = new MyBlogContextFactory(mongoClient);
 
 		// Act
-		var result = factory.CreateContext(_cancellationToken);
+		var result = await factory.CreateContext(_cancellationToken);
 
 		// Assert
 		result.Should().NotBeNull();
