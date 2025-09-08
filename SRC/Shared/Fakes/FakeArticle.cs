@@ -15,6 +15,8 @@ namespace Shared.Fakes;
 public static class FakeArticle
 {
 
+	private const int SEED = 621;
+
 	/// <summary>
 	///   Generates a new fake <see cref="Article" /> object.
 	/// </summary>
@@ -35,15 +37,24 @@ public static class FakeArticle
 	/// <returns>A list of fake <see cref="Article" /> objects.</returns>
 	public static List<Article> GetArticles(int numberRequested, bool useSeed = false)
 	{
-
 		var articles = new List<Article>();
+
+		// Reuse a single Faker instance within this call to ensure unique items in the list.
+		// For seeded runs, create a fresh seeded instance per call so repeated calls yield the same sequence.
+		var faker = GenerateFake(useSeed);
+
+		// Ensure CreatedOn/ModifiedOn are deterministic for seeded list generation across separate calls
+		if (useSeed)
+		{
+			faker = faker
+				.RuleFor(f => f.CreatedOn, _ => GetStaticDate())
+				.RuleFor(f => f.ModifiedOn, _ => null);
+		}
 
 		for (var i = 0; i < numberRequested; i++)
 		{
-
-			var article = GenerateFake(useSeed).Generate();
+			var article = faker.Generate();
 			articles.Add(article);
-
 		}
 
 		return articles;
@@ -58,24 +69,19 @@ public static class FakeArticle
 	internal static Faker<Article> GenerateFake(bool useSeed = false)
 	{
 		var fake = new Faker<Article>()
-				.RuleFor(f => f.Id, f => ObjectId.GenerateNewId())
+				.RuleFor(f => f.Id, _ => ObjectId.GenerateNewId())
 				.RuleFor(f => f.Title, f => f.WaffleTitle())
 				.RuleFor(f => f.Introduction, f => f.Lorem.Sentence())
 				.RuleFor(f => f.Content, f => f.WaffleMarkdown(5))
 				.RuleFor(f => f.UrlSlug, (_, f) => f.Title.GetSlug())
 				.RuleFor(f => f.CoverImageUrl, f => f.Image.PicsumUrl())
-				.RuleFor(f => f.CreatedOn, _ => GetStaticDate())
-				.RuleFor(f => f.ModifiedOn, _ => GetStaticDate())
 				.RuleFor(f => f.IsPublished, f => f.Random.Bool())
 				.RuleFor(f => f.PublishedOn, (_, f) => f.IsPublished ? GetStaticDate() : null)
 				.RuleFor(f => f.IsArchived, f => f.Random.Bool())
-				.RuleFor(f => f.Category, f => FakeCategoryDto.GetNewCategoryDto(useSeed))
-				.RuleFor(f => f.Author, f => FakeAppUserDto.GetNewAppUserDto(useSeed));
+				.RuleFor(f => f.Category, _ => FakeCategoryDto.GetNewCategoryDto(useSeed))
+				.RuleFor(f => f.Author, _ => FakeAppUserDto.GetNewAppUserDto(useSeed));
 
-
-		const int seed = 621;
-
-		return useSeed ? fake.UseSeed(seed) : fake;
+		return useSeed ? fake.UseSeed(SEED) : fake;
 
 	}
 

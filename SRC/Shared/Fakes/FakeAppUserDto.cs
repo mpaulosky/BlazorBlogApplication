@@ -7,11 +7,7 @@
 // Project Name :  Shared
 // =======================================================
 
-#region
-
 using Shared.Enums;
-
-#endregion
 
 namespace Shared.Fakes;
 
@@ -20,6 +16,8 @@ namespace Shared.Fakes;
 /// </summary>
 public static class FakeAppUserDto
 {
+
+	private const int SEED = 621;
 
 	/// <summary>
 	///   Generates a new fake <see cref="AppUserDto" /> object.
@@ -54,15 +52,13 @@ public static class FakeAppUserDto
 	internal static Faker<AppUserDto> GenerateFake(bool useSeed = false)
 	{
 
-		const int seed = 621;
-
 		var fake = new Faker<AppUserDto>()
 				.RuleFor(x => x.Id, ObjectId.GenerateNewId().ToString())
 				.RuleFor(x => x.UserName, f => f.Name.FullName())
 				.RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.UserName))
-				.RuleFor(x => x.Roles, f => [f.Random.Enum<Roles>().ToString()]);
+				.RuleFor(x => x.Roles, f => new List<string> { f.Random.Enum<Roles>().ToString() });
 
-		return useSeed ? fake.UseSeed(seed) : fake;
+		return useSeed ? fake.UseSeed(SEED) : fake;
 
 	}
 

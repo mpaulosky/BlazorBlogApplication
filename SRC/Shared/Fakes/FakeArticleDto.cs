@@ -15,6 +15,8 @@ namespace Shared.Fakes;
 public static class FakeArticleDto
 {
 
+	private const int SEED = 621;
+
 	/// <summary>
 	///   Generates a new fake <see cref="ArticleDto" /> object.
 	/// </summary>
@@ -54,18 +56,14 @@ public static class FakeArticleDto
 				.RuleFor(f => f.Content, f => f.WaffleMarkdown(5))
 				.RuleFor(f => f.UrlSlug, (_, f) => f.Title.GetSlug())
 				.RuleFor(f => f.CoverImageUrl, f => f.Image.PicsumUrl() ?? string.Empty)
-				.RuleFor(f => f.CreatedOn, _ => GetStaticDate())
-				.RuleFor(f => f.ModifiedOn, _ => GetStaticDate())
 				.RuleFor(f => f.IsPublished, f => f.Random.Bool())
-				.RuleFor(f => f.PublishedOn, (_, f) => f.IsPublished ? GetStaticDate() : null)
+				.RuleFor(f => f.PublishedOn, (_, f) => f.IsPublished ? DateTime.Now : null)
 				.RuleFor(f => f.IsArchived, f => f.Random.Bool())
 				.RuleFor(f => f.Category, _ => FakeCategoryDto.GetNewCategoryDto(useSeed))
 				.RuleFor(f => f.Author, _ => FakeAppUserDto.GetNewAppUserDto(useSeed));
 
 
-		const int seed = 621;
-
-		return useSeed ? fake.UseSeed(seed) : fake;
+		return useSeed ? fake.UseSeed(SEED) : fake;
 
 	}
 

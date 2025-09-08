@@ -15,6 +15,8 @@ namespace Shared.Fakes;
 public static class FakeCategoryDto
 {
 
+	private const int SEED = 621;
+
 	/// <summary>
 	///   Generates a new fake <see cref="CategoryDto" /> object.
 	/// </summary>
@@ -48,16 +50,13 @@ public static class FakeCategoryDto
 	internal static Faker<CategoryDto> GenerateFake(bool useSeed = false)
 	{
 
-		const int seed = 621;
 
 		var fake = new Faker<CategoryDto>()
-				.RuleFor(x => x.Id, f => ObjectId.GenerateNewId())
+				.RuleFor(x => x.Id, _ => ObjectId.GenerateNewId())
 				.RuleFor(x => x.CategoryName, _ => GetRandomCategoryName())
-				.RuleFor(x => x.IsArchived, f => f.Random.Bool())
-				.RuleFor(x => x.CreatedOn, _ => GetStaticDate())
-				.RuleFor(f => f.ModifiedOn, _ => GetStaticDate());
+				.RuleFor(x => x.IsArchived, f => f.Random.Bool());
 
-		return useSeed ? fake.UseSeed(seed) : fake;
+		return useSeed ? fake.UseSeed(SEED) : fake;
 
 	}
 
