@@ -31,12 +31,13 @@ public class Category : Entity
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public Category() : this(string.Empty, false) { }
+	public Category() : this(string.Empty) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="Category" /> class.
 	/// </summary>
 	/// <param name="categoryName">The categoryName of the category.</param>
+	/// <param name="isArchived"></param>
 	public Category(string categoryName, bool isArchived = false)
 	{
 		CategoryName = categoryName;
@@ -47,7 +48,7 @@ public class Category : Entity
 	///   Gets an empty category instance.
 	/// </summary>
 	public static Category Empty =>
-			new(string.Empty, false)
+			new(string.Empty)
 			{
 					Id = ObjectId.Empty,
 					IsArchived = false
