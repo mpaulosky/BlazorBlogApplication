@@ -61,9 +61,9 @@ These instructions define the required coding, architecture, and project rules f
 - **Enforce Async/Await:** `true` (async methods and tests)
 - **Enforce Strongly Typed Config:** `true`
 - **Enforce CQRS:** `true` (see `Domain/Abstractions/`, `MyMediator/`)
-- **Enforce Unit Tests:** `true` (see `Tests/`)
-- **Enforce Integration Tests:** `true` (see `Tests/`)
-- **Enforce Architecture Tests:** `true` (see `Tests/Architecture.Tests/`)
+- **Enforce Unit Tests:** `true` (see `tests/`)
+- **Enforce Integration Tests:** `true` (see `tests/`)
+- **Enforce Architecture Tests:** `true` (see `tests/Architecture.Tests.Unit/`)
 - **Enforce Vertical Slice Architecture:** `true`
 - **Enforce Aspire:** `true` (see `AppHost/`, `README.md`)
 - **Centralize NuGet Package Versions:** `true` (all package versions must be managed in `Directory.Packages.props` at the repo root; do not specify versions in individual project files)
@@ -118,7 +118,7 @@ Project Name :  ${File.ProjectName}
 - **Use MongoDB:** `true` (see `Persistence.MongoDb/`)
 - **Prefer Async Operations:** `true`
 - **Use Migrations:** `false` (for MongoDB)
-- **Use TestContainers:** `true` (for Integration testing, see `Tests/Article Service.Persistence.MongoDb.Tests.Integration/`)
+- **Use TestContainers:** `true` (for Integration testing, see `tests/Article Service.Persistence.MongoDb.Tests.Integration/`)
 - **Use Change Tracking:** `true`
 - **Use DbContext Pooling:** `true`
 - **Use In-Memory Database:** `false`
@@ -157,14 +157,14 @@ Project Name :  ${File.ProjectName}
 
 ### Testing (Required)
 
-- **Require Unit Tests:** `true` (see `Tests/`)
-- **Require Integration Tests:** `true` (see `Tests/`)
-- **Require Architecture Tests:** `true` (see `Tests/Architecture.Tests.Unit/`)
-- **Use xUnit:** `true` (see `Tests/`)
-- **Use FluentAssertions:** `true` (see `Tests/`)
+- **Require Unit Tests:** `true` (see `tests/`)
+- **Require Integration Tests:** `true` (see `tests/`)
+- **Require Architecture Tests:** `true` (see `tests/Architecture.Tests.Unit/`)
+- **Use xUnit:** `true` (see `tests/`)
+- **Use FluentAssertions:** `true` (see `tests/`)
 - **Use NSubstitute:** `true`
-- **Use Xunit:** `true` (see `Tests/Shared.Tests.Unit/`)
-- **Use bUnit:** `true` (see `Tests/Web.Tests.Unit/`)
+- **Use Xunit:** `true` (see `tests/Shared.Tests.Unit/`)
+- **Use bUnit:** `true` (see `tests/Web.Tests.Unit/`)
 - **Use Playwright:** `true` (see `README.md`)
 
 ---

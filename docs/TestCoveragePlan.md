@@ -15,7 +15,7 @@ Overall coverage (from report):
   - Startup smoke test using WebApplicationFactory or minimal host to ensure the app can build and start with default configuration.
   - Verify critical service registrations (e.g., auth, antiforgery, output caching) via service provider lookups.
 - Suggested test files:
-  - Tests/Web.Tests.Unit/Startup/ProgramSmokeTests.cs
+  - tests/Web.Tests.Unit/Startup/ProgramSmokeTests.cs
 - Acceptance: At least one test executes code paths in Program (Main builder pipeline) without failing.
 
 2) Web.Components.Layout.MainLayout.GetErrorCode (0% covered)
@@ -24,7 +24,7 @@ Overall coverage (from report):
   - Inputs: UnauthorizedAccessException, KeyNotFoundException, NotSupportedException, generic Exception, custom known exceptions if used.
   - Assert: returns expected codes (likely 401/403/404/500 or app-specific mapping) for each branch and default path.
 - Suggested test files:
-  - Tests/Web.Tests.Unit/Components/Layout/MainLayoutTests.cs
+  - tests/Web.Tests.Unit/Components/Layout/MainLayoutTests.cs
 - Acceptance: 100% sequence and branch coverage for GetErrorCode.
 
 3) Web.Components.Features.UserInfo.Profile.LoadUserDataAsync (0% covered)
@@ -36,7 +36,7 @@ Overall coverage (from report):
 - Infra:
   - Use Helpers.SetAuthorization (already used in repo) and DI registration for a mock IAuth0Service (or HttpClient via HttpMessageHandler stub if the service is concrete-only).
 - Suggested test files:
-  - Tests/Web.Tests.Unit/Components/Features/UserInfo/Profile/ProfileTests.cs
+  - tests/Web.Tests.Unit/Components/Features/UserInfo/Profile/ProfileTests.cs
 - Acceptance: Cover branches in LoadUserDataAsync, including filters/linq display class delegate.
 
 4) Category Handlers: GetCategories.Handler.HandleAsync (0% covered)
@@ -48,7 +48,7 @@ Overall coverage (from report):
 - Infra:
   - Mock IMyBlogContext (and IMongoCollection via abstraction or a fake provider) to return deterministic data.
 - Suggested test files:
-  - Tests/Web.Tests.Unit/Components/Features/Categories/CategoryList/GetCategoriesHandlerTests.cs
+  - tests/Web.Tests.Unit/Components/Features/Categories/CategoryList/GetCategoriesHandlerTests.cs
 - Acceptance: 100% sequence coverage for handler ctor and HandleAsync, meaningful branch coverage.
 
 5) Category Handlers: EditCategory.Handler.HandleAsync (0% covered)
@@ -60,7 +60,7 @@ Overall coverage (from report):
 - Infra:
   - Mock IMyBlogContextFactory to provide a context; mock update behavior and exceptions.
 - Suggested test files:
-  - Tests/Web.Tests.Unit/Components/Features/Categories/CategoryEdit/EditCategoryHandlerTests.cs
+  - tests/Web.Tests.Unit/Components/Features/Categories/CategoryEdit/EditCategoryHandlerTests.cs
 - Acceptance: Cover ctor and HandleAsync state machine branches.
 
 ## Medium Priority Targets
@@ -71,14 +71,14 @@ Overall coverage (from report):
   - Unit tests for IgnoreUnderscoreNamingPolicy.ConvertName covering names with/without leading underscore.
   - Test GetAccessTokenAsync error branches (already partially covered but branch coverage is 0% there)—provide failing HTTP responses (401/500) via HttpMessageHandler stub.
 - Suggested test files:
-  - Tests/Shared.Tests.Unit/Data/Auth0/Auth0ServiceTests.cs
+  - tests/Shared.Tests.Unit/Data/Auth0/Auth0ServiceTests.cs
 - Acceptance: Increase branch coverage for Auth0Service.
 
 7) Web.Data.MyBlogContextFactory (0% covered)
 - Proposed tests:
   - CreateAsync returns a context with initialized collections; cancels gracefully on CancellationToken cancellation.
 - Suggested test files:
-  - Tests/Shared.Tests.Unit/Data/MyBlogContextFactoryTests.cs
+  - tests/Shared.Tests.Unit/Data/MyBlogContextFactoryTests.cs
 
 ## Low Priority / Consider Exclusions
 
