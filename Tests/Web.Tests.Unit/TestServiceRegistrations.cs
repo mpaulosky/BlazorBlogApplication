@@ -103,26 +103,26 @@ public static class TestServiceRegistrations
 		// Prepare sample data shared by multiple default substitutes
 		var sampleCategory = new CategoryDto
 		{
-				Id = ObjectId.GenerateNewId(),
-				CategoryName = "General Programming"
+			Id = ObjectId.GenerateNewId(),
+			CategoryName = "General Programming"
 		};
 
 		var sampleArticle = new ArticleDto
 		{
-				Id = ObjectId.GenerateNewId(),
-				Title = "The Empathy Of Mission Contemplation",
-				Introduction = "Intro",
-				Content = "Sample article content",
-				CoverImageUrl = string.Empty,
-				UrlSlug = "the-empathy-of-mission-contemplation",
-				Author = AppUserDto.Empty,
-				Category = sampleCategory,
-				CreatedOn = DateTime.UtcNow,
-				ModifiedOn = null,
-				IsPublished = true,
-				PublishedOn = DateTime.UtcNow,
-				IsArchived = false,
-				CanEdit = true
+			Id = ObjectId.GenerateNewId(),
+			Title = "The Empathy Of Mission Contemplation",
+			Introduction = "Intro",
+			Content = "Sample article content",
+			CoverImageUrl = string.Empty,
+			UrlSlug = "the-empathy-of-mission-contemplation",
+			Author = AppUserDto.Empty,
+			Category = sampleCategory,
+			CreatedOn = DateTime.UtcNow,
+			ModifiedOn = null,
+			IsPublished = true,
+			PublishedOn = DateTime.UtcNow,
+			IsArchived = false,
+			CanEdit = true
 		};
 
 		if (!IsEitherRegistered(typeof(GetCategory.IGetCategoryHandler), typeof(GetCategory.Handler)))
@@ -348,7 +348,7 @@ public static class TestServiceRegistrations
 		var context = RegisterMyBlogContext(ctx);
 
 		var loggerGet = Substitute.For<ILogger<GetCategory.Handler>>();
-		var getHandler = new GetCategory.Handler(context, loggerGet);
+		var getHandler = new GetCategory.Handler(new TestMyBlogContextFactory(context), loggerGet);
 		ctx.Services.AddScoped(_ => getHandler);
 		ctx.Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 

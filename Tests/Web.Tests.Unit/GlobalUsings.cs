@@ -78,3 +78,4 @@ global using Web.Infrastructure;
 global using Xunit;
 
 global using static Shared.Services;
+global using static Shared.Helpers.Helpers;
