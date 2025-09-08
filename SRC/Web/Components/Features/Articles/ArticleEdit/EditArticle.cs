@@ -60,25 +60,34 @@ public static class EditArticle
 
 				var context = await _factory.CreateContext(CancellationToken.None);
 
-				var category = new Article
+				// First check if the article exists
+				var existingArticle = await context.Articles.Find(
+					Builders<Article>.Filter.Eq(x => x.Id, request.Id)
+				).FirstOrDefaultAsync();
+
+				if (existingArticle is null)
 				{
-						Title = request.Title,
-						Introduction = request.Introduction,
-						Content = request.Content,
-						CoverImageUrl = request.CoverImageUrl,
-						UrlSlug = request.UrlSlug,
-						Author = request.Author,
-						Category = request.Category,
-						IsPublished = request.IsPublished,
-						PublishedOn = request.PublishedOn,
-						IsArchived = request.IsArchived,
-						ModifiedOn = DateTime.UtcNow
-				};
+					_logger.LogWarning("Article not found for update: {ArticleId}", request.Id);
+					return Result.Fail("Article not found.");
+				}
+
+				// Update the existing article
+				existingArticle.Title = request.Title;
+				existingArticle.Introduction = request.Introduction;
+				existingArticle.Content = request.Content;
+				existingArticle.CoverImageUrl = request.CoverImageUrl;
+				existingArticle.UrlSlug = request.UrlSlug;
+				existingArticle.Author = request.Author;
+				existingArticle.Category = request.Category;
+				existingArticle.IsPublished = request.IsPublished;
+				existingArticle.PublishedOn = request.PublishedOn;
+				existingArticle.IsArchived = request.IsArchived;
+				existingArticle.ModifiedOn = DateTime.UtcNow;
 
 				await context.Articles.ReplaceOneAsync(
-						Builders<Article>.Filter.Eq(x => x.Id, request.Id),
-						category,
-						new ReplaceOptions { IsUpsert = false }
+					Builders<Article>.Filter.Eq(x => x.Id, request.Id),
+					existingArticle,
+					new ReplaceOptions { IsUpsert = false }
 				);
 
 				_logger.LogInformation("Article updated successfully: {Title}", request.Title);
@@ -90,7 +99,7 @@ public static class EditArticle
 			{
 
 				// Avoid dereferencing the request in the error path (it may be null).
-				_logger.LogError(ex, "Failed to update category: {Title}", request.Title);
+				_logger.LogError(ex, "Failed to update article: {Title}", request?.Title ?? "Unknown");
 
 				return Result.Fail(ex.Message);
 

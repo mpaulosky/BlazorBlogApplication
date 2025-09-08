@@ -50,24 +50,40 @@ public static class EditCategory
 				return Result.Fail("The request is null.");
 			}
 
+			if (string.IsNullOrWhiteSpace(request.CategoryName))
+			{
+				_logger.LogError("Category name cannot be empty or whitespace.");
+
+				return Result.Fail("Category name cannot be empty or whitespace.");
+			}
+
+			if (request.Id == ObjectId.Empty)
+			{
+				_logger.LogError("Category ID cannot be empty.");
+
+				return Result.Fail("Category ID cannot be empty.");
+			}
+
 			try
 			{
 
 				var context = await _contextFactory.CreateContext(CancellationToken.None);
 
-				var category = new Category
+				var update = Builders<Category>.Update
+					.Set(c => c.CategoryName, request.CategoryName)
+					.Set(c => c.ModifiedOn, DateTime.UtcNow);
+
+				var result = await context.Categories.UpdateOneAsync(
+					Builders<Category>.Filter.Eq(x => x.Id, request.Id),
+					update,
+					new UpdateOptions { IsUpsert = false },
+					CancellationToken.None);
+
+				if (result.ModifiedCount == 0)
 				{
-						CategoryName = request.CategoryName,
-						ModifiedOn = DateTime.UtcNow
-				};
-
-
-				await context.Categories.ReplaceOneAsync(
-						Builders<Category>.Filter.Eq(x => x.Id, request.Id),
-						category,
-						new ReplaceOptions { IsUpsert = false },
-						CancellationToken.None
-				);
+					_logger.LogWarning("No category found with ID: {CategoryId}", request.Id);
+					return Result.Fail("Category not found.");
+				}
 
 				_logger.LogInformation("Category updated successfully: {CategoryName}", request.CategoryName);
 

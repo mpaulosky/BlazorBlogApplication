@@ -21,7 +21,7 @@ public static class CreateArticle
 	public interface ICreateArticleHandler
 	{
 
-		Task<Result> HandleAsync(ArticleDto request);
+		Task<Result> HandleAsync(ArticleDto? request);
 
 	}
 

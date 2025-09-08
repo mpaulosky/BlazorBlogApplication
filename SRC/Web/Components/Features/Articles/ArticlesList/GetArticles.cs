@@ -59,7 +59,7 @@ public static class GetArticles
 				var context = await _factory.CreateContext(CancellationToken.None);
 
 				var filter = excludeArchived
-						? Builders<Article>.Filter.Eq(x => x.Archived, false)
+						? Builders<Article>.Filter.Eq(x => x.IsArchived, false)
 						: Builders<Article>.Filter.Empty;
 
 				var articlesCursor = await context.Articles.FindAsync(filter);
