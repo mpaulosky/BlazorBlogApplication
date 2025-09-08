@@ -15,12 +15,12 @@ namespace Shared.Helpers;
 public static partial class Helpers
 {
 
-	private static readonly DateTime _staticDate = new(2025, 1, 1);
+	private static readonly DateTime _staticDate = new(2025, 1, 1, 8, 0, 0);
 
 	/// <summary>
 	///   Gets a static date for testing purposes.
 	/// </summary>
-	/// <returns>A static date of January 1, 2025.</returns>
+	/// <returns>A static date of January 1, 2025, at 08:00 AM.</returns>
 	public static DateTime GetStaticDate()
 	{
 		return _staticDate;
