@@ -54,7 +54,9 @@ public static class FakeCategoryDto
 		var fake = new Faker<CategoryDto>()
 				.RuleFor(x => x.Id, _ => ObjectId.GenerateNewId())
 				.RuleFor(x => x.CategoryName, _ => GetRandomCategoryName())
-				.RuleFor(x => x.IsArchived, f => f.Random.Bool());
+				.RuleFor(x => x.IsArchived, f => f.Random.Bool())
+				.RuleFor(x => x.CreatedOn, _ => DateTime.Now)
+				.RuleFor(x => x.ModifiedOn, _ => DateTime.Now);
 
 		return useSeed ? fake.UseSeed(SEED) : fake;
 
