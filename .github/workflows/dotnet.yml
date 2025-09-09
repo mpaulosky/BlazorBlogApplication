@@ -58,7 +58,7 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Run all tests in all test projects
-        working-directory: tests/*
+        working-directory: .tests/
         id: run-tests
         run: |
           # Ensure repository-level test-results exists
