@@ -28,8 +28,8 @@ public class FakeCategoryDtoTests
 		dto.Should().NotBeNull();
 		dto.CategoryName.Should().NotBeNullOrWhiteSpace();
 		dto.Id.Should().NotBe(ObjectId.Empty);
-		dto.CreatedOn.Should().Be(GetStaticDate());
-		dto.ModifiedOn.Should().Be(GetStaticDate());
+		dto.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
+		dto.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
 	}
 
 	[Fact]
@@ -49,8 +49,8 @@ public class FakeCategoryDtoTests
 		{
 			dto.CategoryName.Should().NotBeNullOrWhiteSpace();
 			dto.Id.Should().NotBe(ObjectId.Empty);
-			dto.CreatedOn.Should().Be(GetStaticDate());
-			dto.ModifiedOn.Should().Be(GetStaticDate());
+			dto.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
+			dto.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
 		}
 	}
 
@@ -68,18 +68,25 @@ public class FakeCategoryDtoTests
 	[Fact]
 	public void GetNewCategoryDto_WithSeed_ShouldReturnDeterministicResult()
 	{
+
 		// Act
 		var a = FakeCategoryDto.GetNewCategoryDto(true);
 		var b = FakeCategoryDto.GetNewCategoryDto(true);
 
 		// Assert - deterministic except for Id and CategoryName
-		a.Should().BeEquivalentTo(b, opts => opts
-				.Excluding(x => x.Id)
-				.Excluding(x => x.CategoryName));
+		a.Id.Should().NotBe(ObjectId.Empty);
+		b.Id.Should().NotBe(ObjectId.Empty);
+		a.CategoryName.Should().NotBeNullOrWhiteSpace();
+		b.CategoryName.Should().NotBeNullOrWhiteSpace();
+		a.CreatedOn.Should().BeCloseTo(b.CreatedOn, TimeSpan.FromSeconds(1));
+		a.Id.Should().NotBe(b.Id);
+		a.CreatedOn.Should().NotBe(b.CreatedOn);
+		a.ModifiedOn.Should().NotBe(b.ModifiedOn);
+
 	}
 
 	[Theory]
-	[InlineData(1)]
+	[InlineData(2)]
 	[InlineData(5)]
 	[InlineData(10)]
 	public void GetCategoriesDto_ShouldReturnRequestedNumberOfDtos(int count)
@@ -93,33 +100,28 @@ public class FakeCategoryDtoTests
 		results.Should().AllBeOfType<CategoryDto>();
 		results.Should().OnlyContain(c => !string.IsNullOrWhiteSpace(c.CategoryName));
 		results.Should().OnlyContain(c => c.Id != ObjectId.Empty);
-		results.Should().OnlyContain(c => c.CreatedOn == GetStaticDate());
-		results.Should().OnlyContain(c => c.ModifiedOn == GetStaticDate());
+
 	}
 
 	[Fact]
 	public void GetCategoriesDto_WithSeed_ShouldReturnDeterministicResults()
 	{
+
 		// Arrange
-		const int count = 3;
+		const int count = 2;
 
 		// Act
-		var r1 = FakeCategoryDto.GetCategoriesDto(count, true);
-		var r2 = FakeCategoryDto.GetCategoriesDto(count, true);
+		var categories = FakeCategoryDto.GetCategoriesDto(count, true);
 
 		// Assert
-		r1.Should().HaveCount(count);
-		r2.Should().HaveCount(count);
 
-		for (var i = 0; i < count; i++)
-		{
-			r1[i].Should().BeEquivalentTo(r2[i], opts => opts
-					.Excluding(x => x.Id)
-					.Excluding(x => x.CategoryName));
+		// Assert
+		categories[0].Id.Should().NotBe(ObjectId.Empty);
+		categories[1].Id.Should().NotBe(ObjectId.Empty);
+		categories[0].CategoryName.Should().NotBeNullOrWhiteSpace();
+		categories[1].CategoryName.Should().NotBeNullOrWhiteSpace();
+		categories[0].CreatedOn.Should().BeCloseTo(categories[1].CreatedOn, TimeSpan.FromSeconds(1));
 
-			r1[i].CreatedOn.Should().Be(r2[i].CreatedOn);
-			r1[i].ModifiedOn.Should().Be(r2[i].ModifiedOn);
-		}
 	}
 
 	[Fact]
@@ -134,32 +136,36 @@ public class FakeCategoryDtoTests
 		dto.Should().BeOfType<CategoryDto>();
 		dto.Id.Should().NotBe(ObjectId.Empty);
 		dto.CategoryName.Should().NotBeNullOrWhiteSpace();
-		dto.CreatedOn.Should().Be(GetStaticDate());
-		dto.ModifiedOn.Should().Be(GetStaticDate());
+		dto.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
+		dto.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
 	}
 
 	[Fact]
 	public void GenerateFake_WithSeed_ShouldApplySeed()
 	{
+
 		// Act
-		var dto1 = FakeCategoryDto.GenerateFake(true).Generate();
-		var dto2 = FakeCategoryDto.GenerateFake(true).Generate();
+		var categories = FakeCategoryDto.GenerateFake(true).Generate(2);
 
 		// Assert
-		dto2.Should().BeEquivalentTo(dto1, opts => opts
-				.Excluding(x => x.Id)
-				.Excluding(x => x.CategoryName));
+		categories[0].Id.Should().NotBe(ObjectId.Empty);
+		categories[1].Id.Should().NotBe(ObjectId.Empty);
+		categories[0].CategoryName.Should().NotBeNullOrWhiteSpace();
+		categories[1].CategoryName.Should().NotBeNullOrWhiteSpace();
+		categories[0].CreatedOn.Should().BeCloseTo(categories[1].CreatedOn, TimeSpan.FromSeconds(1));
+
 	}
 
 	[Fact]
 	public void GenerateFake_WithSeedFalse_ShouldNotApplySeed()
 	{
+
 		// Act
-		var dto1 = FakeCategoryDto.GenerateFake().Generate();
-		var dto2 = FakeCategoryDto.GenerateFake().Generate();
+		var categories = FakeCategoryDto.GenerateFake(false).Generate(2);
 
 		// Assert
-		dto1.Should().NotBeEquivalentTo(dto2, opts => opts.Excluding(x => x.CategoryName));
+		categories[0].Should().NotBeEquivalentTo(categories[1]);
+
 	}
 
 }

@@ -54,8 +54,8 @@ public class FakeCategory
 				.RuleFor(x => x.Id, _ => ObjectId.GenerateNewId())
 				.RuleFor(x => x.CategoryName, _ => GetRandomCategoryName())
 				.RuleFor(x => x.IsArchived, f => f.Random.Bool())
-				.RuleFor(x => x.CreatedOn, _ => GetStaticDate())
-				.RuleFor(f => f.ModifiedOn, _ => GetStaticDate());
+				.RuleFor(x => x.CreatedOn, _ => DateTime.Now)
+				.RuleFor(x => x.ModifiedOn, _ => DateTime.Now);
 
 		return useSeed ? fake.UseSeed(SEED) : fake;
 	}

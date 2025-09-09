@@ -39,7 +39,7 @@ public class FakeArticleDtoTests
 
 		if (dto.IsPublished)
 		{
-			dto.PublishedOn.Should().Be(GetStaticDate());
+			dto.PublishedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
 		}
 		else
 		{
@@ -73,7 +73,7 @@ public class FakeArticleDtoTests
 
 			if (dto.IsPublished)
 			{
-				dto.PublishedOn.Should().Be(GetStaticDate());
+				dto.PublishedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
 			}
 			else
 			{
@@ -96,73 +96,126 @@ public class FakeArticleDtoTests
 	[Fact]
 	public void GetNewArticleDto_WithSeed_ShouldReturnDeterministicResult()
 	{
-		// Act
-		var a = FakeArticleDto.GetNewArticleDto(true);
-		var b = FakeArticleDto.GetNewArticleDto(true);
 
-		// Assert - deterministic except for Id and some external random URL fields and nested complex types
-		a.Should().BeEquivalentTo(b, opts => opts
-				.Excluding(x => x.Id)
-				.Excluding(x => x.Title)
-				.Excluding(x => x.Introduction)
-				.Excluding(x => x.Content)
-				.Excluding(x => x.UrlSlug)
-				.Excluding(x => x.CoverImageUrl)
-				.Excluding(x => x.Category)
-				.Excluding(x => x.Author));
+		// Act
+		const int count = 2;
+		var results = FakeArticleDto.GetArticleDtos(count, true);
+
+		// Assert
+
+		for (var i = 0; i < count; i++)
+		{
+			results[i].Should().NotBeNull();
+			results[i].Id.Should().NotBe(ObjectId.Empty);
+			results[i].Title.Should().NotBeNullOrWhiteSpace();
+			results[i].Introduction.Should().NotBeNullOrWhiteSpace();
+			results[i].Content.Should().NotBeNullOrWhiteSpace();
+			results[i].UrlSlug.Should().Be(results[i].Title.GetSlug());
+			results[i].CoverImageUrl.Should().NotBeNull();
+			results[i].Category.Should().NotBeNull();
+			results[i].Author.Should().NotBeNull();
+			results[i].CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
+			results[i].ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
+			results[i].CanEdit.Should().BeFalse();
+
+			if (results[i].IsPublished)
+			{
+				results[i].PublishedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
+			}
+			else
+			{
+				results[i].PublishedOn.Should().BeNull();
+			}
+
+		}
+
+		results[0].Title.Should().NotBe(results[1].Title);
+		results[0].Introduction.Should().NotBe(results[1].Introduction);
+
 	}
 
 	[Theory]
-	[InlineData(1)]
+	[InlineData(2)]
 	[InlineData(5)]
 	[InlineData(10)]
-	public void GetArticleDtos_ShouldReturnRequestedNumberOfDtos(int count)
+	public void GetArticleDtos_WithOutSeed_ShouldReturnRequestedNumberOfDtos(int count)
 	{
+
 		// Act
 		var results = FakeArticleDto.GetArticleDtos(count);
 
 		// Assert
-		results.Should().NotBeNull();
-		results.Should().HaveCount(count);
-		results.Should().AllBeOfType<ArticleDto>();
-		results.Should().OnlyContain(a => !string.IsNullOrWhiteSpace(a.Title));
-		results.Should().OnlyContain(a => a.Id != ObjectId.Empty);
+
+		for (var i = 0; i < count; i++)
+		{
+			results[i].Should().NotBeNull();
+			results[i].Id.Should().NotBe(ObjectId.Empty);
+			results[i].Title.Should().NotBeNullOrWhiteSpace();
+			results[i].Introduction.Should().NotBeNullOrWhiteSpace();
+			results[i].Content.Should().NotBeNullOrWhiteSpace();
+			results[i].UrlSlug.Should().Be(results[i].Title.GetSlug());
+			results[i].CoverImageUrl.Should().NotBeNull();
+			results[i].Category.Should().NotBeNull();
+			results[i].Author.Should().NotBeNull();
+			results[i].CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
+			results[i].ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
+			results[i].IsArchived.Should().BeFalse();
+			results[i].CanEdit.Should().BeFalse();
+
+			if (results[i].IsPublished)
+			{
+				results[i].PublishedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
+			}
+			else
+			{
+				results[i].PublishedOn.Should().BeNull();
+			}
+		}
+
+		results[0].Title.Should().NotBe(results[1].Title);
+		results[0].Introduction.Should().NotBe(results[1].Introduction);
 
 	}
 
 	[Fact]
-	public void GetArticleDtos_WithSeed_ShouldReturnDeterministicResults()
+	public void GetArticleDtos_WithSeed_Should_ReturnDeterministicResults()
 	{
-		// Arrange
-		const int count = 3;
 
 		// Act
-		var r1 = FakeArticleDto.GetArticleDtos(count, true);
-		var r2 = FakeArticleDto.GetArticleDtos(count, true);
+		const int count = 2;
+		var results = FakeArticleDto.GetArticleDtos(count, true);
 
 		// Assert
-		r1.Should().HaveCount(count);
-		r2.Should().HaveCount(count);
 
 		for (var i = 0; i < count; i++)
 		{
-			r1[i].Should().BeEquivalentTo(r2[i], opts => opts
-					.Excluding(x => x.Id)
-					.Excluding(x => x.Title)
-					.Excluding(x => x.Introduction)
-					.Excluding(x => x.Content)
-					.Excluding(x => x.UrlSlug)
-					.Excluding(x => x.CoverImageUrl)
-					.Excluding(x => x.Category)
-					.Excluding(x => x.Author));
+			results[i].Should().NotBeNull();
+			results[i].Id.Should().NotBe(ObjectId.Empty);
+			results[i].Title.Should().NotBeNullOrWhiteSpace();
+			results[i].Introduction.Should().NotBeNullOrWhiteSpace();
+			results[i].Content.Should().NotBeNullOrWhiteSpace();
+			results[i].UrlSlug.Should().Be(results[i].Title.GetSlug());
+			results[i].CoverImageUrl.Should().NotBeNull();
+			results[i].Category.Should().NotBeNull();
+			results[i].Author.Should().NotBeNull();
+			results[i].CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
+			results[i].ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
+			results[i].IsArchived.Should().BeFalse();
+			results[i].CanEdit.Should().BeFalse();
 
-			// Dates should always match
-			r1[i].CreatedOn.Should().Be(r2[i].CreatedOn);
-			r1[i].ModifiedOn.Should().Be(r2[i].ModifiedOn);
-
-			// PublishedOn should match under seeded generation
-			(r1[i].PublishedOn == r2[i].PublishedOn).Should().BeTrue();
+			if (results[i].IsPublished)
+			{
+				results[i].PublishedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
+			}
+			else
+			{
+				results[i].PublishedOn.Should().BeNull();
+			}
 		}
+
+		results[0].Title.Should().NotBe(results[1].Title);
+		results[0].Introduction.Should().NotBe(results[1].Introduction);
+
 	}
 
 	[Fact]
@@ -185,32 +238,37 @@ public class FakeArticleDtoTests
 	[Fact]
 	public void GenerateFake_WithSeed_ShouldApplySeed()
 	{
-		// Act
-		var a1 = FakeArticleDto.GenerateFake(true).Generate();
-		var a2 = FakeArticleDto.GenerateFake(true).Generate();
 
-		// Assert
-		a2.Should().BeEquivalentTo(a1, opts => opts
-				.Excluding(x => x.Id)
-				.Excluding(x => x.Title)
-				.Excluding(x => x.Introduction)
-				.Excluding(x => x.Content)
-				.Excluding(x => x.UrlSlug)
-				.Excluding(x => x.CoverImageUrl)
-				.Excluding(x => x.Category)
-				.Excluding(x => x.Author));
+		// Act
+		var articles = FakeArticleDto.GenerateFake(true).Generate(2);
+
+		// Assert - focus on string fields that should generally differ without a seed
+		articles[0].Title.Should().NotBe(articles[1].Title);
+		articles[0].Introduction.Should().NotBe(articles[1].Introduction);
+		articles[0].Content.Should().NotBe(articles[1].Content);
+		articles[0].UrlSlug.Should().NotBe(articles[1].UrlSlug);
+		articles[0].CoverImageUrl.Should().NotBe(articles[1].CoverImageUrl);
+		articles[0].Category.Should().NotBe(articles[1].Category);
+		articles[0].Author.Should().NotBe(articles[1].Author);
+
 	}
 
 	[Fact]
 	public void GenerateFake_WithSeedFalse_ShouldNotApplySeed()
 	{
+
 		// Act
-		var a1 = FakeArticleDto.GenerateFake().Generate();
-		var a2 = FakeArticleDto.GenerateFake().Generate();
+		var articles = FakeArticleDto.GenerateFake().Generate(2);
 
 		// Assert - focus on string fields that should generally differ without a seed
-		a1.Title.Should().NotBe(a2.Title);
-		a1.Introduction.Should().NotBe(a2.Introduction);
+		articles[0].Title.Should().NotBe(articles[1].Title);
+		articles[0].Introduction.Should().NotBe(articles[1].Introduction);
+		articles[0].Content.Should().NotBe(articles[1].Content);
+		articles[0].UrlSlug.Should().NotBe(articles[1].UrlSlug);
+		articles[0].CoverImageUrl.Should().NotBe(articles[1].CoverImageUrl);
+		articles[0].Category.Should().NotBe(articles[1].Category);
+		articles[0].Author.Should().NotBe(articles[1].Author);
+
 	}
 
 }

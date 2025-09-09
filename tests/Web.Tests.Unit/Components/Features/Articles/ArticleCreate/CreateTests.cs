@@ -50,8 +50,11 @@ public class CreateTests : BunitContext
 		cut.Markup.Should().Contain("Published");
 	}
 
+/// <summary>
+	///   Should show validation errors when the form is submitted with invalid data.
+	/// </summary>
 	[Fact]
-	public void Shows_Validation_Errors_When_Form_Is_Invalid()
+	public async Task Shows_Validation_Errors_When_Form_Is_InvalidAsync()
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
@@ -59,7 +62,7 @@ public class CreateTests : BunitContext
 		var form = cut.Find("form");
 
 		// Act
-		form.Submit();
+		await form.SubmitAsync();
 
 		// Assert
 		cut.Markup.Should().Contain("validation-message");

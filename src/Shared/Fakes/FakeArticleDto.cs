@@ -58,9 +58,10 @@ public static class FakeArticleDto
 				.RuleFor(f => f.CoverImageUrl, f => f.Image.PicsumUrl() ?? string.Empty)
 				.RuleFor(f => f.IsPublished, f => f.Random.Bool())
 				.RuleFor(f => f.PublishedOn, (_, f) => f.IsPublished ? DateTime.Now : null)
-				.RuleFor(f => f.IsArchived, f => f.Random.Bool())
 				.RuleFor(f => f.Category, _ => FakeCategoryDto.GetNewCategoryDto(useSeed))
-				.RuleFor(f => f.Author, _ => FakeAppUserDto.GetNewAppUserDto(useSeed));
+				.RuleFor(f => f.Author, _ => FakeAppUserDto.GetNewAppUserDto(useSeed))
+				.RuleFor(f => f.CreatedOn, _ => DateTime.Now)
+				.RuleFor(f => f.ModifiedOn, _ => DateTime.Now);
 
 
 		return useSeed ? fake.UseSeed(SEED) : fake;

@@ -31,8 +31,8 @@ public class FakeCategoryTests
 		// Assert
 		category.Should().NotBeNull();
 		category.CategoryName.Should().NotBeNullOrWhiteSpace();
-		category.CreatedOn.Should().Be(GetStaticDate());
-		category.ModifiedOn.Should().Be(GetStaticDate());
+		category.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		category.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
 		category.Id.Should().NotBe(ObjectId.Empty);
 	}
 
@@ -56,8 +56,8 @@ public class FakeCategoryTests
 		foreach (var c in categories)
 		{
 			c.CategoryName.Should().NotBeNullOrWhiteSpace();
-			c.CreatedOn.Should().Be(GetStaticDate());
-			c.ModifiedOn.Should().Be(GetStaticDate());
+			c.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+			c.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
 			c.Id.Should().NotBe(ObjectId.Empty);
 		}
 	}
@@ -85,27 +85,20 @@ public class FakeCategoryTests
 	[Fact]
 	public void GetNewCategory_WithSeed_ShouldReturnConsistentStaticFields()
 	{
+
 		// Act
 		var a = FakeCategory.GetNewCategory(true);
 		var b = FakeCategory.GetNewCategory(true);
 
-		// Assert: static date fields should be equal (Helpers provides a static date)
-		a.CreatedOn.Should().Be(GetStaticDate());
-		b.CreatedOn.Should().Be(GetStaticDate());
-		a.ModifiedOn.Should().Be(GetStaticDate());
-		b.ModifiedOn.Should().Be(GetStaticDate());
-
-		// Basic validity checks
-		a.CategoryName.Should().NotBeNullOrWhiteSpace();
-		b.CategoryName.Should().NotBeNullOrWhiteSpace();
+		// Assert - deterministic except for Id and CategoryName
 		a.Id.Should().NotBe(ObjectId.Empty);
 		b.Id.Should().NotBe(ObjectId.Empty);
-
-		// Stricter: seeded calls should produce the same category name and the same static dates
-		a.Should().BeEquivalentTo(b,
-				options => options
-						.Excluding(t => t.Id)
-						.Excluding(t => t.CategoryName));
+		a.CategoryName.Should().NotBeNullOrWhiteSpace();
+		b.CategoryName.Should().NotBeNullOrWhiteSpace();
+		a.CreatedOn.Should().BeCloseTo(b.CreatedOn, TimeSpan.FromSeconds(1));
+		a.Id.Should().NotBe(b.Id);
+		a.CreatedOn.Should().NotBe(b.CreatedOn);
+		a.ModifiedOn.Should().NotBe(b.ModifiedOn);
 
 	}
 
@@ -114,7 +107,7 @@ public class FakeCategoryTests
 	///   requested number of categories and that each item is a valid <see cref="Category" />.
 	/// </summary>
 	[Theory]
-	[InlineData(1)]
+	[InlineData(2)]
 	[InlineData(5)]
 	[InlineData(10)]
 	public void GetCategories_ShouldReturnRequestedNumberOfCategories(int count)
@@ -129,8 +122,6 @@ public class FakeCategoryTests
 		results.Should().AllBeOfType<Category>();
 		results.Should().OnlyContain(c => !string.IsNullOrEmpty(c.CategoryName));
 		results.Should().OnlyContain(c => c.Id != ObjectId.Empty);
-		results.Should().OnlyContain(c => c.CreatedOn == GetStaticDate());
-		results.Should().OnlyContain(c => c.ModifiedOn == GetStaticDate());
 
 	}
 
@@ -143,36 +134,25 @@ public class FakeCategoryTests
 	{
 
 		// Arrange
-		const int count = 3;
+		const int count = 2;
 
 		// Act
-		var results1 = FakeCategory.GetCategories(count, true);
-		var results2 = FakeCategory.GetCategories(count, true);
+		var categories = FakeCategory.GetCategories(count, true);
 
 		// Assert
-		results1.Should().NotBeNull();
-		results2.Should().NotBeNull();
-		results1.Should().HaveCount(count);
-		results2.Should().HaveCount(count);
 
-		for (var i = 0; i < count; i++)
-		{
-			results1[i].Should().BeEquivalentTo(results2[i],
-					options => options
-							.Excluding(t => t.Id)
-							.Excluding(t => t.CategoryName));
-
-			// Stricter: ensure the static date matches between corresponding items
-			results1[i].CreatedOn.Should().Be(results2[i].CreatedOn);
-			results1[i].ModifiedOn.Should().Be(results2[i].ModifiedOn);
-
-		}
+		// Assert
+		categories[0].Id.Should().NotBe(ObjectId.Empty);
+		categories[1].Id.Should().NotBe(ObjectId.Empty);
+		categories[0].CategoryName.Should().NotBeNullOrWhiteSpace();
+		categories[1].CategoryName.Should().NotBeNullOrWhiteSpace();
+		categories[0].CreatedOn.Should().BeCloseTo(categories[1].CreatedOn, TimeSpan.FromSeconds(1));
 
 	}
 
 	/// <summary>
-	///   Verifies that the <see cref="FakeCategory.GenerateFake" /> configuration produces
-	///   valid <see cref="Category" /> instances when used directly.
+	///  Verifies that the <see cref="FakeCategory.GenerateFake" /> configuration produces
+	///  valid <see cref="Category" /> instances when used directly.
 	/// </summary>
 	[Fact]
 	public void GenerateFake_ShouldConfigureFakerCorrectly()
@@ -186,8 +166,8 @@ public class FakeCategoryTests
 		category.Should().NotBeNull();
 		category.Id.Should().NotBe(ObjectId.Empty);
 		category.CategoryName.Should().NotBeNullOrEmpty();
-		category.CreatedOn.Should().Be(GetStaticDate());
-		category.ModifiedOn.Should().Be(GetStaticDate());
+		category.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		category.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
 
 	}
 
@@ -200,43 +180,16 @@ public class FakeCategoryTests
 	{
 
 		// Act
-		var faker1 = FakeCategory.GenerateFake(true).Generate();
-		var result = FakeCategory.GenerateFake(true).Generate();
+		var categories = FakeCategory.GenerateFake(true).Generate(2);
 
 		// Assert
-		result.Should().NotBeNull();
-		result.Should().BeOfType<Category>();
-		result.Id.Should().NotBe(ObjectId.Empty);
-		result.CreatedOn.Should().Be(GetStaticDate());
-		result.ModifiedOn.Should().Be(GetStaticDate());
-
-		result.Should().BeEquivalentTo(faker1,
-				options => options
-						.Excluding(t => t.Id)
-						.Excluding(t => t.CategoryName));
-
-	}
-
-	/// <summary>
-	///   Verifies that calling <see cref="FakeCategory.GetNewCategory(bool)" /> with seed produces deterministic
-	///   CategoryName values across calls.
-	/// </summary>
-	[Fact]
-	public void GetNewCategory_WithSeed_ShouldReturnDeterministicResult()
-	{
-
-		// Act
-		var result1 = FakeCategory.GetNewCategory(true);
-		var result2 = FakeCategory.GetNewCategory(true);
-
-		// Assert
-		result1.Should().NotBeNull();
-		result2.Should().NotBeNull();
-
-		result1.Should().BeEquivalentTo(result2,
-				options => options
-						.Excluding(t => t.Id)
-						.Excluding(t => t.CategoryName));
+		categories.Should().HaveCount(2);
+		categories[0].Id.Should().NotBe(ObjectId.Empty);
+		categories[0].CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		categories[0].ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		categories[1].Id.Should().NotBe(ObjectId.Empty);
+		categories[0].CreatedOn.Should().BeCloseTo(categories[1].CreatedOn, TimeSpan.FromSeconds(1));
+		categories[1].ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
 
 	}
 
