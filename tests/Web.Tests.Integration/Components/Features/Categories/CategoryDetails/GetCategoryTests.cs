@@ -69,7 +69,7 @@ public class GetCategoryTests : IAsyncLifetime
 		result.Value.Id.Should().Be(request.Id);
 		result.Value.CategoryName.Should().Be(request.CategoryName);
 		result.Value.IsArchived.Should().Be(request.Archived);
-		result.Value.CreatedOn.Should().BeCloseTo(request.CreatedOn, TimeSpan.FromHours(7));;
+		result.Value.CreatedOn.Should().BeCloseTo(request.CreatedOn, TimeSpan.FromHours(7));
 
 	}
 
