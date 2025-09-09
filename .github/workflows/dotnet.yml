@@ -58,7 +58,6 @@ jobs:
         run: dotnet build --no-restore
 
       - name: Run all tests in all test projects
-        working-directory: tests/
         id: run-tests
         run: |
           # Ensure repository-level test-results exists
@@ -67,12 +66,14 @@ jobs:
 
           set -o pipefail
 
+          overall_rc=0
+
+          # Find all test projects recursively
           while IFS= read -r proj; do
             if grep -q "<IsTestProject>true</IsTestProject>" "$proj" 2>/dev/null; then
               name=$(basename "$proj" .csproj)
               echo "Running tests for: $proj -> test-results/${name}.trx (logs -> test-results/${name}.coverage.log)"
               set +e
-              # Run tests and collect XPlat Code Coverage; quoting is safe for bash
               dotnet test "$proj" \
                 --no-build --no-restore \
                 --collect:"XPlat Code Coverage" \
@@ -89,7 +90,7 @@ jobs:
             else
               echo "Skipping non-test project: $proj"
             fi
-          done < <( find Tests -name "*.csproj" -type f 2>/dev/null || true )
+          done < <( find . -type f -name "*.csproj" )
 
           echo "tests_exit_code=$overall_rc" >> "$GITHUB_OUTPUT"
           exit 0
