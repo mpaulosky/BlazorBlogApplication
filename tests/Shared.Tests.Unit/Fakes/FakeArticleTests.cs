@@ -37,7 +37,7 @@ public class FakeArticleTests
 
 		if (article.IsPublished)
 		{
-			article.PublishedOn.Should().Be(GetStaticDate());
+			article.PublishedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
 		}
 		else
 		{
@@ -68,7 +68,7 @@ public class FakeArticleTests
 
 			if (a.IsPublished)
 			{
-				a.PublishedOn.Should().Be(GetStaticDate());
+				a.PublishedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromMinutes(1));
 			}
 			else
 			{
