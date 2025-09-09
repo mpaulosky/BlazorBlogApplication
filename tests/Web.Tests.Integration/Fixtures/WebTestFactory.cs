@@ -71,9 +71,9 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 				["ConnectionStrings:mongoDb-connection"] =
 							$"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin",
 				["DatabaseName"] = _databaseName,
-				["Auth0:Domain"] = "dummy-domain.auth0.com",
-				["Auth0:ClientId"] = "dummy-client-id",
-				["Auth0:ClientSecret"] = "dummy-client-secret"
+				["Parameters:auth0-domain"] = "dummy-domain.auth0.com",
+				["Parameters:auth0-client-id"] = "dummy-client-id",
+				["Parameters:auth0-client-secret"] = "dummy-client-secret"
 			});
 		});
 
