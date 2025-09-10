@@ -1,4 +1,4 @@
-﻿// =======================================================
+// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     WebTestFactory.cs
 // Company :       mpaulosky
@@ -66,10 +66,10 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 	{
 		builder.ConfigureAppConfiguration((_, config) =>
 		{
+			var mongoConnectionString = _sharedContainer?.GetConnectionString() ?? $"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin";
 			config.AddInMemoryCollection(new Dictionary<string, string?>
 			{
-				["ConnectionStrings:mongoDb-connection"] =
-							$"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin",
+				["ConnectionStrings:mongoDb-connection"] = mongoConnectionString,
 				["DatabaseName"] = _databaseName,
 				["Parameters:auth0-domain"] = "dummy-domain.auth0.com",
 				["Parameters:auth0-client-id"] = "dummy-client-id",
@@ -81,10 +81,10 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		{
 			services.AddSingleton<IMongoClient>(_ =>
 			{
-				var connectionString = $"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin";
-				_logger.LogInformation("Using MongoDB connection string: {ConnectionString}", connectionString);
+				var mongoConnectionString = _sharedContainer?.GetConnectionString() ?? $"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin";
+				_logger.LogInformation("Using MongoDB connection string: {ConnectionString}", mongoConnectionString);
 
-				return new MongoClient(connectionString);
+				return new MongoClient(mongoConnectionString);
 			});
 		});
 	}
@@ -167,8 +167,8 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		try
 		{
 			await _dbLock.WaitAsync();
-			var connectionString = $"mongodb://admin:password@localhost:{_port}/admin?authSource=admin";
-			var client = new MongoClient(connectionString);
+			var mongoConnectionString = _sharedContainer?.GetConnectionString() ?? $"mongodb://admin:password@localhost:{_port}/admin?authSource=admin";
+			var client = new MongoClient(mongoConnectionString);
 
 			// Drop the entire database
 			await client.DropDatabaseAsync(_databaseName);
@@ -202,8 +202,8 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		try
 		{
 			await _dbLock.WaitAsync();
-			var connectionString = $"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin";
-			var client = new MongoClient(connectionString);
+			var mongoConnectionString = _sharedContainer?.GetConnectionString() ?? $"mongodb://admin:password@localhost:{_port}/{_databaseName}?authSource=admin";
+			var client = new MongoClient(mongoConnectionString);
 			var database = client.GetDatabase(_databaseName);
 			await database.DropCollectionAsync(collectionName);
 		}
