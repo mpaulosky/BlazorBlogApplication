@@ -15,8 +15,6 @@ namespace Web.Fixtures;
 [UsedImplicitly]
 public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 {
-	private const string TestUsername = "testuser";
-	private const string TestPassword = "testpass";
 
 	private readonly ILogger<WebTestFactory> _logger;
 
