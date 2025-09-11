@@ -1,4 +1,4 @@
-﻿// =======================================================
+// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     RegisterDatabaseContext.cs
 // Company :       mpaulosky
@@ -35,6 +35,12 @@ public static partial class ServiceCollectionExtensions
 		if (string.IsNullOrWhiteSpace(mongoConn))
 		{
 			throw new InvalidOperationException("Required configuration 'mongoDb-connection' is missing");
+		}
+
+		// Ensure SCRAM-SHA-256 is used for authentication
+		if (!mongoConn.Contains("authMechanism=SCRAM-SHA-256"))
+		{
+			mongoConn += mongoConn.Contains("?") ? "&authMechanism=SCRAM-SHA-256" : "?authMechanism=SCRAM-SHA-256";
 		}
 
 		services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoConn));
