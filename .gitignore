@@ -41,9 +41,13 @@ bld/
 # Visual Studio 2017 auto generated files
 Generated\ Files/
 
-# MSTest test Results
+# Test test Results
 [Tt]est[Rr]esult*/
+[Tt]est-[Rr]esults/
 [Bb]uild[Ll]og.*
+.actrc
+.secrets
+.act-run.log
 
 # NUnit
 *.VisualState.xml
