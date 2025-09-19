@@ -28,7 +28,7 @@ public static class CreateCategory
 	public class Handler : ICreateCategoryHandler
 	{
 
-		private readonly IMyBlogContextFactory _factory;
+		private readonly IArticleDbContextFactory _factory;
 
 		private readonly ILogger<Handler> _logger;
 
@@ -37,7 +37,7 @@ public static class CreateCategory
 		/// </summary>
 		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContextFactory factory, ILogger<Handler> logger)
+		public Handler(IArticleDbContextFactory factory, ILogger<Handler> logger)
 		{
 			_factory = factory;
 			_logger = logger;
@@ -60,14 +60,15 @@ public static class CreateCategory
 			try
 			{
 
-				var context = await _factory.CreateContext(CancellationToken.None);
+				var context = _factory.CreateDbContext();
 
 				var category = new Category
 				{
 						CategoryName = request.CategoryName
 				};
 
-				await context.Categories.InsertOneAsync(category);
+				context.Categories.Add(category);
+				await context.SaveChangesAsync();
 
 				_logger.LogInformation("Category created successfully: {CategoryName}", request.CategoryName);
 

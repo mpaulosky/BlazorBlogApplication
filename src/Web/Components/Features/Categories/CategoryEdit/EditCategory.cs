@@ -25,7 +25,7 @@ public static class EditCategory
 	public class Handler : IEditCategoryHandler
 	{
 
-		private readonly IMyBlogContextFactory _contextFactory;
+		private readonly IArticleDbContextFactory _contextFactory;
 
 		private readonly ILogger<Handler> _logger;
 
@@ -34,7 +34,7 @@ public static class EditCategory
 		/// </summary>
 		/// <param name="contextFactory"></param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContextFactory contextFactory, ILogger<Handler> logger)
+		public Handler(IArticleDbContextFactory contextFactory, ILogger<Handler> logger)
 		{
 			_contextFactory = contextFactory;
 			_logger = logger;
@@ -57,7 +57,7 @@ public static class EditCategory
 				return Result.Fail("Category name cannot be empty or whitespace.");
 			}
 
-			if (request.Id == ObjectId.Empty)
+			if (request.Id == Guid.Empty)
 			{
 				_logger.LogError("Category ID cannot be empty.");
 
@@ -67,23 +67,20 @@ public static class EditCategory
 			try
 			{
 
-				var context = await _contextFactory.CreateContext(CancellationToken.None);
+				var context = _contextFactory.CreateDbContext();
 
-				var update = Builders<Category>.Update
-					.Set(c => c.CategoryName, request.CategoryName)
-					.Set(c => c.ModifiedOn, DateTime.UtcNow);
+				var category = await context.Categories.FirstOrDefaultAsync(x => x.Id == request.Id);
 
-				var result = await context.Categories.UpdateOneAsync(
-					Builders<Category>.Filter.Eq(x => x.Id, request.Id),
-					update,
-					new UpdateOptions { IsUpsert = false },
-					CancellationToken.None);
-
-				if (result.ModifiedCount == 0)
+				if (category == null)
 				{
 					_logger.LogWarning("No category found with ID: {CategoryId}", request.Id);
 					return Result.Fail("Category not found.");
 				}
+
+				category.CategoryName = request.CategoryName;
+				category.ModifiedOn = DateTime.UtcNow;
+
+				await context.SaveChangesAsync();
 
 				_logger.LogInformation("Category updated successfully: {CategoryName}", request.CategoryName);
 

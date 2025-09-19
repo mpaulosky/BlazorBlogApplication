@@ -28,7 +28,7 @@ public static class GetCategories
 	public class Handler : IGetCategoriesHandler
 	{
 
-		private readonly IMyBlogContextFactory _factory;
+		private readonly IArticleDbContextFactory _factory;
 
 		private readonly ILogger<Handler> _logger;
 
@@ -37,7 +37,7 @@ public static class GetCategories
 		/// </summary>
 		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContextFactory factory, ILogger<Handler> logger)
+		public Handler(IArticleDbContextFactory factory, ILogger<Handler> logger)
 		{
 			_factory = factory;
 			_logger = logger;
@@ -50,19 +50,14 @@ public static class GetCategories
 		/// <returns>A <see cref="Result" /> representing the outcome of the operation.</returns>
 		public async Task<Result<IEnumerable<CategoryDto>>> HandleAsync(bool excludeArchived = false)
 		{
-			try
-			{
+		try
+		{
 
-				var context = await _factory.CreateContext(CancellationToken.None);
+			var context = _factory.CreateDbContext();
 
-				var filter = excludeArchived
-						? Builders<Category>.Filter.Eq(x => x.Archived, false)
-						: Builders<Category>.Filter.Empty;
-
-				var categoriesCursor = await context.Categories.FindAsync(filter);
-				var categories = await categoriesCursor.ToListAsync();
-
-				if (categories is null || categories.Count == 0)
+			var categories = excludeArchived
+					? await context.Categories.Where(x => !x.IsArchived).ToListAsync()
+					: await context.Categories.ToListAsync();				if (categories is null || categories.Count == 0)
 				{
 					_logger.LogWarning("No categories found.");
 

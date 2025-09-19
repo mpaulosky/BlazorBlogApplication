@@ -31,7 +31,7 @@ public static class GetArticles
 	public class Handler : IGetArticlesHandler
 	{
 
-		private readonly IMyBlogContextFactory _factory;
+		private readonly IArticleDbContextFactory _factory;
 
 		private readonly ILogger<Handler> _logger;
 
@@ -40,7 +40,7 @@ public static class GetArticles
 		/// </summary>
 		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContextFactory factory, ILogger<Handler> logger)
+		public Handler(IArticleDbContextFactory factory, ILogger<Handler> logger)
 		{
 			_factory = factory;
 			_logger = logger;
@@ -56,14 +56,19 @@ public static class GetArticles
 			try
 			{
 
-				var context = await _factory.CreateContext(CancellationToken.None);
+				using var context = _factory.CreateDbContext();
 
-				var filter = excludeArchived
-						? Builders<Article>.Filter.Eq(x => x.IsArchived, false)
-						: Builders<Article>.Filter.Empty;
+				var articlesQuery = context.Articles
+					.Include(a => a.Author)
+					.Include(a => a.Category)
+					.AsQueryable();
 
-				var articlesCursor = await context.Articles.FindAsync(filter);
-				var articles = await articlesCursor.ToListAsync();
+				if (excludeArchived)
+				{
+					articlesQuery = articlesQuery.Where(x => !x.IsArchived);
+				}
+
+				var articles = await articlesQuery.ToListAsync();
 
 				if (articles is null || articles.Count == 0)
 				{
@@ -72,7 +77,7 @@ public static class GetArticles
 					return Result<IEnumerable<ArticleDto>>.Fail("No articles found.");
 				}
 
-				_logger.LogInformation("Categories retrieved successfully. Count: {Count}", articles.Count);
+				_logger.LogInformation("Articles retrieved successfully. Count: {Count}", articles.Count);
 
 				return Result<IEnumerable<ArticleDto>>.Ok(articles.Adapt<IEnumerable<ArticleDto>>());
 			}
