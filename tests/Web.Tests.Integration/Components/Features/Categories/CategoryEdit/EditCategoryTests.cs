@@ -26,7 +26,7 @@ public class EditCategoryTests : IAsyncLifetime
 	{
 		_factory = factory;
 
-		// Create a scope here so scoped services (like IMyBlogContextFactory) are resolved correctly.
+		// Create a scope here so scoped services (like IArticleDbContextFactory) are resolved correctly.
 		_scope = _factory.Services.CreateScope();
 		_sut = _scope.ServiceProvider.GetRequiredService<EditCategory.IEditCategoryHandler>();
 	}
@@ -53,14 +53,14 @@ public class EditCategoryTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetCollectionAsync(CLEANUP_VALUE);
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		// Create an existing category to edit
 		var existingCategory = new Category
 		{
 			CategoryName = "Original Category",
-			Archived = false
+			IsArchived = false
 		};
 
 		await ctx.Categories.InsertOneAsync(existingCategory, cancellationToken: CancellationToken.None);
@@ -143,7 +143,7 @@ public class EditCategoryTests : IAsyncLifetime
 		// Arrange
 		var request = new CategoryDto
 		{
-			Id = ObjectId.Empty,
+			Id = Guid.Empty,
 			CategoryName = "Valid Category"
 		};
 
@@ -160,8 +160,8 @@ public class EditCategoryTests : IAsyncLifetime
 	public async Task HandleAsync_With_SpecialCharacters_Should_Succeed_TestAsync()
 	{
 		// Arrange
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		// Create an existing category to edit
 		var existingCategory = new Category
@@ -196,8 +196,8 @@ public class EditCategoryTests : IAsyncLifetime
 	public async Task HandleAsync_With_VeryLongName_Should_Succeed_TestAsync()
 	{
 		// Arrange
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		// Create an existing category to edit
 		var existingCategory = new Category
@@ -252,8 +252,8 @@ public class EditCategoryTests : IAsyncLifetime
 	public async Task HandleAsync_With_UnicodeCharacters_Should_Succeed_TestAsync()
 	{
 		// Arrange
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		// Create an existing category to edit
 		var existingCategory = new Category
@@ -288,8 +288,8 @@ public class EditCategoryTests : IAsyncLifetime
 	public async Task HandleAsync_Should_UpdateModifiedOnTimestamp_TestAsync()
 	{
 		// Arrange
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		var existingCategory = new Category
 		{

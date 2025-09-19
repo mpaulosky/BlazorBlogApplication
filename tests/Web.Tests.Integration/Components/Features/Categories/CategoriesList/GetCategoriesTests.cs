@@ -26,7 +26,7 @@ public class GetCategoriesTests : IAsyncLifetime
 	{
 		_factory = factory;
 
-		// Create a scope here so scoped services (like IMyBlogContextFactory) are resolved correctly.
+		// Create a scope here so scoped services (like IArticleDbContextFactory) are resolved correctly.
 		_scope = _factory.Services.CreateScope();
 		_sut = _scope.ServiceProvider.GetRequiredService<GetCategories.IGetCategoriesHandler>();
 	}
@@ -53,16 +53,16 @@ public class GetCategoriesTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		var testId = Guid.NewGuid().ToString("N").Substring(0, 8);
 
 		var categories = new List<Category>
 		{
-			new() { CategoryName = $"Tech {testId}", Archived = false },
-			new() { CategoryName = $"Science {testId}", Archived = false },
-			new() { CategoryName = $"History {testId}", Archived = true }
+			new() { CategoryName = $"Tech {testId}", IsArchived = false },
+			new() { CategoryName = $"Science {testId}", IsArchived = false },
+			new() { CategoryName = $"History {testId}", IsArchived = true }
 		};
 
 		await ctx.Categories.InsertManyAsync(categories, cancellationToken: CancellationToken.None);
@@ -88,16 +88,16 @@ public class GetCategoriesTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		var testId = Guid.NewGuid().ToString("N").Substring(0, 8);
 
 		var categories = new List<Category>
 		{
-			new() { CategoryName = $"Tech {testId}", Archived = false },
-			new() { CategoryName = $"Science {testId}", Archived = false },
-			new() { CategoryName = $"History {testId}", Archived = true }
+			new() { CategoryName = $"Tech {testId}", IsArchived = false },
+			new() { CategoryName = $"Science {testId}", IsArchived = false },
+			new() { CategoryName = $"History {testId}", IsArchived = true }
 		};
 
 		await ctx.Categories.InsertManyAsync(categories, cancellationToken: CancellationToken.None);
@@ -123,8 +123,8 @@ public class GetCategoriesTests : IAsyncLifetime
 	{
 		// Arrange - Create a completely isolated test by using a unique collection name
 		var testId = Guid.NewGuid().ToString("N").Substring(0, 8);
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(TestContext.Current.CancellationToken);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(TestContext.Current.CancellationToken);
 
 		// Delete all categories to ensure empty state
 		await ctx.Categories.DeleteManyAsync(Builders<Category>.Filter.Empty, cancellationToken: TestContext.Current.CancellationToken);
@@ -147,16 +147,16 @@ public class GetCategoriesTests : IAsyncLifetime
 	{
 		// Arrange - Create a completely isolated test by using a unique collection name
 		var testId = Guid.NewGuid().ToString("N").Substring(0, 8);
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(TestContext.Current.CancellationToken);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(TestContext.Current.CancellationToken);
 
 		// Clear all existing categories to ensure clean state
 		await ctx.Categories.DeleteManyAsync(Builders<Category>.Filter.Empty, cancellationToken: TestContext.Current.CancellationToken);
 
 		var categories = new List<Category>
 		{
-			new() { CategoryName = $"History {testId}", Archived = true },
-			new() { CategoryName = $"Old News {testId}", Archived = true }
+			new() { CategoryName = $"History {testId}", IsArchived = true },
+			new() { CategoryName = $"Old News {testId}", IsArchived = true }
 		};
 
 		await ctx.Categories.InsertManyAsync(categories, cancellationToken: TestContext.Current.CancellationToken);
@@ -175,8 +175,8 @@ public class GetCategoriesTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		var testId = Guid.NewGuid().ToString("N").Substring(0, 8);
 
@@ -186,7 +186,7 @@ public class GetCategoriesTests : IAsyncLifetime
 			categories.Add(new Category
 			{
 				CategoryName = $"Category{i}_{testId}",
-				Archived = i % 10 == 0 // Every 10th category is archived
+				IsArchived = i % 10 == 0 // Every 10th category is archived
 			});
 		}
 
@@ -216,8 +216,8 @@ public class GetCategoriesTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		var testId = Guid.NewGuid().ToString("N").Substring(0, 8);
 
@@ -227,7 +227,7 @@ public class GetCategoriesTests : IAsyncLifetime
 			new()
 			{
 				CategoryName = $"Test Category {testId}",
-				Archived = false
+				IsArchived = false
 			}
 		};
 
@@ -245,7 +245,7 @@ public class GetCategoriesTests : IAsyncLifetime
 
 		var category = categoriesWithTestId.First();
 		category.CategoryName.Should().Be($"Test Category {testId}");
-		category.Id.Should().NotBe(ObjectId.Empty);
+		category.Id.Should().NotBe(Guid.Empty);
 	}
 
 	[Fact(DisplayName = "HandleAsync Should Handle Categories With Special Characters")]
@@ -253,16 +253,16 @@ public class GetCategoriesTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		var testId = Guid.NewGuid().ToString("N").Substring(0, 8);
 
 		var categories = new List<Category>
 		{
-			new() { CategoryName = $"Test & Category {testId}", Archived = false },
-			new() { CategoryName = $"Science & Technology {testId}", Archived = false },
-			new() { CategoryName = $"History/Politics {testId}", Archived = false }
+			new() { CategoryName = $"Test & Category {testId}", IsArchived = false },
+			new() { CategoryName = $"Science & Technology {testId}", IsArchived = false },
+			new() { CategoryName = $"History/Politics {testId}", IsArchived = false }
 		};
 
 		await ctx.Categories.InsertManyAsync(categories, cancellationToken: CancellationToken.None);
@@ -288,16 +288,16 @@ public class GetCategoriesTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		var testId = Guid.NewGuid().ToString("N").Substring(0, 8);
 
 		var categories = new List<Category>
 		{
-			new() { CategoryName = $"测试 {testId}", Archived = false },
-			new() { CategoryName = $"Español {testId}", Archived = false },
-			new() { CategoryName = $"Français {testId}", Archived = false }
+			new() { CategoryName = $"测试 {testId}", IsArchived = false },
+			new() { CategoryName = $"Español {testId}", IsArchived = false },
+			new() { CategoryName = $"Français {testId}", IsArchived = false }
 		};
 
 		await ctx.Categories.InsertManyAsync(categories, cancellationToken: CancellationToken.None);

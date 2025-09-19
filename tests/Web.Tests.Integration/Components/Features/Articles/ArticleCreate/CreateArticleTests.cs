@@ -28,7 +28,7 @@ public class CreateArticleTests : IAsyncLifetime
 	{
 		_factory = factory;
 
-		// Create a scope here so scoped services (like IMyBlogContextFactory) are resolved correctly.
+		// Create a scope here so scoped services (like IArticleDbContextFactory) are resolved correctly.
 		_scope = _factory.Services.CreateScope();
 		_sut = _scope.ServiceProvider.GetRequiredService<CreateArticle.ICreateArticleHandler>();
 	}
@@ -55,8 +55,8 @@ public class CreateArticleTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(_cancellationToken);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(_cancellationToken);
 
 		// Create required dependencies
 		var request = FakeArticleDto.GetNewArticleDto(true);
@@ -94,8 +94,8 @@ public class CreateArticleTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		// Create required dependencies
 		var request = FakeArticleDto.GetNewArticleDto(true);
@@ -148,8 +148,8 @@ public class CreateArticleTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		// Create required dependencies
 		var request = FakeArticleDto.GetNewArticleDto(true);
@@ -190,8 +190,8 @@ public class CreateArticleTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		// Create required dependencies
 		var request = FakeArticleDto.GetNewArticleDto(true);
@@ -229,8 +229,8 @@ public class CreateArticleTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		// Create required dependencies
 		var request = FakeArticleDto.GetNewArticleDto(true);

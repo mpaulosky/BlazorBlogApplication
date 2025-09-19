@@ -26,7 +26,7 @@ public class CreateCategoryTests : IAsyncLifetime
 	{
 		_factory = factory;
 
-		// Create a scope here so scoped services (like IMyBlogContextFactory) are resolved correctly.
+		// Create a scope here so scoped services (like IArticleDbContextFactory) are resolved correctly.
 		_scope = _factory.Services.CreateScope();
 		_sut = _scope.ServiceProvider.GetRequiredService<CreateCategory.ICreateCategoryHandler>();
 	}
@@ -63,14 +63,14 @@ public class CreateCategoryTests : IAsyncLifetime
 		result.Success.Should().BeTrue();
 
 		// Verify the document was inserted into MongoDB
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
-		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
+		var ctx = await ctxFactory.CreateDbContext(CancellationToken.None);
 
 		var inserted = await ctx.Categories.Find(c => c.CategoryName == expected.CategoryName)
 				.FirstOrDefaultAsync(CancellationToken.None);
 
 		inserted.Should().NotBeNull();
-		inserted.Id.Should().NotBe(ObjectId.Empty);
+		inserted.Id.Should().NotBe(Guid.Empty);
 
 	}
 

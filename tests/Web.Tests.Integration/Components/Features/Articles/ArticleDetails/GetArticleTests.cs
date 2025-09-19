@@ -25,7 +25,7 @@ public class GetArticleTests : IAsyncLifetime
 	{
 		_factory = factory;
 
-		// Create a scope here so scoped services (like IMyBlogContextFactory) are resolved correctly.
+		// Create a scope here so scoped services (like IArticleDbContextFactory) are resolved correctly.
 		_scope = _factory.Services.CreateScope();
 		_sut = _scope.ServiceProvider.GetRequiredService<GetArticle.IGetArticleHandler>();
 	}
@@ -52,11 +52,11 @@ public class GetArticleTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
 		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
 
 		// Create required dependencies
-		var category = new Category { CategoryName = "Test Category", Archived = false };
+		var category = new Category { CategoryName = "Test Category", IsArchived = false };
 		await ctx.Categories.InsertOneAsync(category, cancellationToken: CancellationToken.None);
 
 		var author = new AppUserDto { Id = ObjectId.GenerateNewId().ToString(), UserName = "testuser", Email = "test@example.com" };
@@ -118,7 +118,7 @@ public class GetArticleTests : IAsyncLifetime
 		// Arrange
 		await _factory.ResetDatabaseAsync();
 
-		var emptyId = ObjectId.Empty;
+		var emptyId = Guid.Empty;
 
 		// Act
 		var result = await _sut.HandleAsync(emptyId);
@@ -134,11 +134,11 @@ public class GetArticleTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
 		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
 
 		// Create required dependencies
-		var category = new Category { CategoryName = "测试分类", Archived = false };
+		var category = new Category { CategoryName = "测试分类", IsArchived = false };
 		await ctx.Categories.InsertOneAsync(category, cancellationToken: CancellationToken.None);
 
 		var author = new AppUserDto { Id = ObjectId.GenerateNewId().ToString(), UserName = "测试用户", Email = "test@example.com" };
@@ -175,11 +175,11 @@ public class GetArticleTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
 		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
 
 		// Create required dependencies
-		var category = new Category { CategoryName = "Special & Category", Archived = false };
+		var category = new Category { CategoryName = "Special & Category", IsArchived = false };
 		await ctx.Categories.InsertOneAsync(category, cancellationToken: CancellationToken.None);
 
 		var author = new AppUserDto { Id = ObjectId.GenerateNewId().ToString(), UserName = "special@user", Email = "special@example.com" };
@@ -216,11 +216,11 @@ public class GetArticleTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
 		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
 
 		// Create required dependencies
-		var category = new Category { CategoryName = "Draft Category", Archived = false };
+		var category = new Category { CategoryName = "Draft Category", IsArchived = false };
 		await ctx.Categories.InsertOneAsync(category, cancellationToken: CancellationToken.None);
 
 		var author = new AppUserDto { Id = ObjectId.GenerateNewId().ToString(), UserName = "draftauthor", Email = "draft@example.com" };
@@ -256,11 +256,11 @@ public class GetArticleTests : IAsyncLifetime
 	{
 		// Arrange
 		await _factory.ResetDatabaseAsync();
-		var ctxFactory = _factory.Services.GetRequiredService<IMyBlogContextFactory>();
+		var ctxFactory = _factory.Services.GetRequiredService<IArticleDbContextFactory>();
 		var ctx = await ctxFactory.CreateContext(CancellationToken.None);
 
 		// Create required dependencies
-		var category = new Category { CategoryName = "Archived Category", Archived = false };
+		var category = new Category { CategoryName = "Archived Category", IsArchived = false };
 		await ctx.Categories.InsertOneAsync(category, cancellationToken: CancellationToken.None);
 
 		var author = new AppUserDto { Id = ObjectId.GenerateNewId().ToString(), UserName = "archivedauthor", Email = "archived@example.com" };

@@ -19,13 +19,8 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 
-global using MongoDB.Bson;
-global using MongoDB.Driver;
-
 global using Shared.Fakes;
 global using static Shared.Helpers.Helpers;
-
-global using Testcontainers.MongoDb;
 
 global using Web.Data;
 global using Web.Fixtures;
