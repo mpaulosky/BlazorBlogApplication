@@ -65,4 +65,20 @@ public class AppUserDto
 
 	public static AppUserDto Empty => _empty;
 
+	/// <summary>
+	///   Creates an AppUserDto from an AppUser entity.
+	/// </summary>
+	/// <param name="user">The AppUser entity</param>
+	/// <returns>An AppUserDto representation</returns>
+	public static AppUserDto FromEntity(AppUser user)
+	{
+		return new AppUserDto
+		{
+			Id = user.Id,
+			UserName = user.UserName,
+			Email = user.Email,
+			Roles = user.Roles?.ToList() ?? new List<string>()
+		};
+	}
+
 }

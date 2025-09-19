@@ -19,7 +19,7 @@ public sealed class ArticleDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public ArticleDto() : this(ObjectId.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+	public ArticleDto() : this(Guid.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
 			AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false) { }
 
 	/// <summary>
@@ -40,7 +40,7 @@ public sealed class ArticleDto
 	/// <param name="isArchived">Gets or sets the archived status of the entity.</param>
 	/// <param name="canEdit"></param>
 	private ArticleDto(
-			ObjectId id,
+			Guid id,
 			string title,
 			string introduction,
 			string content,
@@ -74,70 +74,51 @@ public sealed class ArticleDto
 	/// <summary>
 	///   Gets or sets the unique identifier for the article.
 	/// </summary>
-	[BsonId]
-	[BsonElement("_id")]
-	[BsonRepresentation(BsonType.ObjectId)]
-	public ObjectId Id { get; set; }
+
+
+
+	public Guid Id { get; set; }
 
 	/// <summary>
 	///   Gets or sets the title of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	[BsonElement("title")]
-	[BsonRequired]
-	[BsonRepresentation(BsonType.String)]
 	public string Title { get; set; }
 
 	/// <summary>
 	///   Gets or sets the introduction or summary of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	[BsonElement("introduction")]
-	[BsonRequired]
-	[BsonRepresentation(BsonType.String)]
 	public string Introduction { get; set; }
 
 	/// <summary>
 	///   Gets or sets the main content of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	[BsonElement("content")]
-	[BsonRequired]
-	[BsonRepresentation(BsonType.String)]
 	public string Content { get; set; }
 
 	/// <summary>
 	///   Gets or sets the URL of the article's cover image.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	[BsonElement("coverImageUrl")]
-	[BsonRequired]
-	[BsonRepresentation(BsonType.String)]
 	public string CoverImageUrl { get; set; }
 
 	/// <summary>
 	///   Gets or sets the URL-friendly slug for the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	[BsonElement("urlSlug")]
-	[BsonRequired]
-	[BsonRepresentation(BsonType.String)]
 	public string UrlSlug { get; set; }
 
 	/// <summary>
 	///   Gets or sets the author information of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	[BsonElement("author")]
-	[BsonRequired]
 	public AppUserDto Author { get; set; }
 
 	/// <summary>
 	///   Gets or sets the category information of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	[BsonElement("category")]
-	[BsonRequired]
 	public CategoryDto Category { get; set; }
 
 	/// <summary>
@@ -145,51 +126,36 @@ public sealed class ArticleDto
 	/// </summary>
 	/// )]
 	[Display(Name = "Created On")]
-	[BsonElement("createdOn")]
-	[BsonRequired]
-	[BsonRepresentation(BsonType.DateTime)]
 	public DateTime CreatedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets the date and time when this entity was last modified.
 	/// </summary>
 	[Display(Name = "Modified On")]
-	[BsonElement("modifiedOn")]
-	[BsonIgnoreIfNull]
-	[BsonIgnoreIfDefault]
-	[BsonRepresentation(BsonType.DateTime)]
 	public DateTime? ModifiedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets a value indicating whether the article is published.
 	/// </summary>
 	[Display(Name = "Is Published")]
-	[BsonElement("isPublished")]
-	[BsonRepresentation(BsonType.Boolean)]
 	public bool IsPublished { get; set; }
 
 	/// <summary>
 	///   Gets or sets the date when the article was published.
 	/// </summary>
 	[Display(Name = "Published On")]
-	[BsonElement("publishedOn")]
-	[BsonIgnoreIfNull]
-	[BsonIgnoreIfDefault]
-	[BsonRepresentation(BsonType.DateTime)]
 	public DateTime? PublishedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets a value indicating whether the article is marked as archived.
 	/// </summary>
-	[BsonRepresentation(BsonType.Boolean)]
-	[BsonElement("isArchived")]
+	[Display(Name = "Is Archived")]
 	public bool IsArchived { get; set; }
 
 	/// <summary>
 	///   Indicates whether the current user can edit/delete this article.
 	/// </summary>
-	[BsonRepresentation(BsonType.Boolean)]
-	[BsonElement("canEdit")]
+	[Display(Name = "Can Edit")]
 	public bool CanEdit { get; set; }
 
 	/// <summary>
@@ -197,7 +163,7 @@ public sealed class ArticleDto
 	/// </summary>
 	public static ArticleDto Empty { get; } =
 		new(
-				ObjectId.Empty,
+				Guid.Empty,
 				string.Empty,
 				string.Empty,
 				string.Empty,
@@ -220,8 +186,8 @@ public sealed class ArticleDto
 				Content = article.Content,
 				CoverImageUrl = article.CoverImageUrl,
 				UrlSlug = article.UrlSlug,
-				Author = article.Author,
-				Category = article.Category,
+				Author = article.Author != null ? AppUserDto.FromEntity(article.Author) : AppUserDto.Empty,
+				Category = article.Category != null ? CategoryDto.FromEntity(article.Category) : CategoryDto.Empty,
 				CreatedOn = article.CreatedOn,
 				ModifiedOn = article.ModifiedOn,
 				IsPublished = article.IsPublished,

@@ -18,7 +18,7 @@ public class CategoryDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public CategoryDto() : this(ObjectId.Empty, string.Empty, DateTime.UtcNow, null) { }
+	public CategoryDto() : this(Guid.Empty, string.Empty, DateTime.UtcNow, null, false) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="CategoryDto" /> class.
@@ -27,37 +27,29 @@ public class CategoryDto
 	/// <param name="categoryName"></param>
 	/// <param name="createdOn"></param>
 	/// <param name="modifiedOn"></param>
-	/// <param name="IsArchived">Indicates whether the category is archived.</param>
+	/// <param name="isArchived">Indicates whether the category is archived.</param>
 	private CategoryDto(
-			ObjectId id,
+			Guid id,
 			string categoryName,
 			DateTime createdOn,
 			DateTime? modifiedOn,
-			bool IsArchived = false)
+			bool isArchived)
 	{
 		Id = id;
 		CategoryName = categoryName;
 		CreatedOn = createdOn;
 		ModifiedOn = modifiedOn;
-
-		// store into the primary IsArchived property
-		this.IsArchived = IsArchived;
+		IsArchived = isArchived;
 	}
 
 	/// <summary>
 	///   Gets or sets the unique identifier for the category.
 	/// </summary>
-	[BsonId]
-	[BsonElement("_id")]
-	[BsonRepresentation(BsonType.ObjectId)]
-	public ObjectId Id { get; set; }
+	public Guid Id { get; set; }
 
 	/// <summary>
 	///   Gets the name of the category.
 	/// </summary>
-	[BsonRepresentation(BsonType.String)]
-	[BsonElement("categoryName")]
-	[BsonRequired]
 	[Display(Name = "Category Name")]
 	public string CategoryName { get; set; }
 
@@ -66,46 +58,34 @@ public class CategoryDto
 	/// </summary>
 	/// )]
 	[Display(Name = "Created On")]
-	[BsonElement("createdOn")]
-	[BsonRequired]
-	[BsonRepresentation(BsonType.DateTime)]
 	public DateTime CreatedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets the date and time when this entity was last modified.
 	/// </summary>
 	[Display(Name = "Modified On")]
-	[BsonElement("modifiedOn")]
-	[BsonIgnoreIfNull]
-	[BsonIgnoreIfDefault]
-	[BsonRepresentation(BsonType.DateTime)]
 	public DateTime? ModifiedOn { get; set; }
 
 	/// <summary>
-	///   Gets or sets a value indicating whether the article is marked as deleted.
+	///   Gets or sets a value indicating whether the category is archived.
 	/// </summary>
-	[BsonRepresentation(BsonType.Boolean)]
-	[BsonElement("isArchived")]
+	[Display(Name = "Is Archived")]
 	public bool IsArchived { get; set; }
 
 	/// <summary>
-	///   Backwards-compatible alias used throughout tests and UI code.
+	///   Backwards-compatible alias for IsArchived used throughout UI code.
 	///   Some code expects a property named 'Archived' on DTOs; expose it as an alias.
-	///   This property is ignored by BSON serializers to avoid duplicate mapping.
 	/// </summary>
-	[BsonIgnore]
-	public bool Archived {
+	public bool Archived
+	{
 		get => IsArchived;
-
 		set => IsArchived = value;
 	}
 
 	/// <summary>
 	///   Gets an empty singleton category instance.
 	/// </summary>
-	private static readonly CategoryDto _empty = new(ObjectId.Empty, string.Empty, DateTime.UtcNow, null);
-
-	public static CategoryDto Empty => _empty;
+	public static CategoryDto Empty { get; } = new(Guid.Empty, string.Empty, DateTime.UtcNow, null, false);
 
 	public static CategoryDto FromEntity(Category c)
 	{
