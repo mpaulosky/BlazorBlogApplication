@@ -53,7 +53,7 @@ public static class FakeAppUser
 	{
 
 		var fake = new Faker<AppUser>()
-				.RuleFor(x => x.Id, ObjectId.GenerateNewId().ToString())
+				.RuleFor(x => x.Id, Guid.CreateVersion7().ToString())
 				.RuleFor(x => x.UserName, f => f.Name.FullName())
 				.RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.UserName))
 				.RuleFor(x => x.Roles, f => [f.Random.Enum<Roles>().ToString()]);

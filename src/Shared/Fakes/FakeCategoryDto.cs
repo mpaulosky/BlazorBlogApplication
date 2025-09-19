@@ -52,7 +52,7 @@ public static class FakeCategoryDto
 
 
 		var fake = new Faker<CategoryDto>()
-				.RuleFor(x => x.Id, _ => ObjectId.GenerateNewId())
+				.RuleFor(x => x.Id, _ => Guid.CreateVersion7())
 				.RuleFor(x => x.CategoryName, _ => GetRandomCategoryName())
 				.RuleFor(x => x.IsArchived, f => f.Random.Bool())
 				.RuleFor(x => x.CreatedOn, _ => DateTime.Now)

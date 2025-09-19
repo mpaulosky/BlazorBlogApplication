@@ -69,7 +69,7 @@ public static class FakeArticle
 	internal static Faker<Article> GenerateFake(bool useSeed = false)
 	{
 		var fake = new Faker<Article>()
-				.RuleFor(f => f.Id, _ => ObjectId.GenerateNewId())
+				.RuleFor(f => f.Id, _ => Guid.CreateVersion7())
 				.RuleFor(f => f.Title, f => f.WaffleTitle())
 				.RuleFor(f => f.Introduction, f => f.Lorem.Sentence())
 				.RuleFor(f => f.Content, f => f.WaffleMarkdown(5))
@@ -78,8 +78,8 @@ public static class FakeArticle
 				.RuleFor(f => f.IsPublished, f => f.Random.Bool())
 				.RuleFor(f => f.PublishedOn, (_, f) => f.IsPublished ? DateTime.Now : null)
 				.RuleFor(f => f.IsArchived, f => f.Random.Bool())
-				.RuleFor(f => f.Category, _ => FakeCategoryDto.GetNewCategoryDto(useSeed))
-				.RuleFor(f => f.Author, _ => FakeAppUserDto.GetNewAppUserDto(useSeed))
+				.RuleFor(f => f.CategoryId, _ => FakeCategory.GetNewCategory(useSeed).Id)
+				.RuleFor(f => f.AuthorId, _ => FakeAppUser.GetNewAppUser(useSeed).Id)
 				.RuleFor(f => f.CreatedOn, _ => DateTime.Now)
 				.RuleFor(f => f.ModifiedOn, _ => DateTime.Now);
 

@@ -15,9 +15,11 @@ namespace Shared;
 public static class Services
 {
 
-	public const string SERVER = "Server";
+	public const string SERVER = "PostgresServer";
 
-	public const string DATABASE = "articlesDb";
+	public const string ARTICLE_DATABASE = "articlesDb";
+
+	public const string USER_DATABASE = "usersDb";
 
 	public const string WEBSITE = "Web";
 

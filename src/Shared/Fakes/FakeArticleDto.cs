@@ -50,7 +50,7 @@ public static class FakeArticleDto
 	internal static Faker<ArticleDto> GenerateFake(bool useSeed = false)
 	{
 		var fake = new Faker<ArticleDto>()
-				.RuleFor(f => f.Id, ObjectId.GenerateNewId())
+				.RuleFor(f => f.Id, Guid.CreateVersion7())
 				.RuleFor(f => f.Title, f => f.WaffleTitle())
 				.RuleFor(f => f.Introduction, f => f.Lorem.Sentence())
 				.RuleFor(f => f.Content, f => f.WaffleMarkdown(5))

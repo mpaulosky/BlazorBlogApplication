@@ -10,7 +10,7 @@
 		<PackageReference Include="Bogus"/>
 		<PackageReference Include="FluentValidation"/>
 		<PackageReference Include="Mapster"/>
-		<PackageReference Include="MongoDB.Bson"/>
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
 		<PackageReference Include="WaffleGenerator.Bogus"/>
 	</ItemGroup>
 

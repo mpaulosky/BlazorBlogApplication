@@ -23,12 +23,6 @@ public class Category : Entity
 	public string CategoryName { get; set; }
 
 	/// <summary>
-	///   Indicates whether the article is archived.
-	/// </summary>
-	[Display(Name = "Is Archived")]
-	public bool IsArchived { get; set; }
-
-	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
 	public Category() : this(string.Empty) { }
@@ -50,8 +44,7 @@ public class Category : Entity
 	public static Category Empty =>
 			new(string.Empty)
 			{
-					Id = ObjectId.Empty,
-					IsArchived = false
+					Id = Guid.Empty
 			};
 
 }
