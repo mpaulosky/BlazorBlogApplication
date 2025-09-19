@@ -27,7 +27,7 @@ public class FakeCategoryDtoTests
 		// Assert
 		dto.Should().NotBeNull();
 		dto.CategoryName.Should().NotBeNullOrWhiteSpace();
-		dto.Id.Should().NotBe(ObjectId.Empty);
+		dto.Id.Should().NotBe(Guid.Empty);
 		dto.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
 		dto.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
 	}
@@ -48,7 +48,7 @@ public class FakeCategoryDtoTests
 		foreach (var dto in list)
 		{
 			dto.CategoryName.Should().NotBeNullOrWhiteSpace();
-			dto.Id.Should().NotBe(ObjectId.Empty);
+			dto.Id.Should().NotBe(Guid.Empty);
 			dto.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
 			dto.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
 		}
@@ -74,8 +74,8 @@ public class FakeCategoryDtoTests
 		var b = FakeCategoryDto.GetNewCategoryDto(true);
 
 		// Assert - deterministic except for Id and CategoryName
-		a.Id.Should().NotBe(ObjectId.Empty);
-		b.Id.Should().NotBe(ObjectId.Empty);
+		a.Id.Should().NotBe(Guid.Empty);
+		b.Id.Should().NotBe(Guid.Empty);
 		a.CategoryName.Should().NotBeNullOrWhiteSpace();
 		b.CategoryName.Should().NotBeNullOrWhiteSpace();
 		a.CreatedOn.Should().BeCloseTo(b.CreatedOn, TimeSpan.FromSeconds(1));
@@ -99,7 +99,7 @@ public class FakeCategoryDtoTests
 		results.Should().HaveCount(count);
 		results.Should().AllBeOfType<CategoryDto>();
 		results.Should().OnlyContain(c => !string.IsNullOrWhiteSpace(c.CategoryName));
-		results.Should().OnlyContain(c => c.Id != ObjectId.Empty);
+		results.Should().OnlyContain(c => c.Id != Guid.Empty);
 
 	}
 
@@ -116,8 +116,8 @@ public class FakeCategoryDtoTests
 		// Assert
 
 		// Assert
-		categories[0].Id.Should().NotBe(ObjectId.Empty);
-		categories[1].Id.Should().NotBe(ObjectId.Empty);
+		categories[0].Id.Should().NotBe(Guid.Empty);
+		categories[1].Id.Should().NotBe(Guid.Empty);
 		categories[0].CategoryName.Should().NotBeNullOrWhiteSpace();
 		categories[1].CategoryName.Should().NotBeNullOrWhiteSpace();
 		categories[0].CreatedOn.Should().BeCloseTo(categories[1].CreatedOn, TimeSpan.FromSeconds(1));
@@ -134,7 +134,7 @@ public class FakeCategoryDtoTests
 		// Assert
 		dto.Should().NotBeNull();
 		dto.Should().BeOfType<CategoryDto>();
-		dto.Id.Should().NotBe(ObjectId.Empty);
+		dto.Id.Should().NotBe(Guid.Empty);
 		dto.CategoryName.Should().NotBeNullOrWhiteSpace();
 		dto.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
 		dto.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(5));
@@ -148,8 +148,8 @@ public class FakeCategoryDtoTests
 		var categories = FakeCategoryDto.GenerateFake(true).Generate(2);
 
 		// Assert
-		categories[0].Id.Should().NotBe(ObjectId.Empty);
-		categories[1].Id.Should().NotBe(ObjectId.Empty);
+		categories[0].Id.Should().NotBe(Guid.Empty);
+		categories[1].Id.Should().NotBe(Guid.Empty);
 		categories[0].CategoryName.Should().NotBeNullOrWhiteSpace();
 		categories[1].CategoryName.Should().NotBeNullOrWhiteSpace();
 		categories[0].CreatedOn.Should().BeCloseTo(categories[1].CreatedOn, TimeSpan.FromSeconds(1));

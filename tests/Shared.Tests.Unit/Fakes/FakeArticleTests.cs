@@ -26,7 +26,7 @@ public class FakeArticleTests
 
 		// Assert
 		article.Should().NotBeNull();
-		article.Id.Should().NotBe(ObjectId.Empty);
+		article.Id.Should().NotBe(Guid.Empty);
 		article.Title.Should().NotBeNullOrWhiteSpace();
 		article.Introduction.Should().NotBeNullOrWhiteSpace();
 		article.Content.Should().NotBeNullOrWhiteSpace();
@@ -60,7 +60,7 @@ public class FakeArticleTests
 
 		foreach (var a in articles)
 		{
-			a.Id.Should().NotBe(ObjectId.Empty);
+			a.Id.Should().NotBe(Guid.Empty);
 			a.Title.Should().NotBeNullOrWhiteSpace();
 			a.UrlSlug.Should().Be(a.Title.GetSlug());
 			a.Category.Should().NotBeNull();
@@ -102,7 +102,7 @@ public class FakeArticleTests
 		results.Should().HaveCount(count);
 		results.Should().AllBeOfType<Article>();
 		results.Should().OnlyContain(a => !string.IsNullOrWhiteSpace(a.Title));
-		results.Should().OnlyContain(a => a.Id != ObjectId.Empty);
+		results.Should().OnlyContain(a => a.Id != Guid.Empty);
 
 	}
 
@@ -116,7 +116,7 @@ public class FakeArticleTests
 
 		// Assert
 		article.Should().NotBeNull();
-		article.Id.Should().NotBe(ObjectId.Empty);
+		article.Id.Should().NotBe(Guid.Empty);
 		article.Title.Should().NotBeNullOrWhiteSpace();
 		article.UrlSlug.Should().Be(article.Title.GetSlug());
 		article.Category.Should().NotBeNull();

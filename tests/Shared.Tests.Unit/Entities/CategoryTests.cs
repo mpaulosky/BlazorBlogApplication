@@ -7,6 +7,8 @@
 // Project Name :  Shared.Tests.Unit
 // =======================================================
 
+using Shared.Abstractions;
+
 namespace Shared.Entities;
 
 /// <summary>
@@ -21,11 +23,10 @@ public class CategoryTests
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
 		var category = new Category();
-		category.Id.Should().NotBeNull();
 		category.CategoryName.Should().BeEmpty();
 		category.CreatedOn.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
 		category.ModifiedOn.Should().BeNull();
-		category.Archived.Should().BeFalse();
+		((Entity)category).IsArchived.Should().BeFalse();
 	}
 
 	[Fact]
@@ -37,12 +38,12 @@ public class CategoryTests
 		{
 				CategoryName = expected.CategoryName,
 				ModifiedOn = expected.ModifiedOn,
-				Archived = expected.Archived
+				IsArchived = ((Entity)expected).IsArchived
 		};
 
 		category.CategoryName.Should().Be(expected.CategoryName);
 		category.ModifiedOn.Should().Be(expected.ModifiedOn);
-		category.Archived.Should().Be(expected.Archived);
+		((Entity)category).IsArchived.Should().Be(((Entity)expected).IsArchived);
 	}
 
 	[Fact]
@@ -51,7 +52,7 @@ public class CategoryTests
 		var category = Category.Empty;
 		category.CategoryName.Should().BeEmpty();
 		category.ModifiedOn.Should().BeNull();
-		category.Archived.Should().BeFalse();
+		((Entity)category).IsArchived.Should().BeFalse();
 	}
 
 }

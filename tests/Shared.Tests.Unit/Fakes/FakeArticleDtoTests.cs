@@ -26,7 +26,7 @@ public class FakeArticleDtoTests
 
 		// Assert
 		dto.Should().NotBeNull();
-		dto.Id.Should().NotBe(ObjectId.Empty);
+		dto.Id.Should().NotBe(Guid.Empty);
 		dto.Title.Should().NotBeNullOrWhiteSpace();
 		dto.Introduction.Should().NotBeNullOrWhiteSpace();
 		dto.Content.Should().NotBeNullOrWhiteSpace();
@@ -62,7 +62,7 @@ public class FakeArticleDtoTests
 
 		foreach (var dto in list)
 		{
-			dto.Id.Should().NotBe(ObjectId.Empty);
+			dto.Id.Should().NotBe(Guid.Empty);
 			dto.Title.Should().NotBeNullOrWhiteSpace();
 			dto.Introduction.Should().NotBeNullOrWhiteSpace();
 			dto.Content.Should().NotBeNullOrWhiteSpace();
@@ -106,7 +106,7 @@ public class FakeArticleDtoTests
 		for (var i = 0; i < count; i++)
 		{
 			results[i].Should().NotBeNull();
-			results[i].Id.Should().NotBe(ObjectId.Empty);
+			results[i].Id.Should().NotBe(Guid.Empty);
 			results[i].Title.Should().NotBeNullOrWhiteSpace();
 			results[i].Introduction.Should().NotBeNullOrWhiteSpace();
 			results[i].Content.Should().NotBeNullOrWhiteSpace();
@@ -149,7 +149,7 @@ public class FakeArticleDtoTests
 		for (var i = 0; i < count; i++)
 		{
 			results[i].Should().NotBeNull();
-			results[i].Id.Should().NotBe(ObjectId.Empty);
+			results[i].Id.Should().NotBe(Guid.Empty);
 			results[i].Title.Should().NotBeNullOrWhiteSpace();
 			results[i].Introduction.Should().NotBeNullOrWhiteSpace();
 			results[i].Content.Should().NotBeNullOrWhiteSpace();
@@ -190,7 +190,7 @@ public class FakeArticleDtoTests
 		for (var i = 0; i < count; i++)
 		{
 			results[i].Should().NotBeNull();
-			results[i].Id.Should().NotBe(ObjectId.Empty);
+			results[i].Id.Should().NotBe(Guid.Empty);
 			results[i].Title.Should().NotBeNullOrWhiteSpace();
 			results[i].Introduction.Should().NotBeNullOrWhiteSpace();
 			results[i].Content.Should().NotBeNullOrWhiteSpace();
@@ -228,7 +228,7 @@ public class FakeArticleDtoTests
 		// Assert
 		dto.Should().NotBeNull();
 		dto.Should().BeOfType<ArticleDto>();
-		dto.Id.Should().NotBe(ObjectId.Empty);
+		dto.Id.Should().NotBe(Guid.Empty);
 		dto.Title.Should().NotBeNullOrWhiteSpace();
 		dto.UrlSlug.Should().Be(dto.Title.GetSlug());
 		dto.Category.Should().NotBeNull();

@@ -33,7 +33,7 @@ public class FakeCategoryTests
 		category.CategoryName.Should().NotBeNullOrWhiteSpace();
 		category.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
 		category.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
-		category.Id.Should().NotBe(ObjectId.Empty);
+		category.Id.Should().NotBe(Guid.Empty);
 	}
 
 	/// <summary>
@@ -58,7 +58,7 @@ public class FakeCategoryTests
 			c.CategoryName.Should().NotBeNullOrWhiteSpace();
 			c.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
 			c.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
-			c.Id.Should().NotBe(ObjectId.Empty);
+			c.Id.Should().NotBe(Guid.Empty);
 		}
 	}
 
@@ -91,8 +91,8 @@ public class FakeCategoryTests
 		var b = FakeCategory.GetNewCategory(true);
 
 		// Assert - deterministic except for Id and CategoryName
-		a.Id.Should().NotBe(ObjectId.Empty);
-		b.Id.Should().NotBe(ObjectId.Empty);
+		a.Id.Should().NotBe(Guid.Empty);
+		b.Id.Should().NotBe(Guid.Empty);
 		a.CategoryName.Should().NotBeNullOrWhiteSpace();
 		b.CategoryName.Should().NotBeNullOrWhiteSpace();
 		a.CreatedOn.Should().BeCloseTo(b.CreatedOn, TimeSpan.FromSeconds(1));
@@ -121,7 +121,7 @@ public class FakeCategoryTests
 		results.Should().HaveCount(count);
 		results.Should().AllBeOfType<Category>();
 		results.Should().OnlyContain(c => !string.IsNullOrEmpty(c.CategoryName));
-		results.Should().OnlyContain(c => c.Id != ObjectId.Empty);
+		results.Should().OnlyContain(c => c.Id != Guid.Empty);
 
 	}
 
@@ -142,8 +142,8 @@ public class FakeCategoryTests
 		// Assert
 
 		// Assert
-		categories[0].Id.Should().NotBe(ObjectId.Empty);
-		categories[1].Id.Should().NotBe(ObjectId.Empty);
+		categories[0].Id.Should().NotBe(Guid.Empty);
+		categories[1].Id.Should().NotBe(Guid.Empty);
 		categories[0].CategoryName.Should().NotBeNullOrWhiteSpace();
 		categories[1].CategoryName.Should().NotBeNullOrWhiteSpace();
 		categories[0].CreatedOn.Should().BeCloseTo(categories[1].CreatedOn, TimeSpan.FromSeconds(1));
@@ -164,7 +164,7 @@ public class FakeCategoryTests
 
 		// Assert
 		category.Should().NotBeNull();
-		category.Id.Should().NotBe(ObjectId.Empty);
+		category.Id.Should().NotBe(Guid.Empty);
 		category.CategoryName.Should().NotBeNullOrEmpty();
 		category.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
 		category.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
@@ -184,10 +184,10 @@ public class FakeCategoryTests
 
 		// Assert
 		categories.Should().HaveCount(2);
-		categories[0].Id.Should().NotBe(ObjectId.Empty);
+		categories[0].Id.Should().NotBe(Guid.Empty);
 		categories[0].CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
 		categories[0].ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
-		categories[1].Id.Should().NotBe(ObjectId.Empty);
+		categories[1].Id.Should().NotBe(Guid.Empty);
 		categories[0].CreatedOn.Should().BeCloseTo(categories[1].CreatedOn, TimeSpan.FromSeconds(1));
 		categories[1].ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
 
