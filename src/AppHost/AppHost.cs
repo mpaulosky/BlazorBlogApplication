@@ -30,34 +30,24 @@ public static class AppHostEntryPoint
 	{
 		var builder = DistributedApplication.CreateBuilder(args);
 
-		// Define constants for resources
-		var auth0Domain = builder.AddParameter("auth0-domain", true)
-				.WithDescription("The Auth0 domain for authentication.");
-
-		var auth0Client = builder.AddParameter("auth0-client-id", true)
-				.WithDescription("The Auth0 client ID for authentication.");
-
-		var auth0ClientSecret = builder.AddParameter("auth0-client-secret", true)
-				.WithDescription("The Auth0 client secret for authentication.");
-
-		var mongoDbConnection = builder.AddParameter("mongoDb-connection", true)
-				.WithDescription("The MongoDB connection string.");
-
-		var database = builder.AddMongoDB(SERVER)
+		var cache = builder.AddRedis(CACHE)
 				.WithLifetime(ContainerLifetime.Persistent)
-				.WithDataVolume($"{SERVER}-data")
-				.WithMongoExpress()
-				.AddDatabase(DATABASE);
+				.WithRedisInsight();
+
+		var postgres = builder.AddPostgres(SERVER)
+				.WithLifetime(ContainerLifetime.Persistent)
+				.WithPgAdmin()
+				.WithDataVolume(isReadOnly: false);
+
+		var postgresDb = postgres.AddDatabase(ARTICLE_DATABASE);
+		var userDb = postgres.AddDatabase(USER_DATABASE);
 
 		builder.AddProject<Web>(WEBSITE)
-				.WithExternalHttpEndpoints()
-				.WithHttpHealthCheck("/health")
-				.WithReference(database)
-				.WaitFor(database)
-				.WithEnvironment("mongoDb-connection", mongoDbConnection)
-				.WithEnvironment("auth0-domain", auth0Domain)
-				.WithEnvironment("auth0-client-id", auth0Client)
-				.WithEnvironment("auth0-client-secret", auth0ClientSecret);
+				.WithReference(postgresDb)
+				.WithReference(userDb)
+				.WithReference(cache)
+				.WaitFor(postgres)
+				.WithExternalHttpEndpoints();
 
 		builder.Build().Run();
 	}
