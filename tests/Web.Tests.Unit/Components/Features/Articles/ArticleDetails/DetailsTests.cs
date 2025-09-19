@@ -232,7 +232,7 @@ public class DetailsTests : BunitContext
 	public void HandlesEmptyObjectId()
 	{
 		// Arrange & Act
-		var emptyId = ObjectId.Empty;
+		var emptyId = Guid.Empty;
 		_mockHandler.HandleAsync(emptyId).Returns(Task.FromResult(Result<ArticleDto>.Fail("Article not found")));
 		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, emptyId));
 

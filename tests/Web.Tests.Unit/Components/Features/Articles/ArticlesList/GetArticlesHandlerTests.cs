@@ -84,11 +84,11 @@ public class GetArticlesHandlerTests
 						Arg.Any<CancellationToken>()))
 				.Do(_ => throw new InvalidOperationException("Find failed"));
 
-		var context = Substitute.For<IMyBlogContext>();
+		var context = Substitute.For<IArticleDbContext>();
 		context.Articles.Returns(collection);
 
 		var logger = Substitute.For<ILogger<GetArticles.Handler>>();
-		var handler = new GetArticles.Handler(new TestMyBlogContextFactory(context), logger);
+		var handler = new GetArticles.Handler(new TestArticleDbContextFactory(context), logger);
 
 		// Act
 		var result = await handler.HandleAsync();
@@ -101,25 +101,25 @@ public class GetArticlesHandlerTests
 				Arg.Any<Func<object, Exception?, string>>());
 	}
 
-	// Lightweight IMyBlogContextFactory stub used by handlers in tests
-	private class TestMyBlogContextFactory : IMyBlogContextFactory
+	// Lightweight IArticleDbContextFactory stub used by handlers in tests
+	private class TestArticleDbContextFactory : IArticleDbContextFactory
 	{
 
-		private readonly IMyBlogContext _ctx;
+		private readonly IArticleDbContext _ctx;
 
-		public TestMyBlogContextFactory(IMyBlogContext ctx)
+		public TestArticleDbContextFactory(IArticleDbContext ctx)
 		{
 			_ctx = ctx;
 		}
 
-		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
+		public Task<IArticleDbContext> CreateDbContext(CancellationToken cancellationToken = default)
 		{
 			return Task.FromResult(_ctx);
 		}
 
-		public MyBlogContext CreateContext()
+		public MyzBlogContext CreateDbContext()
 		{
-			return (MyBlogContext)_ctx;
+			return (MyzBlogContext)_ctx;
 		}
 
 	}

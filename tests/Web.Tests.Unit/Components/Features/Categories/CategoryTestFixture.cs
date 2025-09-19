@@ -16,90 +16,70 @@ namespace Web.Components.Features.Categories;
 
 // This fixture is not parallelized to avoid issues with shared MongoDB collections.
 [ExcludeFromCodeCoverage]
-public class CategoryTestFixture : IAsyncDisposable
+public class CategoryTestFixture : IAsyncDisposable, IDisposable
 {
 
-	private IMongoClient MongoClient { get; }
-
-	private IMongoDatabase MongoDatabase { get; }
-
-	// Expose the collection so handler tests can configure InsertOneAsync behavior
-	public IMongoCollection<Category> CategoriesCollection { get; }
-
-	// Expose the IMyBlogContext for tests similar to ArticlesTestFixture
-	public IMyBlogContext BlogContext { get; private set; }
+	// Expose the ArticleDbContext for tests
+	public ArticleDbContext BlogContext { get; private set; }
 
 	public ILogger<GetCategories.Handler> Logger { get; }
 
 	public CategoryTestFixture()
 	{
-		MongoClient = Substitute.For<IMongoClient>();
-		MongoDatabase = Substitute.For<IMongoDatabase>();
-		CategoriesCollection = Substitute.For<IMongoCollection<Category>>();
-		MongoClient.GetDatabase(Arg.Any<string>()).Returns(MongoDatabase);
-		MongoDatabase.GetCollection<Category>(Arg.Any<string>()).Returns(CategoriesCollection);
-		var blogContext = new MyBlogContext(MongoClient);
-		BlogContext = blogContext;
+		var options = new DbContextOptionsBuilder<ArticleDbContext>()
+			.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+			.Options;
+
+		BlogContext = new ArticleDbContext(options);
 		Logger = Substitute.For<ILogger<GetCategories.Handler>>();
 	}
 
-	// Lightweight IMyBlogContextFactory stub used by EditCategory.Handler in tests
-	private class TestMyBlogContextFactory : IMyBlogContextFactory
+	// Lightweight IArticleDbContextFactory stub used by EditCategory.Handler in tests
+	private class TestArticleDbContextFactory : IArticleDbContextFactory
 	{
 
-		private readonly IMyBlogContext _ctx;
+		private readonly ArticleDbContext _ctx;
 
-		public TestMyBlogContextFactory(IMyBlogContext ctx)
+		public TestArticleDbContextFactory(ArticleDbContext ctx)
 		{
 			_ctx = ctx;
 		}
 
-		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
+		public ArticleDbContext CreateDbContext()
 		{
-			return Task.FromResult(_ctx);
-		}
-
-		public MyBlogContext CreateContext()
-		{
-			return (MyBlogContext)_ctx;
+			return _ctx;
 		}
 
 	}
 
 	/// <summary>
 	///   Configure the underlying categories collection to return the supplied categories
-	///   from FindAsync via the generic <see cref="StubCursor{T}" />.
+	///   from Entity Framework in-memory database.
 	/// </summary>
 	public void SetupFindAsync(IEnumerable<Category> categories)
 	{
-		var cursor = new StubCursor<Category>(categories.ToList());
-
-		// Match any filter/options/token so tests can call FindAsync with a filter
-		// (for example, Builders<Category>.Filter.Eq("_id", id)) and still receive
-		// the prepared cursor.
-		CategoriesCollection
-				.FindAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<FindOptions<Category, Category>>(),
-						Arg.Any<CancellationToken>())
-				.ReturnsForAnyArgs(Task.FromResult((IAsyncCursor<Category>)cursor));
+		// Add categories to the in-memory database
+		BlogContext.Categories.AddRange(categories);
+		BlogContext.SaveChanges();
 	}
 
 	/// <summary>
-	///   Create a concrete GetCategory.Handler wired to the fixture's MyBlogContext and logger.
+	///   Create a concrete GetCategory.Handler wired to the fixture's MyzBlogContext and logger.
 	///   Tests can register this into a bUnit TestContext or the test DI container.
 	/// </summary>
 	public GetCategory.Handler CreateGetCategoryHandler()
 	{
 		var categoryLogger = Substitute.For<ILogger<GetCategory.Handler>>();
-		return new GetCategory.Handler(new TestMyBlogContextFactory(BlogContext), categoryLogger);
+		return new GetCategory.Handler(new TestArticleDbContextFactory(BlogContext), categoryLogger);
 	}
 
 	/// <summary>
-	///   Create a concrete GetCategories.Handler wired to the fixture's MyBlogContext and logger.
+	///   Create a concrete GetCategories.Handler wired to the fixture's ArticleDbContext and logger.
 	///   Tests can register this into a bUnit TestContext or the test DI container.
 	/// </summary>
 	public GetCategories.Handler CreateGetCategoriesHandler()
 	{
-		return new GetCategories.Handler(new TestMyBlogContextFactory(BlogContext), Logger);
+		return new GetCategories.Handler(new TestArticleDbContextFactory(BlogContext), Logger);
 	}
 
 	/// <summary>
@@ -127,25 +107,24 @@ public class CategoryTestFixture : IAsyncDisposable
 		// And register the Edit handler interface used by components
 		ctx.Services.AddScoped<EditCategory.IEditCategoryHandler>(_ => editHandler);
 
-		// Register the concrete MyBlogContext so handlers resolving MyBlogContext get the fixture instance
+		// Register the concrete ArticleDbContext so handlers resolving ArticleDbContext get the fixture instance
 		ctx.Services.AddScoped(_ => BlogContext);
 
-		// Also register the IMyBlogContext and factory interfaces
-		ctx.Services.AddScoped<IMyBlogContext>(_ => BlogContext);
-		ctx.Services.AddScoped<IMyBlogContextFactory>(_ => new TestMyBlogContextFactory(BlogContext));
+		// Also register the factory interfaces
+		ctx.Services.AddScoped<IArticleDbContextFactory>(_ => new TestArticleDbContextFactory(BlogContext));
 
 		// Register logger instance used by handlers
 		ctx.Services.AddSingleton(Logger);
 	}
 
 	/// <summary>
-	///   Create a concrete EditCategory.Handler wired to the fixture's MyBlogContext via a factory stub.
+	///   Create a concrete EditCategory.Handler wired to the fixture's ArticleDbContext via a factory stub.
 	///   Tests can register this into a bUnit TestContext or the test DI container.
 	/// </summary>
 	private EditCategory.Handler CreateEditHandler()
 	{
 		var editLogger = Substitute.For<ILogger<EditCategory.Handler>>();
-		var factory = new TestMyBlogContextFactory(BlogContext);
+		var factory = new TestArticleDbContextFactory(BlogContext);
 
 		return new EditCategory.Handler(factory, editLogger);
 	}
@@ -165,8 +144,16 @@ public class CategoryTestFixture : IAsyncDisposable
 	/// </summary>
 	public ValueTask DisposeAsync()
 	{
-		// No async resources currently, but keep the method for future-proofing.
+		Dispose();
 		return ValueTask.CompletedTask;
+	}
+
+	/// <summary>
+	///   Cleanup the ArticleDbContext
+	/// </summary>
+	public void Dispose()
+	{
+		BlogContext?.Dispose();
 	}
 
 }

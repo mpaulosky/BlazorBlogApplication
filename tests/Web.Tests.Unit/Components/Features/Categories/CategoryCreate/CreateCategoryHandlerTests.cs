@@ -25,7 +25,7 @@ public class CreateCategoryHandlerTests
 				.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateCategory.Handler>>();
-		var handler = new CreateCategory.Handler(new TestMyBlogContextFactory(_fixture.BlogContext), logger);
+		var handler = new CreateCategory.Handler(new TestArticleDbContextFactory(_fixture.BlogContext), logger);
 
 		var dto = new CategoryDto { CategoryName = "Test Cat" };
 
@@ -49,7 +49,7 @@ public class CreateCategoryHandlerTests
 				.Do(_ => throw new InvalidOperationException("DB error"));
 
 		var logger = Substitute.For<ILogger<CreateCategory.Handler>>();
-		var handler = new CreateCategory.Handler(new TestMyBlogContextFactory(_fixture.BlogContext), logger);
+		var handler = new CreateCategory.Handler(new TestArticleDbContextFactory(_fixture.BlogContext), logger);
 
 		var dto = new CategoryDto { CategoryName = "T" };
 
@@ -73,7 +73,7 @@ public class CreateCategoryHandlerTests
 				.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateCategory.Handler>>();
-		var handler = new CreateCategory.Handler(new TestMyBlogContextFactory(_fixture.BlogContext), logger);
+		var handler = new CreateCategory.Handler(new TestArticleDbContextFactory(_fixture.BlogContext), logger);
 
 		// Act
 		var result = await handler.HandleAsync(null);
@@ -93,7 +93,7 @@ public class CreateCategoryHandlerTests
 				.Returns(Task.CompletedTask);
 
 		var logger = Substitute.For<ILogger<CreateCategory.Handler>>();
-		var handler = new CreateCategory.Handler(new TestMyBlogContextFactory(_fixture.BlogContext), logger);
+		var handler = new CreateCategory.Handler(new TestArticleDbContextFactory(_fixture.BlogContext), logger);
 		var dto = new CategoryDto { CategoryName = string.Empty };
 
 		// Act
@@ -108,25 +108,25 @@ public class CreateCategoryHandlerTests
 
 	}
 
-	// Lightweight IMyBlogContextFactory stub used by handlers in tests
-	private class TestMyBlogContextFactory : IMyBlogContextFactory
+	// Lightweight IArticleDbContextFactory stub used by handlers in tests
+	private class TestArticleDbContextFactory : IArticleDbContextFactory
 	{
 
-		private readonly IMyBlogContext _ctx;
+		private readonly IArticleDbContext _ctx;
 
-		public TestMyBlogContextFactory(IMyBlogContext ctx)
+		public TestArticleDbContextFactory(IArticleDbContext ctx)
 		{
 			_ctx = ctx;
 		}
 
-		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
+		public Task<IArticleDbContext> CreateDbContext(CancellationToken cancellationToken = default)
 		{
 			return Task.FromResult(_ctx);
 		}
 
-		public MyBlogContext CreateContext()
+		public MyzBlogContext CreateDbContext()
 		{
-			return (MyBlogContext)_ctx;
+			return (MyzBlogContext)_ctx;
 		}
 
 	}

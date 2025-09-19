@@ -29,7 +29,7 @@ public static class Helpers
 	{
 		// Register the full set of common test services used across the suite.
 		// This includes NavigationManager, loggers, a lightweight Auth0Service,
-		// a test MyBlogContext, and handler substitutes/mappings. Individual
+		// a test MyzBlogContext, and handler substitutes/mappings. Individual
 		// tests may still override or register concrete handlers as needed.
 		//TestServiceRegistrations.RegisterAll(context);
 

@@ -75,16 +75,16 @@ public class GetArticleHandlerTests
 
 				// Simulate Articles property throwing when accessed
 				// Create a substitute context that throws when Articles getter is accessed
-				context = Substitute.For<IMyBlogContext>();
+				context = Substitute.For<IArticleDbContext>();
 				context.Articles.Returns(_ => throw new InvalidOperationException("Getter fail"));
 
 				break;
 		}
 
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
-		var handler = new GetArticle.Handler(new TestMyBlogContextFactory(context), logger);
+		var handler = new GetArticle.Handler(new TestArticleDbContextFactory(context), logger);
 
-		var id = scenario == FailureScenario.EMPTY_ID ? ObjectId.Empty : ObjectId.GenerateNewId();
+		var id = scenario == FailureScenario.EMPTY_ID ? Guid.Empty : ObjectId.GenerateNewId();
 
 		// Act
 		var result = await handler.HandleAsync(id);
@@ -110,11 +110,11 @@ public class GetArticleHandlerTests
 						Arg.Any<CancellationToken>())
 				.ReturnsForAnyArgs(Task.FromResult<IAsyncCursor<Article>>(cursor));
 
-		var context = Substitute.For<IMyBlogContext>();
+		var context = Substitute.For<IArticleDbContext>();
 		context.Articles.Returns(collection);
 
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
-		var handler = new GetArticle.Handler(new TestMyBlogContextFactory(context), logger);
+		var handler = new GetArticle.Handler(new TestArticleDbContextFactory(context), logger);
 
 		//var id = ObjectId.GenerateNewId();
 
@@ -141,14 +141,14 @@ public class GetArticleHandlerTests
 	{
 		// Arrange
 		var collection = Substitute.For<IMongoCollection<Article>>();
-		var context = Substitute.For<IMyBlogContext>();
+		var context = Substitute.For<IArticleDbContext>();
 		context.Articles.Returns(collection);
 
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
-		var handler = new GetArticle.Handler(new TestMyBlogContextFactory(context), logger);
+		var handler = new GetArticle.Handler(new TestArticleDbContextFactory(context), logger);
 
 		// Act
-		var result = await handler.HandleAsync(ObjectId.Empty);
+		var result = await handler.HandleAsync(Guid.Empty);
 
 		// Assert
 		result.Failure.Should().BeTrue();
@@ -174,11 +174,11 @@ public class GetArticleHandlerTests
 						Arg.Any<CancellationToken>())
 				.ReturnsForAnyArgs(Task.FromResult((IAsyncCursor<Article>)cursor));
 
-		var context = Substitute.For<IMyBlogContext>();
+		var context = Substitute.For<IArticleDbContext>();
 		context.Articles.Returns(collection);
 
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
-		var handler = new GetArticle.Handler(new TestMyBlogContextFactory(context), logger);
+		var handler = new GetArticle.Handler(new TestArticleDbContextFactory(context), logger);
 
 		var id = ObjectId.GenerateNewId();
 
@@ -207,11 +207,11 @@ public class GetArticleHandlerTests
 						Arg.Any<CancellationToken>()))
 				.Do(_ => throw new InvalidOperationException("DB fail"));
 
-		var context = Substitute.For<IMyBlogContext>();
+		var context = Substitute.For<IArticleDbContext>();
 		context.Articles.Returns(collection);
 
 		var logger = Substitute.For<ILogger<GetArticle.Handler>>();
-		var handler = new GetArticle.Handler(new TestMyBlogContextFactory(context), logger);
+		var handler = new GetArticle.Handler(new TestArticleDbContextFactory(context), logger);
 
 		var id = ObjectId.GenerateNewId();
 
@@ -260,25 +260,25 @@ public class GetArticleHandlerTests
 		found.Id.Should().Be(article.Id);
 	}
 
-	// Lightweight IMyBlogContextFactory stub used by handlers in tests
-	private class TestMyBlogContextFactory : IMyBlogContextFactory
+	// Lightweight IArticleDbContextFactory stub used by handlers in tests
+	private class TestArticleDbContextFactory : IArticleDbContextFactory
 	{
 
-		private readonly IMyBlogContext _ctx;
+		private readonly IArticleDbContext _ctx;
 
-		public TestMyBlogContextFactory(IMyBlogContext ctx)
+		public TestArticleDbContextFactory(IArticleDbContext ctx)
 		{
 			_ctx = ctx;
 		}
 
-		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
+		public Task<IArticleDbContext> CreateDbContext(CancellationToken cancellationToken = default)
 		{
 			return Task.FromResult(_ctx);
 		}
 
-		public MyBlogContext CreateContext()
+		public MyzBlogContext CreateDbContext()
 		{
-			return (MyBlogContext)_ctx;
+			return (MyzBlogContext)_ctx;
 		}
 
 	}

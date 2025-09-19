@@ -23,7 +23,7 @@ public class GetCategoriesHandlerTests
 		var categories = FakeCategory.GetCategories(2, true);
 		_fixture.SetupFindAsync(categories);
 		var logger = Substitute.For<ILogger<GetCategories.Handler>>();
-		var handler = new GetCategories.Handler(new TestMyBlogContextFactory(_fixture.BlogContext), logger);
+		var handler = new GetCategories.Handler(new TestArticleDbContextFactory(_fixture.BlogContext), logger);
 
 		// Act
 		var result = await handler.HandleAsync();
@@ -40,7 +40,7 @@ public class GetCategoriesHandlerTests
 		// Arrange
 		_fixture.SetupFindAsync(new List<Category>());
 		var logger = Substitute.For<ILogger<GetCategories.Handler>>();
-		var handler = new GetCategories.Handler(new TestMyBlogContextFactory(_fixture.BlogContext), logger);
+		var handler = new GetCategories.Handler(new TestArticleDbContextFactory(_fixture.BlogContext), logger);
 
 		// Act
 		var result = await handler.HandleAsync();
@@ -64,11 +64,11 @@ public class GetCategoriesHandlerTests
 						Arg.Any<CancellationToken>()))
 				.Do(_ => throw new InvalidOperationException("Find failed"));
 
-		var context = Substitute.For<IMyBlogContext>();
+		var context = Substitute.For<IArticleDbContext>();
 		context.Categories.Returns(collection);
 
 		var logger = Substitute.For<ILogger<GetCategories.Handler>>();
-		var handler = new GetCategories.Handler(new TestMyBlogContextFactory(context), logger);
+		var handler = new GetCategories.Handler(new TestArticleDbContextFactory(context), logger);
 
 		// Act
 		var result = await handler.HandleAsync();
@@ -81,25 +81,25 @@ public class GetCategoriesHandlerTests
 				Arg.Any<Func<object, Exception?, string>>());
 	}
 
-	// Lightweight IMyBlogContextFactory stub used by handlers in tests
-	private class TestMyBlogContextFactory : IMyBlogContextFactory
+	// Lightweight IArticleDbContextFactory stub used by handlers in tests
+	private class TestArticleDbContextFactory : IArticleDbContextFactory
 	{
 
-		private readonly IMyBlogContext _ctx;
+		private readonly IArticleDbContext _ctx;
 
-		public TestMyBlogContextFactory(IMyBlogContext ctx)
+		public TestArticleDbContextFactory(IArticleDbContext ctx)
 		{
 			_ctx = ctx;
 		}
 
-		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
+		public Task<IArticleDbContext> CreateDbContext(CancellationToken cancellationToken = default)
 		{
 			return Task.FromResult(_ctx);
 		}
 
-		public MyBlogContext CreateContext()
+		public MyzBlogContext CreateDbContext()
 		{
-			return (MyBlogContext)_ctx;
+			return (MyzBlogContext)_ctx;
 		}
 
 	}

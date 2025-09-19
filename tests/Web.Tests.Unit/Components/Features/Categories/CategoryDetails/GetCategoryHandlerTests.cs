@@ -38,12 +38,12 @@ public class GetCategoryHandlerTests
 	{
 		// Arrange
 		var logger = Substitute.For<ILogger<GetCategory.Handler>>();
-		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var factory = Substitute.For<IArticleDbContextFactory>();
+		factory.CreateDbContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new GetCategory.Handler(factory, logger);
 
 		// Act
-		var result = await handler.HandleAsync(ObjectId.Empty);
+		var result = await handler.HandleAsync(Guid.Empty);
 
 		// Assert
 		result.Failure.Should().BeTrue();
@@ -69,8 +69,8 @@ public class GetCategoryHandlerTests
 	{
 		// Arrange
 		var logger = Substitute.For<ILogger<GetCategory.Handler>>();
-		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var factory = Substitute.For<IArticleDbContextFactory>();
+		factory.CreateDbContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new GetCategory.Handler(factory, logger);
 
 		// Configure the CategoriesCollection to throw when FindAsync is called

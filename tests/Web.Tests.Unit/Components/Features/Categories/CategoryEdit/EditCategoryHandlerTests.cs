@@ -26,8 +26,8 @@ public class EditCategoryHandlerTests
 				.Returns(_ => Task.FromResult<UpdateResult>(new UpdateResult.Acknowledged(1, 1, null)));
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
-		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var factory = Substitute.For<IArticleDbContextFactory>();
+		factory.CreateDbContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
 		var dto = new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "Updated Name" };
@@ -62,8 +62,8 @@ public class EditCategoryHandlerTests
 				.Returns(_ => Task.FromResult<UpdateResult>(new UpdateResult.Acknowledged(1, 1, null)));
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
-		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var factory = Substitute.For<IArticleDbContextFactory>();
+		factory.CreateDbContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
 		var dto = new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "DoesNotExist" };
@@ -98,8 +98,8 @@ public class EditCategoryHandlerTests
 				.Do(_ => throw new InvalidOperationException("DB error"));
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
-		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var factory = Substitute.For<IArticleDbContextFactory>();
+		factory.CreateDbContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
 		var dto = new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "Any" };
@@ -124,8 +124,8 @@ public class EditCategoryHandlerTests
 	{
 		// Arrange
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
-		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var factory = Substitute.For<IArticleDbContextFactory>();
+		factory.CreateDbContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
 		var dto = new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "" };
@@ -150,8 +150,8 @@ public class EditCategoryHandlerTests
 	{
 		// Arrange
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
-		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var factory = Substitute.For<IArticleDbContextFactory>();
+		factory.CreateDbContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
 		var dto = new CategoryDto { Id = ObjectId.GenerateNewId(), CategoryName = "   " };
@@ -181,8 +181,8 @@ public class EditCategoryHandlerTests
 				.Returns(_ => Task.FromResult<UpdateResult>(new UpdateResult.Acknowledged(1, 1, null)));
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
-		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var factory = Substitute.For<IArticleDbContextFactory>();
+		factory.CreateDbContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
 		var longName = new string('A', 500); // Very long category name
@@ -211,8 +211,8 @@ public class EditCategoryHandlerTests
 				.Returns(_ => Task.FromResult<UpdateResult>(new UpdateResult.Acknowledged(1, 1, null)));
 
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
-		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var factory = Substitute.For<IArticleDbContextFactory>();
+		factory.CreateDbContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
 		var specialName = "Test & Category < > \" ' ";
@@ -236,11 +236,11 @@ public class EditCategoryHandlerTests
 	{
 		// Arrange
 		var logger = Substitute.For<ILogger<EditCategory.Handler>>();
-		var factory = Substitute.For<IMyBlogContextFactory>();
-		factory.CreateContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
+		var factory = Substitute.For<IArticleDbContextFactory>();
+		factory.CreateDbContext(Arg.Any<CancellationToken>()).Returns(Task.FromResult(_fixture.BlogContext));
 		var handler = new EditCategory.Handler(factory, logger);
 
-		var dto = new CategoryDto { Id = ObjectId.Empty, CategoryName = "Test Category" };
+		var dto = new CategoryDto { Id = Guid.Empty, CategoryName = "Test Category" };
 
 		// Act
 		var result = await handler.HandleAsync(dto);

@@ -62,16 +62,16 @@ public class StartupRegistrationTests : IClassFixture<TestWebApplicationFactory>
 		client1.Should().BeSameAs(client2);
 
 		// IMyBlogContext is scoped: same within a scope, different across scopes
-		var ctxFactory = spRoot.GetRequiredService<IMyBlogContextFactory>();
+		var ctxFactory = spRoot.GetRequiredService<IArticleDbContextFactory>();
 		ctxFactory.Should().NotBeNull();
 
-		var ctx1A = spRoot.GetRequiredService<IMyBlogContext>();
-		var ctx1B = spRoot.GetRequiredService<IMyBlogContext>();
+		var ctx1A = spRoot.GetRequiredService<IArticleDbContext>();
+		var ctx1B = spRoot.GetRequiredService<IArticleDbContext>();
 		ctx1A.Should().BeSameAs(ctx1B);
 
 		using var scope2 = _factory.Services.CreateScope();
 		var sp2 = scope2.ServiceProvider;
-		var ctx2 = sp2.GetRequiredService<IMyBlogContext>();
+		var ctx2 = sp2.GetRequiredService<IArticleDbContext>();
 		ctx2.Should().NotBeSameAs(ctx1A);
 	}
 

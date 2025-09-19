@@ -71,28 +71,17 @@ public static class TestServiceRegistrations
 		});
 	}
 
-	// Register MyBlogContext and a simple factory that returns it
-	private static MyBlogContext RegisterMyBlogContext(BunitContext ctx)
+	// Register ArticleDbContext and a simple factory that returns it
+	private static ArticleDbContext RegisterMyBlogContext(BunitContext ctx)
 	{
-		var mongoClient = Substitute.For<IMongoClient>();
-		var mongoDatabase = Substitute.For<IMongoDatabase>();
-		var categoriesCollection = Substitute.For<IMongoCollection<Category>>();
-		mongoClient.GetDatabase(Arg.Any<string>()).Returns(mongoDatabase);
-		mongoDatabase.GetCollection<Category>(Arg.Any<string>()).Returns(categoriesCollection);
+		var options = new DbContextOptionsBuilder<ArticleDbContext>()
+			.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+			.Options;
 
-		// Default FindAsync behavior: return an empty cursor so components that
-		// call FindAsync without explicit test setups receive an empty result set
-		// instead of throwing or returning null.
-		categoriesCollection
-				.FindAsync(Arg.Any<FilterDefinition<Category>>(), Arg.Any<FindOptions<Category, Category>>(),
-						Arg.Any<CancellationToken>())
-				.Returns(Task.FromResult((IAsyncCursor<Category>)new SimpleCursor<Category>(new List<Category>())));
-
-		var blogContext = new MyBlogContext(mongoClient);
+		var blogContext = new ArticleDbContext(options);
 
 		ctx.Services.AddScoped(_ => blogContext);
-		ctx.Services.AddScoped<IMyBlogContext>(_ => blogContext);
-		ctx.Services.AddScoped<IMyBlogContextFactory>(_ => new TestMyBlogContextFactory(blogContext));
+		ctx.Services.AddScoped<IArticleDbContextFactory>(_ => new TestArticleDbContextFactory(blogContext));
 
 		return blogContext;
 	}
@@ -103,13 +92,13 @@ public static class TestServiceRegistrations
 		// Prepare sample data shared by multiple default substitutes
 		var sampleCategory = new CategoryDto
 		{
-			Id = ObjectId.GenerateNewId(),
+			Id = Guid.NewGuid(),
 			CategoryName = "General Programming"
 		};
 
 		var sampleArticle = new ArticleDto
 		{
-			Id = ObjectId.GenerateNewId(),
+			Id = Guid.NewGuid(),
 			Title = "The Empathy Of Mission Contemplation",
 			Introduction = "Intro",
 			Content = "Sample article content",
@@ -130,7 +119,7 @@ public static class TestServiceRegistrations
 			var getCategorySub = Substitute.For<GetCategory.IGetCategoryHandler>();
 
 			// Default: return a sample category so components render normally in tests.
-			getCategorySub.HandleAsync(Arg.Any<ObjectId>())
+			getCategorySub.HandleAsync(Arg.Any<Guid>())
 					.Returns(Task.FromResult(Result.Ok(sampleCategory)));
 
 			// Register the interface with a factory that prefers a concrete handler if present,
@@ -236,7 +225,7 @@ public static class TestServiceRegistrations
 		if (!IsEitherRegistered(typeof(GetArticle.IGetArticleHandler), typeof(GetArticle.Handler)))
 		{
 			var getArticleSub = Substitute.For<GetArticle.IGetArticleHandler>();
-			getArticleSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(sampleArticle)));
+			getArticleSub.HandleAsync(Arg.Any<Guid>()).Returns(Task.FromResult(Result.Ok(sampleArticle)));
 
 			ctx.Services.AddScoped<GetArticle.IGetArticleHandler>(sp =>
 			{
@@ -299,61 +288,21 @@ public static class TestServiceRegistrations
 		}
 	}
 
-	// Simple IAsyncCursor<T> implementation used for default FindAsync responses in tests
-	private class SimpleCursor<T> : IAsyncCursor<T>
-	{
-
-		private readonly IEnumerator<T> _enumerator;
-
-		private readonly List<T> _items;
-
-		private bool _moved;
-
-		public SimpleCursor(IEnumerable<T> items)
-		{
-			_items = items.ToList();
-			_enumerator = _items.GetEnumerator();
-			_moved = false;
-		}
-
-		public IEnumerable<T> Current => _items;
-
-		public void Dispose() { }
-
-		public bool MoveNext(CancellationToken cancellationToken = default)
-		{
-			if (_moved)
-			{
-				return false;
-			}
-
-			_moved = true;
-
-			return _items.Count > 0;
-		}
-
-		public Task<bool> MoveNextAsync(CancellationToken cancellationToken = default)
-		{
-			return Task.FromResult(MoveNext(cancellationToken));
-		}
-
-	}
-
-	// Register common category handlers (both concrete and interface) wired to MyBlogContext from RegisterMyBlogContext
+	// Register common category handlers (both concrete and interface) wired to ArticleDbContext from RegisterMyBlogContext
 	public static void RegisterCategoryHandlers(BunitContext ctx)
 	{
-		// Create and register a MyBlogContext instance and use it directly. Do not
+		// Create and register a ArticleDbContext instance and use it directly. Do not
 		// call BuildServiceProvider() here because Bunit will lock the service
 		// provider once any service is resolved.
 		var context = RegisterMyBlogContext(ctx);
 
 		var loggerGet = Substitute.For<ILogger<GetCategory.Handler>>();
-		var getHandler = new GetCategory.Handler(new TestMyBlogContextFactory(context), loggerGet);
+		var getHandler = new GetCategory.Handler(new TestArticleDbContextFactory(context), loggerGet);
 		ctx.Services.AddScoped(_ => getHandler);
 		ctx.Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 
 		var loggerEdit = Substitute.For<ILogger<EditCategory.Handler>>();
-		var factory = new TestMyBlogContextFactory(context);
+		var factory = new TestArticleDbContextFactory(context);
 		var editHandler = new EditCategory.Handler(factory, loggerEdit);
 		ctx.Services.AddScoped(_ => editHandler);
 		ctx.Services.AddScoped<EditCategory.IEditCategoryHandler>(_ => editHandler);
@@ -437,9 +386,9 @@ public static class TestServiceRegistrations
 		RegisterCommonUtilities(ctx);
 		RegisterAuth0Service(ctx);
 
-		// Ensure MyBlogContext is available so concrete handlers (that require it)
+		// Ensure ArticleDbContext is available so concrete handlers (that require it)
 		// can be activated when tests register concrete handler types directly.
-		if (ctx.Services.All(sd => sd.ServiceType != typeof(IMyBlogContext)))
+		if (ctx.Services.All(sd => sd.ServiceType != typeof(ArticleDbContext)))
 		{
 			RegisterMyBlogContext(ctx);
 		}
@@ -484,28 +433,23 @@ public static class TestServiceRegistrations
 	// Register concrete article handlers (mirroring Program.cs registrations) if tests need concrete handlers
 	public static void RegisterArticleHandlers(BunitContext ctx)
 	{
-		// no-op for now; concrete handlers rely on MyBlogContext, which we register in RegisterMyBlogContext
+		// no-op for now; concrete handlers rely on ArticleDbContext, which we register in RegisterMyBlogContext
 	}
 
-	// Internal simple IMyBlogContextFactory used by tests
-	private class TestMyBlogContextFactory : IMyBlogContextFactory
+	// Internal simple IArticleDbContextFactory used by tests
+	private class TestArticleDbContextFactory : IArticleDbContextFactory
 	{
 
-		private readonly IMyBlogContext _ctx;
+		private readonly ArticleDbContext _ctx;
 
-		public TestMyBlogContextFactory(IMyBlogContext ctx)
+		public TestArticleDbContextFactory(ArticleDbContext ctx)
 		{
 			_ctx = ctx;
 		}
 
-		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
+		public ArticleDbContext CreateDbContext()
 		{
-			return Task.FromResult(_ctx);
-		}
-
-		public MyBlogContext CreateContext()
-		{
-			return (MyBlogContext)_ctx;
+			return _ctx;
 		}
 
 	}

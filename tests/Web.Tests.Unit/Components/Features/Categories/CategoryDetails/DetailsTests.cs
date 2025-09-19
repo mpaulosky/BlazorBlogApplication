@@ -158,13 +158,13 @@ public class DetailsTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 
-		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == ObjectId.Empty))
+		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == Guid.Empty))
 				.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
 
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.Empty));
+		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, Guid.Empty));
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert

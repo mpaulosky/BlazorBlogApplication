@@ -285,7 +285,7 @@ public class EditTests : BunitContext
 		_fixture.SetupFindAsync(new List<Category>());
 		var getHandler = _fixture.CreateGetCategoryHandler();
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
-		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, ObjectId.Empty));
+		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, Guid.Empty));
 
 		// Wait for the component to finish loading
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));

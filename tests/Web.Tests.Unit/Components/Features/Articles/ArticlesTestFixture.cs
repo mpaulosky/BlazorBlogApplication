@@ -20,9 +20,9 @@ public class ArticlesTestFixture : IAsyncDisposable
 
 	public IMongoCollection<Article> ArticlesCollection { get; }
 
-	private readonly MyBlogContext _blogContext;
+	private readonly MyzBlogContext _blogContext;
 
-	public IMyBlogContext BlogContext { get; }
+	public IArticleDbContext BlogContext { get; }
 
 	public ILogger<GetArticles.Handler> Logger { get; }
 
@@ -35,7 +35,7 @@ public class ArticlesTestFixture : IAsyncDisposable
 		ArticlesCollection = Substitute.For<IMongoCollection<Article>>();
 		MongoClient.GetDatabase(Arg.Any<string>()).Returns(MongoDatabase);
 		MongoDatabase.GetCollection<Article>(Arg.Any<string>()).Returns(ArticlesCollection);
-		_blogContext = new MyBlogContext(MongoClient);
+		_blogContext = new MyzBlogContext(MongoClient);
 		BlogContext = _blogContext;
 		Logger = Substitute.For<ILogger<GetArticles.Handler>>();
 		EditLogger = Substitute.For<ILogger<EditArticle.Handler>>();
@@ -55,21 +55,21 @@ public class ArticlesTestFixture : IAsyncDisposable
 	}
 
 	/// <summary>
-	///   Create a concrete GetArticles.Handler wired to the fixture's MyBlogContext and logger.
+	///   Create a concrete GetArticles.Handler wired to the fixture's MyzBlogContext and logger.
 	///   Tests can register this into a bUnit TestContext or the test DI container.
 	/// </summary>
 	public GetArticles.Handler CreateGetHandler()
 	{
-		return new GetArticles.Handler(new TestMyBlogContextFactory(_blogContext), Logger);
+		return new GetArticles.Handler(new TestArticleDbContextFactory(_blogContext), Logger);
 	}
 
 	/// <summary>
-	///   Create a concrete EditArticle.Handler wired to the fixture's MyBlogContext.
+	///   Create a concrete EditArticle.Handler wired to the fixture's MyzBlogContext.
 	///   Tests can register this into a bUnit TestContext or the test DI container.
 	/// </summary>
 	public EditArticle.Handler CreateEditHandler()
 	{
-		return new EditArticle.Handler(new TestMyBlogContextFactory(_blogContext), EditLogger);
+		return new EditArticle.Handler(new TestArticleDbContextFactory(_blogContext), EditLogger);
 	}
 
 	/// <summary>
@@ -93,9 +93,9 @@ public class ArticlesTestFixture : IAsyncDisposable
 		ctx.Services.AddScoped(_ => editHandler);
 		ctx.Services.AddScoped<EditArticle.IEditArticleHandler>(_ => editHandler);
 
-		// Register the concrete MyBlogContext so handlers resolving MyBlogContext get the fixture instance
+		// Register the concrete MyzBlogContext so handlers resolving MyzBlogContext get the fixture instance
 		ctx.Services.AddScoped(_ => _blogContext);
-		ctx.Services.AddScoped<IMyBlogContext>(_ => _blogContext);
+		ctx.Services.AddScoped<IArticleDbContext>(_ => _blogContext);
 
 		// Register logger instance used by handlers
 		ctx.Services.AddSingleton(Logger);
@@ -106,25 +106,25 @@ public class ArticlesTestFixture : IAsyncDisposable
 		return ValueTask.CompletedTask;
 	}
 
-	// Lightweight IMyBlogContextFactory stub used by handlers in tests
-	private class TestMyBlogContextFactory : IMyBlogContextFactory
+	// Lightweight IArticleDbContextFactory stub used by handlers in tests
+	private class TestArticleDbContextFactory : IArticleDbContextFactory
 	{
 
-		private readonly IMyBlogContext _ctx;
+		private readonly IArticleDbContext _ctx;
 
-		public TestMyBlogContextFactory(IMyBlogContext ctx)
+		public TestArticleDbContextFactory(IArticleDbContext ctx)
 		{
 			_ctx = ctx;
 		}
 
-		public Task<IMyBlogContext> CreateContext(CancellationToken cancellationToken = default)
+		public Task<IArticleDbContext> CreateDbContext(CancellationToken cancellationToken = default)
 		{
 			return Task.FromResult(_ctx);
 		}
 
-		public MyBlogContext CreateContext()
+		public MyzBlogContext CreateDbContext()
 		{
-			return (MyBlogContext)_ctx;
+			return (MyzBlogContext)_ctx;
 		}
 
 	}
