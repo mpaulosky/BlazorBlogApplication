@@ -20,9 +20,18 @@
 		<PackageReference Include="FluentValidation"/>
 		<PackageReference Include="JetBrains.Annotations"/>
 		<PackageReference Include="Mapster"/>
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection"/>
-		<PackageReference Include="MongoDB.Bson"/>
-		<PackageReference Include="MongoDB.Driver"/>
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 		<PackageReference Include="RestSharp"/>
 		<PackageReference Include="System.Text.RegularExpressions"/>
 		<PackageReference Include="WaffleGenerator.Bogus"/>

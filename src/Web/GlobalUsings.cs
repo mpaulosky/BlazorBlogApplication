@@ -22,9 +22,7 @@ global using Mapster;
 
 global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Authentication.Cookies;
-
-global using MongoDB.Bson;
-global using MongoDB.Driver;
+global using Microsoft.EntityFrameworkCore;
 
 global using RestSharp;
 
