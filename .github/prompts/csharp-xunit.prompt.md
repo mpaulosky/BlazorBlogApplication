@@ -5,7 +5,7 @@ description: "Get best practices for XUnit unit testing, including data-driven t
 
 # XUnit Best Practices
 
-Your goal is to help me write effective unit tests with XUnit v3, covering both standard and data-driven testing approaches. Use the following guidelines and examples to create robust tests. Ensure to use the AAA (Arrange-Act-Assert) pattern. When applicable, prefer using data-driven tests with the `[Theory]` attribute and inline data. When dealing with references move them into the GlobalUsings.cs file. When mocking dependencies, use a mocking library like Moq or NSubstitute.
+Your goal is to help me write effective unit tests with XUnit v3, covering both standard and data-driven testing approaches. Use the following guidelines and examples to create robust tests. Ensure to use the AAA (Arrange-Act-Assert) pattern. When applicable, prefer using data-driven tests with the `[Theory]` attribute and inline data. When dealing with references, move them into the GlobalUsings.cs file. When mocking dependencies, use a mocking library like Moq or NSubstitute.
 
 ## Quick Tips
 
@@ -13,7 +13,7 @@ Your goal is to help me write effective unit tests with XUnit v3, covering both 
 - **Test data management:** Use fakes, builders, or factories for generating test data. Prefer deterministic data for repeatable tests.
 - **Test discovery/filtering:** Use XUnit v3's improved test discovery and filtering (e.g., `dotnet test --filter FullyQualifiedName~MyTest` or by trait/category).
 
-### Example: Testing a Blazor Counter Component using XUnit
+### Example: Testing a Blazor Article Component using XUnit
 
 ````csharp
 
@@ -30,11 +30,12 @@ using JetBrains.Annotations;
 [TestSubject(typeof(Article))]
 public class ArticleTests
 {
-[Fact]
-public void DefaultConstructor_ShouldInitializeWithDefaults()
-{
-// Arrange & Act
-var article = new Article();
+  [Fact]
+  public void DefaultConstructor_ShouldInitializeWithDefaults()
+  {
+
+    // Arrange & Act
+    article = new Article();
 
     	// Assert
     	article.Title.Should().Be("");
@@ -47,9 +48,10 @@ var article = new Article();
     	article.IsPublished.Should().BeFalse();
     	article.PublishedOn.Should().BeNull();
     	article.IsArchived.Should().BeFalse();
-    }
+    	article.Tags.Should().BeEmpty();
 
-...
+  }
+````
 
 ## Project Setup
 
@@ -59,7 +61,7 @@ var article = new Article();
 - Reference the same NuGet packages as your main project
 - Reference the same project references as your main project
 - Reference any additional dependencies required for testing
-- Set the projects root namespace to match the project under test (e.g., `Web`)
+- Set the project root namespace to match the project under test (e.g., `Web`)
 - Reference XUnit v3 packages: `xunit.v3.core`, `xunit.v3.assert`, and `xunit.v3.runner.visualstudio`
 - Also reference `Microsoft.NET.Test.Sdk`, `FluentAssertions`, and `bunit` packages for Blazor component/page testing
 - Create test classes that match the classes being tested (e.g., `CalculatorTests` for `Calculator`)
