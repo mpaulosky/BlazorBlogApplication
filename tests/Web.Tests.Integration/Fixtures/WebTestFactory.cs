@@ -1,38 +1,23 @@
-// =======================================================
-// Copyright (c) 2025. All rights reserved.
-// File Name :     WebTestFactory.cs
-// Company :       mpaulosky
-// Author :        Matthew
-// Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Integration
-// =======================================================
+using Testcontainers.PostgreSql;
 
 namespace Web.Fixtures;
-
 
 [Collection("Test Collection")]
 [ExcludeFromCodeCoverage]
 [UsedImplicitly]
 public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 {
-
 	private readonly ILogger<WebTestFactory> _logger;
-
 	private readonly string _databaseName;
-
 	private readonly CancellationTokenSource _cts;
-
-	private static MongoDbContainer? _sharedContainer;
-
-	private static readonly Lock _lock = new();
-
-	private static int _port;
-
-	private static readonly SemaphoreSlim _dbLock = new(1, 1);
+	private static PostgreSqlContainer? s_sharedContainer;
+	private static readonly Lock Lock = new();
+	private static int s_port;
+	private static readonly SemaphoreSlim DbLock = new(1, 1);
 
 	public WebTestFactory()
 	{
-		_databaseName = $"test_db_{Guid.NewGuid()}";
+		_databaseName = $"test_db_{Guid.NewGuid():N}";
 		_cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
 
 		var loggerFactory = LoggerFactory.Create(builder =>
@@ -44,91 +29,87 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		_logger = loggerFactory.CreateLogger<WebTestFactory>();
 
 		// Initialize a shared container if not already done
-		if (_sharedContainer == null)
+		if (s_sharedContainer == null)
 		{
-			lock (_lock)
+			lock (Lock)
 			{
-				if (_sharedContainer == null)
+				if (s_sharedContainer == null)
 				{
-					_port = new Random().Next(28000, 29000);
-					_sharedContainer = new MongoDbBuilder()
-						.WithImage("mongo:8.0")
-						.WithPortBinding(_port, 27017)
-						.WithUsername(string.Empty)
-						.WithPassword(string.Empty)
+					s_port = new Random().Next(5237, 6000);
+					s_sharedContainer = new PostgreSqlBuilder()
+						.WithImage("postgres:16-alpine")
+						.WithDatabase(_databaseName)
+						.WithUsername("postgres")
+						.WithPassword("postgrespw")
+						.WithPortBinding(s_port, 5432)
 						.Build();
 				}
 			}
 		}
+
+		// Prefer unsecured transport for Aspire/test hosts and export the DefaultConnection
+		// environment variable early so it is available during host startup when
+		// Program.ConfigureServices runs. Some test hosts construct the application
+		// before ConfigureWebHost runs, so ConfigureAppConfiguration isn't sufficient.
+		// Allow Aspire to expose unsecured HTTP endpoints for integration tests.
+		Environment.SetEnvironmentVariable("ASPIRE_ALLOW_UNSECURED_TRANSPORT", "true");
+		// Ensure ASP.NET binds to an HTTP URL (use dynamic port 0 letting the host choose)
+		Environment.SetEnvironmentVariable("ASPNETCORE_URLS", "http://localhost:0");
+
+		// Export the DefaultConnection environment variable early so it is available
+		// during host startup when Program.ConfigureServices runs. Some test hosts
+		// construct the application before ConfigureWebHost runs, so ConfigureAppConfiguration
+		// isn't sufficient.
+		var earlyConnection = $"Host=localhost;Port={s_port};Database={_databaseName};Username=postgres;Password=postgrespw;";
+		Environment.SetEnvironmentVariable("DefaultConnection", earlyConnection);
 	}
 
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
-		builder.ConfigureAppConfiguration((_, config) =>
+		builder.ConfigureAppConfiguration((context, config) =>
 		{
-			var mongoConnectionString = $"mongodb://localhost:{_port}/{_databaseName}";
+			var npgsqlConnection = $"Host=localhost;Port={s_port};Database={_databaseName};Username=postgres;Password=postgrespw;";
+			// Add to the in-memory configuration so the app picks it up.
 			config.AddInMemoryCollection(new Dictionary<string, string?>
 			{
-				["ConnectionStrings:mongoDb-connection"] = mongoConnectionString,
-				["DatabaseName"] = _databaseName,
-				["auth0-domain"] = "dummy-domain.auth0.com",
-				["auth0-client-id"] = "dummy-client-id",
-				["auth0-client-secret"] = "dummy-client-secret"
+				["ConnectionStrings:DefaultConnection"] = npgsqlConnection,
+				["DefaultConnection"] = npgsqlConnection,
+				// Prefer unsecured transport in the app's configuration for tests
+				["Aspire:AllowUnsecuredTransport"] = "true",
+				["ASPNETCORE_URLS"] = "http://localhost:0"
 			});
+
+			// Also export to environment variables so code paths that read
+			// Environment.GetEnvironmentVariable("DefaultConnection") can find it
+			// during host startup in the test environment.
+			Environment.SetEnvironmentVariable("DefaultConnection", npgsqlConnection);
 		});
 
-		builder.ConfigureServices(services =>
-		{
-			services.AddSingleton<IMongoClient>(_ =>
-			{
-				var mongoConnectionString = $"mongodb://localhost:{_port}/{_databaseName}";
-				_logger.LogInformation("Using MongoDB connection string: {ConnectionString}", mongoConnectionString);
-				return new MongoClient(mongoConnectionString);
-			});
-		});
+		// No extra service registrations required here; the app registers DbContext via configuration
 	}
 
-	public async ValueTask InitializeAsync()
+ public async ValueTask InitializeAsync()
 	{
 		try
 		{
-			_logger.LogInformation("Starting MongoDB container...");
-			await _sharedContainer!.StartAsync(_cts.Token);
-			_logger.LogInformation("MongoDB container started successfully");
+			_logger.LogInformation("Starting PostgresSQL container...");
+			await s_sharedContainer!.StartAsync(_cts.Token);
+			_logger.LogInformation("PostgresSQL container started successfully on localhost:{Port}", s_port);
 
-			// Wait for MongoDB to be ready
-			var client = new MongoClient($"mongodb://localhost:{_port}/");
-			const int maxRetries = 30;
-			const int retryDelayMs = 1000;
-
-			for (var i = 0; i < maxRetries; i++)
-			{
-				try
-				{
-					var database = client.GetDatabase("admin");
-					var pingCommand = new BsonDocument("ping", 1);
-					await database.RunCommandAsync<BsonDocument>(pingCommand, cancellationToken: _cts.Token);
-					_logger.LogInformation("MongoDB ping successful, container is ready.");
-					break;
-				}
-				catch (Exception ex)
-				{
-					_logger.LogWarning(ex, "MongoDB ping failed (attempt {Attempt}/{MaxRetries})", i + 1, maxRetries);
-					if (i < maxRetries - 1)
-					{
-						await Task.Delay(retryDelayMs, _cts.Token);
-					}
-				}
-			}
+			// Apply EF Core migrations to ensure the schema is ready
+			using var scope = Services.CreateScope();
+			var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+			await db.Database.MigrateAsync(_cts.Token);
+			_logger.LogInformation("Database migrated successfully");
 		}
 		catch (OperationCanceledException)
 		{
-			_logger.LogError("MongoDB container startup timed out after 5 minutes");
+			_logger.LogError("PostgresSQL container startup timed out after 5 minutes");
 			throw;
 		}
 		catch (Exception ex)
 		{
-			_logger.LogError(ex, "Failed to start MongoDB container");
+			_logger.LogError(ex, "Failed to start PostgresSQL container or migrate database");
 			throw;
 		}
 	}
@@ -138,18 +119,17 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		try
 		{
 			// Only dispose of the container when the last test factory is disposed
-			if (_sharedContainer != null)
+			if (s_sharedContainer != null)
 			{
-				_logger.LogInformation("Disposing MongoDB container...");
-				await _sharedContainer.DisposeAsync();
-				_sharedContainer = null;
-				_logger.LogInformation("MongoDB container disposed successfully");
+				_logger.LogInformation("Disposing PostgresSQL container...");
+				await s_sharedContainer.DisposeAsync();
+				s_sharedContainer = null;
+				_logger.LogInformation("PostgresSQL container disposed successfully");
 			}
 		}
 		catch (Exception ex)
 		{
-			_logger.LogError(ex, "Error disposing MongoDB container");
-
+			_logger.LogError(ex, "Error disposing PostgresSQL container");
 			throw;
 		}
 		finally
@@ -163,54 +143,21 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 	{
 		try
 		{
-			await _dbLock.WaitAsync();
-			var mongoConnectionString = $"mongodb://localhost:{_port}/admin";
-			var client = new MongoClient(mongoConnectionString);
-
-			// Drop the entire database
-			await client.DropDatabaseAsync(_databaseName);
-
-			// Verify the database was dropped by listing databases and checking
-			var databases = await client.ListDatabaseNamesAsync();
-			var dbList = await databases.ToListAsync();
-			if (dbList.Contains(_databaseName))
-			{
-				_logger.LogWarning("Database {DatabaseName} still exists after drop attempt", _databaseName);
-			}
-			else
-			{
-				_logger.LogInformation("Database {DatabaseName} successfully dropped and verified", _databaseName);
-			}
+			await DbLock.WaitAsync();
+			using var scope = Services.CreateScope();
+			var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+			await db.Database.EnsureDeletedAsync(_cts.Token);
+			await db.Database.MigrateAsync(_cts.Token);
+			_logger.LogInformation("Database {DatabaseName} reset successfully", _databaseName);
 		}
 		catch (Exception ex)
 		{
-			_logger.LogError(ex, "Error clearing database");
+			_logger.LogError(ex, "Error resetting database");
 			throw;
 		}
 		finally
 		{
-			_dbLock.Release();
-		}
-	}
-
-	public async Task ResetCollectionAsync(string collectionName)
-	{
-		try
-		{
-			await _dbLock.WaitAsync();
-			var mongoConnectionString = $"mongodb://localhost:{_port}/{_databaseName}";
-			var client = new MongoClient(mongoConnectionString);
-			var database = client.GetDatabase(_databaseName);
-			await database.DropCollectionAsync(collectionName);
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "Error resetting collection {CollectionName}", collectionName);
-			throw;
-		}
-		finally
-		{
-			_dbLock.Release();
+			DbLock.Release();
 		}
 	}
 
