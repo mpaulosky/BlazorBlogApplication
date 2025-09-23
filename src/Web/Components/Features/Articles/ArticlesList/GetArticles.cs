@@ -31,7 +31,7 @@ public static class GetArticles
 	public class Handler : IGetArticlesHandler
 	{
 
-		private readonly IArticleDbContextFactory _factory;
+		private readonly IApplicationDbContextFactory _factory;
 
 		private readonly ILogger<Handler> _logger;
 
@@ -40,7 +40,7 @@ public static class GetArticles
 		/// </summary>
 		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IArticleDbContextFactory factory, ILogger<Handler> logger)
+		public Handler(IApplicationDbContextFactory factory, ILogger<Handler> logger)
 		{
 			_factory = factory;
 			_logger = logger;

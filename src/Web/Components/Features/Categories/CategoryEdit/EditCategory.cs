@@ -25,7 +25,7 @@ public static class EditCategory
 	public class Handler : IEditCategoryHandler
 	{
 
-		private readonly IArticleDbContextFactory _contextFactory;
+		private readonly IApplicationDbContextFactory _contextFactory;
 
 		private readonly ILogger<Handler> _logger;
 
@@ -34,7 +34,7 @@ public static class EditCategory
 		/// </summary>
 		/// <param name="contextFactory"></param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IArticleDbContextFactory contextFactory, ILogger<Handler> logger)
+		public Handler(IApplicationDbContextFactory contextFactory, ILogger<Handler> logger)
 		{
 			_contextFactory = contextFactory;
 			_logger = logger;

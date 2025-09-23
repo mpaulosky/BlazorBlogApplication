@@ -14,7 +14,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Auth0.AspNetCore.Authentication"/>
 		<PackageReference Include="Blazored.FluentValidation"/>
 		<PackageReference Include="Bogus"/>
 		<PackageReference Include="FluentValidation"/>
@@ -26,6 +25,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -42,6 +42,11 @@
 		<InternalsVisibleTo Include="Shared.Tests.Unit"/>
 		<InternalsVisibleTo Include="Web.Tests.Unit"/>
 		<InternalsVisibleTo Include="Web.Tests.Integration"/>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="Components\Features\UserInfo\Profile\UserOverview.razor" />
+	  <_ContentIncludedByDefault Remove="Components\Features\UserInfo\Profile\UserProfile.razor" />
 	</ItemGroup>
 
 </Project>

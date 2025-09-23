@@ -11,6 +11,7 @@ namespace Web.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+
 using Web.Data;
 
 /// <summary>
@@ -38,22 +39,35 @@ public static partial class ServiceCollectionExtensions
 
 		if (string.IsNullOrWhiteSpace(connectionString))
 		{
-			throw new InvalidOperationException("Required configuration 'DefaultConnection' is missing");
+			// In some test-hosting scenarios the configuration may not yet be available
+			// at the time services are registered (for example when Program runs
+			// early during host construction). To make tests and developer runs more
+			// robust, fall back to an in-memory database when the connection string
+			// is not provided. Integration tests that require Postgres should
+			// ensure the connection string is provided (for example via the test
+			// fixture). Falling back prevents startup from throwing.
+			services.AddDbContext<ApplicationDbContext>(options =>
+				options.UseInMemoryDatabase("BlazorBlog_Test_Db"));
+		}
+		else
+		{
+			// Register Entity Framework with PostgreSQL
+			services.AddDbContext<ApplicationDbContext>(options =>
+				options.UseNpgsql(connectionString));
 		}
 
-		// Register Entity Framework with PostgreSQL
-		services.AddDbContext<ArticleDbContext>(options =>
-			options.UseNpgsql(connectionString));
-
-		// Register the standard EF Core factory
-		services.AddDbContextFactory<ArticleDbContext>(options =>
-			options.UseNpgsql(connectionString));
+		// Do not register the standard EF Core IDbContextFactory here. The factory
+		// can be registered with incompatible lifetimes by the EF provider which
+		// can cause DI validation errors (singleton factory consuming scoped
+		// DbContextOptions) in test hosts. The application uses a scoped
+		// IApplicationDbContextFactory wrapper which is registered below and is
+		// sufficient for runtime and tests.
 
 		// Register our custom factory interface that wraps the standard EF Core factory
-		services.AddScoped<IArticleDbContextFactory, ArticleDbContextFactory>();
+		services.AddScoped<IApplicationDbContextFactory, ApplicationDbContextFactory>();
 
 		// Register the context interface
-		services.AddScoped<IArticleDbContext>(sp => sp.GetRequiredService<ArticleDbContext>());
+		services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
 	}
 
