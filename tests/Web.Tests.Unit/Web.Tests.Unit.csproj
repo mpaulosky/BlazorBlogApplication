@@ -27,6 +27,7 @@
 		<PackageReference Include="JunitXml.TestLogger"/>
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing"/>
 		<PackageReference Include="Microsoft.CodeCoverage"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory"/>
 		<PackageReference Include="Microsoft.NET.Test.Sdk"/>
 		<PackageReference Include="Moq"/>
 		<PackageReference Include="NSubstitute"/>
@@ -40,6 +41,10 @@
 		<ProjectReference Include="..\..\src\ServiceDefaults\ServiceDefaults.csproj"/>
 		<ProjectReference Include="..\..\src\Shared\Shared.csproj"/>
 		<ProjectReference Include="..\..\src\Web\Web.csproj"/>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Components\Features\Categories\CategoryEdit\" />
 	</ItemGroup>
 
 </Project>

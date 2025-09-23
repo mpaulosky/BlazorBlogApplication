@@ -39,7 +39,7 @@ public static class AllServicesToRegister
 		builder.Services.AddMemoryCache();
 		builder.Services.AddHealthChecks();
 
-// Add services to the container.
+		// Add services to the container.
 		builder.Services.AddRazorComponents()
 				.AddInteractiveServerComponents();
 
@@ -50,7 +50,7 @@ public static class AllServicesToRegister
 
 		builder.Services.AddCors(options =>
 		{
-			options.AddPolicy(DEFAULT_CORS_POLICY, policy =>
+			options.AddPolicy(DefaultCorsPolicy, policy =>
 			{
 				policy.WithOrigins("https://yourdomain.com", "https://localhost:7157")
 

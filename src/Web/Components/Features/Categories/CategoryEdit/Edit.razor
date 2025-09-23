@@ -51,7 +51,7 @@ else
 
 @code {
 
-	[Parameter] public ObjectId Id { get; set; }
+	[Parameter] public Guid Id { get; set; }
 
 	[CascadingParameter] private Task<AuthenticationState>? AuthenticationState { get; set; }
 

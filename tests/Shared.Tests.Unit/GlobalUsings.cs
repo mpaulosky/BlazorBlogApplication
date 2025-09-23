@@ -16,8 +16,6 @@ global using FluentValidation.TestHelper;
 
 global using JetBrains.Annotations;
 
-global using MongoDB.Bson;
-
 global using Shared.Entities;
 global using Shared.Enums;
 global using Shared.Fakes;

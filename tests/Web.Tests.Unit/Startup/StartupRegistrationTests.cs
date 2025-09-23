@@ -56,23 +56,18 @@ public class StartupRegistrationTests : IClassFixture<TestWebApplicationFactory>
 		using var scopeRoot = _factory.Services.CreateScope();
 		var spRoot = scopeRoot.ServiceProvider;
 
-		// IMongoClient is a singleton
-		var client1 = spRoot.GetRequiredService<IMongoClient>();
-		var client2 = spRoot.GetRequiredService<IMongoClient>();
-		client1.Should().BeSameAs(client2);
+	// ApplicationDbContext factory and lifetimes
+	var ctxFactory = spRoot.GetRequiredService<IApplicationDbContextFactory>();
+	ctxFactory.Should().NotBeNull();
 
-		// IMyBlogContext is scoped: same within a scope, different across scopes
-		var ctxFactory = spRoot.GetRequiredService<IMyBlogContextFactory>();
-		ctxFactory.Should().NotBeNull();
+	var ctx1A = spRoot.GetRequiredService<IApplicationDbContext>();
+	var ctx1B = spRoot.GetRequiredService<IApplicationDbContext>();
+	ctx1A.Should().BeSameAs(ctx1B);
 
-		var ctx1A = spRoot.GetRequiredService<IMyBlogContext>();
-		var ctx1B = spRoot.GetRequiredService<IMyBlogContext>();
-		ctx1A.Should().BeSameAs(ctx1B);
-
-		using var scope2 = _factory.Services.CreateScope();
-		var sp2 = scope2.ServiceProvider;
-		var ctx2 = sp2.GetRequiredService<IMyBlogContext>();
-		ctx2.Should().NotBeSameAs(ctx1A);
+	using var scope2 = _factory.Services.CreateScope();
+	var sp2 = scope2.ServiceProvider;
+	var ctx2 = sp2.GetRequiredService<IApplicationDbContext>();
+	ctx2.Should().NotBeSameAs(ctx1A);
 	}
 
 }

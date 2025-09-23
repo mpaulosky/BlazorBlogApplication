@@ -67,7 +67,7 @@ public sealed class Result<T> : Result
 		return new Result<T>(value, true);
 	}
 
-	public new static Result<T> Fail(string errorMessage)
+	public static new Result<T> Fail(string errorMessage)
 	{
 		return new Result<T>(default, false, errorMessage);
 	}

@@ -21,22 +21,20 @@ public class CategoryDtoTests
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
 		var dto = new CategoryDto();
-		dto.Id.Should().NotBeNull();
 		dto.CategoryName.Should().BeEmpty();
 		dto.CreatedOn.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
 		dto.ModifiedOn.Should().BeNull();
-		dto.Archived.Should().BeFalse();
+		dto.IsArchived.Should().BeFalse();
 	}
 
 	[Fact]
 	public void EmptyProperty_ShouldReturnEmptyDto()
 	{
 		var dto = CategoryDto.Empty;
-		dto.Id.Should().NotBeNull();
 		dto.CategoryName.Should().BeEmpty();
 		dto.CreatedOn.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
 		dto.ModifiedOn.Should().BeNull();
-		dto.Archived.Should().BeFalse();
+		dto.IsArchived.Should().BeFalse();
 	}
 
 }

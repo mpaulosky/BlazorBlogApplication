@@ -31,7 +31,7 @@ public static class CreateArticle
 	public class Handler : ICreateArticleHandler
 	{
 
-		private readonly IMyBlogContextFactory _factory;
+		private readonly IApplicationDbContextFactory _factory;
 
 		private readonly ILogger<Handler> _logger;
 
@@ -40,7 +40,7 @@ public static class CreateArticle
 		/// </summary>
 		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContextFactory factory, ILogger<Handler> logger)
+		public Handler(IApplicationDbContextFactory factory, ILogger<Handler> logger)
 		{
 			_factory = factory;
 			_logger = logger;
@@ -61,7 +61,7 @@ public static class CreateArticle
 
 			try
 			{
-				var context = await _factory.CreateContext(CancellationToken.None);
+				var context = _factory.CreateDbContext();
 
 				// Manually map DTO to an entity to avoid relying on Mapster in unit tests
 				var article = new Article(
@@ -70,13 +70,14 @@ public static class CreateArticle
 						request.Content,
 						request.CoverImageUrl,
 						request.UrlSlug,
-						request.Author,
-						request.Category,
+						request.Author.Id,
+						request.Category.Id,
 						request.IsPublished,
 						request.PublishedOn,
 						request.IsArchived);
 
-				await context.Articles.InsertOneAsync(article, new InsertOneOptions(), CancellationToken.None);
+				context.Articles.Add(article);
+				await context.SaveChangesAsync();
 
 				_logger.LogInformation("Article created successfully: {Title}", request.Title);
 

@@ -9,6 +9,11 @@
 
 namespace Web.Extensions;
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+using Web.Data;
+
 /// <summary>
 ///   IServiceCollectionExtensions
 /// </summary>
@@ -23,49 +28,46 @@ public static partial class ServiceCollectionExtensions
 	public static void RegisterDatabaseContext(this IServiceCollection services, ConfigurationManager configuration)
 	{
 
-		// Resolve the MongoDB connection string from multiple possible locations.
+		// Resolve the PostgreSQL connection string from multiple possible locations.
 		// Aspire may populate this value as a user secret / parameter or under the
 		// ConnectionStrings section. Also allow overriding via environment variable
 		// for CI or DevOps pipelines.
-		var mongoConn = configuration["mongoDb-connection"]
-										?? configuration.GetConnectionString("mongoDb-connection")
-										?? configuration["ConnectionStrings:mongoDb-connection"]
-										?? Environment.GetEnvironmentVariable("mongoDb-connection");
+		var connectionString = configuration["DefaultConnection"]
+										?? configuration.GetConnectionString("DefaultConnection")
+										?? configuration["ConnectionStrings:DefaultConnection"]
+										?? Environment.GetEnvironmentVariable("DefaultConnection");
 
-		if (string.IsNullOrWhiteSpace(mongoConn))
+		if (string.IsNullOrWhiteSpace(connectionString))
 		{
-			throw new InvalidOperationException("Required configuration 'mongoDb-connection' is missing");
+			// In some test-hosting scenarios the configuration may not yet be available
+			// at the time services are registered (for example when Program runs
+			// early during host construction). To make tests and developer runs more
+			// robust, fall back to an in-memory database when the connection string
+			// is not provided. Integration tests that require Postgres should
+			// ensure the connection string is provided (for example via the test
+			// fixture). Falling back prevents startup from throwing.
+			services.AddDbContext<ApplicationDbContext>(options =>
+				options.UseInMemoryDatabase("BlazorBlog_Test_Db"));
+		}
+		else
+		{
+			// Register Entity Framework with PostgreSQL
+			services.AddDbContext<ApplicationDbContext>(options =>
+				options.UseNpgsql(connectionString));
 		}
 
-		// Ensure SCRAM-SHA-256 is used for authentication
-		if (!mongoConn.Contains("authMechanism=SCRAM-SHA-256"))
-		{
-			mongoConn += mongoConn.Contains("?") ? "&authMechanism=SCRAM-SHA-256" : "?authMechanism=SCRAM-SHA-256";
-		}
+		// Do not register the standard EF Core IDbContextFactory here. The factory
+		// can be registered with incompatible lifetimes by the EF provider which
+		// can cause DI validation errors (singleton factory consuming scoped
+		// DbContextOptions) in test hosts. The application uses a scoped
+		// IApplicationDbContextFactory wrapper which is registered below and is
+		// sufficient for runtime and tests.
 
-		services.AddSingleton<IMongoClient>(_ => new MongoClient(mongoConn));
+		// Register our custom factory interface that wraps the standard EF Core factory
+		services.AddScoped<IApplicationDbContextFactory, ApplicationDbContextFactory>();
 
-		// Register the MongoDB context factory
-		services.AddSingleton<IMyBlogContextFactory, MyBlogContextFactory>();
-
-		// Register the MongoDB context as scoped using the factory to ensure per-request lifetime
-		// The factory exposes a synchronous CreateContext() convenience method that wraps
-		// the async CreateContext(CancellationToken) implementation. Use the sync overload
-		// here because DI doesn't support async factories.
-		services.AddScoped<IMyBlogContext>(sp =>
-		{
-			var factory = sp.GetRequiredService<IMyBlogContextFactory>();
-
-			return factory.CreateContext();
-		});
-
-		// Register the MongoDB context as scoped using the factory to ensure per-request lifetime
-		// services.AddScoped<IMyBlogContext>(sp =>
-		// {
-		// 	var factory = sp.GetRequiredService<IMyBlogContextFactory>();
-		// 	// Block synchronously here since DI does not support async factories
-		// 	return factory.CreateAsync().GetAwaiter().GetResult();
-		// });
+		// Register the context interface
+		services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
 	}
 

@@ -50,7 +50,7 @@ public class CreateTests : BunitContext
 		cut.Markup.Should().Contain("Published");
 	}
 
-/// <summary>
+	/// <summary>
 	///   Should show validation errors when the form is submitted with invalid data.
 	/// </summary>
 	[Fact]
@@ -73,7 +73,7 @@ public class CreateTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-		_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Task.FromResult(Result.Ok()));
+	_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Result.Ok());
 		var cut = Render<Create>();
 		var form = cut.Find("form");
 
@@ -96,7 +96,7 @@ public class CreateTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-		_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Task.FromResult(Result.Fail("Error occurred")));
+	_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Result.Fail("Error occurred"));
 		var cut = Render<Create>();
 		var form = cut.Find("form");
 
@@ -119,7 +119,7 @@ public class CreateTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-		_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Task.FromResult(Result.Ok()));
+	_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Result.Ok());
 		var nav = Services.GetRequiredService<NavigationManager>();
 		var cut = Render<Create>();
 		var form = cut.Find("form");

@@ -7,6 +7,10 @@
 // Project Name :  Web
 // =======================================================
 
+// Auth0 removed - using Microsoft Identity instead
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Web.Extensions;
 
 /// <summary>
@@ -25,33 +29,28 @@ public static partial class ServiceCollectionExtensions
 			ConfigurationManager config)
 	{
 
-		// Add Auth0 authentication
+		// Use Microsoft Identity with default cookie authentication for Blazor Server
 		services.AddCascadingAuthenticationState();
 
-		var domain = config["auth0-domain"];
-		var clientId = config["auth0-client-id"];
-		var clientSecret = config["auth0-client-secret"];
-
-		if (string.IsNullOrWhiteSpace(domain) || string.IsNullOrWhiteSpace(clientId))
+		// Let AddIdentity register the cookie scheme for Identity. Avoid adding
+		// the cookie scheme here to prevent duplicate scheme registration when
+		// Identity also configures it.
+		services.AddAuthentication(options =>
 		{
-			throw new InvalidOperationException("Required Auth0 configuration is missing");
-		}
+			options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+			options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+		});
 
-		// The client secret may be omitted in some test environments; the Auth0
-		// registration accepts an empty secret for these cases (tests mock behavior).
-		services
-				.AddAuth0WebAppAuthentication(options =>
-				{
-					options.Domain = domain;
-					options.ClientId = clientId;
-					options.ClientSecret = clientSecret ?? string.Empty;
-				});
-
-		services.AddAuthentication();
-
-		services.AddHttpClient();
-
-		services.AddHttpClient<Auth0Service>();
+		// Add Identity stores using EF Core Identity setup already present in ApplicationDbContext
+		services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+		{
+			// Configure password/lockout settings conservatively for security; override in appsettings if needed
+			options.Password.RequireDigit = false;
+			options.Password.RequireNonAlphanumeric = false;
+			options.Password.RequiredLength = 6;
+		})
+		.AddEntityFrameworkStores<ApplicationDbContext>()
+		.AddSignInManager();
 
 	}
 

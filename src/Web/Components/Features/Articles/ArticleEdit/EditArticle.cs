@@ -28,7 +28,7 @@ public static class EditArticle
 	public class Handler : IEditArticleHandler
 	{
 
-		private readonly IMyBlogContextFactory _factory;
+		private readonly IApplicationDbContextFactory _factory;
 
 		private readonly ILogger<Handler> _logger;
 
@@ -37,7 +37,7 @@ public static class EditArticle
 		/// </summary>
 		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContextFactory factory, ILogger<Handler> logger)
+		public Handler(IApplicationDbContextFactory factory, ILogger<Handler> logger)
 		{
 			_factory = factory;
 			_logger = logger;
@@ -58,12 +58,10 @@ public static class EditArticle
 			try
 			{
 
-				var context = await _factory.CreateContext(CancellationToken.None);
+				var context = _factory.CreateDbContext();
 
 				// First check if the article exists
-				var existingArticle = await context.Articles.Find(
-					Builders<Article>.Filter.Eq(x => x.Id, request.Id)
-				).FirstOrDefaultAsync();
+				var existingArticle = await context.Articles.FirstOrDefaultAsync(x => x.Id == request.Id);
 
 				if (existingArticle is null)
 				{
@@ -77,18 +75,14 @@ public static class EditArticle
 				existingArticle.Content = request.Content;
 				existingArticle.CoverImageUrl = request.CoverImageUrl;
 				existingArticle.UrlSlug = request.UrlSlug;
-				existingArticle.Author = request.Author;
-				existingArticle.Category = request.Category;
+				existingArticle.AuthorId = request.Author.Id;
+				existingArticle.CategoryId = request.Category.Id;
 				existingArticle.IsPublished = request.IsPublished;
 				existingArticle.PublishedOn = request.PublishedOn;
 				existingArticle.IsArchived = request.IsArchived;
 				existingArticle.ModifiedOn = DateTime.UtcNow;
 
-				await context.Articles.ReplaceOneAsync(
-					Builders<Article>.Filter.Eq(x => x.Id, request.Id),
-					existingArticle,
-					new ReplaceOptions { IsUpsert = false }
-				);
+				await context.SaveChangesAsync();
 
 				_logger.LogInformation("Article updated successfully: {Title}", request.Title);
 

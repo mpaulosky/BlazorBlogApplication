@@ -29,7 +29,7 @@ public static class Helpers
 	{
 		// Register the full set of common test services used across the suite.
 		// This includes NavigationManager, loggers, a lightweight Auth0Service,
-		// a test MyBlogContext, and handler substitutes/mappings. Individual
+		// a test MyzBlogContext, and handler substitutes/mappings. Individual
 		// tests may still override or register concrete handlers as needed.
 		//TestServiceRegistrations.RegisterAll(context);
 
@@ -61,30 +61,6 @@ public static class Helpers
 			authContext.SetNotAuthorized();
 		}
 
-	}
-
-}
-
-[ExcludeFromCodeCoverage]
-public static class TestFixtures
-{
-
-	public static Mock<IAsyncCursor<TEntity>> GetMockCursor<TEntity>(IEnumerable<TEntity> list) where TEntity : class?
-	{
-		Mock<IAsyncCursor<TEntity>> cursor = new();
-		cursor.Setup(a => a.Current).Returns(list);
-
-		cursor
-				.SetupSequence(a => a.MoveNext(It.IsAny<CancellationToken>()))
-				.Returns(true)
-				.Returns(false);
-
-		cursor
-				.SetupSequence(a => a.MoveNextAsync(It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(true))
-				.Returns(Task.FromResult(false));
-
-		return cursor;
 	}
 
 }

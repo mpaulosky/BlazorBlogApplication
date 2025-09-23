@@ -33,13 +33,13 @@ public class DetailsTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin");
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 
-		getSub.HandleAsync(Arg.Any<ObjectId>())
-				.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
+	getSub.HandleAsync(Arg.Any<Guid>())
+				.Returns(Result.Fail<CategoryDto>("Category not found."));
 
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.GenerateNewId()));
+	var cut = Render<Details>(parameters => parameters.Add(p => p.Id, Guid.NewGuid()));
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
@@ -58,8 +58,8 @@ public class DetailsTests : BunitContext
 		// register a handler that returns the DTO for the matching id
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 
-		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id))
-				.Returns(Task.FromResult(Result.Ok(categoryDto)));
+		getSub.HandleAsync(Arg.Is<Guid>(id => id == categoryDto.Id))
+				.Returns(Result.Ok(categoryDto));
 
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
@@ -90,8 +90,8 @@ public class DetailsTests : BunitContext
 		// register a handler that returns the DTO for the matching id
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 
-		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id))
-				.Returns(Task.FromResult(Result.Ok(categoryDto)));
+		getSub.HandleAsync(Arg.Is<Guid>(id => id == categoryDto.Id))
+				.Returns(Result.Ok(categoryDto));
 
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
@@ -117,7 +117,7 @@ public class DetailsTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin");
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
+	getSub.HandleAsync(Arg.Any<Guid>()).Returns(Result.Ok(categoryDto));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 		var navigationManager = Services.GetRequiredService<BunitNavigationManager>();
 
@@ -137,7 +137,7 @@ public class DetailsTests : BunitContext
 		Helpers.SetAuthorization(this, true, "Admin");
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
+	getSub.HandleAsync(Arg.Any<Guid>()).Returns(Result.Ok(categoryDto));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 		var navigationManager = Services.GetRequiredService<BunitNavigationManager>();
 
@@ -158,13 +158,13 @@ public class DetailsTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 
-		getSub.HandleAsync(Arg.Is<ObjectId>(id => id == ObjectId.Empty))
-				.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category not found.")));
+		getSub.HandleAsync(Arg.Is<Guid>(id => id == Guid.Empty))
+				.Returns(Result.Fail<CategoryDto>("Category not found."));
 
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.Empty));
+		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, Guid.Empty));
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
@@ -179,13 +179,13 @@ public class DetailsTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 
-		getSub.HandleAsync(Arg.Any<ObjectId>())
-				.Returns(Task.FromResult(Result.Fail<CategoryDto>("Category service failure.")));
+	getSub.HandleAsync(Arg.Any<Guid>())
+				.Returns(Result.Fail<CategoryDto>("Category service failure."));
 
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.GenerateNewId()));
+	var cut = Render<Details>(parameters => parameters.Add(p => p.Id, Guid.NewGuid()));
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
@@ -219,7 +219,7 @@ public class DetailsTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
+	getSub.HandleAsync(Arg.Any<Guid>()).Returns(Result.Ok(categoryDto));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act - render the Details component directly since we've set the authorization state
@@ -242,7 +242,7 @@ public class DetailsTests : BunitContext
 		TestServiceRegistrations.RegisterCommonUtilities(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(Task.FromResult(Result.Ok(categoryDto)));
+	getSub.HandleAsync(Arg.Any<Guid>()).Returns(Result.Ok(categoryDto));
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act
@@ -263,11 +263,11 @@ public class DetailsTests : BunitContext
 		var getSub = Substitute.For<GetCategory.IGetCategoryHandler>();
 
 		// Return a Task that won't complete until we call TrySetResult
-		getSub.HandleAsync(Arg.Any<ObjectId>()).Returns(tcs.Task);
+	getSub.HandleAsync(Arg.Any<Guid>()).Returns(tcs.Task);
 		Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getSub);
 
 		// Act - render the component; since the handler Task is pending, _isLoading should remain true
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, ObjectId.GenerateNewId()));
+	var cut = Render<Details>(parameters => parameters.Add(p => p.Id, Guid.NewGuid()));
 
 		// Immediately after render the spinner should be present
 		cut.Markup.Should().Contain("animate-spin");

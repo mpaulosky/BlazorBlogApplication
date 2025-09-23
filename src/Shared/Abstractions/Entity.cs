@@ -19,33 +19,24 @@ public abstract class Entity
 	/// <summary>
 	///   /// Gets the unique identifier for this entity.
 	/// </summary>
-	[BsonId]
-	[BsonRepresentation(BsonType.ObjectId)]
-	[BsonElement("_id")]
-	public ObjectId Id { get; protected init; } = ObjectId.GenerateNewId();
+	public Guid Id { get; protected init; } = Guid.CreateVersion7();
 
 	/// <summary>
 	///   Gets the date and time when this entity was created.
 	/// </summary>
 	[Display(Name = "Created On")]
-	[BsonElement("createdOn")]
-	[BsonRepresentation(BsonType.DateTime)]
 	public DateTime CreatedOn { get; protected init; } = DateTime.UtcNow;
 
 	/// <summary>
 	///   Gets or sets the date and time when this entity was la///
 	/// </summary>
 	[Display(Name = "Modified On")]
-	[BsonElement("modifiedOn")]
-	[BsonIgnoreIfNull]
-	[BsonIgnoreIfDefault]
-	[BsonRepresentation(BsonType.DateTime)]
 	public DateTime? ModifiedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets the archived status of the entity.
 	/// </summary>
-	[Display(Name = "Archived")]
-	public bool Archived { get; set; }
+	[Display(Name = "Is Archived")]
+	public bool IsArchived { get; set; }
 
 }

@@ -28,7 +28,7 @@ public class CorsPolicyTests : IClassFixture<TestWebApplicationFactory>
 		var provider = scope.ServiceProvider.GetRequiredService<ICorsPolicyProvider>();
 
 		var httpContext = new DefaultHttpContext();
-		var policy = await provider.GetPolicyAsync(httpContext, DEFAULT_CORS_POLICY);
+		var policy = await provider.GetPolicyAsync(httpContext, DefaultCorsPolicy);
 
 		policy.Should().NotBeNull();
 

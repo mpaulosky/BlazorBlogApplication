@@ -10,7 +10,7 @@
 		<PackageReference Include="Bogus"/>
 		<PackageReference Include="FluentValidation"/>
 		<PackageReference Include="Mapster"/>
-		<PackageReference Include="MongoDB.Bson"/>
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
 		<PackageReference Include="WaffleGenerator.Bogus"/>
 	</ItemGroup>
 
@@ -18,6 +18,7 @@
 		<InternalsVisibleTo Include="Architecture.Tests.Unit"/>
 		<InternalsVisibleTo Include="Shared.Tests.Unit"/>
 		<InternalsVisibleTo Include="Web.Tests.Unit"/>
+		<InternalsVisibleTo Include="Web.Tests"/>
 		<InternalsVisibleTo Include="Web.Tests.Integration"/>
 	</ItemGroup>
 

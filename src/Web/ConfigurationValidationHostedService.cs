@@ -53,23 +53,8 @@ public sealed class ConfigurationValidationHostedService : IHostedService
 				throw new Exception("Required configuration 'mongoDb-connection' is missing");
 			}
 
-			var authDomain = _config["Auth0-Domain"];
-			var authClient = _config["Auth0-Client-Id"];
-
-			if (string.IsNullOrWhiteSpace(authDomain))
-			{
-				authDomain = Environment.GetEnvironmentVariable("Auth0-Domain");
-			}
-
-			if (string.IsNullOrWhiteSpace(authClient))
-			{
-				authClient = Environment.GetEnvironmentVariable("Auth0-Client-Id");
-			}
-
-			if (string.IsNullOrWhiteSpace(authDomain) || string.IsNullOrWhiteSpace(authClient))
-			{
-				throw new Exception("Required Auth0 configuration is missing");
-			}
+			// Auth0 removed: do not validate Auth0 configuration here. If authentication
+			// settings are required by a deployment, validate them in deployment/CI.
 		});
 
 		return Task.CompletedTask;

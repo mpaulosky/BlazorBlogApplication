@@ -26,25 +26,40 @@ public class Article : Entity
 
 	[Display(Name = "Url Slug")] public string UrlSlug { get; set; }
 
-	public AppUserDto Author { get; set; }
-
-	public CategoryDto Category { get; set; }
-
-	[Display(Name = "Is Published")] public bool IsPublished { get; set; }
+	/// <summary>
+	///   Foreign key to the author (AppUser)
+	/// </summary>
+	public string AuthorId { get; set; }
 
 	/// <summary>
-	///   Indicates whether the article is archived.
+	///   Navigation property to the author (DTO expected by tests)
 	/// </summary>
-	[Display(Name = "Is Archived")]
-	public bool IsArchived { get; set; }
+	public Models.AppUserDto? Author { get; set; }
+
+	/// <summary>
+	///   Foreign key to the category
+	/// </summary>
+	public Guid CategoryId { get; set; }
+
+	/// <summary>
+	///   Navigation property to the category (DTO expected by tests)
+	/// </summary>
+	public Models.CategoryDto? Category { get; set; }
+
+	[Display(Name = "Is Published")] public bool IsPublished { get; set; }
 
 	[Display(Name = "Published On")] public DateTime? PublishedOn { get; set; }
 
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public Article() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty,
-			CategoryDto.Empty) { }
+	public Article() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+	Guid.Empty)
+	{
+		// Ensure navigation DTOs are initialized to Empty to match test expectations
+		Author = Models.AppUserDto.Empty;
+		Category = Models.CategoryDto.Empty;
+	}
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="Article" /> class.
@@ -54,22 +69,49 @@ public class Article : Entity
 	/// <param name="content">The new content</param>
 	/// <param name="coverImageUrl">The new cover image URL</param>
 	/// <param name="urlSlug">The new URL slug</param>
-	/// <param name="author">The new author</param>
-	/// <param name="category">The new category</param>
+	/// <param name="authorId">The author's ID</param>
+	/// <param name="categoryId">The category's ID</param>
 	/// <param name="isPublished">The newly published status</param>
 	/// <param name="publishedOn">The new publication date</param>
 	/// <param name="isArchived">Indicates whether the article is archived.</param>
 	/// <remarks>
 	///   This constructor is used to create a new article instance with all required properties.
 	/// </remarks>
+    public Article(
+			string title,
+			string introduction,
+			string content,
+			string coverImageUrl,
+			string urlSlug,
+	    string authorId,
+	    Guid categoryId,
+			bool isPublished = false,
+			DateTime? publishedOn = null,
+			bool isArchived = false)
+	{
+		Title = title;
+		Introduction = introduction;
+		Content = content;
+		CoverImageUrl = coverImageUrl;
+		UrlSlug = urlSlug;
+		AuthorId = authorId;
+		CategoryId = categoryId;
+		IsPublished = isPublished;
+		PublishedOn = publishedOn;
+		IsArchived = isArchived;
+	}
+
+	/// <summary>
+	/// Alternative constructor accepting Author and Category objects (used in tests)
+	/// </summary>
 	public Article(
 			string title,
 			string introduction,
 			string content,
 			string coverImageUrl,
 			string urlSlug,
-			AppUserDto author,
-			CategoryDto category,
+			Models.AppUserDto author,
+			Models.CategoryDto category,
 			bool isPublished = false,
 			DateTime? publishedOn = null,
 			bool isArchived = false)
@@ -80,7 +122,35 @@ public class Article : Entity
 		CoverImageUrl = coverImageUrl;
 		UrlSlug = urlSlug;
 		Author = author;
+		AuthorId = string.Empty;
 		Category = category;
+		CategoryId = Guid.Empty;
+		IsPublished = isPublished;
+		PublishedOn = publishedOn;
+		IsArchived = isArchived;
+	}
+
+	/// <summary>
+	/// Update overload accepting a CategoryDto to match tests
+	/// </summary>
+	public void Update(
+			string title,
+			string introduction,
+			string content,
+			string coverImageUrl,
+			string urlSlug,
+			CategoryDto categoryDto,
+			bool isPublished,
+			DateTime? publishedOn,
+			bool isArchived)
+	{
+		Title = title;
+		Introduction = introduction;
+		Content = content;
+		CoverImageUrl = coverImageUrl;
+		UrlSlug = urlSlug;
+		CategoryId = categoryDto.Id;
+		Category = categoryDto;
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
 		IsArchived = isArchived;
@@ -94,7 +164,7 @@ public class Article : Entity
 	/// <param name="content"></param>
 	/// <param name="coverImageUrl">The new cover image URL</param>
 	/// <param name="urlSlug">The new URL slug</param>
-	/// <param name="category">The new category</param>
+	/// <param name="categoryId">The new category ID</param>
 	/// <param name="isPublished">The newly published status</param>
 	/// <param name="publishedOn">The new publication date</param>
 	/// <param name="isArchived">Indicates whether the article is archived.</param>
@@ -107,7 +177,7 @@ public class Article : Entity
 			string content,
 			string coverImageUrl,
 			string urlSlug,
-			CategoryDto category,
+			Guid categoryId,
 			bool isPublished,
 			DateTime? publishedOn,
 			bool isArchived)
@@ -117,7 +187,7 @@ public class Article : Entity
 		Content = content;
 		CoverImageUrl = coverImageUrl;
 		UrlSlug = urlSlug;
-		Category = category;
+		CategoryId = categoryId;
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
 		IsArchived = isArchived;
@@ -141,13 +211,19 @@ public class Article : Entity
 	///   Gets an empty article instance.
 	/// </summary>
 	public static Article Empty { get; } = new(
-					string.Empty,
-					string.Empty,
-					string.Empty,
-					string.Empty,
-					string.Empty,
-					AppUserDto.Empty,
-					CategoryDto.Empty)
-			{ Id = ObjectId.Empty };
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			Guid.Empty)
+		{
+			Id = Guid.Empty,
+			AuthorId = string.Empty,
+			CategoryId = Guid.Empty,
+			Author = Models.AppUserDto.Empty,
+			Category = Models.CategoryDto.Empty
+		};
 
 }

@@ -15,9 +15,6 @@ global using Bogus;
 
 global using FluentValidation;
 
-global using MongoDB.Bson;
-global using MongoDB.Bson.Serialization.Attributes;
-
 global using Shared.Abstractions;
 global using Shared.Entities;
 global using Shared.Models;

@@ -26,10 +26,10 @@ public class EntityTests
 		var entity = new TestEntity();
 
 		// Assert
-		entity.Id.Should().NotBeNull();
+		entity.Id.Should().NotBeEmpty();
 		entity.CreatedOn.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
 		entity.ModifiedOn.Should().BeNull();
-		entity.Archived.Should().BeFalse();
+		entity.IsArchived.Should().BeFalse();
 	}
 
 	[Fact]
@@ -41,11 +41,11 @@ public class EntityTests
 
 		// Act
 		entity.ModifiedOn = now;
-		entity.Archived = true;
+		entity.IsArchived = true;
 
 		// Assert
 		entity.ModifiedOn.Should().Be(now);
-		entity.Archived.Should().BeTrue();
+		entity.IsArchived.Should().BeTrue();
 	}
 
 }

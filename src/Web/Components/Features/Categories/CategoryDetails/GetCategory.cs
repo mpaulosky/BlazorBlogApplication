@@ -18,7 +18,7 @@ public static class GetCategory
 	public interface IGetCategoryHandler
 	{
 
-		Task<Result<CategoryDto>> HandleAsync(ObjectId id);
+		Task<Result<CategoryDto>> HandleAsync(Guid id);
 
 	}
 
@@ -28,7 +28,7 @@ public static class GetCategory
 	public class Handler : IGetCategoryHandler
 	{
 
-		private readonly IMyBlogContextFactory _factory;
+		private readonly IApplicationDbContextFactory _factory;
 
 		private readonly ILogger<Handler> _logger;
 
@@ -37,7 +37,7 @@ public static class GetCategory
 		/// </summary>
 		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContextFactory factory, ILogger<Handler> logger)
+		public Handler(IApplicationDbContextFactory factory, ILogger<Handler> logger)
 		{
 			_factory = factory;
 			_logger = logger;
@@ -48,10 +48,10 @@ public static class GetCategory
 		/// </summary>
 		/// <param name="id">The category ObjectId.</param>
 		/// <returns>A <see cref="Result" /> representing the outcome of the operation.</returns>
-		public async Task<Result<CategoryDto>> HandleAsync(ObjectId id)
+		public async Task<Result<CategoryDto>> HandleAsync(Guid id)
 		{
 
-			if (id == ObjectId.Empty)
+			if (id == Guid.Empty)
 			{
 				_logger.LogError("The ID cannot be empty.");
 
@@ -61,19 +61,16 @@ public static class GetCategory
 			try
 			{
 
-				var context = await _factory.CreateContext(CancellationToken.None);
+				var context = _factory.CreateDbContext();
 
-				if (id == ObjectId.Empty)
+				if (id == Guid.Empty)
 				{
 					_logger.LogError("The ID cannot be empty.");
 
 					return Result.Fail<CategoryDto>("The ID cannot be empty.");
 				}
 
-				var filter = Builders<Category>.Filter.Eq("_id", id);
-				var cursor = await context.Categories.FindAsync<Category>(filter);
-				var categories = await cursor.ToListAsync();
-				var category = categories.FirstOrDefault();
+				var category = await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
 
 				if (category is null)
 				{

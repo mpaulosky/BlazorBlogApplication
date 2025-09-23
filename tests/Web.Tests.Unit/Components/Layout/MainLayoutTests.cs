@@ -19,7 +19,7 @@ public class MainLayoutTests
 		var type = typeof(MainLayout);
 		var mi = type.GetMethod("GetErrorCode", BindingFlags.NonPublic | BindingFlags.Static);
 		mi.Should().NotBeNull("private static method should exist on MainLayout");
-		var result = mi.Invoke(null, [ ex ]);
+		var result = mi.Invoke(null, [ex]);
 		result.Should().BeOfType<int>();
 
 		return (int)result;

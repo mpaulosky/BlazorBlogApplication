@@ -65,7 +65,7 @@ public class ErrorPageTest : BunitContext
 		// Arrange
 		var httpContext = new DefaultHttpContext
 		{
-				TraceIdentifier = "Test-Trace-Id"
+			TraceIdentifier = "Test-Trace-Id"
 		};
 
 		// Act

@@ -21,7 +21,7 @@ public static class GetArticle
 	public interface IGetArticleHandler
 	{
 
-		Task<Result<ArticleDto>> HandleAsync(ObjectId id);
+		Task<Result<ArticleDto>> HandleAsync(Guid id);
 
 	}
 
@@ -31,7 +31,7 @@ public static class GetArticle
 	public class Handler : IGetArticleHandler
 	{
 
-		private readonly IMyBlogContextFactory _factory;
+		private readonly IApplicationDbContextFactory _factory;
 
 		private readonly ILogger<Handler> _logger;
 
@@ -40,7 +40,7 @@ public static class GetArticle
 		/// </summary>
 		/// <param name="factory">The context factory.</param>
 		/// <param name="logger">The logger instance.</param>
-		public Handler(IMyBlogContextFactory factory, ILogger<Handler> logger)
+		public Handler(IApplicationDbContextFactory factory, ILogger<Handler> logger)
 		{
 			_factory = factory;
 			_logger = logger;
@@ -51,10 +51,10 @@ public static class GetArticle
 		/// </summary>
 		/// <param name="id">The article ObjectId.</param>
 		/// <returns>A <see cref="Result" /> representing the outcome of the operation.</returns>
-		public async Task<Result<ArticleDto>> HandleAsync(ObjectId id)
+		public async Task<Result<ArticleDto>> HandleAsync(Guid id)
 		{
 
-			if (id == ObjectId.Empty)
+			if (id == Guid.Empty)
 			{
 
 				_logger.LogError("The ID is empty.");
@@ -65,15 +65,16 @@ public static class GetArticle
 			try
 			{
 
-				var context = await _factory.CreateContext(CancellationToken.None);
+				using var context = _factory.CreateDbContext();
 
-				var filter = Builders<Article>.Filter.Eq("_id", id);
-				var cursor = await context.Articles.FindAsync(filter);
-				var article = await cursor.FirstOrDefaultAsync();
+				var article = await context.Articles
+					.Include(a => a.Author)
+					.Include(a => a.Category)
+					.FirstOrDefaultAsync(a => a.Id == id);
 
 				if (article is null)
 				{
-					_logger.LogWarning("Article not found: {CategoryId}", id);
+					_logger.LogWarning("Article not found: {ArticleId}", id);
 
 					return Result.Fail<ArticleDto>("Article not found.");
 				}

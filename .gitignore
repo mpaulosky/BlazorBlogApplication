@@ -41,9 +41,13 @@ bld/
 # Visual Studio 2017 auto generated files
 Generated\ Files/
 
-# MSTest test Results
-[Tt]est[Rr]esult*/
+# Test test Results
+[Tt]est[Rr]esults/
+[Tt]est-[Rr]esults/
 [Bb]uild[Ll]og.*
+.actrc
+.secrets
+.act-run.log
 
 # NUnit
 *.VisualState.xml
@@ -143,9 +147,18 @@ _TeamCity*
 !.axoCover/settings.json
 
 # Coverlet is a free, cross platform Code Coverage Tool
-coverage*.json
-coverage*.xml
-coverage*.info
+[Cc]overage-[Rr]eport/
+[Cc]overage-[Rr]eport/*.html
+[Cc]overage-[Rr]eport/*.json
+[Cc]overage-[Rr]eport/*.xml
+[Cc]overage-[Rr]eport/*.htm
+[Cc]overage-[Rr]eport/*.js
+[Cc]overage-[Rr]eport/*.css
+[Cc]overage-[Rr]eport/*.svg
+[Cc]overage-[Rr]eport/*.txt
+[Cc]overage*.json
+[Cc]overage*.xml
+[Cc]overage*.info
 
 # Visual Studio code coverage results
 *.coverage

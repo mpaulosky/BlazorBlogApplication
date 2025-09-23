@@ -7,12 +7,15 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<IsTestProject>true</IsTestProject>
 	</PropertyGroup>
+
 	<ItemGroup>
 		<Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<Using Include="Xunit" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Aspire.Hosting.Testing" />
 		<PackageReference Include="coverlet.collector" />
@@ -27,25 +30,18 @@
 		<PackageReference Include="NSubstitute" />
 		<PackageReference Include="NSubstitute.Analyzers.CSharp" />
 		<PackageReference Include="Testcontainers" />
-		<PackageReference Include="Testcontainers.MongoDb" />
+		<PackageReference Include="Testcontainers.PostgreSql" />
 		<PackageReference Include="Testcontainers.XunitV3" />
 		<PackageReference Include="xunit.v3" />
 		<PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\AppHost\AppHost.csproj" />
 		<ProjectReference Include="..\..\src\ServiceDefaults\ServiceDefaults.csproj" />
 		<ProjectReference Include="..\..\src\Shared\Shared.csproj" />
 		<ProjectReference Include="..\..\src\Web\Web.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-		<Folder Include="Components\Features\Articles\ArticleCreate\" />
-		<Folder Include="Components\Features\Articles\ArticleDetails\" />
-		<Folder Include="Components\Features\Articles\ArticleEdit\" />
-		<Folder Include="Components\Features\Articles\ArticlesList\" />
-		<Folder Include="Components\Features\Categories\CategoryDetails\" />
-		<Folder Include="Components\Features\Categories\CategoryEdit\" />
-		<Folder Include="Components\Features\Categories\CategoriesList\" />
-	</ItemGroup>
+
 </Project>

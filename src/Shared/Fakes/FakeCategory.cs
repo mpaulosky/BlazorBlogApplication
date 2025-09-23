@@ -51,7 +51,7 @@ public class FakeCategory
 	{
 
 		var fake = new Faker<Category>()
-				.RuleFor(x => x.Id, _ => ObjectId.GenerateNewId())
+				.RuleFor(x => x.Id, _ => Guid.CreateVersion7())
 				.RuleFor(x => x.CategoryName, _ => GetRandomCategoryName())
 				.RuleFor(x => x.IsArchived, f => f.Random.Bool())
 				.RuleFor(x => x.CreatedOn, _ => DateTime.Now)

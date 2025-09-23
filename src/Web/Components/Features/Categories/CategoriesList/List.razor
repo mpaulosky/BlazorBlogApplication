@@ -115,13 +115,13 @@ else
 		Navigation.NavigateTo("/categories/create");
 	}
 
-	private void GoToEdit(ObjectId id)
+	private void GoToEdit(Guid id)
 	{
 		// Use segment-style route to match route templates and tests
 		Navigation.NavigateTo($"/categories/edit/{id}");
 	}
 
-	private void GoToDetails(ObjectId id)
+	private void GoToDetails(Guid id)
 	{
 		// Navigate using the details route with segment id
 		Navigation.NavigateTo($"/categories/{id}");

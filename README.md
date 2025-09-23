@@ -23,10 +23,9 @@
 
 ## Overview
 
-BlazorApp is a modern, secure, and scalable .NET 9 solution built with Blazor Server, .NET Aspire, and MongoDB. It demonstrates best practices in architecture, testing, and cloud-native development, including CQRS, Vertical Slice, and strong security defaults (Auth0, HTTPS, CORS, Antiforgery, secure headers).
+BlazorApp is a modern, secure, and scalable .NET 9 solution built with Blazor Server, .NET Aspire, and PostgresSQL. It demonstrates best practices in architecture, testing, and cloud-native development, including CQRS, Vertical Slice, and strong security defaults (HTTPS, CORS, Antiforgery, secure headers, and pluggable authentication providers).
 
----
-
+****
 ## Solution Structure
 
 ```
@@ -37,17 +36,14 @@ Shared            -- Shared contracts, constants, and service/resource names
 tests             -- Unit, integration, and architecture tests (xUnit, bUnit, Playwright)
 ```
 
----
-
+****
 ## Key Technologies & Features
 
 - **.NET 9** & **.NET Aspire** (cloud-native orchestration)
 - **Blazor Server** (interactive, stream rendering, error boundaries)
-- **MongoDB** (NoSQL data, async access)
-- **Auth0** (authentication/authorization)
+- **Authentication (ASP.NET Core authentication providers)
 - **CQRS & Vertical Slice Architecture**
 - **Dependency Injection** everywhere
-- **OpenAPI/Swagger** for APIs
 - **OpenTelemetry & Application Insights**
 - **Distributed Caching** (Redis)
 - **Output Caching**
@@ -55,8 +51,7 @@ tests             -- Unit, integration, and architecture tests (xUnit, bUnit, Pl
 - **FluentValidation** for model validation
 - **Unit, Integration, and Architecture Tests** (xUnit, bUnit, Playwright, TestContainers)
 
----
-
+****
 ## Coding & Architecture Standards
 
 This repository enforces the following rules for all .NET code (see `.editorconfig`, StyleCop, and tooling):
@@ -82,7 +77,7 @@ This repository enforces the following rules for all .NET code (see `.editorconf
 
 ### Security
 
-- **HTTPS, Authentication (Auth0), Authorization, Antiforgery, CORS, Secure Headers**  
+- **HTTPS, Authentication, Authorization, Antiforgery, CORS, Secure Headers**  
   See `Web/Program.cs` for implementation.
 
 ### Architecture
@@ -137,30 +132,12 @@ This repository enforces the following rules for all .NET code (see `.editorconf
 - **Unit, Integration, Architecture Tests**
 - **xUnit, FluentAssertions, NSubstitute, Moq, bUnit (`tests/Web.Tests.Unit/`), Playwright**
 
----
-
+****
 ## Getting Started
 
-### Auth0 Setup
+### Authentication
 
-This application uses Auth0 for authentication. To configure Auth0:
-
-1. **Create an Auth0 Application**
-   - Go to [Auth0 Dashboard](https://manage.auth0.com/)
-   - Create a new "Regular Web Application"
-   - Note your Domain and Client ID
-
-2. **Configure Application Settings**
-   - **Allowed Callback URLs**: `https://localhost:7039/callback`
-   - **Allowed Logout URLs**: `https://localhost:7039/`
-   - **Allowed Web Origins**: `https://localhost:7039`
-
-3. **Set User Secrets**
-   ```bash
-   cd AppHost
-   dotnet user-secrets set "Parameters:auth0-domain" "your-domain.auth0.com"
-   dotnet user-secrets set "Parameters:auth0-client-id" "your-client-id"
-   ```
+This application supports ASP.NET Core authentication providers. Configure authentication via user secrets or environment variables in the `AppHost` project and ensure the provider-specific settings are present before running the application.
 
 ### Running the Application
 
@@ -171,25 +148,21 @@ This application uses Auth0 for authentication. To configure Auth0:
 4. **tests:**
    - `dotnet test` (runs all unit/integration/architecture tests)
 
----
-
+****
 ## Contribution & Documentation
 
 - [Code of Conduct](./docs/CODE_OF_CONDUCT.md)
 - [Contributing Guide](./docs/CONTRIBUTING.md)
 - [Architecture & Usage Docs](./README.md)
 
----
-
+****
 ## Software References
 
 - .NET 9, .NET Aspire
 - Blazor Server, C#, TailwindCSS
-- MongoDB, Redis
-- Auth0
-
----
-
+- PostgresSQL, Redis
+  
+****
 ## License
 
 See [LICENSE](./LICENSE.txt)

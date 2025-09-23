@@ -21,7 +21,6 @@ public class ArticleDtoTests
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
 		var dto = new ArticleDto();
-		dto.Id.Should().NotBeNull();
 		dto.Title.Should().BeEmpty();
 		dto.Introduction.Should().BeEmpty();
 		dto.Content.Should().BeEmpty();
@@ -38,7 +37,6 @@ public class ArticleDtoTests
 	public void EmptyProperty_ShouldReturnEmptyDto()
 	{
 		var dto = ArticleDto.Empty;
-		dto.Id.Should().NotBeNull();
 		dto.Title.Should().BeEmpty();
 		dto.Introduction.Should().BeEmpty();
 		dto.Content.Should().BeEmpty();

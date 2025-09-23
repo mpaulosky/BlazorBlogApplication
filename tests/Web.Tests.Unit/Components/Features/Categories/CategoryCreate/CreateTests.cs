@@ -26,7 +26,7 @@ public class CreateTests : BunitContext
 		_createHandlerMock = Substitute.For<CreateCategory.ICreateCategoryHandler>();
 
 		// Default handler behavior: return success to avoid awaiting null Tasks
-		_createHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
+		_createHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Result.Ok());
 		Services.AddScoped(_ => _createHandlerMock);
 		Services.AddScoped<ILogger<Create>, Logger<Create>>();
 		Services.AddScoped(_ => _validator);
@@ -79,7 +79,7 @@ public class CreateTests : BunitContext
 		var navMan = Services.GetRequiredService<BunitNavigationManager>();
 
 		// Ensure the handler returns success so the component navigates
-		_createHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
+		_createHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Result.Ok());
 		var cut = Render<Create>();
 
 		// Act
@@ -99,7 +99,7 @@ public class CreateTests : BunitContext
 		Helpers.SetAuthorization(this);
 
 		// Arrange failure: configure the existing handler mock to return a failure
-		_createHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Fail("Service error")));
+		_createHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Result.Fail("Service error"));
 
 		var cut = Render<Create>();
 		var nameInput = cut.Find("#name");

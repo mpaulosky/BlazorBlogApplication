@@ -24,9 +24,6 @@ jobs:
 
     env:
       NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
-      auth0-domain: dummy-domain.auth0.com
-      auth0-client-id: dummy-client-id
-      auth0-client-secret: dummy-client-secret
 
     steps:
       - uses: actions/checkout@v5
@@ -117,7 +114,6 @@ jobs:
         if: ${{ !cancelled() }}
         uses: codecov/test-results-action@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
           files: test-results/**/*.xml
 
       - name: Publish Test Results
@@ -150,4 +146,5 @@ jobs:
           if [ "$tests_exit_code" != "0" ]; then
             echo "Tests failed with exit code $tests_exit_code"
             exit $tests_exit_code
+          fi
           fi
