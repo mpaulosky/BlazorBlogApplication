@@ -11,19 +11,43 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Aspire.Hosting.Testing"/>
-		<PackageReference Include="coverlet.collector"/>
-		<PackageReference Include="Microsoft.NET.Test.Sdk"/>
-		<PackageReference Include="xunit.runner.visualstudio"/>
-		<PackageReference Include="xunit.v3"/>
+		<PackageReference Include="Aspire.Hosting.Testing" />
+		<PackageReference Include="Microsoft.Playwright" />
+		<PackageReference Include="coverlet.collector" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="xunit.runner.visualstudio" />
+		<PackageReference Include="xunit.v3" />
+		<!-- Integration testing packages (versions managed centrally in Directory.Packages.props) -->
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+		<PackageReference Include="Testcontainers" />
+		<PackageReference Include="Testcontainers.PostgreSql" />
+		<PackageReference Include="Testcontainers.XunitV3" />
+		<PackageReference Include="FluentAssertions" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Using Include="System.Net"/>
-		<Using Include="Microsoft.Extensions.DependencyInjection"/>
-		<Using Include="Aspire.Hosting.ApplicationModel"/>
-		<Using Include="Aspire.Hosting.Testing"/>
-		<Using Include="Xunit"/>
+		<None Update="appsettings.Integration.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\AppHost\AppHost.csproj" />
+		<ProjectReference Include="..\..\src\Web\Web.csproj" />
+		<ProjectReference Include="..\..\src\Shared\Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="System.Net" />
+		<Using Include="Microsoft.Extensions.DependencyInjection" />
+		<Using Include="Aspire.Hosting.ApplicationModel" />
+		<Using Include="Aspire.Hosting.Testing" />
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Playwright\" />
 	</ItemGroup>
 
 </Project>

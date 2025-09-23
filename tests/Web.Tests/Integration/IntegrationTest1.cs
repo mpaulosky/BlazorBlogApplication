@@ -41,10 +41,10 @@ public class IntegrationTest1
 		await app.StartAsync(cancellationToken).WaitAsync(DefaultTimeout, cancellationToken);
 
 		// Act
-		await app.ResourceNotifications.WaitForResourceHealthyAsync(WEBSITE, cancellationToken).WaitAsync(DefaultTimeout, cancellationToken);
+		await app.ResourceNotifications.WaitForResourceHealthyAsync(Website, cancellationToken).WaitAsync(DefaultTimeout, cancellationToken);
 
 		// Use the resource endpoint and create a local HttpClient that accepts the test server's self-signed cert
-		var endpoint = app.GetEndpoint(WEBSITE);
+		var endpoint = app.GetEndpoint(Website);
 		Console.WriteLine($"Integration test: resource endpoint = {endpoint}");
 
 		HttpResponseMessage? response = null;
