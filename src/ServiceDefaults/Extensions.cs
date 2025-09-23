@@ -32,12 +32,12 @@ public static class Extensions
 	/// <summary>
 	///   The health endpoint path.
 	/// </summary>
-	private const string HEALTH_ENDPOINT_PATH = "/health";
+	private const string HealthEndpointPath = "/health";
 
 	/// <summary>
 	///   The aliveness endpoint path.
 	/// </summary>
-	private const string ALIVENESS_ENDPOINT_PATH = "/alive";
+	private const string AlivenessEndpointPath = "/alive";
 
 	/// <summary>
 	///   Adds service defaults including OpenTelemetry, health checks, and service discovery.
@@ -92,8 +92,8 @@ public static class Extensions
 
 									// Exclude health check requests from tracing
 									tracing.Filter = context =>
-											!context.Request.Path.StartsWithSegments(HEALTH_ENDPOINT_PATH)
-											&& !context.Request.Path.StartsWithSegments(ALIVENESS_ENDPOINT_PATH)
+											!context.Request.Path.StartsWithSegments(HealthEndpointPath)
+											&& !context.Request.Path.StartsWithSegments(AlivenessEndpointPath)
 							)
 
 							// Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
@@ -160,12 +160,12 @@ public static class Extensions
 		if (app.Environment.IsDevelopment())
 		{
 			// All health checks must pass for the app to be considered ready to accept traffic after starting
-			app.MapHealthChecks(HEALTH_ENDPOINT_PATH);
+			app.MapHealthChecks(HealthEndpointPath);
 
 			// Only health checks tagged with the "live" tag must pass for the app to be considered alive
-			app.MapHealthChecks(ALIVENESS_ENDPOINT_PATH, new HealthCheckOptions
+			app.MapHealthChecks(AlivenessEndpointPath, new HealthCheckOptions
 			{
-					Predicate = r => r.Tags.Contains("live")
+				Predicate = r => r.Tags.Contains("live")
 			});
 		}
 
