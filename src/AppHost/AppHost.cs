@@ -30,21 +30,19 @@ public static class AppHostEntryPoint
 	{
 		var builder = DistributedApplication.CreateBuilder(args);
 
-		var cache = builder.AddRedis(CACHE)
+		var cache = builder.AddRedis(Cache)
 				.WithLifetime(ContainerLifetime.Persistent)
 				.WithRedisInsight();
 
-		var postgres = builder.AddPostgres(SERVER)
+		var postgres = builder.AddPostgres(Server)
 				.WithLifetime(ContainerLifetime.Persistent)
 				.WithPgAdmin()
 				.WithDataVolume(isReadOnly: false);
 
-		var postgresDb = postgres.AddDatabase(ARTICLE_DATABASE);
-		var userDb = postgres.AddDatabase(USER_DATABASE);
+		var postgresDb = postgres.AddDatabase(ArticleDatabase);
 
-		builder.AddProject<Web>(WEBSITE)
+		builder.AddProject<Web>(Website)
 				.WithReference(postgresDb)
-				.WithReference(userDb)
 				.WithReference(cache)
 				.WaitFor(postgres)
 				.WithExternalHttpEndpoints();
