@@ -30,11 +30,11 @@ Overall coverage (from report):
 3) Web.Components.Features.UserInfo.Profile.LoadUserDataAsync (0% covered)
 - Why: User profile loading is a meaningful user path. Current coverage is 0% for the state machine, indicating no tests exercise this async flow.
 - Proposed tests (BUnit component tests):
-  - Success path: authenticated user; mock Auth0 service to return user details and roles; assert rendered user info and roles list.
+  - Success path: authenticated user; assert rendered user info and roles list using `Helpers.SetAuthorization` to configure authentication state.
   - No user path: unauthenticated; assert appropriate placeholder/error UI.
-  - Error path: Auth0 service throws or returns error; assert error UI and no crash.
+  - Error path: component handles exceptions and surfaces error UI without crashing.
 - Infra:
-  - Use Helpers.SetAuthorization (already used in repo) and DI registration for a mock IAuth0Service (or HttpClient via HttpMessageHandler stub if the service is concrete-only).
+  - Use `Helpers.SetAuthorization` and component-level DI to inject required test doubles for user data if needed. Avoid coupling tests to a specific external identity provider implementation; prefer using claims-based AuthenticationState where possible.
 - Suggested test files:
   - tests/Web.Tests.Unit/Components/Features/UserInfo/Profile/ProfileTests.cs
 - Acceptance: Cover branches in LoadUserDataAsync, including filters/linq display class delegate.
@@ -65,14 +65,15 @@ Overall coverage (from report):
 
 ## Medium Priority Targets
 
-6) Web.Data.Auth0.Auth0Service helpers (static ctor, IgnoreUnderscoreNamingPolicy.ConvertName, lambdas)
-- Current: Several inner classes/methods at 0%.
-- Proposed tests:
-  - Unit tests for IgnoreUnderscoreNamingPolicy.ConvertName covering names with/without leading underscore.
-  - Test GetAccessTokenAsync error branches (already partially covered but branch coverage is 0% there)—provide failing HTTP responses (401/500) via HttpMessageHandler stub.
-- Suggested test files:
-  - tests/Shared.Tests.Unit/Data/Auth0/Auth0ServiceTests.cs
-- Acceptance: Increase branch coverage for Auth0Service.
+6) Web.Data.Auth0 helpers (if still present)
+- Current: Helper logic that was used by the Auth0 integration may or may not be present in the codebase.
+- If `Web.Data.Auth0` remains in the repository: Proposed tests:
+  - Unit tests for `IgnoreUnderscoreNamingPolicy.ConvertName` covering names with and without a leading underscore.
+  - Tests for `GetAccessTokenAsync` and other HTTP-dependent branches using `HttpMessageHandler` stubs to simulate non-success responses (401, 500) and verify error handling.
+  - Suggested test files:
+    - tests/Shared.Tests.Unit/Data/Auth0/Auth0ServiceTests.cs
+  - Acceptance: Increase branch coverage for any remaining Auth0 helper logic.
+- If the `Web.Data.Auth0` code has been removed from the codebase, skip these tests.
 
 7) Web.Data.MyBlogContextFactory (0% covered)
 - Proposed tests:
