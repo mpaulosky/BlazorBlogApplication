@@ -39,12 +39,26 @@ public class Category : Entity
 	}
 
 	/// <summary>
+	/// Initializes a new instance of the <see cref="Category"/> class with an explicit id. Used by tests and factories.
+	/// </summary>
+	/// <param name="id">The category id.</param>
+	/// <param name="categoryName">The category name.</param>
+	/// <param name="isArchived">Whether the category is archived.</param>
+	public Category(Guid id, string categoryName, bool isArchived = false)
+	{
+		CategoryName = categoryName;
+		IsArchived = isArchived;
+		// Set the protected init Id (allowed in derived type constructor because it's protected)
+		Id = id;
+	}
+
+	/// <summary>
 	///   Gets an empty category instance.
 	/// </summary>
 	public static Category Empty =>
 			new(string.Empty)
 			{
-					Id = Guid.Empty
+				Id = Guid.Empty
 			};
 
 }

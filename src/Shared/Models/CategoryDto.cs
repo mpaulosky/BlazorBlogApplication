@@ -91,11 +91,11 @@ public class CategoryDto
 	{
 		return new CategoryDto
 		{
-				Id = c.Id,
-				CategoryName = c.CategoryName,
-				CreatedOn = c.CreatedOn,
-				ModifiedOn = c.ModifiedOn,
-				IsArchived = c.IsArchived
+			Id = c.Id,
+			CategoryName = c.CategoryName,
+			CreatedOn = c.CreatedOn,
+			ModifiedOn = c.ModifiedOn,
+			IsArchived = c.IsArchived
 		};
 	}
 

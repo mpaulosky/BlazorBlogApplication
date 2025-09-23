@@ -56,7 +56,7 @@ public static class FakeAppUserDto
 				.RuleFor(x => x.Id, Guid.CreateVersion7().ToString())
 				.RuleFor(x => x.UserName, f => f.Name.FullName())
 				.RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.UserName))
-				.RuleFor(x => x.Roles, f => [f.Random.Enum<Roles>().ToString()]);
+				.RuleFor(x => x.Roles, f => new List<string> { f.Random.Enum<Shared.Enums.Roles>().ToString() });
 
 		return useSeed ? fake.UseSeed(SEED) : fake;
 

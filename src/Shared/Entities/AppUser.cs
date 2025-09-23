@@ -18,7 +18,7 @@ public class AppUser
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public AppUser() : this(string.Empty, string.Empty, string.Empty, []) { }
+	public AppUser() : this(string.Empty, string.Empty, string.Empty, new List<string>()) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="AppUser" /> class.
@@ -58,6 +58,6 @@ public class AppUser
 	/// <summary>
 	///   Gets an empty instance of AppUser with default values.
 	/// </summary>
-	public static AppUser Empty => new(string.Empty, string.Empty, string.Empty, []);
+	public static AppUser Empty => new(string.Empty, string.Empty, string.Empty, new List<string>());
 
 }

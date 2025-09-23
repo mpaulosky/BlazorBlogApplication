@@ -15,11 +15,9 @@ namespace Shared.Enums;
 public enum Roles
 {
 
-	Author = 0,
+	Admin = 0,
 
-	Admin = 1,
-
-	Reader = 2
+	Author = 10,
 
 }
 

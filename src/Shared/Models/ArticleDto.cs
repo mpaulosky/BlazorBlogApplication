@@ -20,7 +20,8 @@ public sealed class ArticleDto
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
 	public ArticleDto() : this(Guid.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
-			AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false) { }
+			AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false)
+	{ }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="ArticleDto" /> class.
@@ -180,20 +181,22 @@ public sealed class ArticleDto
 	{
 		return new ArticleDto
 		{
-				Id = article.Id,
-				Title = article.Title,
-				Introduction = article.Introduction,
-				Content = article.Content,
-				CoverImageUrl = article.CoverImageUrl,
-				UrlSlug = article.UrlSlug,
-				Author = article.Author != null ? AppUserDto.FromEntity(article.Author) : AppUserDto.Empty,
-				Category = article.Category != null ? CategoryDto.FromEntity(article.Category) : CategoryDto.Empty,
-				CreatedOn = article.CreatedOn,
-				ModifiedOn = article.ModifiedOn,
-				IsPublished = article.IsPublished,
-				PublishedOn = article.PublishedOn,
-				IsArchived = article.IsArchived,
-				CanEdit = false
+			Id = article.Id,
+			Title = article.Title,
+			Introduction = article.Introduction,
+			Content = article.Content,
+			CoverImageUrl = article.CoverImageUrl,
+			UrlSlug = article.UrlSlug,
+			// Article.Author/Category are stored as DTOs on the Article entity in this codebase.
+			// Avoid casting between DTO and entity types — use the DTO if present, otherwise fall back to Empty.
+			Author = article.Author ?? AppUserDto.Empty,
+			Category = article.Category ?? CategoryDto.Empty,
+			CreatedOn = article.CreatedOn,
+			ModifiedOn = article.ModifiedOn,
+			IsPublished = article.IsPublished,
+			PublishedOn = article.PublishedOn,
+			IsArchived = article.IsArchived,
+			CanEdit = false
 		};
 	}
 
