@@ -27,7 +27,7 @@ public class AuthorizationPolicyTests : IClassFixture<TestWebApplicationFactory>
 		using var scope = _factory.Services.CreateScope();
 		var provider = scope.ServiceProvider.GetRequiredService<IAuthorizationPolicyProvider>();
 
-		var policy = await provider.GetPolicyAsync(ADMIN_POLICY);
+		var policy = await provider.GetPolicyAsync(AdminPolicy);
 		policy.Should().NotBeNull();
 
 		policy.Requirements.OfType<RolesAuthorizationRequirement>()

@@ -43,4 +43,8 @@
 		<ProjectReference Include="..\..\src\Web\Web.csproj"/>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Components\Features\Categories\CategoryEdit\" />
+	</ItemGroup>
+
 </Project>

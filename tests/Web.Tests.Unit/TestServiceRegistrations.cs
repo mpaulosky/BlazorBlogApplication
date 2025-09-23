@@ -7,8 +7,6 @@
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System.Net.Http;
-
 using Web.Components.Features.Categories.CategoryCreate;
 
 namespace Web;
@@ -17,16 +15,7 @@ namespace Web;
 public static class TestServiceRegistrations
 {
 
-	// Register a minimal Auth0Service replacement (no network calls)
-	private static void RegisterAuth0Service(BunitContext ctx)
-	{
-		// Provide a simple Auth0Service instance that uses an HttpClient and an empty config.
-		// If tests need more behavior, replace it with a test double in those tests.
-		var http = new HttpClient();
-		var config = new ConfigurationBuilder().Build();
-		var svc = new Auth0Service(http, config);
-		ctx.Services.AddSingleton(svc);
-	}
+	// Auth0 removed from tests; do not register an Auth0Service replacement here.
 
 	// If a concrete handler type is registered in the BunitContext services but
 	// the corresponding interface isn't, register a resolution from the
@@ -71,17 +60,17 @@ public static class TestServiceRegistrations
 		});
 	}
 
-	// Register ArticleDbContext and a simple factory that returns it
-	private static ArticleDbContext RegisterMyBlogContext(BunitContext ctx)
+	// Register ApplicationDbContext and a simple factory that returns it
+	private static ApplicationDbContext RegisterMyBlogContext(BunitContext ctx)
 	{
-		var options = new DbContextOptionsBuilder<ArticleDbContext>()
+		var options = new DbContextOptionsBuilder<ApplicationDbContext>()
 			.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
 			.Options;
 
-		var blogContext = new ArticleDbContext(options);
+		var blogContext = new ApplicationDbContext(options);
 
 		ctx.Services.AddScoped(_ => blogContext);
-		ctx.Services.AddScoped<IArticleDbContextFactory>(_ => new TestArticleDbContextFactory(blogContext));
+		ctx.Services.AddScoped<IApplicationDbContextFactory>(_ => new TestIApplicationDbContextFactory(blogContext));
 
 		return blogContext;
 	}
@@ -119,8 +108,8 @@ public static class TestServiceRegistrations
 			var getCategorySub = Substitute.For<GetCategory.IGetCategoryHandler>();
 
 			// Default: return a sample category so components render normally in tests.
-			getCategorySub.HandleAsync(Arg.Any<Guid>())
-					.Returns(Task.FromResult(Result.Ok(sampleCategory)));
+	    getCategorySub.HandleAsync(Arg.Any<Guid>())
+		    .Returns(Result.Ok(sampleCategory));
 
 			// Register the interface with a factory that prefers a concrete handler if present,
 			// otherwise falls back to the substitute.
@@ -148,8 +137,8 @@ public static class TestServiceRegistrations
 		{
 			var getCategoriesSub = Substitute.For<GetCategories.IGetCategoriesHandler>();
 
-			getCategoriesSub.HandleAsync(Arg.Any<bool>())
-					.Returns(Task.FromResult(Result.Ok<IEnumerable<CategoryDto>>([sampleCategory])));
+	    getCategoriesSub.HandleAsync(Arg.Any<bool>())
+		    .Returns(Result.Ok<IEnumerable<CategoryDto>>([ sampleCategory ]));
 
 			ctx.Services.AddScoped<GetCategories.IGetCategoriesHandler>(sp =>
 			{
@@ -174,7 +163,7 @@ public static class TestServiceRegistrations
 		if (!IsEitherRegistered(typeof(CreateCategory.ICreateCategoryHandler), typeof(CreateCategory.Handler)))
 		{
 			var createCategorySub = Substitute.For<CreateCategory.ICreateCategoryHandler>();
-			createCategorySub.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
+			createCategorySub.HandleAsync(Arg.Any<CategoryDto>()).Returns(Result.Ok());
 
 			ctx.Services.AddScoped<CreateCategory.ICreateCategoryHandler>(sp =>
 			{
@@ -199,7 +188,7 @@ public static class TestServiceRegistrations
 		if (!IsEitherRegistered(typeof(EditCategory.IEditCategoryHandler), typeof(EditCategory.Handler)))
 		{
 			var editCategorySub = Substitute.For<EditCategory.IEditCategoryHandler>();
-			editCategorySub.HandleAsync(Arg.Any<CategoryDto>()).Returns(Task.FromResult(Result.Ok()));
+			editCategorySub.HandleAsync(Arg.Any<CategoryDto>()).Returns(Result.Ok());
 
 			ctx.Services.AddScoped<EditCategory.IEditCategoryHandler>(sp =>
 			{
@@ -225,7 +214,7 @@ public static class TestServiceRegistrations
 		if (!IsEitherRegistered(typeof(GetArticle.IGetArticleHandler), typeof(GetArticle.Handler)))
 		{
 			var getArticleSub = Substitute.For<GetArticle.IGetArticleHandler>();
-			getArticleSub.HandleAsync(Arg.Any<Guid>()).Returns(Task.FromResult(Result.Ok(sampleArticle)));
+			getArticleSub.HandleAsync(Arg.Any<Guid>()).Returns(Result.Ok(sampleArticle));
 
 			ctx.Services.AddScoped<GetArticle.IGetArticleHandler>(sp =>
 			{
@@ -251,8 +240,8 @@ public static class TestServiceRegistrations
 		{
 			var getArticlesSub = Substitute.For<GetArticles.IGetArticlesHandler>();
 
-			getArticlesSub.HandleAsync(Arg.Any<bool>())
-					.Returns(Task.FromResult(Result.Ok<IEnumerable<ArticleDto>>([sampleArticle])));
+	    getArticlesSub.HandleAsync(Arg.Any<bool>())
+		    .Returns(Result.Ok<IEnumerable<ArticleDto>>([ sampleArticle ]));
 
 			ctx.Services.AddScoped<GetArticles.IGetArticlesHandler>(sp =>
 			{
@@ -288,21 +277,21 @@ public static class TestServiceRegistrations
 		}
 	}
 
-	// Register common category handlers (both concrete and interface) wired to ArticleDbContext from RegisterMyBlogContext
+	// Register common category handlers (both concrete and interface) wired to ApplicationDbContext from RegisterMyBlogContext
 	public static void RegisterCategoryHandlers(BunitContext ctx)
 	{
-		// Create and register a ArticleDbContext instance and use it directly. Do not
+		// Create and register an ApplicationDbContext instance and use it directly. Do not
 		// call BuildServiceProvider() here because Bunit will lock the service
 		// provider once any service is resolved.
 		var context = RegisterMyBlogContext(ctx);
 
 		var loggerGet = Substitute.For<ILogger<GetCategory.Handler>>();
-		var getHandler = new GetCategory.Handler(new TestArticleDbContextFactory(context), loggerGet);
+		var getHandler = new GetCategory.Handler(new TestIApplicationDbContextFactory(context), loggerGet);
 		ctx.Services.AddScoped(_ => getHandler);
 		ctx.Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 
 		var loggerEdit = Substitute.For<ILogger<EditCategory.Handler>>();
-		var factory = new TestArticleDbContextFactory(context);
+		var factory = new TestIApplicationDbContextFactory(context);
 		var editHandler = new EditCategory.Handler(factory, loggerEdit);
 		ctx.Services.AddScoped(_ => editHandler);
 		ctx.Services.AddScoped<EditCategory.IEditCategoryHandler>(_ => editHandler);
@@ -311,6 +300,14 @@ public static class TestServiceRegistrations
 	// Register a NavigationManager and a logger if not present
 	public static void RegisterCommonUtilities(BunitContext ctx)
 	{
+		// Ensure a placeholder DefaultConnection exists so code paths that build the
+		// application host (RegisterDatabaseContext) do not throw when running tests.
+		// their own in-memory contexts explicitly via RegisterMyBlogContext.
+		if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("DefaultConnection")))
+		{
+			Environment.SetEnvironmentVariable("DefaultConnection", "Host=localhost;Database=Test;Username=Test;Password=Test");
+		}
+
 		if (ctx.Services.All(sd => sd.ServiceType != typeof(NavigationManager)))
 		{
 			ctx.Services.AddSingleton<NavigationManager, BunitNavigationManager>();
@@ -360,11 +357,7 @@ public static class TestServiceRegistrations
 			// Swallow - registration of substitutes is the best effort for test safety.
 		}
 
-		// Ensure a minimal Auth0Service is available for components that inject it.
-		if (ctx.Services.All(sd => sd.ServiceType != typeof(Auth0Service)))
-		{
-			RegisterAuth0Service(ctx);
-		}
+		// Auth0 removed: don't register Auth0Service here.
 	}
 
 	// Simple fallback provider returning an anonymous (unauthenticated) user.
@@ -384,11 +377,11 @@ public static class TestServiceRegistrations
 	public static void RegisterAll(BunitContext ctx)
 	{
 		RegisterCommonUtilities(ctx);
-		RegisterAuth0Service(ctx);
+	// Auth0 removed: no-op
 
-		// Ensure ArticleDbContext is available so concrete handlers (that require it)
+		// Ensure ApplicationDbContext is available so concrete handlers (that require it)
 		// can be activated when tests register concrete handler types directly.
-		if (ctx.Services.All(sd => sd.ServiceType != typeof(ArticleDbContext)))
+		if (ctx.Services.All(sd => sd.ServiceType != typeof(ApplicationDbContext)))
 		{
 			RegisterMyBlogContext(ctx);
 		}
@@ -433,21 +426,21 @@ public static class TestServiceRegistrations
 	// Register concrete article handlers (mirroring Program.cs registrations) if tests need concrete handlers
 	public static void RegisterArticleHandlers(BunitContext ctx)
 	{
-		// no-op for now; concrete handlers rely on ArticleDbContext, which we register in RegisterMyBlogContext
+		// no-op for now; concrete handlers rely on ApplicationDbContext, which we register in RegisterMyBlogContext
 	}
 
-	// Internal simple IArticleDbContextFactory used by tests
-	private class TestArticleDbContextFactory : IArticleDbContextFactory
+	// Internal simple IApplicationDbContextFactory used by tests
+	private class TestIApplicationDbContextFactory : IApplicationDbContextFactory
 	{
 
-		private readonly ArticleDbContext _ctx;
+		private readonly ApplicationDbContext _ctx;
 
-		public TestArticleDbContextFactory(ArticleDbContext ctx)
+		public TestIApplicationDbContextFactory(ApplicationDbContext ctx)
 		{
 			_ctx = ctx;
 		}
 
-		public ArticleDbContext CreateDbContext()
+		public ApplicationDbContext CreateDbContext()
 		{
 			return _ctx;
 		}

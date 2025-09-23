@@ -176,7 +176,7 @@ public class ListTests : BunitContext
 		{
 				new()
 				{
-						Id = ObjectId.GenerateNewId(), CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now,
+						Id = Guid.NewGuid(), CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now,
 						Archived = false
 				}
 		};
@@ -208,7 +208,7 @@ public class ListTests : BunitContext
 		{
 				new()
 				{
-						Id = ObjectId.GenerateNewId(), CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now,
+						Id = Guid.NewGuid(), CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now,
 						Archived = false
 				}
 		};

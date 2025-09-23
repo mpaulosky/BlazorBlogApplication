@@ -26,7 +26,7 @@ public class EnvironmentBehaviorTests : BunitContext
 
 		var client = factory.CreateClient(new WebApplicationFactoryClientOptions
 		{
-				AllowAutoRedirect = false
+			AllowAutoRedirect = false
 		});
 
 		// Act

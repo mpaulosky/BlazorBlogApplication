@@ -8,16 +8,14 @@
 // =======================================================
 
 global using System;
+global using System.Collections.Generic;
 global using System.Diagnostics.CodeAnalysis;
+global using System.Linq;
 global using System.Net;
 global using System.Reflection;
 global using System.Security.Claims;
 global using System.Threading;
 global using System.Threading.Tasks;
-global using System.Collections.Generic;
-global using System.Linq;
-
-global using Auth0.AspNetCore.Authentication;
 
 global using Bunit;
 global using Bunit.TestDoubles;
@@ -45,13 +43,10 @@ global using Microsoft.AspNetCore.Mvc.Testing;
 global using Microsoft.AspNetCore.OutputCaching;
 global using Microsoft.AspNetCore.TestHost;
 global using Microsoft.EntityFrameworkCore;
-
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.Extensions.Options;
-
-global using Moq;
 
 global using NSubstitute;
 
@@ -71,10 +66,9 @@ global using Web.Components.Features.Categories.CategoryDetails;
 global using Web.Components.Features.Categories.CategoryEdit;
 global using Web.Components.Shared;
 global using Web.Data;
-global using Web.Data.Auth0;
 global using Web.Infrastructure;
 
 global using Xunit;
 
-global using static Shared.Services;
 global using static Shared.Helpers.Helpers;
+global using static Shared.Services;

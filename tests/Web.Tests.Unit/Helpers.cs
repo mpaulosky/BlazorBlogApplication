@@ -64,27 +64,3 @@ public static class Helpers
 	}
 
 }
-
-[ExcludeFromCodeCoverage]
-public static class TestFixtures
-{
-
-	public static Mock<IAsyncCursor<TEntity>> GetMockCursor<TEntity>(IEnumerable<TEntity> list) where TEntity : class?
-	{
-		Mock<IAsyncCursor<TEntity>> cursor = new();
-		cursor.Setup(a => a.Current).Returns(list);
-
-		cursor
-				.SetupSequence(a => a.MoveNext(It.IsAny<CancellationToken>()))
-				.Returns(true)
-				.Returns(false);
-
-		cursor
-				.SetupSequence(a => a.MoveNextAsync(It.IsAny<CancellationToken>()))
-				.Returns(Task.FromResult(true))
-				.Returns(Task.FromResult(false));
-
-		return cursor;
-	}
-
-}

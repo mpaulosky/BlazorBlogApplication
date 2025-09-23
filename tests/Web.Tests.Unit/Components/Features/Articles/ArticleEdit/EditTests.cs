@@ -44,8 +44,8 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
-		var id = ObjectId.GenerateNewId();
-		_mockGetArticleHandler.HandleAsync(id).Returns(Task.FromResult(Result<ArticleDto>.Fail("Article not found")));
+	var id = Guid.NewGuid();
+	_mockGetArticleHandler.HandleAsync(id).Returns(Result<ArticleDto>.Fail("Article not found"));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, id));
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -68,7 +68,7 @@ public class EditTests : BunitContext
 
 		// Arrange
 		var article = FakeArticleDto.GetNewArticleDto(true);
-		_mockGetArticleHandler.HandleAsync(article.Id).Returns(Task.FromResult(Result<ArticleDto>.Ok(article)));
+	_mockGetArticleHandler.HandleAsync(article.Id).Returns(Result<ArticleDto>.Ok(article));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, article.Id));
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -92,8 +92,8 @@ public class EditTests : BunitContext
 
 		// Arrange
 		var article = FakeArticleDto.GetNewArticleDto(true);
-		_mockGetArticleHandler.HandleAsync(article.Id).Returns(Task.FromResult(Result<ArticleDto>.Ok(article)));
-		_mockHandler.HandleAsync(article).Returns(Task.FromResult(Result.Ok()));
+	_mockGetArticleHandler.HandleAsync(article.Id).Returns(Result<ArticleDto>.Ok(article));
+	_mockHandler.HandleAsync(article).Returns(Result.Ok());
 		var nav = Services.GetRequiredService<BunitNavigationManager>();
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, article.Id));
 
@@ -119,8 +119,8 @@ public class EditTests : BunitContext
 
 		// Arrange
 		var article = FakeArticleDto.GetNewArticleDto(true);
-		_mockGetArticleHandler.HandleAsync(article.Id).Returns(Task.FromResult(Result<ArticleDto>.Ok(article)));
-		_mockHandler.HandleAsync(article).Returns(Task.FromResult(Result.Fail("Update failed")));
+	_mockGetArticleHandler.HandleAsync(article.Id).Returns(Result<ArticleDto>.Ok(article));
+	_mockHandler.HandleAsync(article).Returns(Result.Fail("Update failed"));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, article.Id));
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -145,7 +145,7 @@ public class EditTests : BunitContext
 
 		// Arrange
 		var article = FakeArticleDto.GetNewArticleDto(true);
-		_mockGetArticleHandler.HandleAsync(article.Id).Returns(Task.FromResult(Result<ArticleDto>.Ok(article)));
+	_mockGetArticleHandler.HandleAsync(article.Id).Returns(Result<ArticleDto>.Ok(article));
 		var nav = Services.GetRequiredService<BunitNavigationManager>();
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, article.Id));
 
@@ -169,8 +169,8 @@ public class EditTests : BunitContext
 	public void Renders_LoadingComponent_When_IsLoading()
 	{
 		// Arrange
-		var id = ObjectId.GenerateNewId();
-		_mockGetArticleHandler.HandleAsync(id).Returns(Task.FromResult(Result<ArticleDto>.Fail("Loading")));
+	var id = Guid.NewGuid();
+	_mockGetArticleHandler.HandleAsync(id).Returns(Result<ArticleDto>.Fail("Loading"));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, id));
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -187,7 +187,7 @@ public class EditTests : BunitContext
 	public async Task ShowsSpinnerWhileLoading_AndHidesAfter()
 	{
 		// Arrange
-		var id = ObjectId.GenerateNewId();
+	var id = Guid.NewGuid();
 		var tcs = new TaskCompletionSource<Result<ArticleDto>>();
 		_mockGetArticleHandler.HandleAsync(id).Returns(_ => tcs.Task);
 
@@ -212,7 +212,7 @@ public class EditTests : BunitContext
 	{
 		// Arrange
 		var article = FakeArticleDto.GetNewArticleDto(true);
-		_mockGetArticleHandler.HandleAsync(article.Id).Returns(Task.FromResult(Result<ArticleDto>.Ok(article)));
+	_mockGetArticleHandler.HandleAsync(article.Id).Returns(Result<ArticleDto>.Ok(article));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, article.Id));
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -239,12 +239,12 @@ public class EditTests : BunitContext
 
 		// Make the article invalid by clearing the title so the component's guard triggers
 		article.Title = string.Empty;
-		_mockGetArticleHandler.HandleAsync(article.Id).Returns(Task.FromResult(Result<ArticleDto>.Ok(article)));
+	_mockGetArticleHandler.HandleAsync(article.Id).Returns(Result<ArticleDto>.Ok(article));
 
 		// Ensure the edit handler returns a Task so component code can await it if invoked.
 		// Tests that exercise validation still configure a safe default to avoid NREs
 		// when the form is submitted synchronously by bUnit.
-		_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Task.FromResult(Result.Ok()));
+	_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Result.Ok());
 
 		// Configure the FluentValidation validator to return a validation failure
 		// so the ValidationSummary/validator components render errors on submitting.
@@ -274,7 +274,7 @@ public class EditTests : BunitContext
 	{
 		// Arrange
 		var article = FakeArticleDto.GetNewArticleDto(true);
-		_mockGetArticleHandler.HandleAsync(article.Id).Returns(Task.FromResult(Result<ArticleDto>.Ok(article)));
+	_mockGetArticleHandler.HandleAsync(article.Id).Returns(Result<ArticleDto>.Ok(article));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, article.Id));
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -356,10 +356,10 @@ public class EditTests : BunitContext
 	public async Task OnInitializedAsync_SuccessWithNullValue_Sets_Article_Null_And_NotLoading()
 	{
 		// Arrange
-		var id = ObjectId.GenerateNewId();
+	var id = Guid.NewGuid();
 
 		// Simulate a successful result but with a null Value
-		_mockGetArticleHandler.HandleAsync(id).Returns(Task.FromResult(Result<ArticleDto>.Ok(null!)));
+	_mockGetArticleHandler.HandleAsync(id).Returns(Result<ArticleDto>.Ok(null!));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, id));
 
 		// Act - explicitly invoke the lifecycle method to ensure the branch executes
@@ -385,10 +385,10 @@ public class EditTests : BunitContext
 	public async Task OnInitializedAsync_Failure_Sets_ErrorMessage_And_NotLoading()
 	{
 		// Arrange
-		var id = ObjectId.GenerateNewId();
+	var id = Guid.NewGuid();
 
 		// Simulate a failed result from the GetArticle handler
-		_mockGetArticleHandler.HandleAsync(id).Returns(Task.FromResult(Result<ArticleDto>.Fail("Fetch error")));
+	_mockGetArticleHandler.HandleAsync(id).Returns(Result<ArticleDto>.Fail("Fetch error"));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, id));
 
 		// Act - explicitly invoke the lifecycle method to ensure the failure branch executes
@@ -422,10 +422,10 @@ public class EditTests : BunitContext
 
 		// Make the title whitespace so Trim().Length == 0
 		article.Title = "   ";
-		_mockGetArticleHandler.HandleAsync(article.Id).Returns(Task.FromResult(Result<ArticleDto>.Ok(article)));
+	_mockGetArticleHandler.HandleAsync(article.Id).Returns(Result<ArticleDto>.Ok(article));
 
 		// Ensure the edit handler is callable but not used in this guard path
-		_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Task.FromResult(Result.Ok()));
+	_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Result.Ok());
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, article.Id));
 
 		// Ensure the component state reflects not loading and article populated
@@ -462,8 +462,8 @@ public class EditTests : BunitContext
 	public async Task HandleValidSubmit_When_Article_Is_Null_Does_NotThrow_And_Resets_Flags()
 	{
 		// Arrange
-		var id = ObjectId.GenerateNewId();
-		_mockGetArticleHandler.HandleAsync(id).Returns(Task.FromResult(Result<ArticleDto>.Ok(null!)));
+	var id = Guid.NewGuid();
+	_mockGetArticleHandler.HandleAsync(id).Returns(Result<ArticleDto>.Ok(null!));
 		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, id));
 
 		// Ensure the component state reflects not loading and no article

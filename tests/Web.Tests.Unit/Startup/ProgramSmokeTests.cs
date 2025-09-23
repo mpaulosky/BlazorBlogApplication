@@ -23,7 +23,7 @@ public class ProgramSmokeTests
 
 		var client = factory.CreateClient(new WebApplicationFactoryClientOptions
 		{
-				AllowAutoRedirect = true
+			AllowAutoRedirect = true
 		});
 
 		var res = await client.GetAsync("/health", _cancellationToken);
