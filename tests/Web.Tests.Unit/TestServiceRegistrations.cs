@@ -93,7 +93,7 @@ public static class TestServiceRegistrations
 			Content = "Sample article content",
 			CoverImageUrl = string.Empty,
 			UrlSlug = "the-empathy-of-mission-contemplation",
-			Author = AppUserDto.Empty,
+			Author = ApplicationUserDto.Empty,
 			Category = sampleCategory,
 			CreatedOn = DateTime.UtcNow,
 			ModifiedOn = null,

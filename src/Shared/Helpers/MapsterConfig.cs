@@ -40,7 +40,7 @@ public static class MapsterConfig
 				.Ignore(dest => dest.CanEdit)
 				.IgnoreNullValues(true);
 
-		TypeAdapterConfig<AppUserDto, AppUserDto>.NewConfig();
+		TypeAdapterConfig<ApplicationUserDto, ApplicationUserDto>.NewConfig();
 		TypeAdapterConfig<CategoryDto, CategoryDto>.NewConfig();
 	}
 

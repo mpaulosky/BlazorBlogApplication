@@ -59,7 +59,7 @@ public static class FakeArticleDto
 				.RuleFor(f => f.IsPublished, f => f.Random.Bool())
 				.RuleFor(f => f.PublishedOn, (_, f) => f.IsPublished ? DateTime.Now : null)
 				.RuleFor(f => f.Category, _ => FakeCategoryDto.GetNewCategoryDto(useSeed))
-				.RuleFor(f => f.Author, _ => FakeAppUserDto.GetNewAppUserDto(useSeed))
+				.RuleFor(f => f.Author, _ => FakeApplicationUserDto.GetNewApplicationUserDto(useSeed))
 				.RuleFor(f => f.CreatedOn, _ => DateTime.Now)
 				.RuleFor(f => f.ModifiedOn, _ => DateTime.Now);
 

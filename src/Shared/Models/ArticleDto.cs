@@ -20,7 +20,7 @@ public sealed class ArticleDto
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
 	public ArticleDto() : this(Guid.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
-			AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false)
+			ApplicationUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false)
 	{ }
 
 	/// <summary>
@@ -47,7 +47,7 @@ public sealed class ArticleDto
 			string content,
 			string coverImageUrl,
 			string urlSlug,
-			AppUserDto author,
+			ApplicationUserDto author,
 			CategoryDto category,
 			DateTime createdOn,
 			DateTime? modifiedOn,
@@ -114,7 +114,7 @@ public sealed class ArticleDto
 	///   Gets or sets the author information of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	public AppUserDto Author { get; set; }
+	public ApplicationUserDto Author { get; set; }
 
 	/// <summary>
 	///   Gets or sets the category information of the article.
@@ -170,7 +170,7 @@ public sealed class ArticleDto
 				string.Empty,
 				string.Empty,
 				string.Empty,
-				AppUserDto.Empty,
+				ApplicationUserDto.Empty,
 				CategoryDto.Empty,
 				DateTime.MinValue,
 				null,
@@ -189,7 +189,7 @@ public sealed class ArticleDto
 			UrlSlug = article.UrlSlug,
 			// Article.Author/Category are stored as DTOs on the Article entity in this codebase.
 			// Avoid casting between DTO and entity types — use the DTO if present, otherwise fall back to Empty.
-			Author = article.Author ?? AppUserDto.Empty,
+			Author = article.Author ?? ApplicationUserDto.Empty,
 			Category = article.Category ?? CategoryDto.Empty,
 			CreatedOn = article.CreatedOn,
 			ModifiedOn = article.ModifiedOn,

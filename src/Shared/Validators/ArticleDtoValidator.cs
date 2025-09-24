@@ -47,6 +47,10 @@ public class ArticleDtoValidator : AbstractValidator<ArticleDto>
 				.NotNull()
 				.WithMessage("Author is required");
 
+		RuleFor(x => x.Category)
+				.NotNull()
+				.WithMessage("Category is required");
+
 		RuleFor(x => x.PublishedOn)
 				.NotNull()
 				.When(x => x.IsPublished)

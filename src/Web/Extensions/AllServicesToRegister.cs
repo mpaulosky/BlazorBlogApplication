@@ -50,7 +50,7 @@ public static class AllServicesToRegister
 
 		builder.Services.AddCors(options =>
 		{
-			options.AddPolicy(DefaultCorsPolicy, policy =>
+			options.AddPolicy(DEFAULT_CORS_POLICY, policy =>
 			{
 				policy.WithOrigins("https://yourdomain.com", "https://localhost:7157")
 

@@ -1,0 +1,16 @@
+{
+  "folders": [
+    {
+      "path": "src"
+    },
+    {
+      "path": "tests"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/bin": true,
+      "**/obj": true
+    }
+  }
+}

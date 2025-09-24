@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     AppUserValidator.cs
+// File Name :     ApplicationUserValidator.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorBlogApplication
@@ -10,15 +10,15 @@
 namespace Shared.Validators;
 
 /// <summary>
-///   Validator for the AppUser entity.
+///   Validator for the ApplicationUser entity.
 /// </summary>
-public class AppUserValidator : AbstractValidator<AppUser>
+public class ApplicationUserValidator : AbstractValidator<ApplicationUser>
 {
 
 	/// <summary>
-	///   Initializes a new instance of the <see cref="AppUserValidator" /> class.
+	///   Initializes a new instance of the <see cref="ApplicationUserValidator" /> class.
 	/// </summary>
-	public AppUserValidator()
+	public ApplicationUserValidator()
 	{
 		RuleFor(x => x.Id)
 				.NotEmpty().WithMessage("User ID is required");
@@ -31,8 +31,9 @@ public class AppUserValidator : AbstractValidator<AppUser>
 				.NotEmpty().WithMessage("Email is required")
 				.EmailAddress().WithMessage("Invalid email address format");
 
-		RuleFor(x => x.Roles)
-				.NotNull().WithMessage("Roles collection cannot be null");
+		RuleFor(x => x.DisplayName)
+				.NotEmpty().WithMessage("Display Name is required")
+				.Length(3, 50).WithMessage("Display Name must be between 3 and 50 characters");
 	}
 
-}
+}	

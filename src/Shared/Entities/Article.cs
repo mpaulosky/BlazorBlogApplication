@@ -16,6 +16,15 @@ namespace Shared.Entities;
 public class Article : Entity
 {
 
+	private static void EnsureRequired(string value, string paramName)
+	{
+		if (string.IsNullOrWhiteSpace(value))
+		{
+			throw new ArgumentException($"{paramName} is required and cannot be empty.", paramName);
+		}
+	}
+
+
 	public string Title { get; set; }
 
 	public string Introduction { get; set; }
@@ -27,14 +36,14 @@ public class Article : Entity
 	[Display(Name = "Url Slug")] public string UrlSlug { get; set; }
 
 	/// <summary>
-	///   Foreign key to the author (AppUser)
+	///   Foreign key to the author (ApplicationUser)
 	/// </summary>
 	public string AuthorId { get; set; }
 
 	/// <summary>
 	///   Navigation property to the author (DTO expected by tests)
 	/// </summary>
-	public Models.AppUserDto? Author { get; set; }
+	public ApplicationUserDto Author { get; set; } = ApplicationUserDto.Empty;
 
 	/// <summary>
 	///   Foreign key to the category
@@ -44,20 +53,32 @@ public class Article : Entity
 	/// <summary>
 	///   Navigation property to the category (DTO expected by tests)
 	/// </summary>
-	public Models.CategoryDto? Category { get; set; }
+	public CategoryDto Category { get; set; } = CategoryDto.Empty;
 
 	[Display(Name = "Is Published")] public bool IsPublished { get; set; }
 
 	[Display(Name = "Published On")] public DateTime? PublishedOn { get; set; }
 
+
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
+	///   This bypasses validation and creates an empty/default article used by tests and serializers.
 	/// </summary>
-	public Article() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
-	Guid.Empty)
+	public Article()
 	{
+		Title = string.Empty;
+		Introduction = string.Empty;
+		Content = string.Empty;
+		CoverImageUrl = string.Empty;
+		UrlSlug = string.Empty;
+		AuthorId = string.Empty;
+		CategoryId = Guid.Empty;
+		IsPublished = false;
+		PublishedOn = null;
+		IsArchived = false;
+
 		// Ensure navigation DTOs are initialized to Empty to match test expectations
-		Author = Models.AppUserDto.Empty;
+		Author = Models.ApplicationUserDto.Empty;
 		Category = Models.CategoryDto.Empty;
 	}
 
@@ -89,6 +110,9 @@ public class Article : Entity
 			DateTime? publishedOn = null,
 			bool isArchived = false)
 	{
+		EnsureRequired(title, nameof(title));
+		EnsureRequired(content, nameof(content));
+		EnsureRequired(urlSlug, nameof(urlSlug));
 		Title = title;
 		Introduction = introduction;
 		Content = content;
@@ -104,18 +128,25 @@ public class Article : Entity
 	/// <summary>
 	/// Alternative constructor accepting Author and Category objects (used in tests)
 	/// </summary>
+	/// <remarks>
+	/// Added overloads will accept the newer <c>ApplicationUserDto</c> while
+	/// mapping to the legacy <c>ApplicationUserDto</c> to remain backward compatible.
+	/// </remarks>
 	public Article(
 			string title,
 			string introduction,
 			string content,
 			string coverImageUrl,
 			string urlSlug,
-			Models.AppUserDto author,
-			Models.CategoryDto category,
+			ApplicationUserDto author,
+			CategoryDto category,
 			bool isPublished = false,
 			DateTime? publishedOn = null,
 			bool isArchived = false)
 	{
+		EnsureRequired(title, nameof(title));
+		EnsureRequired(content, nameof(content));
+		EnsureRequired(urlSlug, nameof(urlSlug));
 		Title = title;
 		Introduction = introduction;
 		Content = content;
@@ -125,32 +156,6 @@ public class Article : Entity
 		AuthorId = string.Empty;
 		Category = category;
 		CategoryId = Guid.Empty;
-		IsPublished = isPublished;
-		PublishedOn = publishedOn;
-		IsArchived = isArchived;
-	}
-
-	/// <summary>
-	/// Update overload accepting a CategoryDto to match tests
-	/// </summary>
-	public void Update(
-			string title,
-			string introduction,
-			string content,
-			string coverImageUrl,
-			string urlSlug,
-			CategoryDto categoryDto,
-			bool isPublished,
-			DateTime? publishedOn,
-			bool isArchived)
-	{
-		Title = title;
-		Introduction = introduction;
-		Content = content;
-		CoverImageUrl = coverImageUrl;
-		UrlSlug = urlSlug;
-		CategoryId = categoryDto.Id;
-		Category = categoryDto;
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
 		IsArchived = isArchived;
@@ -182,6 +187,9 @@ public class Article : Entity
 			DateTime? publishedOn,
 			bool isArchived)
 	{
+		EnsureRequired(title, nameof(title));
+		EnsureRequired(content, nameof(content));
+		EnsureRequired(urlSlug, nameof(urlSlug));
 		Title = title;
 		Introduction = introduction;
 		Content = content;
@@ -210,20 +218,13 @@ public class Article : Entity
 	/// <summary>
 	///   Gets an empty article instance.
 	/// </summary>
-	public static Article Empty { get; } = new(
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			Guid.Empty)
-		{
-			Id = Guid.Empty,
-			AuthorId = string.Empty,
-			CategoryId = Guid.Empty,
-			Author = Models.AppUserDto.Empty,
-			Category = Models.CategoryDto.Empty
-		};
+	public static Article Empty { get; } = new Article()
+	{
+		Id = Guid.Empty,
+		AuthorId = string.Empty,
+		CategoryId = Guid.Empty,
+		Author = Models.ApplicationUserDto.Empty,
+		Category = Models.CategoryDto.Empty
+	};
 
 }

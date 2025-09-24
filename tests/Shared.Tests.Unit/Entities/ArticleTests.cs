@@ -29,11 +29,28 @@ public class ArticleTests
 		article.Content.Should().Be("");
 		article.CoverImageUrl.Should().Be("");
 		article.UrlSlug.Should().Be("");
-		article.Author.Should().Be(AppUserDto.Empty);
+		article.Author.Should().Be(ApplicationUserDto.Empty);
 		article.Category.Should().Be(CategoryDto.Empty);
 		article.IsPublished.Should().BeFalse();
 		article.PublishedOn.Should().BeNull();
 		article.IsArchived.Should().BeFalse();
+	}
+
+	[Fact]
+	public void Article_Constructor_ShouldThrow_WhenTitleIsEmpty()
+	{
+		// Arrange
+		var emptyTitle = "";
+		var intro = "Intro";
+		var content = "Content";
+		var cover = "cover.png";
+		var slug = "slug";
+		var authorId = string.Empty;
+		var categoryId = Guid.NewGuid();
+
+		// Act & Assert
+		Action act = () => new Article(emptyTitle, intro, content, cover, slug, authorId, categoryId);
+		act.Should().Throw<ArgumentException>().Where(e => e.ParamName == "title");
 	}
 
 	[Fact]
@@ -84,7 +101,7 @@ public class ArticleTests
 		const bool newArchived = true;
 
 		// Act
-		article.Update(newTitle, newIntro, newContent, newCover, newSlug, newCategory, newPublished, newPublishedOn,
+		article.Update(newTitle, newIntro, newContent, newCover, newSlug, newCategory.Id, newPublished, newPublishedOn,
 				newArchived);
 
 		// Assert
@@ -93,7 +110,9 @@ public class ArticleTests
 		article.Content.Should().Be(newContent);
 		article.CoverImageUrl.Should().Be(newCover);
 		article.UrlSlug.Should().Be(newSlug);
-		article.Category.Should().Be(newCategory);
+	// The Update method accepts a category id and sets the CategoryId; the
+	// navigation property is not updated by Update(), so assert the id.
+	article.CategoryId.Should().Be(newCategory.Id);
 		article.IsPublished.Should().Be(newPublished);
 		article.PublishedOn.Should().Be(newPublishedOn);
 		article.IsArchived.Should().Be(newArchived);
@@ -143,7 +162,7 @@ public class ArticleTests
 		empty.Content.Should().Be("");
 		empty.CoverImageUrl.Should().Be("");
 		empty.UrlSlug.Should().Be("");
-		empty.Author.Should().Be(AppUserDto.Empty);
+	empty.Author.Should().Be(ApplicationUserDto.Empty);
 		empty.Category.Should().Be(CategoryDto.Empty);
 		empty.IsPublished.Should().BeFalse();
 		empty.PublishedOn.Should().BeNull();

@@ -86,6 +86,7 @@ Carefully read the issue and think hard about a plan to solve it before coding.
 
 ## 6. Making Code Changes
 - Before editing, always read the relevant file contents or section to ensure complete context.
+- Always search for relevent instructions and enforce consistency.
 - Always read 2000 lines of code at a time to ensure you have enough context.
 - If a patch is not applied correctly, attempt to reapply it.
 - Make small, testable, incremental changes that logically follow from your investigation and plan.
