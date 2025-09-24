@@ -63,9 +63,9 @@ public sealed record ApplicationUserDto
         EmailConfirmed = emailConfirmed;
     }
         
-	/// <summary>
-	///   Gets an empty singleton instance of ApplicationUserDto with default values.
-	/// </summary>
-	public static ApplicationUserDto Empty { get; } = new(string.Empty, string.Empty, string.Empty, string.Empty, false);
+    /// <summary>
+    ///   Gets an empty singleton instance of ApplicationUserDto with default values.
+    /// </summary>
+    public static ApplicationUserDto Empty { get; } = new(string.Empty, string.Empty, string.Empty, string.Empty, false);
 
 }
