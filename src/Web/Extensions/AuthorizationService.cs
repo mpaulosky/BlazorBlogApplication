@@ -25,7 +25,7 @@ public static partial class ServiceCollectionExtensions
 		{
 			// Use the RoleNames constant to avoid casing/typo issues. Also include lowercase 'admin'
 			// because some tests expect the policy to include that literal value.
-			options.AddPolicy(AdminPolicy, policy => policy.RequireRole(Shared.Entities.RoleNames.Admin, "admin"));
+			options.AddPolicy(ADMIN_POLICY, policy => policy.RequireRole(Shared.Entities.RoleNames.Admin, "admin"));
 		});
 	}
 

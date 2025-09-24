@@ -79,9 +79,9 @@ public static class FakeArticle
 				.RuleFor(a => a.PublishedOn, (f, a) => a.IsPublished ? DateTime.Now : null)
 				.RuleFor(a => a.IsArchived, (f, _) => f.Random.Bool())
 				.RuleFor(a => a.CategoryId, (f, _) => FakeCategory.GetNewCategory(useSeed).Id)
-				.RuleFor(a => a.AuthorId, (f, _) => FakeAppUser.GetNewAppUser(useSeed).Id)
-				.RuleFor<CategoryDto>(a => a.Category, (f, _) => FakeCategoryDto.GetNewCategoryDto(useSeed))
-				.RuleFor<AppUserDto>(a => a.Author, (f, _) => FakeAppUserDto.GetNewAppUserDto(useSeed))
+				.RuleFor(a => a.AuthorId, (f, _) => Guid.CreateVersion7().ToString())
+				.RuleFor(a => a.Category, (f, _) => FakeCategoryDto.GetNewCategoryDto(useSeed))
+				.RuleFor(a => a.Author, (f, _) => FakeApplicationUserDto.GetNewApplicationUserDto(useSeed))
 				.RuleFor(a => a.CreatedOn, (_, __) => DateTime.Now)
 				.RuleFor(a => a.ModifiedOn, (_, __) => DateTime.Now);
 

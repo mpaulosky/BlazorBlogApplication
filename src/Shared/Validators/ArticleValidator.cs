@@ -45,7 +45,7 @@ public class ArticleValidator : AbstractValidator<Article>
 
 		RuleFor(x => x.Category)
 				.NotNull()
-				.WithMessage("Categories is required");
+				.WithMessage("Category is required");
 
 		RuleFor(x => x.PublishedOn)
 				.NotNull()

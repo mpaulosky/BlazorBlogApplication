@@ -68,7 +68,7 @@ app.MapStaticAssets();
 
 app.UseRouting();
 
-app.UseCors(DefaultCorsPolicy);
+app.UseCors(DEFAULT_CORS_POLICY);
 
 app.UseAuthentication();
 app.UseAuthorization();

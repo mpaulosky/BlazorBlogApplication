@@ -39,4 +39,33 @@ public sealed record ApplicationUserDto
     /// Gets or sets whether the email address is confirmed.
     /// </summary>
     public bool EmailConfirmed { get; init; }
+
+
+    /// <summary>
+    ///   Parameterless constructor for serialization and test data generation.
+    /// </summary>
+    public ApplicationUserDto() : this(string.Empty, string.Empty, string.Empty, string.Empty, false) { }
+
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="ApplicationUserDto" /> class.
+    /// </summary>
+    /// <param name="id">The unique identifier for the user.</param>
+    /// <param name="userName">The username of the user.</param>
+    /// <param name="email">The email address of the user.</param>
+    /// <param name="displayName">The display name of the user.</param>
+    /// <param name="emailConfirmed">Whether the email address is confirmed.</param>
+    private ApplicationUserDto(string id, string userName, string email, string displayName, bool emailConfirmed)
+    {
+        Id = id;
+        UserName = userName;
+        Email = email;
+        DisplayName = displayName;
+        EmailConfirmed = emailConfirmed;
+    }
+        
+	/// <summary>
+	///   Gets an empty singleton instance of ApplicationUserDto with default values.
+	/// </summary>
+	public static ApplicationUserDto Empty { get; } = new(string.Empty, string.Empty, string.Empty, string.Empty, false);
+
 }
