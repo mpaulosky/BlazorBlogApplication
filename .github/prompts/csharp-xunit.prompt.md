@@ -43,7 +43,7 @@ public class ArticleTests
     	article.Content.Should().Be("");
     	article.CoverImageUrl.Should().Be("");
     	article.UrlSlug.Should().Be("");
-    	article.Author.Should().Be(AppUserDto.Empty);
+    	article.Author.Should().Be(ApplicationUserDto.Empty);
     	article.Category.Should().Be(CategoryDto.Empty);
     	article.IsPublished.Should().BeFalse();
     	article.PublishedOn.Should().BeNull();
