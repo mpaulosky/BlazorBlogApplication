@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+
 using Testcontainers.PostgreSql;
 
 namespace Web.Fixtures;
@@ -50,17 +52,19 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		// Prefer unsecured transport for Aspire/test hosts and export the DefaultConnection
 		// environment variable early so it is available during host startup when
 		// Program.ConfigureServices runs. Some test hosts construct the application
-		// before ConfigureWebHost runs, so ConfigureAppConfiguration isn't sufficient.
+		// before ConfigureWebHost runs, so ConfigureAppConfiguration isn't enough.
 		// Allow Aspire to expose unsecured HTTP endpoints for integration tests.
 		Environment.SetEnvironmentVariable("ASPIRE_ALLOW_UNSECURED_TRANSPORT", "true");
+		
 		// Ensure ASP.NET binds to an HTTP URL (use dynamic port 0 letting the host choose)
 		Environment.SetEnvironmentVariable("ASPNETCORE_URLS", "http://localhost:0");
 
 		// Export the DefaultConnection environment variable early so it is available
 		// during host startup when Program.ConfigureServices runs. Some test hosts
 		// construct the application before ConfigureWebHost runs, so ConfigureAppConfiguration
-		// isn't sufficient.
+		// isn't enough.
 		var earlyConnection = $"Host=localhost;Port={s_port};Database={_databaseName};Username=postgres;Password=postgrespw;";
+		
 		Environment.SetEnvironmentVariable("DefaultConnection", earlyConnection);
 	}
 
@@ -79,7 +83,7 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 				["ASPNETCORE_URLS"] = "http://localhost:0"
 			});
 
-			// Also export to environment variables so code paths that read
+			// Also, export to environment variables so code paths that read
 			// Environment.GetEnvironmentVariable("DefaultConnection") can find it
 			// during host startup in the test environment.
 			Environment.SetEnvironmentVariable("DefaultConnection", npgsqlConnection);

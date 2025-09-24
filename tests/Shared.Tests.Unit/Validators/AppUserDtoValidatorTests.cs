@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     AppUserDtoValidatorTests.cs
+// File Name :     ApplicationUserDtoValidatorTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorBlogApplication
@@ -10,16 +10,16 @@
 namespace Shared.Validators;
 
 [ExcludeFromCodeCoverage]
-[TestSubject(typeof(AppUserDtoValidator))]
-public class AppUserDtoValidatorTests
+[TestSubject(typeof(ApplicationUserDtoValidator))]
+public class ApplicationUserDtoValidatorTests
 {
 
-	private readonly AppUserDtoValidator _validator = new();
+	private readonly ApplicationUserDtoValidator _validator = new();
 
 	[Fact]
 	public void Should_Have_Error_When_UserName_Is_Empty()
 	{
-		var dto = new AppUserDto { UserName = "" };
+		var dto = new ApplicationUserDto { UserName = "" };
 		var result = _validator.TestValidate(dto);
 		result.ShouldHaveValidationErrorFor(x => x.UserName);
 	}
@@ -27,7 +27,7 @@ public class AppUserDtoValidatorTests
 	[Fact]
 	public void Should_Not_Have_Error_When_UserName_Is_Not_Empty()
 	{
-		var dto = new AppUserDto { UserName = "TestUser" };
+		var dto = new ApplicationUserDto { UserName = "TestUser" };
 		var result = _validator.TestValidate(dto);
 		result.ShouldNotHaveValidationErrorFor(x => x.UserName);
 	}
