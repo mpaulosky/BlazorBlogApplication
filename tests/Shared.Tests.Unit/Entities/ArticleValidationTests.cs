@@ -2,9 +2,12 @@ using System;
 using Shared.Entities;
 using Shared.Models;
 using Xunit;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Shared.Tests.Unit.Entities;
 
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(Article))]
 public class ArticleValidationTests
 {
     [Fact]
