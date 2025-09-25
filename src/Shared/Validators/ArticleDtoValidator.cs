@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     ArticleDtoValidator.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ArticleDtoValidator.cs

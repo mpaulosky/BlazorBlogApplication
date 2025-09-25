@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     LoadingComponentTests.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     LoadingComponentTests.cs
@@ -34,7 +42,7 @@ public class LoadingComponentTests : BunitContext
 				""";
 
 		// Act
-		var cut = Render<LoadingComponent>();
+		IRenderedComponent<LoadingComponent> cut = Render<LoadingComponent>();
 
 		// Assert
 		cut.MarkupMatches(expectedHtml); // Update selector as needed

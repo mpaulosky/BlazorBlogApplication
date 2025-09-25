@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ResultTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
@@ -23,7 +23,7 @@ public class ResultTests
 	public void Result_Creation_SetsProperties(bool success, string? error)
 	{
 		// Arrange & Act
-		var result = success ? Result.Ok() : Result.Fail(error!);
+		Result result = success ? Result.Ok() : Result.Fail(error!);
 
 		// Assert
 		result.Success.Should().Be(success);
@@ -35,7 +35,7 @@ public class ResultTests
 	public void ResultT_Ok_SetsValueAndSuccess()
 	{
 		// Arrange & Act
-		var result = Result.Ok(42);
+		Result<int> result = Result.Ok(42);
 
 		// Assert
 		result.Success.Should().BeTrue();
@@ -47,7 +47,7 @@ public class ResultTests
 	public void ResultT_Fail_SetsFailureAndError()
 	{
 		// Arrange & Act
-		var result = Result.Fail<int>("fail");
+		Result<int> result = Result.Fail<int>("fail");
 
 		// Assert
 		result.Success.Should().BeFalse();
@@ -70,7 +70,7 @@ public class ResultTests
 	public void ResultT_ImplicitConversionToValue()
 	{
 		// Arrange
-		var result = Result.Ok(123);
+		Result<int> result = Result.Ok(123);
 
 		// Act
 		int value = result;
@@ -85,7 +85,7 @@ public class ResultTests
 	public void ResultT_FromValue_SetsCorrectResult(int? input, bool expectedSuccess)
 	{
 		// Arrange & Act
-		var result = Result.FromValue(input);
+		Result<int?> result = Result.FromValue(input);
 
 		// Assert
 		result.Success.Should().Be(expectedSuccess);

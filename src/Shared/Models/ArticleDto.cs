@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ArticleDto.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
@@ -20,8 +20,7 @@ public sealed class ArticleDto
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
 	public ArticleDto() : this(Guid.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
-			ApplicationUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false)
-	{ }
+			ApplicationUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false) { }
 
 	/// <summary>
 	///   Initializes a new instance of the <see cref="ArticleDto" /> class.
@@ -75,7 +74,6 @@ public sealed class ArticleDto
 	/// <summary>
 	///   Gets or sets the unique identifier for the article.
 	/// </summary>
-
 
 
 	public Guid Id { get; set; }
@@ -181,22 +179,23 @@ public sealed class ArticleDto
 	{
 		return new ArticleDto
 		{
-			Id = article.Id,
-			Title = article.Title,
-			Introduction = article.Introduction,
-			Content = article.Content,
-			CoverImageUrl = article.CoverImageUrl,
-			UrlSlug = article.UrlSlug,
-			// Article.Author/Category are stored as DTOs on the Article entity in this codebase.
-			// Avoid casting between DTO and entity types — use the DTO if present, otherwise fall back to Empty.
-			Author = article.Author ?? ApplicationUserDto.Empty,
-			Category = article.Category ?? CategoryDto.Empty,
-			CreatedOn = article.CreatedOn,
-			ModifiedOn = article.ModifiedOn,
-			IsPublished = article.IsPublished,
-			PublishedOn = article.PublishedOn,
-			IsArchived = article.IsArchived,
-			CanEdit = false
+				Id = article.Id,
+				Title = article.Title,
+				Introduction = article.Introduction,
+				Content = article.Content,
+				CoverImageUrl = article.CoverImageUrl,
+				UrlSlug = article.UrlSlug,
+
+				// Article.Author/Category are stored as DTOs on the Article entity in this codebase.
+				// Avoid casting between DTO and entity types â€” use the DTO if present, otherwise fall back to Empty.
+				Author = article.Author ?? ApplicationUserDto.Empty,
+				Category = article.Category ?? CategoryDto.Empty,
+				CreatedOn = article.CreatedOn,
+				ModifiedOn = article.ModifiedOn,
+				IsPublished = article.IsPublished,
+				PublishedOn = article.PublishedOn,
+				IsArchived = article.IsArchived,
+				CanEdit = false
 		};
 	}
 

@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     EditArticle.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
@@ -58,14 +58,15 @@ public static class EditArticle
 			try
 			{
 
-				var context = _factory.CreateDbContext();
+				ApplicationDbContext context = _factory.CreateDbContext();
 
 				// First check if the article exists
-				var existingArticle = await context.Articles.FirstOrDefaultAsync(x => x.Id == request.Id);
+				Article? existingArticle = await context.Articles.FirstOrDefaultAsync(x => x.Id == request.Id);
 
 				if (existingArticle is null)
 				{
 					_logger.LogWarning("Article not found for update: {ArticleId}", request.Id);
+
 					return Result.Fail("Article not found.");
 				}
 

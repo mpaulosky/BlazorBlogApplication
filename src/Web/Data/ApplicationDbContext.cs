@@ -2,7 +2,7 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ApplicationDbContext.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
@@ -11,10 +11,9 @@ namespace Web.Data;
 
 public sealed class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
 {
+
 	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-		: base(options)
-	{
-	}
+			: base(options) { }
 
 	public DbSet<Article> Articles => Set<Article>();
 
@@ -28,16 +27,16 @@ public sealed class ApplicationDbContext : IdentityDbContext<ApplicationUser>, I
 		builder.Entity<Category>().HasKey(c => c.Id);
 
 		builder.Entity<Article>()
-			.HasOne(a => a.Author)
-			.WithMany()
-			.HasForeignKey(a => a.AuthorId)
-			.OnDelete(DeleteBehavior.Restrict);
+				.HasOne(a => a.Author)
+				.WithMany()
+				.HasForeignKey(a => a.AuthorId)
+				.OnDelete(DeleteBehavior.Restrict);
 
 		builder.Entity<Article>()
-			.HasOne(a => a.Category)
-			.WithMany()
-			.HasForeignKey(a => a.CategoryId)
-			.OnDelete(DeleteBehavior.Restrict);
+				.HasOne(a => a.Category)
+				.WithMany()
+				.HasForeignKey(a => a.CategoryId)
+				.OnDelete(DeleteBehavior.Restrict);
 
 		builder.Entity<ApplicationUser>(entity =>
 		{
@@ -47,4 +46,5 @@ public sealed class ApplicationDbContext : IdentityDbContext<ApplicationUser>, I
 
 		builder.HasDefaultSchema("identity");
 	}
+
 }

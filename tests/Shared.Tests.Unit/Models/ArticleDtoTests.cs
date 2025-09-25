@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ArticleDtoTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
@@ -20,7 +20,7 @@ public class ArticleDtoTests
 	[Fact]
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
-		var dto = new ArticleDto();
+		ArticleDto dto = new ();
 		dto.Title.Should().BeEmpty();
 		dto.Introduction.Should().BeEmpty();
 		dto.Content.Should().BeEmpty();
@@ -36,7 +36,7 @@ public class ArticleDtoTests
 	[Fact]
 	public void EmptyProperty_ShouldReturnEmptyDto()
 	{
-		var dto = ArticleDto.Empty;
+		ArticleDto dto = ArticleDto.Empty;
 		dto.Title.Should().BeEmpty();
 		dto.Introduction.Should().BeEmpty();
 		dto.Content.Should().BeEmpty();

@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     CollectionNamesTests.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared.Tests.Unit
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CollectionNamesTests.cs
@@ -6,6 +14,8 @@
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
+
+using Shared.Abstractions;
 
 namespace Shared.Helpers;
 
@@ -20,15 +30,15 @@ public class CollectionNamesTests
 	[Fact]
 	public void GetCollectionName_ShouldReturnExpectedValues()
 	{
-		var articleResult = CollectionNames.GetCollectionName("Article");
+		Result<string> articleResult = CollectionNames.GetCollectionName("Article");
 		articleResult.Success.Should().BeTrue();
 		articleResult.Value.Should().Be("articles");
 
-		var categoryResult = CollectionNames.GetCollectionName("Category");
+		Result<string> categoryResult = CollectionNames.GetCollectionName("Category");
 		categoryResult.Success.Should().BeTrue();
 		categoryResult.Value.Should().Be("categories");
 
-		var invalidResult = CollectionNames.GetCollectionName("User");
+		Result<string> invalidResult = CollectionNames.GetCollectionName("User");
 		invalidResult.Success.Should().BeFalse();
 		invalidResult.Error.Should().Contain("Invalid entity name");
 	}

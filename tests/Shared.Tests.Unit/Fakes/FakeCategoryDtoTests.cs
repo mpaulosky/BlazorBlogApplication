@@ -1,11 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeCategoryDtoTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
+
+using Bogus;
 
 namespace Shared.Fakes;
 
@@ -22,7 +24,7 @@ public class FakeCategoryDtoTests
 	public void GetNewCategoryDto_ShouldReturnValidDto()
 	{
 		// Act
-		var dto = FakeCategoryDto.GetNewCategoryDto();
+		CategoryDto dto = FakeCategoryDto.GetNewCategoryDto();
 
 		// Assert
 		dto.Should().NotBeNull();
@@ -39,13 +41,13 @@ public class FakeCategoryDtoTests
 		const int requested = 5;
 
 		// Act
-		var list = FakeCategoryDto.GetCategoriesDto(requested);
+		List<CategoryDto> list = FakeCategoryDto.GetCategoriesDto(requested);
 
 		// Assert
 		list.Should().NotBeNull();
 		list.Should().HaveCount(requested);
 
-		foreach (var dto in list)
+		foreach (CategoryDto dto in list)
 		{
 			dto.CategoryName.Should().NotBeNullOrWhiteSpace();
 			dto.Id.Should().NotBe(Guid.Empty);
@@ -58,7 +60,7 @@ public class FakeCategoryDtoTests
 	public void GetCategoriesDto_ZeroRequested_ShouldReturnEmptyList()
 	{
 		// Act
-		var list = FakeCategoryDto.GetCategoriesDto(0);
+		List<CategoryDto> list = FakeCategoryDto.GetCategoriesDto(0);
 
 		// Assert
 		list.Should().NotBeNull();
@@ -70,8 +72,8 @@ public class FakeCategoryDtoTests
 	{
 
 		// Act
-		var a = FakeCategoryDto.GetNewCategoryDto(true);
-		var b = FakeCategoryDto.GetNewCategoryDto(true);
+		CategoryDto a = FakeCategoryDto.GetNewCategoryDto(true);
+		CategoryDto b = FakeCategoryDto.GetNewCategoryDto(true);
 
 		// Assert - deterministic except for Id and CategoryName
 		a.Id.Should().NotBe(Guid.Empty);
@@ -92,7 +94,7 @@ public class FakeCategoryDtoTests
 	public void GetCategoriesDto_ShouldReturnRequestedNumberOfDtos(int count)
 	{
 		// Act
-		var results = FakeCategoryDto.GetCategoriesDto(count);
+		List<CategoryDto> results = FakeCategoryDto.GetCategoriesDto(count);
 
 		// Assert
 		results.Should().NotBeNull();
@@ -111,7 +113,7 @@ public class FakeCategoryDtoTests
 		const int count = 2;
 
 		// Act
-		var categories = FakeCategoryDto.GetCategoriesDto(count, true);
+		List<CategoryDto> categories = FakeCategoryDto.GetCategoriesDto(count, true);
 
 		// Assert
 
@@ -128,8 +130,8 @@ public class FakeCategoryDtoTests
 	public void GenerateFake_ShouldConfigureFakerCorrectly()
 	{
 		// Act
-		var faker = FakeCategoryDto.GenerateFake();
-		var dto = faker.Generate();
+		Faker<CategoryDto> faker = FakeCategoryDto.GenerateFake();
+		CategoryDto? dto = faker.Generate();
 
 		// Assert
 		dto.Should().NotBeNull();
@@ -145,7 +147,7 @@ public class FakeCategoryDtoTests
 	{
 
 		// Act
-		var categories = FakeCategoryDto.GenerateFake(true).Generate(2);
+		List<CategoryDto>? categories = FakeCategoryDto.GenerateFake(true).Generate(2);
 
 		// Assert
 		categories[0].Id.Should().NotBe(Guid.Empty);
@@ -161,7 +163,7 @@ public class FakeCategoryDtoTests
 	{
 
 		// Act
-		var categories = FakeCategoryDto.GenerateFake(false).Generate(2);
+		List<CategoryDto>? categories = FakeCategoryDto.GenerateFake(false).Generate(2);
 
 		// Assert
 		categories[0].Should().NotBeEquivalentTo(categories[1]);

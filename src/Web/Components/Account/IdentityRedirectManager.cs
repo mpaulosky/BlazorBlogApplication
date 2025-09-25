@@ -1,5 +1,11 @@
-using System.Diagnostics.CodeAnalysis;
-
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     IdentityRedirectManager.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web
+// =======================================================
 using Microsoft.AspNetCore.Components;
 
 namespace Web.Components.Account;
@@ -14,10 +20,7 @@ internal sealed class IdentityRedirectManager
 
 	private static readonly CookieBuilder StatusCookieBuilder = new()
 	{
-		SameSite = SameSiteMode.Strict,
-		HttpOnly = true,
-		IsEssential = true,
-		MaxAge = TimeSpan.FromSeconds(5),
+			SameSite = SameSiteMode.Strict, HttpOnly = true, IsEssential = true, MaxAge = TimeSpan.FromSeconds(5)
 	};
 
 	[DoesNotReturn]
@@ -41,8 +44,8 @@ internal sealed class IdentityRedirectManager
 	[DoesNotReturn]
 	public void RedirectTo(string uri, Dictionary<string, object?> queryParameters)
 	{
-		var uriWithoutQuery = navigationManager.ToAbsoluteUri(uri).GetLeftPart(UriPartial.Path);
-		var newUri = navigationManager.GetUriWithQueryParameters(uriWithoutQuery, queryParameters);
+		string uriWithoutQuery = navigationManager.ToAbsoluteUri(uri).GetLeftPart(UriPartial.Path);
+		string newUri = navigationManager.GetUriWithQueryParameters(uriWithoutQuery, queryParameters);
 		RedirectTo(newUri);
 	}
 
@@ -55,10 +58,16 @@ internal sealed class IdentityRedirectManager
 
 	private string CurrentPath => navigationManager.ToAbsoluteUri(navigationManager.Uri).GetLeftPart(UriPartial.Path);
 
-	[DoesNotReturn] public void RedirectToCurrentPage() => RedirectTo(CurrentPath);
+	[DoesNotReturn]
+	public void RedirectToCurrentPage()
+	{
+		RedirectTo(CurrentPath);
+	}
 
 	[DoesNotReturn]
-	public void RedirectToCurrentPageWithStatus(string message, HttpContext context) =>
-			RedirectToWithStatus(CurrentPath, message, context);
+	public void RedirectToCurrentPageWithStatus(string message, HttpContext context)
+	{
+		RedirectToWithStatus(CurrentPath, message, context);
+	}
 
 }

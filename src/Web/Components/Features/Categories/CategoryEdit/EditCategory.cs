@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     EditCategory.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
@@ -67,13 +67,14 @@ public static class EditCategory
 			try
 			{
 
-				var context = _contextFactory.CreateDbContext();
+				ApplicationDbContext context = _contextFactory.CreateDbContext();
 
-				var category = await context.Categories.FirstOrDefaultAsync(x => x.Id == request.Id);
+				Category? category = await context.Categories.FirstOrDefaultAsync(x => x.Id == request.Id);
 
 				if (category == null)
 				{
 					_logger.LogWarning("No category found with ID: {CategoryId}", request.Id);
+
 					return Result.Fail("Category not found.");
 				}
 

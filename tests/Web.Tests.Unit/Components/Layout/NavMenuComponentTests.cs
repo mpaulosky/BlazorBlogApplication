@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     NavMenuComponentTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -34,7 +34,7 @@ public class NavMenuComponentTests : BunitContext
 		SetAuthorization(isAuthorized, hasRoles);
 
 		// Act
-		var cut = Render<NavMenuComponent>();
+		IRenderedComponent<NavMenuComponent> cut = Render<NavMenuComponent>();
 
 		// Assert
 		cut.Markup.Should().Contain("Articles");
@@ -50,7 +50,7 @@ public class NavMenuComponentTests : BunitContext
 	private void SetAuthorization(bool isAuthorized = true, bool hasRoles = false)
 	{
 
-		var authContext = AddAuthorization();
+		BunitAuthorizationContext authContext = AddAuthorization();
 
 		// Set up the authentication state for the component
 		if (isAuthorized)

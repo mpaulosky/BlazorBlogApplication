@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     MainLayoutTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -16,10 +16,10 @@ public class MainLayoutTests
 
 	private static int InvokeGetErrorCode(Exception? ex)
 	{
-		var type = typeof(MainLayout);
-		var mi = type.GetMethod("GetErrorCode", BindingFlags.NonPublic | BindingFlags.Static);
+		Type type = typeof(MainLayout);
+		MethodInfo? mi = type.GetMethod("GetErrorCode", BindingFlags.NonPublic | BindingFlags.Static);
 		mi.Should().NotBeNull("private static method should exist on MainLayout");
-		var result = mi.Invoke(null, [ex]);
+		object? result = mi.Invoke(null, [ex]);
 		result.Should().BeOfType<int>();
 
 		return (int)result;

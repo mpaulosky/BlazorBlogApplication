@@ -2,6 +2,14 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ApplicationUser.cs
 // Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Shared
+// =======================================================
+// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     ApplicationUser.cs
+// Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
@@ -15,8 +23,8 @@ public sealed class ApplicationUser : IdentityUser
 {
 
 	/// <summary>
-	/// Parameterless constructor to ensure IdentityUser string properties
-	/// are initialized to empty values for predictable test behavior.
+	///   Parameterless constructor to ensure IdentityUser string properties
+	///   are initialized to empty values for predictable test behavior.
 	/// </summary>
 	public ApplicationUser()
 	{

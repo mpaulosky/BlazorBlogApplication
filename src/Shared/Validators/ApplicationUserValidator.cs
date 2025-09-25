@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ApplicationUserValidator.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
@@ -36,4 +36,4 @@ public class ApplicationUserValidator : AbstractValidator<ApplicationUser>
 				.Length(3, 50).WithMessage("Display Name must be between 3 and 50 characters");
 	}
 
-}	
+}

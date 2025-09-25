@@ -1,12 +1,11 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CreateArticle.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
-
 namespace Web.Components.Features.Articles.ArticleCreate;
 
 /// <summary>
@@ -61,10 +60,10 @@ public static class CreateArticle
 
 			try
 			{
-				var context = _factory.CreateDbContext();
+				ApplicationDbContext context = _factory.CreateDbContext();
 
 				// Manually map DTO to an entity to avoid relying on Mapster in unit tests
-				var article = new Article(
+				Article article = new (
 						request.Title,
 						request.Introduction,
 						request.Content,

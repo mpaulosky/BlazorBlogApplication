@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ArticleTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
@@ -21,7 +21,7 @@ public class ArticleTests
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
 		// Arrange & Act
-		var article = new Article();
+		Article article = new ();
 
 		// Assert
 		article.Title.Should().Be("");
@@ -40,13 +40,13 @@ public class ArticleTests
 	public void Article_Constructor_ShouldThrow_WhenTitleIsEmpty()
 	{
 		// Arrange
-		var emptyTitle = "";
-		var intro = "Intro";
-		var content = "Content";
-		var cover = "cover.png";
-		var slug = "slug";
-		var authorId = string.Empty;
-		var categoryId = Guid.NewGuid();
+		string emptyTitle = "";
+		string intro = "Intro";
+		string content = "Content";
+		string cover = "cover.png";
+		string slug = "slug";
+		string authorId = string.Empty;
+		Guid categoryId = Guid.NewGuid();
 
 		// Act & Assert
 		Action act = () => new Article(emptyTitle, intro, content, cover, slug, authorId, categoryId);
@@ -57,10 +57,10 @@ public class ArticleTests
 	public void ParameterizedConstructor_ShouldSetAllProperties()
 	{
 		// Arrange
-		var fake = FakeArticle.GetNewArticle(true);
+		Article fake = FakeArticle.GetNewArticle(true);
 
 		// Act
-		var article = new Article(
+		Article article = new (
 				fake.Title,
 				fake.Introduction,
 				fake.Content,
@@ -89,15 +89,15 @@ public class ArticleTests
 	public void Update_ShouldChangeAllProperties()
 	{
 		// Arrange
-		var article = FakeArticle.GetNewArticle(true);
+		Article article = FakeArticle.GetNewArticle(true);
 		const string newTitle = "Updated Title";
 		const string newIntro = "Updated Intro";
 		const string newContent = "Updated Content";
 		const string newCover = "https://newcover.com/image.png";
 		const string newSlug = "updated-slug";
-		var newCategory = FakeCategoryDto.GetNewCategoryDto(true);
+		CategoryDto newCategory = FakeCategoryDto.GetNewCategoryDto(true);
 		const bool newPublished = true;
-		var newPublishedOn = DateTime.UtcNow;
+		DateTime newPublishedOn = DateTime.UtcNow;
 		const bool newArchived = true;
 
 		// Act
@@ -110,9 +110,10 @@ public class ArticleTests
 		article.Content.Should().Be(newContent);
 		article.CoverImageUrl.Should().Be(newCover);
 		article.UrlSlug.Should().Be(newSlug);
-	// The Update method accepts a category id and sets the CategoryId; the
-	// navigation property is not updated by Update(), so assert the id.
-	article.CategoryId.Should().Be(newCategory.Id);
+
+		// The Update method accepts a category id and sets the CategoryId; the
+		// navigation property is not updated by Update(), so assert the id.
+		article.CategoryId.Should().Be(newCategory.Id);
 		article.IsPublished.Should().Be(newPublished);
 		article.PublishedOn.Should().Be(newPublishedOn);
 		article.IsArchived.Should().Be(newArchived);
@@ -122,8 +123,8 @@ public class ArticleTests
 	public void Publish_ShouldSetIsPublishedAndPublishedOn()
 	{
 		// Arrange
-		var article = FakeArticle.GetNewArticle(true);
-		var publishDate = DateTime.UtcNow;
+		Article article = FakeArticle.GetNewArticle(true);
+		DateTime publishDate = DateTime.UtcNow;
 
 		// Act
 		article.Publish(publishDate);
@@ -138,7 +139,7 @@ public class ArticleTests
 	public void Unpublish_ShouldSetIsPublishedFalseAndPublishedOnNull()
 	{
 		// Arrange
-		var article = FakeArticle.GetNewArticle(true);
+		Article article = FakeArticle.GetNewArticle(true);
 		article.Publish(DateTime.UtcNow);
 
 		// Act
@@ -154,7 +155,7 @@ public class ArticleTests
 	public void Empty_ShouldReturnEmptyArticle()
 	{
 		// Arrange & Act
-		var empty = Article.Empty;
+		Article empty = Article.Empty;
 
 		// Assert
 		empty.Title.Should().Be("");
@@ -162,7 +163,7 @@ public class ArticleTests
 		empty.Content.Should().Be("");
 		empty.CoverImageUrl.Should().Be("");
 		empty.UrlSlug.Should().Be("");
-	empty.Author.Should().Be(ApplicationUserDto.Empty);
+		empty.Author.Should().Be(ApplicationUserDto.Empty);
 		empty.Category.Should().Be(CategoryDto.Empty);
 		empty.IsPublished.Should().BeFalse();
 		empty.PublishedOn.Should().BeNull();

@@ -1,9 +1,28 @@
-﻿using Aspire.Hosting;
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     AspireManager.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests
+// =======================================================
+// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     AspireManager.cs
+// Company :       mpaulosky
+// Author :        Matthew
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests
+// =======================================================
+
+using Aspire.Hosting;
+
+using Web.Infrastructure;
 
 namespace Web.Tests.Infrastructure;
 
 /// <summary>
-/// Start up and configure the Aspire application for testing.
+///   Start up and configure the Aspire application for testing.
 /// </summary>
 public class AspireManager : IAsyncLifetime
 {
@@ -17,11 +36,14 @@ public class AspireManager : IAsyncLifetime
 			Action<IDistributedApplicationTestingBuilder>? configureBuilder = null) where TEntryPoint : class
 	{
 
-		if (App is not null) return App;
+		if (App is not null)
+		{
+			return App;
+		}
 
-		var builder = await DistributedApplicationTestingBuilder.CreateAsync<TEntryPoint>(
-				args: args ?? [],
-				configureBuilder: static (options, _) =>
+		IDistributedApplicationTestingBuilder builder = await DistributedApplicationTestingBuilder.CreateAsync<TEntryPoint>(
+				args ?? [],
+				static (options, _) =>
 				{
 					options.DisableDashboard = false;
 				});
@@ -43,10 +65,12 @@ public class AspireManager : IAsyncLifetime
 		// Initialization logic here
 		await PlaywrightManager.InitializeAsync();
 	}
+
 	public async ValueTask DisposeAsync()
 	{
 		await PlaywrightManager.DisposeAsync();
 
 		await (App?.DisposeAsync() ?? ValueTask.CompletedTask);
 	}
+
 }

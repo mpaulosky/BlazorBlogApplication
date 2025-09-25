@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ListTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -43,7 +43,7 @@ public class ListTests : BunitContext
 		SetupHandlerCategories(null);
 
 		// Act
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		// Assert
 		cut.Markup.Should().Contain("No categories available.");
@@ -59,7 +59,7 @@ public class ListTests : BunitContext
 		SetupHandlerCategories(null);
 
 		// Act
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		// Assert
 		cut.Markup.Should().Contain("No categories available");
@@ -73,16 +73,19 @@ public class ListTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 
-		var categoriesDto = new List<CategoryDto>
+		List<CategoryDto> categoriesDto = new()
 		{
-				new()  { CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now, Archived = false },
-				new()  { CategoryName = "Cat2", CreatedOn = DateTime.Now, ModifiedOn = null, Archived = true }
+				new CategoryDto
+				{
+						CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now, Archived = false
+				},
+				new CategoryDto  { CategoryName = "Cat2", CreatedOn = DateTime.Now, ModifiedOn = null, Archived = true }
 		};
 
 		SetupHandlerCategories(categoriesDto);
 
 		// Act
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		// Assert
 		cut.Markup.Should().Contain("Cat1");
@@ -95,7 +98,7 @@ public class ListTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		SetupHandlerCategories(null);
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, true);
@@ -111,11 +114,11 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
-		var tcs = new TaskCompletionSource<Result<IEnumerable<CategoryDto>>>();
+		TaskCompletionSource<Result<IEnumerable<CategoryDto>>> tcs = new ();
 		_mockHandler.HandleAsync(Arg.Any<bool>()).Returns(_ => tcs.Task);
 
 		// Act
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		// Spinner present while pending
 		cut.Markup.Should().Contain("Loading");
@@ -134,7 +137,7 @@ public class ListTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		SetupHandlerCategories(null, false, "Failed to load categories");
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -153,9 +156,9 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
-		var nav = Services.GetRequiredService<BunitNavigationManager>();
+		BunitNavigationManager nav = Services.GetRequiredService<BunitNavigationManager>();
 		SetupHandlerCategories(new List<CategoryDto>());
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -170,19 +173,22 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
-		var nav = Services.GetRequiredService<BunitNavigationManager>();
+		BunitNavigationManager nav = Services.GetRequiredService<BunitNavigationManager>();
 
-		var categoriesDto = new List<CategoryDto>
+		List<CategoryDto> categoriesDto = new()
 		{
-				new()
+				new CategoryDto
 				{
-						Id = Guid.NewGuid(), CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now,
+						Id = Guid.NewGuid(),
+						CategoryName = "Cat1",
+						CreatedOn = DateTime.Now,
+						ModifiedOn = DateTime.Now,
 						Archived = false
 				}
 		};
 
 		SetupHandlerCategories(categoriesDto);
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -202,19 +208,22 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
-		var nav = Services.GetRequiredService<BunitNavigationManager>();
+		BunitNavigationManager nav = Services.GetRequiredService<BunitNavigationManager>();
 
-		var categoriesDto = new List<CategoryDto>
+		List<CategoryDto> categoriesDto = new()
 		{
-				new()
+				new CategoryDto
 				{
-						Id = Guid.NewGuid(), CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now,
+						Id = Guid.NewGuid(),
+						CategoryName = "Cat1",
+						CreatedOn = DateTime.Now,
+						ModifiedOn = DateTime.Now,
 						Archived = false
 				}
 		};
 
 		SetupHandlerCategories(categoriesDto);
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -235,13 +244,16 @@ public class ListTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 
-		var categoriesDto = new List<CategoryDto>
+		List<CategoryDto> categoriesDto = new()
 		{
-				new()  { CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now, Archived = false }
+				new CategoryDto
+				{
+						CategoryName = "Cat1", CreatedOn = DateTime.Now, ModifiedOn = DateTime.Now, Archived = false
+				}
 		};
 
 		SetupHandlerCategories(categoriesDto);
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -250,9 +262,9 @@ public class ListTests : BunitContext
 				?.SetValue(cut.Instance, categoriesDto.AsQueryable());
 
 		cut.Render();
-		var expectedHeaders = new[] { "Category Name", "Created On", "Modified On", "Archived", "Actions" };
+		string[] expectedHeaders = new[] { "Category Name", "Created On", "Modified On", "Archived", "Actions" };
 
-		foreach (var header in expectedHeaders)
+		foreach (string header in expectedHeaders)
 		{
 			cut.Markup.Should().Contain(header);
 		}
@@ -278,7 +290,7 @@ public class ListTests : BunitContext
 			builder.CloseComponent();
 		};
 
-		var cut = Render<AuthorizeView>(parameters => parameters
+		IRenderedComponent<AuthorizeView> cut = Render<AuthorizeView>(parameters => parameters
 				.Add(p => p.Authorized, authorizedFragment)
 				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);
@@ -310,7 +322,7 @@ public class ListTests : BunitContext
 			builder.CloseComponent();
 		};
 
-		var cut = Render<AuthorizeView>(parameters => parameters
+		IRenderedComponent<AuthorizeView> cut = Render<AuthorizeView>(parameters => parameters
 				.Add(p => p.Authorized, authorizedFragment)
 				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);

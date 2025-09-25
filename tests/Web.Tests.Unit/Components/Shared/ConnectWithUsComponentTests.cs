@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ConnectWithUsComponentTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -24,7 +24,7 @@ public class ConnectWithUsComponentTests : BunitContext
 		// Arrange
 
 		// Act
-		var cut = Render<ConnectWithUsComponent>();
+		IRenderedComponent<ConnectWithUsComponent> cut = Render<ConnectWithUsComponent>();
 
 		// Assert
 		cut.Markup.Should()
@@ -40,7 +40,7 @@ public class ConnectWithUsComponentTests : BunitContext
 		// Arrange
 
 		// Act
-		var cut = Render<ConnectWithUsComponent>();
+		IRenderedComponent<ConnectWithUsComponent> cut = Render<ConnectWithUsComponent>();
 
 		// Assert
 		cut.Markup.Should()
@@ -56,7 +56,7 @@ public class ConnectWithUsComponentTests : BunitContext
 		// Arrange
 
 		// Act
-		var cut = Render<ConnectWithUsComponent>();
+		IRenderedComponent<ConnectWithUsComponent> cut = Render<ConnectWithUsComponent>();
 
 		// Assert
 		cut.Markup.Should()
@@ -72,7 +72,7 @@ public class ConnectWithUsComponentTests : BunitContext
 		// Arrange
 
 		// Act
-		var cut = Render<ConnectWithUsComponent>();
+		IRenderedComponent<ConnectWithUsComponent> cut = Render<ConnectWithUsComponent>();
 
 		// Assert
 		cut.Markup.Should()

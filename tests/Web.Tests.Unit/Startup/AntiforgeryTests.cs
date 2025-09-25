@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     AntiforgeryTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -24,8 +24,8 @@ public class AntiforgeryTests : IClassFixture<TestWebApplicationFactory>
 	[Fact]
 	public void Antiforgery_HeaderName_Is_Configured()
 	{
-		using var scope = _factory.Services.CreateScope();
-		var options = scope.ServiceProvider.GetRequiredService<IOptions<AntiforgeryOptions>>().Value;
+		using IServiceScope scope = _factory.Services.CreateScope();
+		AntiforgeryOptions options = scope.ServiceProvider.GetRequiredService<IOptions<AntiforgeryOptions>>().Value;
 		options.HeaderName.Should().Be("X-XSRF-TOKEN");
 	}
 

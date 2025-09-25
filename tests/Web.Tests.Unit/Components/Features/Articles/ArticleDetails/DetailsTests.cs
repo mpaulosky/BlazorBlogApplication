@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     DetailsTests.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     DetailsTests.cs
@@ -6,6 +14,8 @@
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
+
+using AngleSharp.Dom;
 
 namespace Web.Components.Features.Articles.ArticleDetails;
 
@@ -38,9 +48,9 @@ public class DetailsTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this);
-	var articleId = Guid.NewGuid();
-	_mockHandler.HandleAsync(articleId).Returns(Result<ArticleDto>.Fail("Article not found"));
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleId));
+		Guid articleId = Guid.NewGuid();
+		_mockHandler.HandleAsync(articleId).Returns(Result<ArticleDto>.Fail("Article not found"));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleId));
 
 		// Act
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -55,11 +65,11 @@ public class DetailsTests : BunitContext
 	public void RendersArticleDetails_WhenArticleIsPresent()
 	{
 		// Arrange
-		var articleDto = FakeArticleDto.GetNewArticleDto(true);
-	_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
+		ArticleDto articleDto = FakeArticleDto.GetNewArticleDto(true);
+		_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetProperty("_article")?.SetValue(cut.Instance, articleDto);
 		cut.Render();
@@ -75,13 +85,13 @@ public class DetailsTests : BunitContext
 	public void RendersArticleContent_AsMarkupString()
 	{
 		// Arrange
-		var articleDto = FakeArticleDto.GetNewArticleDto(true);
+		ArticleDto articleDto = FakeArticleDto.GetNewArticleDto(true);
 		const string expectedContent = "<p>Test HTML content</p>";
 		articleDto.Content = expectedContent;
-	_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
+		_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetProperty("_article")?.SetValue(cut.Instance, articleDto);
 		cut.Render();
@@ -94,12 +104,12 @@ public class DetailsTests : BunitContext
 	public void DisplaysCorrectPublishedStatus()
 	{
 		// Arrange
-		var articleDto = FakeArticleDto.GetNewArticleDto(true);
+		ArticleDto articleDto = FakeArticleDto.GetNewArticleDto(true);
 		articleDto.IsPublished = true;
-	_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
+		_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetProperty("_article")?.SetValue(cut.Instance, articleDto);
 		cut.Render();
@@ -112,13 +122,13 @@ public class DetailsTests : BunitContext
 	public void DisplaysPublishedDate_WhenPresent()
 	{
 		// Arrange
-		var articleDto = FakeArticleDto.GetNewArticleDto(true);
+		ArticleDto articleDto = FakeArticleDto.GetNewArticleDto(true);
 		articleDto.IsPublished = true;
 		articleDto.PublishedOn = DateTime.Now.Date;
-	_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
+		_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetProperty("_article")?.SetValue(cut.Instance, articleDto);
 		cut.Render();
@@ -131,11 +141,11 @@ public class DetailsTests : BunitContext
 	public void HasCorrectNavigationButtons()
 	{
 		// Arrange
-		var articleDto = FakeArticleDto.GetNewArticleDto(true);
-	_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
+		ArticleDto articleDto = FakeArticleDto.GetNewArticleDto(true);
+		_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetProperty("_article")?.SetValue(cut.Instance, articleDto);
 		cut.Render();
@@ -149,12 +159,12 @@ public class DetailsTests : BunitContext
 	public void NavigatesToEditPage_WhenEditButtonClicked()
 	{
 		// Arrange
-		var articleDto = FakeArticleDto.GetNewArticleDto(true);
-		var navigationManager = Services.GetRequiredService<BunitNavigationManager>();
-	_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
+		ArticleDto articleDto = FakeArticleDto.GetNewArticleDto(true);
+		BunitNavigationManager navigationManager = Services.GetRequiredService<BunitNavigationManager>();
+		_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetProperty("_article")?.SetValue(cut.Instance, articleDto);
 		cut.Render();
@@ -168,12 +178,12 @@ public class DetailsTests : BunitContext
 	public void NavigatesToListPage_WhenBackButtonClicked()
 	{
 		// Arrange
-		var articleDto = FakeArticleDto.GetNewArticleDto(true);
-		var navigationManager = Services.GetRequiredService<BunitNavigationManager>();
-	_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
+		ArticleDto articleDto = FakeArticleDto.GetNewArticleDto(true);
+		BunitNavigationManager navigationManager = Services.GetRequiredService<BunitNavigationManager>();
+		_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetProperty("_article")?.SetValue(cut.Instance, articleDto);
 		cut.Render();
@@ -188,12 +198,12 @@ public class DetailsTests : BunitContext
 	public void DisplaysNotPublished_WhenArticleIsNotPublished()
 	{
 		// Arrange
-		var articleDto = FakeArticleDto.GetNewArticleDto(true);
+		ArticleDto articleDto = FakeArticleDto.GetNewArticleDto(true);
 		articleDto.IsPublished = false;
-	_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
+		_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters
 				.Add(p => p.Id, articleDto.Id));
 
 		// Simulate loading complete
@@ -209,13 +219,13 @@ public class DetailsTests : BunitContext
 	public void DisplaysNullPublishedDate_WhenNotPublished()
 	{
 		// Arrange
-		var articleDto = FakeArticleDto.GetNewArticleDto(true);
+		ArticleDto articleDto = FakeArticleDto.GetNewArticleDto(true);
 		articleDto.IsPublished = false;
 		articleDto.PublishedOn = null;
-	_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
+		_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters
 				.Add(p => p.Id, articleDto.Id));
 
 		// Simulate loading complete
@@ -232,9 +242,9 @@ public class DetailsTests : BunitContext
 	public void HandlesEmptyObjectId()
 	{
 		// Arrange & Act
-		var emptyId = Guid.Empty;
-	_mockHandler.HandleAsync(emptyId).Returns(Result<ArticleDto>.Fail("Article not found"));
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, emptyId));
+		Guid emptyId = Guid.Empty;
+		_mockHandler.HandleAsync(emptyId).Returns(Result<ArticleDto>.Fail("Article not found"));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, emptyId));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -248,11 +258,11 @@ public class DetailsTests : BunitContext
 	public void HandlesServiceException_Gracefully()
 	{
 		// Arrange
-	var articleId = Guid.NewGuid();
-	_mockHandler.HandleAsync(articleId).Returns(Result<ArticleDto>.Fail("Service exception"));
+		Guid articleId = Guid.NewGuid();
+		_mockHandler.HandleAsync(articleId).Returns(Result<ArticleDto>.Fail("Service exception"));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleId));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleId));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -266,12 +276,12 @@ public class DetailsTests : BunitContext
 	public void DisplaysCoverImage_WithCorrectAttributes()
 	{
 		// Arrange
-		var articleDto = FakeArticleDto.GetNewArticleDto(true);
+		ArticleDto articleDto = FakeArticleDto.GetNewArticleDto(true);
 		articleDto.CoverImageUrl = "https://example.com/image.jpg";
-	_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
+		_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -279,7 +289,7 @@ public class DetailsTests : BunitContext
 		cut.Render();
 
 		// Assert
-		var imgElement = cut.Find("img.card-img-top");
+		IElement imgElement = cut.Find("img.card-img-top");
 		imgElement.Should().NotBeNull();
 		imgElement.Attributes["src"]?.Value.Should().Be(articleDto.CoverImageUrl);
 		imgElement.Attributes["alt"]?.Value.Should().Be("Cover");
@@ -289,8 +299,8 @@ public class DetailsTests : BunitContext
 	public void RendersLoadingComponent_WhenIsLoadingIsTrue()
 	{
 		// Arrange
-	var articleId = Guid.NewGuid();
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleId));
+		Guid articleId = Guid.NewGuid();
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleId));
 
 		// Simulate loading state
 		// Directly set the private field so the component renders the LoadingComponent
@@ -307,12 +317,12 @@ public class DetailsTests : BunitContext
 	public async Task ShowsSpinnerWhileLoading_AndHidesAfter()
 	{
 		// Arrange
-	var articleId = Guid.NewGuid();
-		var tcs = new TaskCompletionSource<Result<ArticleDto>>();
+		Guid articleId = Guid.NewGuid();
+		TaskCompletionSource<Result<ArticleDto>> tcs = new ();
 		_mockHandler.HandleAsync(articleId).Returns(_ => tcs.Task);
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleId));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleId));
 
 		// Spinner should be present while the task is pending
 		cut.Markup.Should().Contain("animate-spin");
@@ -330,18 +340,18 @@ public class DetailsTests : BunitContext
 	public void EditButton_IsEnabled_WhenCanEditIsTrue()
 	{
 		// Arrange
-		var articleDto = FakeArticleDto.GetNewArticleDto(true);
+		ArticleDto articleDto = FakeArticleDto.GetNewArticleDto(true);
 		articleDto.CanEdit = true;
-	_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
+		_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetProperty("_article")?.SetValue(cut.Instance, articleDto);
 		cut.Render();
 
 		// Assert
-		var editButton = cut.Find("button.btn-secondary");
+		IElement editButton = cut.Find("button.btn-secondary");
 		editButton.HasAttribute("disabled").Should().BeFalse();
 	}
 
@@ -349,18 +359,18 @@ public class DetailsTests : BunitContext
 	public void EditButton_IsDisabled_WhenCanEditIsFalse()
 	{
 		// Arrange
-		var articleDto = FakeArticleDto.GetNewArticleDto(true);
+		ArticleDto articleDto = FakeArticleDto.GetNewArticleDto(true);
 		articleDto.CanEdit = false;
-	_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
+		_mockHandler.HandleAsync(articleDto.Id).Returns(Result<ArticleDto>.Ok(articleDto));
 
 		// Act
-		var cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
+		IRenderedComponent<Details> cut = Render<Details>(parameters => parameters.Add(p => p.Id, articleDto.Id));
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetProperty("_article")?.SetValue(cut.Instance, articleDto);
 		cut.Render();
 
 		// Assert
-		var editButton = cut.Find("button.btn-secondary");
+		IElement editButton = cut.Find("button.btn-secondary");
 		editButton.HasAttribute("disabled").Should().BeTrue();
 	}
 
@@ -384,7 +394,7 @@ public class DetailsTests : BunitContext
 			builder.CloseComponent();
 		};
 
-		var cut = Render<AuthorizeView>(parameters => parameters
+		IRenderedComponent<AuthorizeView> cut = Render<AuthorizeView>(parameters => parameters
 				.Add(p => p.Authorized, authorizedFragment)
 				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);

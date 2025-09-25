@@ -2,7 +2,9 @@
 
 **Last updated:** June 12, 2025
 
-These instructions define the required coding, architecture, and project rules for all .NET code in this repository. They are based on the actual practices and conventions in the Article ServiceApp solution. For more details, see [CONTRIBUTING.md](../docs/CONTRIBUTING.md).
+These instructions define the required coding, architecture, and project rules for all .NET code in this repository.
+They are based on the actual practices and conventions in the Article ServiceApp solution. For more details,
+see [CONTRIBUTING.md](../docs/CONTRIBUTING.md).
 
 ---
 
@@ -66,7 +68,8 @@ These instructions define the required coding, architecture, and project rules f
 - **Enforce Architecture Tests:** `true` (see `tests/Architecture.Tests.Unit/`)
 - **Enforce Vertical Slice Architecture:** `true`
 - **Enforce Aspire:** `true` (see `AppHost/`, `README.md`)
-- **Centralize NuGet Package Versions:** `true` (all package versions must be managed in `Directory.Packages.props` at the repo root; do not specify versions in individual project files)
+- **Centralize NuGet Package Versions:** `true` (all package versions must be managed in `Directory.Packages.props` at
+  the repo root; do not specify versions in individual project files)
 
 ### Blazor (Required)
 
@@ -118,7 +121,8 @@ Project Name :  ${File.ProjectName}
 - **Use MongoDB:** `true` (see `Persistence.MongoDb/`)
 - **Prefer Async Operations:** `true`
 - **Use Migrations:** `false` (for MongoDB)
-- **Use TestContainers:** `true` (for Integration testing, see `tests/Article Service.Persistence.MongoDb.Tests.Integration/`)
+- **Use TestContainers:** `true` (for Integration testing, see
+  `tests/Article Service.Persistence.MongoDb.Tests.Integration/`)
 - **Use Change Tracking:** `true`
 - **Use DbContext Pooling:** `true`
 - **Use In-Memory Database:** `false`
@@ -169,4 +173,5 @@ Project Name :  ${File.ProjectName}
 
 ---
 
-**Note:** These rules are enforced via `.editorconfig`, StyleCop, and other tooling where possible. For questions or clarifications, see [CONTRIBUTING.md](../docs/CONTRIBUTING.md).
+**Note:** These rules are enforced via `.editorconfig`, StyleCop, and other tooling where possible. For questions or
+clarifications, see [CONTRIBUTING.md](../docs/CONTRIBUTING.md).

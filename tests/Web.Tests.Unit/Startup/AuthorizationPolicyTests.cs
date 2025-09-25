@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     AuthorizationPolicyTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -24,10 +24,10 @@ public class AuthorizationPolicyTests : IClassFixture<TestWebApplicationFactory>
 	[Fact]
 	public async Task AdminOnly_Policy_Requires_Admin_Role()
 	{
-		using var scope = _factory.Services.CreateScope();
-		var provider = scope.ServiceProvider.GetRequiredService<IAuthorizationPolicyProvider>();
+		using IServiceScope scope = _factory.Services.CreateScope();
+		IAuthorizationPolicyProvider provider = scope.ServiceProvider.GetRequiredService<IAuthorizationPolicyProvider>();
 
-	var policy = await provider.GetPolicyAsync(ADMIN_POLICY);
+		AuthorizationPolicy? policy = await provider.GetPolicyAsync(ADMIN_POLICY);
 		policy.Should().NotBeNull();
 
 		policy.Requirements.OfType<RolesAuthorizationRequirement>()

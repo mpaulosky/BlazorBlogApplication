@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     Helpers.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -33,7 +33,7 @@ public static class Helpers
 		// tests may still override or register concrete handlers as needed.
 		//TestServiceRegistrations.RegisterAll(context);
 
-		var authContext = context.AddAuthorization();
+		BunitAuthorizationContext authContext = context.AddAuthorization();
 
 		if (isAuthorized)
 		{
@@ -43,10 +43,9 @@ public static class Helpers
 			// Build claims: include email and a sample profile picture URL as string, and optional roles
 			const string testEmail = "test@example.com";
 
-			var claims = new List<Claim>
+			List<Claim> claims = new()
 			{
-					new(ClaimTypes.Email, testEmail),
-					new("picture", "https://example.com/picture.jpg")
+					new Claim(ClaimTypes.Email, testEmail), new Claim("picture", "https://example.com/picture.jpg")
 			};
 
 			if (roles.Length > 0)

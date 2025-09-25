@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     ContactPageTest.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ContactPageTest.cs
@@ -52,7 +60,7 @@ public class ContactPageTest : BunitContext
 				""";
 
 		// Act
-		var cut = Render<Contact>();
+		IRenderedComponent<Contact> cut = Render<Contact>();
 
 		// Assert
 		cut.MarkupMatches(expectedHtml);

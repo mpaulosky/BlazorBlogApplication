@@ -1,13 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     SecurityHeadersExtensionsTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
 
-using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace Web.Extensions;
 
@@ -25,11 +25,11 @@ public class SecurityHeadersExtensionsTests
 	public async Task UseSecurityHeaders_AddsRequiredSecurityHeaders()
 	{
 		// Arrange
-		await using var factory = new TestWebApplicationFactory();
-		var client = factory.CreateClient();
+		await using TestWebApplicationFactory factory = new ();
+		HttpClient client = factory.CreateClient();
 
 		// Act
-		var response = await client.GetAsync("/health", _cancellationToken);
+		HttpResponseMessage response = await client.GetAsync("/health", _cancellationToken);
 
 		// Assert
 		response.Headers.Should().ContainKey("X-Frame-Options");
@@ -45,7 +45,7 @@ public class SecurityHeadersExtensionsTests
 		response.Headers.GetValues("Referrer-Policy").Should().Contain("strict-origin-when-cross-origin");
 
 		response.Headers.Should().ContainKey("Content-Security-Policy");
-		var cspValues = response.Headers.GetValues("Content-Security-Policy");
+		IEnumerable<string> cspValues = response.Headers.GetValues("Content-Security-Policy");
 		cspValues.Should().Contain(csp => csp.Contains("default-src 'self'"));
 	}
 

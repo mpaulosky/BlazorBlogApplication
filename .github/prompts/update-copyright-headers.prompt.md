@@ -1,6 +1,7 @@
 # Update Copyright Headers Prompt
 
-Update all C# source files in the codebase to use the following copyright header format at the top of each file. Replace any existing copyright header. The Author field must be "Matthew Paulosky".
+Update all C# source files in the codebase to use the following copyright header format at the top of each file. Replace
+any existing copyright header. The Author field must be "Matthew Paulosky".
 
 Look for the following pattern:
 

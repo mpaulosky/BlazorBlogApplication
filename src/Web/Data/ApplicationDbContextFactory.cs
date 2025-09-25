@@ -1,21 +1,19 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ApplicationDbContextFactory.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
 
+using Microsoft.EntityFrameworkCore.Design;
+
 namespace Web.Data;
 
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
-
 /// <summary>
-/// A design-time factory for <see cref="ApplicationDbContext"/> so tools (migrations, EF CLI)
-/// can create the DbContext when building.
+///   A design-time factory for <see cref="ApplicationDbContext" /> so tools (migrations, EF CLI)
+///   can create the DbContext when building.
 /// </summary>
 public sealed class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>,
 		IApplicationDbContextFactory
@@ -24,20 +22,20 @@ public sealed class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Ap
 	public ApplicationDbContext CreateDbContext()
 	{
 		// Build a minimal configuration that mirrors how the app resolves the connection string.
-		var builder = new ConfigurationBuilder()
+		IConfigurationBuilder builder = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory())
-				.AddJsonFile("appsettings.json", optional: true)
-				.AddJsonFile("appsettings.Development.json", optional: true)
+				.AddJsonFile("appsettings.json", true)
+				.AddJsonFile("appsettings.Development.json", true)
 				.AddEnvironmentVariables();
 
-		var configuration = builder.Build();
+		IConfigurationRoot configuration = builder.Build();
 
-		var connectionString = configuration["DefaultConnection"]
-													?? configuration.GetConnectionString("DefaultConnection")
-													?? configuration["ConnectionStrings:DefaultConnection"]
-													?? Environment.GetEnvironmentVariable("DefaultConnection");
+		string? connectionString = configuration["DefaultConnection"]
+															?? configuration.GetConnectionString("DefaultConnection")
+															?? configuration["ConnectionStrings:DefaultConnection"]
+															?? Environment.GetEnvironmentVariable("DefaultConnection");
 
-		var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+		DbContextOptionsBuilder<ApplicationDbContext> optionsBuilder = new ();
 
 		if (string.IsNullOrWhiteSpace(connectionString))
 		{
@@ -47,6 +45,7 @@ public sealed class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Ap
 			// behavior convenient while still allowing production to require a real
 			// connection string via RegisterDatabaseContext.
 			optionsBuilder.UseInMemoryDatabase("DesignTimeFallback");
+
 			return new ApplicationDbContext(optionsBuilder.Options);
 		}
 

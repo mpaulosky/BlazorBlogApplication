@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     OutputCacheTests.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     OutputCacheTests.cs
@@ -24,8 +32,8 @@ public class OutputCacheTests : IClassFixture<TestWebApplicationFactory>
 	[Fact]
 	public void OutputCache_Services_Are_Registered()
 	{
-		using var scope = _factory.Services.CreateScope();
-		var sp = scope.ServiceProvider;
+		using IServiceScope scope = _factory.Services.CreateScope();
+		IServiceProvider sp = scope.ServiceProvider;
 
 		sp.GetService<IOutputCacheStore>().Should().NotBeNull();
 		sp.GetService<IOptions<OutputCacheOptions>>().Should().NotBeNull();

@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FooterComponentTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -22,17 +22,17 @@ public class FooterComponentTests : BunitContext
 	{
 
 		// Arrange
-		var currentYear = DateTime.Now.Year;
+		int currentYear = DateTime.Now.Year;
 
-		var expectedHtml =
+		string expectedHtml =
 				$"""
 				<div class="text-center px-6 py-2 mx-auto xl:max-w-5xl border-t-blue-700">
-				  <a href="/">©{currentYear} MPaulosky Co. All rights reserved.</a>
+				  <a href="/">Â©{currentYear} MPaulosky Co. All rights reserved.</a>
 				</div>
 				""";
 
 		// Act
-		var cut = Render<FooterComponent>();
+		IRenderedComponent<FooterComponent> cut = Render<FooterComponent>();
 
 		// Assert
 		cut.MarkupMatches(expectedHtml);
@@ -43,8 +43,8 @@ public class FooterComponentTests : BunitContext
 	public void Renders_Footer()
 	{
 
-		var cut = Render<FooterComponent>();
-		cut.Markup.Should().Contain("©");
+		IRenderedComponent<FooterComponent> cut = Render<FooterComponent>();
+		cut.Markup.Should().Contain("Â©");
 		cut.Markup.Should().Contain("MPaulosky Co. All rights reserved.");
 		cut.Markup.Should().Contain("text-center px-6 py-2 mx-auto xl:max-w-5xl border-t-blue-700");
 

@@ -1,11 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CreateTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
+
+using AngleSharp.Dom;
 
 namespace Web.Components.Features.Categories.CategoryCreate;
 
@@ -41,7 +43,7 @@ public class CreateTests : BunitContext
 		Helpers.SetAuthorization(this);
 
 		// Act
-		var cut = Render<Create>();
+		IRenderedComponent<Create> cut = Render<Create>();
 
 		// Assert
 		cut.Markup.Should().Contain("Create Category");
@@ -59,8 +61,8 @@ public class CreateTests : BunitContext
 
 		// Arrange
 		Helpers.SetAuthorization(this);
-		var cut = Render<Create>();
-		var form = cut.Find("form");
+		IRenderedComponent<Create> cut = Render<Create>();
+		IElement form = cut.Find("form");
 
 		// Act
 		form.Submit();
@@ -76,11 +78,11 @@ public class CreateTests : BunitContext
 
 		// Arrange
 		Helpers.SetAuthorization(this);
-		var navMan = Services.GetRequiredService<BunitNavigationManager>();
+		BunitNavigationManager navMan = Services.GetRequiredService<BunitNavigationManager>();
 
 		// Ensure the handler returns success so the component navigates
 		_createHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Result.Ok());
-		var cut = Render<Create>();
+		IRenderedComponent<Create> cut = Render<Create>();
 
 		// Act
 		await cut.InvokeAsync(() => cut.Find("#name").Change("Test Category"));
@@ -101,9 +103,9 @@ public class CreateTests : BunitContext
 		// Arrange failure: configure the existing handler mock to return a failure
 		_createHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(Result.Fail("Service error"));
 
-		var cut = Render<Create>();
-		var nameInput = cut.Find("#name");
-		var form = cut.Find("form");
+		IRenderedComponent<Create> cut = Render<Create>();
+		IElement nameInput = cut.Find("#name");
+		IElement form = cut.Find("form");
 
 		// Act
 		await cut.InvokeAsync(() => nameInput.Change("Test"));
@@ -119,12 +121,12 @@ public class CreateTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this);
-		var cut = Render<Create>();
-		var nameInput = cut.Find("#name");
-		var form = cut.Find("form");
-		var submitButton = cut.Find("button[type='submit']");
+		IRenderedComponent<Create> cut = Render<Create>();
+		IElement nameInput = cut.Find("#name");
+		IElement form = cut.Find("form");
+		IElement submitButton = cut.Find("button[type='submit']");
 
-		var tcs = new TaskCompletionSource<Result>();
+		TaskCompletionSource<Result> tcs = new ();
 
 		// Make the handler return a long-running task so the component sets _isSubmitting
 		_createHandlerMock.HandleAsync(Arg.Any<CategoryDto>()).Returns(_ => tcs.Task);
@@ -145,10 +147,10 @@ public class CreateTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this);
-		var navMan = Services.GetRequiredService<BunitNavigationManager>();
-		var cut = Render<Create>();
+		BunitNavigationManager navMan = Services.GetRequiredService<BunitNavigationManager>();
+		IRenderedComponent<Create> cut = Render<Create>();
 
-		var cancelButton = cut.Find("button[type='button']");
+		IElement cancelButton = cut.Find("button[type='button']");
 
 		// Act
 		cancelButton.Click();
@@ -178,7 +180,7 @@ public class CreateTests : BunitContext
 			builder.CloseComponent();
 		};
 
-		var cut = Render<AuthorizeView>(parameters => parameters
+		IRenderedComponent<AuthorizeView> cut = Render<AuthorizeView>(parameters => parameters
 				.Add(p => p.Authorized, authorizedFragment)
 				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);
@@ -210,7 +212,7 @@ public class CreateTests : BunitContext
 			builder.CloseComponent();
 		};
 
-		var cut = Render<AuthorizeView>(parameters => parameters
+		IRenderedComponent<AuthorizeView> cut = Render<AuthorizeView>(parameters => parameters
 				.Add(p => p.Authorized, authorizedFragment)
 				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);

@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     GetArticles.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
@@ -56,19 +56,19 @@ public static class GetArticles
 			try
 			{
 
-				using var context = _factory.CreateDbContext();
+				using ApplicationDbContext context = _factory.CreateDbContext();
 
-				var articlesQuery = context.Articles
-					.Include(a => a.Author)
-					.Include(a => a.Category)
-					.AsQueryable();
+				IQueryable<Article> articlesQuery = context.Articles
+						.Include(a => a.Author)
+						.Include(a => a.Category)
+						.AsQueryable();
 
 				if (excludeArchived)
 				{
 					articlesQuery = articlesQuery.Where(x => !x.IsArchived);
 				}
 
-				var articles = await articlesQuery.ToListAsync();
+				List<Article>? articles = await articlesQuery.ToListAsync();
 
 				if (articles is null || articles.Count == 0)
 				{

@@ -1,12 +1,11 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     Article.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
-
 namespace Shared.Entities;
 
 /// <summary>
@@ -78,8 +77,8 @@ public class Article : Entity
 		IsArchived = false;
 
 		// Ensure navigation DTOs are initialized to Empty to match test expectations
-		Author = Models.ApplicationUserDto.Empty;
-		Category = Models.CategoryDto.Empty;
+		Author = ApplicationUserDto.Empty;
+		Category = CategoryDto.Empty;
 	}
 
 	/// <summary>
@@ -98,14 +97,14 @@ public class Article : Entity
 	/// <remarks>
 	///   This constructor is used to create a new article instance with all required properties.
 	/// </remarks>
-    public Article(
+	public Article(
 			string title,
 			string introduction,
 			string content,
 			string coverImageUrl,
 			string urlSlug,
-	    string authorId,
-	    Guid categoryId,
+			string authorId,
+			Guid categoryId,
 			bool isPublished = false,
 			DateTime? publishedOn = null,
 			bool isArchived = false)
@@ -126,11 +125,11 @@ public class Article : Entity
 	}
 
 	/// <summary>
-	/// Alternative constructor accepting Author and Category objects (used in tests)
+	///   Alternative constructor accepting Author and Category objects (used in tests)
 	/// </summary>
 	/// <remarks>
-	/// Added overloads will accept the newer <c>ApplicationUserDto</c> while
-	/// mapping to the legacy <c>ApplicationUserDto</c> to remain backward compatible.
+	///   Added overloads will accept the newer <c>ApplicationUserDto</c> while
+	///   mapping to the legacy <c>ApplicationUserDto</c> to remain backward compatible.
 	/// </remarks>
 	public Article(
 			string title,
@@ -218,13 +217,13 @@ public class Article : Entity
 	/// <summary>
 	///   Gets an empty article instance.
 	/// </summary>
-	public static Article Empty { get; } = new Article()
+	public static Article Empty { get; } = new()
 	{
-		Id = Guid.Empty,
-		AuthorId = string.Empty,
-		CategoryId = Guid.Empty,
-		Author = Models.ApplicationUserDto.Empty,
-		Category = Models.CategoryDto.Empty
+			Id = Guid.Empty,
+			AuthorId = string.Empty,
+			CategoryId = Guid.Empty,
+			Author = ApplicationUserDto.Empty,
+			Category = CategoryDto.Empty
 	};
 
 }

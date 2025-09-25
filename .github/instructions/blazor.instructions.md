@@ -28,7 +28,8 @@ applyTo: '**/*.razor, **/*.razor.cs, **/*.razor.css'
 ## Error Handling and Validation
 
 - Implement proper error handling for Blazor pages and API calls.
-- Use logging for error tracking in the backend and consider capturing UI-level errors in Blazor with tools like ErrorBoundary.
+- Use logging for error tracking in the backend and consider capturing UI-level errors in Blazor with tools like
+  ErrorBoundary.
 - Implement validation using FluentValidation or DataAnnotations in forms.
 
 ## Blazor API and Performance Optimization
@@ -41,17 +42,23 @@ applyTo: '**/*.razor, **/*.razor.cs, **/*.razor.css'
 
 ## Caching Strategies
 
-- Implement in-memory caching for frequently used data, especially for Blazor Server apps. Use IMemoryCache for lightweight caching solutions.
+- Implement in-memory caching for frequently used data, especially for Blazor Server apps. Use IMemoryCache for
+  lightweight caching solutions.
 - For Blazor WebAssembly, utilize localStorage or sessionStorage to cache application state between user sessions.
-- Consider Distributed Cache strategies (like Redis or SQL Server Cache) for larger applications that need shared state across multiple users or clients.
-- Cache API calls by storing responses to avoid redundant calls when data is unlikely to change, thus improving the user experience.
+- Consider Distributed Cache strategies (like Redis or SQL Server Cache) for larger applications that need shared state
+  across multiple users or clients.
+- Cache API calls by storing responses to avoid redundant calls when data is unlikely to change, thus improving the user
+  experience.
 
 ## State Management Libraries
 
 - Use Blazor's built-in Cascading Parameters and EventCallbacks for basic state sharing across components.
-- Implement advanced state management solutions using libraries like Fluxor or BlazorState when the application grows in complexity.
-- For client-side state persistence in Blazor WebAssembly, consider using Blazored.LocalStorage or Blazored.SessionStorage to maintain state between page reloads.
-- For server-side Blazor, use Scoped Services and the StateContainer pattern to manage state within user sessions while minimizing re-renders.
+- Implement advanced state management solutions using libraries like Fluxor or BlazorState when the application grows in
+  complexity.
+- For client-side state persistence in Blazor WebAssembly, consider using Blazored.LocalStorage or
+  Blazored.SessionStorage to maintain state between page reloads.
+- For server-side Blazor, use Scoped Services and the StateContainer pattern to manage state within user sessions while
+  minimizing re-renders.
 
 ## API Design and Integration
 
@@ -63,12 +70,14 @@ applyTo: '**/*.razor, **/*.razor.cs, **/*.razor.css'
 - All unit testing and integration testing should be done in Visual Studio Enterprise.
 - Test Blazor components and services using xUnit, NUnit, or MSTest.
 - Use Moq or NSubstitute for mocking dependencies during tests.
-- Debug Blazor UI issues using browser developer tools and Visual Studio's debugging tools for backend and server-side issues.
+- Debug Blazor UI issues using browser developer tools and Visual Studio's debugging tools for backend and server-side
+  issues.
 - For performance profiling and optimization, rely on Visual Studio's diagnostics tools.
 
 ## Security and Authentication
 
-- Implement Authentication and Authorization in the Blazor app where necessary using ASP.NET Identity or JWT tokens for API authentication.
+- Implement Authentication and Authorization in the Blazor app where necessary using ASP.NET Identity or JWT tokens for
+  API authentication.
 - Use HTTPS for all web communication and ensure proper CORS policies are implemented.
 
 ## API Documentation and Swagger

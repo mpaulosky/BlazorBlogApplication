@@ -4,7 +4,8 @@ This workspace file configures VS Code for working with the BlazorBlogApplicatio
 
 Quick tasks
 
-- Restore dependencies: Run the `dotnet: restore` task from the Command Palette (Tasks: Run Task) or via `dotnet restore BlazorBlogApplication.sln` in PowerShell.
+- Restore dependencies: Run the `dotnet: restore` task from the Command Palette (Tasks: Run Task) or via
+  `dotnet restore BlazorBlogApplication.sln` in PowerShell.
 - Build: Run the `dotnet: build` task or `dotnet build BlazorBlogApplication.sln`.
 - Test: Run the `dotnet: test` task or `dotnet test BlazorBlogApplication.sln`.
 

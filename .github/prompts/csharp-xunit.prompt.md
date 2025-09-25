@@ -5,13 +5,20 @@ description: "Get best practices for XUnit unit testing, including data-driven t
 
 # XUnit Best Practices
 
-Your goal is to help me write effective unit tests with XUnit v3, covering both standard and data-driven testing approaches. Use the following guidelines and examples to create robust tests. Ensure to use the AAA (Arrange-Act-Assert) pattern. When applicable, prefer using data-driven tests with the `[Theory]` attribute and inline data. When dealing with references, move them into the GlobalUsings.cs file. When mocking dependencies, use a mocking library like Moq or NSubstitute.
+Your goal is to help me write effective unit tests with XUnit v3, covering both standard and data-driven testing
+approaches. Use the following guidelines and examples to create robust tests. Ensure to use the AAA (Arrange-Act-Assert)
+pattern. When applicable, prefer using data-driven tests with the `[Theory]` attribute and inline data. When dealing
+with references, move them into the GlobalUsings.cs file. When mocking dependencies, use a mocking library like Moq or
+NSubstitute.
 
 ## Quick Tips
 
-- **Use `GlobalUsings.cs` for common references** (e.g., `using Xunit;`, `using FluentAssertions;`, `using NSubstitute;`). This keeps your test files clean and consistent.
-- **Test data management:** Use fakes, builders, or factories for generating test data. Prefer deterministic data for repeatable tests.
-- **Test discovery/filtering:** Use XUnit v3's improved test discovery and filtering (e.g., `dotnet test --filter FullyQualifiedName~MyTest` or by trait/category).
+- **Use `GlobalUsings.cs` for common references** (e.g., `using Xunit;`, `using FluentAssertions;`,
+  `using NSubstitute;`). This keeps your test files clean and consistent.
+- **Test data management:** Use fakes, builders, or factories for generating test data. Prefer deterministic data for
+  repeatable tests.
+- **Test discovery/filtering:** Use XUnit v3's improved test discovery and filtering (e.g.,
+  `dotnet test --filter FullyQualifiedName~MyTest` or by trait/category).
 
 ### Example: Testing a Blazor Article Component using XUnit
 
@@ -78,6 +85,7 @@ public class ArticleTests
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.v3.runner.visualstudio" />
   </ItemGroup>
+
 ````
 
 # Blazor Component and Page Testing with bUnit

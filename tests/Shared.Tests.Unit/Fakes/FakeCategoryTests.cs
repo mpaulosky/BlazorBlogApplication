@@ -1,11 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeCategoryTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
+
+using Bogus;
 
 namespace Shared.Fakes;
 
@@ -26,7 +28,7 @@ public class FakeCategoryTests
 	public void GetNewCategory_ShouldReturnValidCategory()
 	{
 		// Arrange & Act
-		var category = FakeCategory.GetNewCategory();
+		Category category = FakeCategory.GetNewCategory();
 
 		// Assert
 		category.Should().NotBeNull();
@@ -47,13 +49,13 @@ public class FakeCategoryTests
 		const int requested = 5;
 
 		// Act
-		var categories = FakeCategory.GetCategories(requested);
+		List<Category> categories = FakeCategory.GetCategories(requested);
 
 		// Assert
 		categories.Should().NotBeNull();
 		categories.Should().HaveCount(requested);
 
-		foreach (var c in categories)
+		foreach (Category c in categories)
 		{
 			c.CategoryName.Should().NotBeNullOrWhiteSpace();
 			c.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
@@ -69,7 +71,7 @@ public class FakeCategoryTests
 	public void GetCategories_ZeroRequested_ShouldReturnEmptyList()
 	{
 		// Act
-		var categories = FakeCategory.GetCategories(0);
+		List<Category> categories = FakeCategory.GetCategories(0);
 
 		// Assert
 		categories.Should().NotBeNull();
@@ -79,7 +81,7 @@ public class FakeCategoryTests
 	/// <summary>
 	///   Uses the seeded generator to ensure generated items still have valid static fields.
 	///   Note: Because CategoryName uses Helpers.GetRandomCategoryName and Id generation may
-	///   depend on ObjectId generation, equality of those fields is not asserted here — only
+	///   depend on ObjectId generation, equality of those fields is not asserted here â€” only
 	///   that static date fields and basic validity are present for seeded calls.
 	/// </summary>
 	[Fact]
@@ -87,8 +89,8 @@ public class FakeCategoryTests
 	{
 
 		// Act
-		var a = FakeCategory.GetNewCategory(true);
-		var b = FakeCategory.GetNewCategory(true);
+		Category a = FakeCategory.GetNewCategory(true);
+		Category b = FakeCategory.GetNewCategory(true);
 
 		// Assert - deterministic except for Id and CategoryName
 		a.Id.Should().NotBe(Guid.Empty);
@@ -114,7 +116,7 @@ public class FakeCategoryTests
 	{
 
 		// Act
-		var results = FakeCategory.GetCategories(count);
+		List<Category> results = FakeCategory.GetCategories(count);
 
 		// Assert
 		results.Should().NotBeNull();
@@ -137,7 +139,7 @@ public class FakeCategoryTests
 		const int count = 2;
 
 		// Act
-		var categories = FakeCategory.GetCategories(count, true);
+		List<Category> categories = FakeCategory.GetCategories(count, true);
 
 		// Assert
 
@@ -151,16 +153,16 @@ public class FakeCategoryTests
 	}
 
 	/// <summary>
-	///  Verifies that the <see cref="FakeCategory.GenerateFake" /> configuration produces
-	///  valid <see cref="Category" /> instances when used directly.
+	///   Verifies that the <see cref="FakeCategory.GenerateFake" /> configuration produces
+	///   valid <see cref="Category" /> instances when used directly.
 	/// </summary>
 	[Fact]
 	public void GenerateFake_ShouldConfigureFakerCorrectly()
 	{
 
 		// Act
-		var faker = FakeCategory.GenerateFake();
-		var category = faker.Generate();
+		Faker<Category> faker = FakeCategory.GenerateFake();
+		Category? category = faker.Generate();
 
 		// Assert
 		category.Should().NotBeNull();
@@ -180,7 +182,7 @@ public class FakeCategoryTests
 	{
 
 		// Act
-		var categories = FakeCategory.GenerateFake(true).Generate(2);
+		List<Category>? categories = FakeCategory.GenerateFake(true).Generate(2);
 
 		// Assert
 		categories.Should().HaveCount(2);
@@ -202,11 +204,11 @@ public class FakeCategoryTests
 	{
 
 		// Act
-		var faker1 = FakeCategory.GenerateFake();
-		var faker2 = FakeCategory.GenerateFake();
+		Faker<Category> faker1 = FakeCategory.GenerateFake();
+		Faker<Category> faker2 = FakeCategory.GenerateFake();
 
-		var category1 = faker1.Generate();
-		var category2 = faker2.Generate();
+		Category? category1 = faker1.Generate();
+		Category? category2 = faker2.Generate();
 
 		// Assert
 		category1.Should().NotBeEquivalentTo(category2,

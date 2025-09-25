@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     EntityTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
@@ -23,7 +23,7 @@ public class EntityTests
 	public void DefaultConstructor_ShouldInitializeProperties()
 	{
 		// Arrange & Act
-		var entity = new TestEntity();
+		TestEntity entity = new ();
 
 		// Assert
 		entity.Id.Should().NotBeEmpty();
@@ -36,8 +36,8 @@ public class EntityTests
 	public void CanSetModifiedOnAndArchived()
 	{
 		// Arrange
-		var entity = new TestEntity();
-		var now = DateTime.UtcNow;
+		TestEntity entity = new ();
+		DateTime now = DateTime.UtcNow;
 
 		// Act
 		entity.ModifiedOn = now;

@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     GetArticle.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
@@ -65,12 +65,12 @@ public static class GetArticle
 			try
 			{
 
-				using var context = _factory.CreateDbContext();
+				using ApplicationDbContext context = _factory.CreateDbContext();
 
-				var article = await context.Articles
-					.Include(a => a.Author)
-					.Include(a => a.Category)
-					.FirstOrDefaultAsync(a => a.Id == id);
+				Article? article = await context.Articles
+						.Include(a => a.Author)
+						.Include(a => a.Category)
+						.FirstOrDefaultAsync(a => a.Id == id);
 
 				if (article is null)
 				{
@@ -80,7 +80,7 @@ public static class GetArticle
 				}
 
 				_logger.LogInformation("Article was found successfully: {CategoryId}", id);
-				var dto = ArticleDto.FromEntity(article);
+				ArticleDto dto = ArticleDto.FromEntity(article);
 
 				return Result<ArticleDto>.Ok(dto);
 			}

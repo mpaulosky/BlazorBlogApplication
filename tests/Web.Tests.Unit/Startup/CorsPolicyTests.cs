@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     CorsPolicyTests.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CorsPolicyTests.cs
@@ -24,11 +32,11 @@ public class CorsPolicyTests : IClassFixture<TestWebApplicationFactory>
 	[Fact]
 	public async Task DefaultCorsPolicy_Exists_And_Has_Expected_Origins()
 	{
-		using var scope = _factory.Services.CreateScope();
-		var provider = scope.ServiceProvider.GetRequiredService<ICorsPolicyProvider>();
+		using IServiceScope scope = _factory.Services.CreateScope();
+		ICorsPolicyProvider provider = scope.ServiceProvider.GetRequiredService<ICorsPolicyProvider>();
 
-		var httpContext = new DefaultHttpContext();
-	var policy = await provider.GetPolicyAsync(httpContext, DEFAULT_CORS_POLICY);
+		DefaultHttpContext httpContext = new ();
+		CorsPolicy? policy = await provider.GetPolicyAsync(httpContext, DEFAULT_CORS_POLICY);
 
 		policy.Should().NotBeNull();
 

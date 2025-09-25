@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     LoginComponentTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -26,7 +26,7 @@ public class AccessControlComponentTests : BunitContext
 		SetAuthorization(isAuthorized, hasRoles);
 
 		// Act
-		var cut = Render<AccessControlComponent>();
+		IRenderedComponent<AccessControlComponent> cut = Render<AccessControlComponent>();
 
 		// Assert
 		cut.MarkupMatches(
@@ -37,7 +37,7 @@ public class AccessControlComponentTests : BunitContext
 	private void SetAuthorization(bool isAuthorized = true, bool hasRoles = false)
 	{
 
-		var authContext = AddAuthorization();
+		BunitAuthorizationContext authContext = AddAuthorization();
 
 		// Set up the authentication state for the component
 		if (isAuthorized)

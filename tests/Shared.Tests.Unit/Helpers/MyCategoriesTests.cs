@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     MyCategoriesTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
@@ -21,26 +21,26 @@ public class MyCategoriesTests
 	public void MyCategories_ShouldContainExpectedCategoryNames()
 	{
 		// Arrange
-		var expectedFirst = "ASP.NET Core";
-		var expectedSecond = "Blazor Server";
-		var expectedThird = "Blazor WebAssembly";
-		var expectedFourth = "C# Programming";
-		var expectedFifth = "Entity Framework Core (EF Core)";
-		var expectedSixth = ".NET MAUI";
-		var expectedSeventh = "General Programming";
-		var expectedEighth = "Web Development";
-		var expectedNinth = "Other .NET Topics";
+		string expectedFirst = "ASP.NET Core";
+		string expectedSecond = "Blazor Server";
+		string expectedThird = "Blazor WebAssembly";
+		string expectedFourth = "C# Programming";
+		string expectedFifth = "Entity Framework Core (EF Core)";
+		string expectedSixth = ".NET MAUI";
+		string expectedSeventh = "General Programming";
+		string expectedEighth = "Web Development";
+		string expectedNinth = "Other .NET Topics";
 
 		// Act
-		var first = MyCategories.FIRST;
-		var second = MyCategories.SECOND;
-		var third = MyCategories.THIRD;
-		var fourth = MyCategories.FOURTH;
-		var fifth = MyCategories.FIFTH;
-		var sixth = MyCategories.SIXTH;
-		var seventh = MyCategories.SEVENTH;
-		var eighth = MyCategories.EIGHTH;
-		var ninth = MyCategories.NINTH;
+		string first = MyCategories.FIRST;
+		string second = MyCategories.SECOND;
+		string third = MyCategories.THIRD;
+		string fourth = MyCategories.FOURTH;
+		string fifth = MyCategories.FIFTH;
+		string sixth = MyCategories.SIXTH;
+		string seventh = MyCategories.SEVENTH;
+		string eighth = MyCategories.EIGHTH;
+		string ninth = MyCategories.NINTH;
 
 		// Assert
 		first.Should().Be(expectedFirst);

@@ -1,11 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeApplicationUserTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
+
+using Bogus;
 
 namespace Shared.Fakes;
 
@@ -22,7 +24,7 @@ public class FakeApplicationUserTests
 	public void GetNewApplicationUser_ShouldReturnValidUser()
 	{
 		// Act
-		var user = FakeApplicationUser.GetNewApplicationUser();
+		ApplicationUser user = FakeApplicationUser.GetNewApplicationUser();
 
 		// Assert
 		user.Should().NotBeNull();
@@ -40,7 +42,7 @@ public class FakeApplicationUserTests
 		const int requested = 5;
 
 		// Act
-		var list = FakeApplicationUser.GetApplicationUsers(requested);
+		List<ApplicationUser> list = FakeApplicationUser.GetApplicationUsers(requested);
 
 		// Assert
 		list.Should().NotBeNull();
@@ -56,7 +58,7 @@ public class FakeApplicationUserTests
 	public void GetApplicationUsers_ZeroRequested_ShouldReturnEmptyList()
 	{
 		// Act
-		var list = FakeApplicationUser.GetApplicationUsers(0);
+		List<ApplicationUser> list = FakeApplicationUser.GetApplicationUsers(0);
 
 		// Assert
 		list.Should().NotBeNull();
@@ -67,8 +69,8 @@ public class FakeApplicationUserTests
 	public void GetNewApplicationUser_WithSeed_ShouldReturnDeterministicResult()
 	{
 		// Act
-		var a = FakeApplicationUser.GetNewApplicationUser(true);
-		var b = FakeApplicationUser.GetNewApplicationUser(true);
+		ApplicationUser a = FakeApplicationUser.GetNewApplicationUser(true);
+		ApplicationUser b = FakeApplicationUser.GetNewApplicationUser(true);
 
 		// Assert - deterministic except for Id which is generated via ObjectId.NewId().ToString()
 		a.Should().BeEquivalentTo(b, opts => opts
@@ -82,14 +84,14 @@ public class FakeApplicationUserTests
 		const int count = 3;
 
 		// Act
-		var r1 = FakeApplicationUser.GetApplicationUsers(count, true);
-		var r2 = FakeApplicationUser.GetApplicationUsers(count, true);
+		List<ApplicationUser> r1 = FakeApplicationUser.GetApplicationUsers(count, true);
+		List<ApplicationUser> r2 = FakeApplicationUser.GetApplicationUsers(count, true);
 
 		// Assert
 		r1.Should().HaveCount(count);
 		r2.Should().HaveCount(count);
 
-		for (var i = 0; i < count; i++)
+		for (int i = 0; i < count; i++)
 		{
 			r1[i].Should().BeEquivalentTo(r2[i], opts => opts.Excluding(x => x.Id));
 
@@ -102,8 +104,8 @@ public class FakeApplicationUserTests
 	public void GenerateFake_ShouldConfigureFakerCorrectly()
 	{
 		// Act
-		var faker = FakeApplicationUser.GenerateFake();
-		var user = faker.Generate();
+		Faker<ApplicationUser> faker = FakeApplicationUser.GenerateFake();
+		ApplicationUser? user = faker.Generate();
 
 		// Assert
 		user.Should().NotBeNull();
@@ -119,8 +121,8 @@ public class FakeApplicationUserTests
 	public void GenerateFake_WithSeed_ShouldApplySeed()
 	{
 		// Act
-		var a1 = FakeApplicationUser.GenerateFake(true).Generate();
-		var a2 = FakeApplicationUser.GenerateFake(true).Generate();
+		ApplicationUser? a1 = FakeApplicationUser.GenerateFake(true).Generate();
+		ApplicationUser? a2 = FakeApplicationUser.GenerateFake(true).Generate();
 
 		// Assert
 		a2.Should().BeEquivalentTo(a1, opts => opts.Excluding(x => x.Id));
@@ -130,8 +132,8 @@ public class FakeApplicationUserTests
 	public void GenerateFake_WithSeedFalse_ShouldNotApplySeed()
 	{
 		// Act
-		var a1 = FakeApplicationUser.GenerateFake().Generate();
-		var a2 = FakeApplicationUser.GenerateFake().Generate();
+		ApplicationUser? a1 = FakeApplicationUser.GenerateFake().Generate();
+		ApplicationUser? a2 = FakeApplicationUser.GenerateFake().Generate();
 
 		// Assert - focus on string fields that should generally differ without a seed
 		a1.UserName.Should().NotBe(a2.UserName);

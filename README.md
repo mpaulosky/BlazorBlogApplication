@@ -23,9 +23,12 @@
 
 ## Overview
 
-BlazorApp is a modern, secure, and scalable .NET 9 solution built with Blazor Server, .NET Aspire, and PostgresSQL. It demonstrates best practices in architecture, testing, and cloud-native development, including CQRS, Vertical Slice, and strong security defaults (HTTPS, CORS, Antiforgery, secure headers, and pluggable authentication providers).
+BlazorApp is a modern, secure, and scalable .NET 9 solution built with Blazor Server, .NET Aspire, and PostgresSQL. It
+demonstrates best practices in architecture, testing, and cloud-native development, including CQRS, Vertical Slice, and
+strong security defaults (HTTPS, CORS, Antiforgery, secure headers, and pluggable authentication providers).
 
 ****
+
 ## Solution Structure
 
 ```
@@ -37,6 +40,7 @@ tests             -- Unit, integration, and architecture tests (xUnit, bUnit, Pl
 ```
 
 ****
+
 ## Key Technologies & Features
 
 - **.NET 9** & **.NET Aspire** (cloud-native orchestration)
@@ -52,6 +56,7 @@ tests             -- Unit, integration, and architecture tests (xUnit, bUnit, Pl
 - **Unit, Integration, and Architecture Tests** (xUnit, bUnit, Playwright, TestContainers)
 
 ****
+
 ## Coding & Architecture Standards
 
 This repository enforces the following rules for all .NET code (see `.editorconfig`, StyleCop, and tooling):
@@ -60,7 +65,8 @@ This repository enforces the following rules for all .NET code (see `.editorconf
 - **Explicit Types:** Use explicit types except where `var` improves clarity
 - **Null Checks:** Use `is null` / `is not null`
 - **Records & Minimal APIs:** Prefer records and minimal APIs
-- **File Scoped Namespaces & Global Usings:** Use file-scoped namespaces and centralized global usings (`GlobalUsings.cs`)
+- **File Scoped Namespaces & Global Usings:** Use file-scoped namespaces and centralized global usings (
+  `GlobalUsings.cs`)
 - **Nullable Reference Types:** Enabled
 - **Pattern Matching:** Preferred
 - **Line Length:** Max 120
@@ -104,7 +110,8 @@ This repository enforces the following rules for all .NET code (see `.editorconf
 ### Database
 
 - **Entity Framework Core, MongoDB (see `Persistence.MongoDb/`), SQL Server**
-- **Async Operations, TestContainers for Integration Testing (`tests/Article Service.Persistence.MongoDb.Tests.Integration/`), Change Tracking, DbContext Pooling**
+- **Async Operations, TestContainers for Integration
+  Testing (`tests/Article Service.Persistence.MongoDb.Tests.Integration/`), Change Tracking, DbContext Pooling**
 
 ### Versioning & Caching
 
@@ -133,22 +140,26 @@ This repository enforces the following rules for all .NET code (see `.editorconf
 - **xUnit, FluentAssertions, NSubstitute, Moq, bUnit (`tests/Web.Tests.Unit/`), Playwright**
 
 ****
+
 ## Getting Started
 
 ### Authentication
 
-This application supports ASP.NET Core authentication providers. Configure authentication via user secrets or environment variables in the `AppHost` project and ensure the provider-specific settings are present before running the application.
+This application supports ASP.NET Core authentication providers. Configure authentication via user secrets or
+environment variables in the `AppHost` project and ensure the provider-specific settings are present before running the
+application.
 
 ### Running the Application
 
 1. **Requirements:** .NET 9 SDK, Docker (for MongoDB/Redis/TestContainers), Node.js (for Playwright tests)
 2. **Run the App:**
-   - `dotnet run --project AppHost` (or use Visual Studio/Rider launch)
+  - `dotnet run --project AppHost` (or use Visual Studio/Rider launch)
 3. **Browse:** Navigate to the provided endpoint (see console output)
 4. **tests:**
-   - `dotnet test` (runs all unit/integration/architecture tests)
+  - `dotnet test` (runs all unit/integration/architecture tests)
 
 ****
+
 ## Contribution & Documentation
 
 - [Code of Conduct](./docs/CODE_OF_CONDUCT.md)
@@ -156,13 +167,15 @@ This application supports ASP.NET Core authentication providers. Configure authe
 - [Architecture & Usage Docs](./README.md)
 
 ****
+
 ## Software References
 
 - .NET 9, .NET Aspire
 - Blazor Server, C#, TailwindCSS
 - PostgresSQL, Redis
-  
+
 ****
+
 ## License
 
 See [LICENSE](./LICENSE.txt)

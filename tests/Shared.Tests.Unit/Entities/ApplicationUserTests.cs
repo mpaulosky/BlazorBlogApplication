@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ApplicationUserTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
@@ -20,7 +20,7 @@ public class ApplicationUserTests
 	[Fact]
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
-		var user = new ApplicationUser();
+		ApplicationUser user = new ();
 		user.Id.Should().BeEmpty();
 		user.UserName.Should().BeEmpty();
 		user.Email.Should().BeEmpty();
@@ -30,7 +30,7 @@ public class ApplicationUserTests
 	[Fact]
 	public void ParameterizedConstructor_ShouldSetAllProperties()
 	{
-		var user = FakeApplicationUser.GetNewApplicationUser(true);
+		ApplicationUser user = FakeApplicationUser.GetNewApplicationUser(true);
 
 		user.Id.Should().BeEquivalentTo(user.Id);
 		user.UserName.Should().BeEquivalentTo(user.UserName);
