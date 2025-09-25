@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     Helpers.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
@@ -34,7 +34,7 @@ public static partial class Helpers
 	public static string GetSlug(this string item)
 	{
 
-		var slug = MyRegex().Replace(item.ToLower(), "_")
+		string slug = MyRegex().Replace(item.ToLower(), "_")
 				.Trim('_');
 
 		return HttpUtility.UrlEncode(slug);
@@ -49,7 +49,7 @@ public static partial class Helpers
 	public static string GetRandomCategoryName()
 	{
 
-		var categories = new List<string>
+		List<string> categories = new()
 		{
 				MyCategories.FIRST,
 				MyCategories.SECOND,

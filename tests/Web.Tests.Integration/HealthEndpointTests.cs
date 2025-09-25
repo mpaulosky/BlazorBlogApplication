@@ -1,29 +1,40 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     HealthEndpointTests.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Integration
+// =======================================================
+
 using System.Net;
-using Xunit;
-using Web.Fixtures.Extensions;
+
+using Web.Extensions;
 
 namespace Web;
 
 [Collection("Test Collection")]
 public class HealthEndpointTests
 {
-    private readonly Web.Fixtures.WebTestFactory _factory;
 
-    public HealthEndpointTests(Web.Fixtures.WebTestFactory factory)
-    {
-        _factory = factory;
-    }
+	private readonly WebTestFactory _factory;
 
-    [Fact]
-    public async Task Get_Root_ReturnsSuccess()
-    {
-        // Arrange
-        using var client = _factory.CreateClientWithJson();
+	public HealthEndpointTests(WebTestFactory factory)
+	{
+		_factory = factory;
+	}
 
-        // Act
-        var res = await client.GetAsync("/", TestContext.Current.CancellationToken);
+	[Fact]
+	public async Task Get_Root_ReturnsSuccess()
+	{
+		// Arrange
+		using HttpClient client = _factory.CreateClientWithJson();
 
-        // Assert
-        res.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
+		// Act
+		HttpResponseMessage res = await client.GetAsync("/", TestContext.Current.CancellationToken);
+
+		// Assert
+		res.StatusCode.Should().Be(HttpStatusCode.OK);
+	}
+
 }

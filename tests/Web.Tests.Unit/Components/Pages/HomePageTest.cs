@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     HomePageTest.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -43,7 +43,7 @@ public class HomePageTest : BunitContext
 				""";
 
 		// Act
-		var cut = Render<Home>();
+		IRenderedComponent<Home> cut = Render<Home>();
 
 		// Assert
 		cut.MarkupMatches(expectedHtml);
@@ -78,7 +78,7 @@ public class HomePageTest : BunitContext
 				""";
 
 		// Act
-		var cut = Render<Home>();
+		IRenderedComponent<Home> cut = Render<Home>();
 
 		// Assert
 		cut.MarkupMatches(expectedHtml);

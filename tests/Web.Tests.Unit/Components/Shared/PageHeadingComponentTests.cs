@@ -1,11 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     PageHeadingComponentTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
+
+using Bunit.Rendering;
 
 namespace Web.Components.Shared;
 
@@ -32,7 +34,7 @@ public class PageHeadingComponentTests : BunitContext
 		ComponentFactories.AddStub<PageTitle>();
 
 		// Act
-		var cut = Render<PageHeadingComponent>(parameters => parameters
+		IRenderedComponent<PageHeadingComponent> cut = Render<PageHeadingComponent>(parameters => parameters
 				.Add(p => p.Level, level)
 				.Add(p => p.HeaderText, headerText)
 				.Add(p => p.TextColorClass, headerColor));
@@ -44,8 +46,11 @@ public class PageHeadingComponentTests : BunitContext
 		cut.Markup.Should().Contain(expectedHtml);
 
 		// Assert PageTitle
-		var pageTitleStub = cut.FindComponent<Stub<PageTitle>>();
-		var pageTitle = Render(pageTitleStub.Instance.Parameters.Get(p => p.ChildContent)!);
+		IRenderedComponent<Stub<PageTitle>> pageTitleStub = cut.FindComponent<Stub<PageTitle>>();
+
+		IRenderedComponent<ContainerFragment> pageTitle =
+				Render(pageTitleStub.Instance.Parameters.Get(p => p.ChildContent)!);
+
 		pageTitle.Markup.Should().Be(headerText);
 
 	}

@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CreateCategory.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
@@ -54,18 +54,16 @@ public static class CreateCategory
 			if (request is null)
 			{
 				_logger.LogError("The request is null.");
+
 				return Result.Fail("The request is null.");
 			}
 
 			try
 			{
 
-				var context = _factory.CreateDbContext();
+				ApplicationDbContext context = _factory.CreateDbContext();
 
-				var category = new Category
-				{
-					CategoryName = request.CategoryName
-				};
+				Category category = new() { CategoryName = request.CategoryName };
 
 				context.Categories.Add(category);
 				await context.SaveChangesAsync();

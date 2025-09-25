@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     GetCategories.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
@@ -53,11 +53,13 @@ public static class GetCategories
 			try
 			{
 
-				var context = _factory.CreateDbContext();
+				ApplicationDbContext context = _factory.CreateDbContext();
 
-				var categories = excludeArchived
+				List<Category>? categories = excludeArchived
 						? await context.Categories.Where(x => !x.IsArchived).ToListAsync()
-						: await context.Categories.ToListAsync(); if (categories is null || categories.Count == 0)
+						: await context.Categories.ToListAsync();
+
+				if (categories is null || categories.Count == 0)
 				{
 					_logger.LogWarning("No categories found.");
 

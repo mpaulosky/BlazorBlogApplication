@@ -1,13 +1,11 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeApplicationUserDto.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
-
-using Shared.Enums;
 
 namespace Shared.Fakes;
 
@@ -52,7 +50,7 @@ public static class FakeApplicationUserDto
 	internal static Faker<ApplicationUserDto> GenerateFake(bool useSeed = false)
 	{
 
-		var fake = new Faker<ApplicationUserDto>()
+		Faker<ApplicationUserDto>? fake = new Faker<ApplicationUserDto>()
 				.RuleFor(x => x.Id, Guid.CreateVersion7().ToString())
 				.RuleFor(x => x.UserName, f => f.Name.FullName())
 				.RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.UserName))

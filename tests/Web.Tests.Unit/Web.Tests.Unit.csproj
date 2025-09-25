@@ -44,7 +44,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Components\Features\Categories\CategoryEdit\" />
+		<Folder Include="Components\Features\Categories\CategoryEdit\"/>
 	</ItemGroup>
 
 </Project>

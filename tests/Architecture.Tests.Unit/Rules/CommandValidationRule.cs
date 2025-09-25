@@ -1,11 +1,12 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CommandValidationRule.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Architecture.Tests.Unit
 // =======================================================
+
 
 namespace Architecture.Rules;
 

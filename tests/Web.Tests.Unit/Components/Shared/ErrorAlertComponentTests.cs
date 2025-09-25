@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     ErrorAlertComponentTests.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ErrorAlertComponentTests.cs
@@ -18,11 +26,11 @@ public class ErrorAlertComponentTests : BunitContext
 	public void RendersTitleAndChildContent_WhenChildProvided()
 	{
 		// Arrange
-		var title = "Test Title";
-		var child = (RenderFragment)(builder => builder.AddContent(0, "Child message here."));
+		string title = "Test Title";
+		RenderFragment child = (RenderFragment)(builder => builder.AddContent(0, "Child message here."));
 
 		// Act
-		var cut = Render<ErrorAlertComponent>(parameters => parameters
+		IRenderedComponent<ErrorAlertComponent> cut = Render<ErrorAlertComponent>(parameters => parameters
 				.Add(p => p.Title, title)
 				.Add<RenderFragment>(p => p.ChildContent!, child)
 		);
@@ -36,11 +44,11 @@ public class ErrorAlertComponentTests : BunitContext
 	public void UsesMessageFallback_WhenNoChildContentProvided()
 	{
 		// Arrange
-		var title = "Fallback Title";
-		var message = "Fallback message.";
+		string title = "Fallback Title";
+		string message = "Fallback message.";
 
 		// Act
-		var cut = Render<ErrorAlertComponent>(parameters => parameters
+		IRenderedComponent<ErrorAlertComponent> cut = Render<ErrorAlertComponent>(parameters => parameters
 				.Add(p => p.Title, title)
 				.Add(p => p.Message, message)
 		);
@@ -54,11 +62,11 @@ public class ErrorAlertComponentTests : BunitContext
 	public void HasCorrectVisualStructure()
 	{
 		// Arrange
-		var title = "Visual Title";
-		var message = "Visual message.";
+		string title = "Visual Title";
+		string message = "Visual message.";
 
 		// Act
-		var cut = Render<ErrorAlertComponent>(parameters => parameters
+		IRenderedComponent<ErrorAlertComponent> cut = Render<ErrorAlertComponent>(parameters => parameters
 				.Add(p => p.Title, title)
 				.Add(p => p.Message, message)
 		);

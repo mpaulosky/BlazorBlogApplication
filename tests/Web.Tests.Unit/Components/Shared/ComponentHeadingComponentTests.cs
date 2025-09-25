@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ComponentHeadingComponentTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -28,7 +28,7 @@ public class ComponentHeadingComponentTests : BunitContext
 	{
 
 		// Arrange & Act
-		var cut = Render<ComponentHeadingComponent>(parameters => parameters
+		IRenderedComponent<ComponentHeadingComponent> cut = Render<ComponentHeadingComponent>(parameters => parameters
 				.Add(p => p.Level, level)
 				.Add(p => p.HeaderText, headerText)
 				.Add(p => p.TextColorClass, headerColor));

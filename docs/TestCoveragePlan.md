@@ -1,8 +1,11 @@
 # Test Coverage Improvement Plan
 
-This document summarizes current code coverage gaps (from coverage.opencover.xml) and proposes a prioritized, actionable plan to add tests that cover missing or under-tested code paths. The emphasis is on high-value areas (core handlers, layout logic, and user info flows) with minimal code changes.
+This document summarizes current code coverage gaps (from coverage.opencover.xml) and proposes a prioritized, actionable
+plan to add tests that cover missing or under-tested code paths. The emphasis is on high-value areas (core handlers,
+layout logic, and user info flows) with minimal code changes.
 
 Overall coverage (from report):
+
 - Sequence coverage: 81.45%
 - Branch coverage: 69.89%
 - Classes covered: 85/100
@@ -10,36 +13,48 @@ Overall coverage (from report):
 ## Highest Priority Targets
 
 1) Web.Program (0% covered)
-- Why: Entry-point configuration is important to validate DI, middleware, and endpoint wiring. Currently 0% coverage drags overall metrics.
+
+- Why: Entry-point configuration is important to validate DI, middleware, and endpoint wiring. Currently 0% coverage
+  drags overall metrics.
 - Proposed tests:
-  - Startup smoke test using WebApplicationFactory or minimal host to ensure the app can build and start with default configuration.
+  - Startup smoke test using WebApplicationFactory or minimal host to ensure the app can build and start with default
+    configuration.
   - Verify critical service registrations (e.g., auth, antiforgery, output caching) via service provider lookups.
 - Suggested test files:
   - tests/Web.Tests.Unit/Startup/ProgramSmokeTests.cs
 - Acceptance: At least one test executes code paths in Program (Main builder pipeline) without failing.
 
 2) Web.Components.Layout.MainLayout.GetErrorCode (0% covered)
-- Why: Logic mapping exceptions to HTTP-like status codes is pure, small, and easy to cover, giving quick branch coverage wins.
+
+- Why: Logic mapping exceptions to HTTP-like status codes is pure, small, and easy to cover, giving quick branch
+  coverage wins.
 - Proposed tests:
-  - Inputs: UnauthorizedAccessException, KeyNotFoundException, NotSupportedException, generic Exception, custom known exceptions if used.
+  - Inputs: UnauthorizedAccessException, KeyNotFoundException, NotSupportedException, generic Exception, custom known
+    exceptions if used.
   - Assert: returns expected codes (likely 401/403/404/500 or app-specific mapping) for each branch and default path.
 - Suggested test files:
   - tests/Web.Tests.Unit/Components/Layout/MainLayoutTests.cs
 - Acceptance: 100% sequence and branch coverage for GetErrorCode.
 
 3) Web.Components.Features.UserInfo.Profile.LoadUserDataAsync (0% covered)
-- Why: User profile loading is a meaningful user path. Current coverage is 0% for the state machine, indicating no tests exercise this async flow.
+
+- Why: User profile loading is a meaningful user path. Current coverage is 0% for the state machine, indicating no tests
+  exercise this async flow.
 - Proposed tests (BUnit component tests):
-  - Success path: authenticated user; assert rendered user info and roles list using `Helpers.SetAuthorization` to configure authentication state.
+  - Success path: authenticated user; assert rendered user info and roles list using `Helpers.SetAuthorization` to
+    configure authentication state.
   - No user path: unauthenticated; assert appropriate placeholder/error UI.
   - Error path: component handles exceptions and surfaces error UI without crashing.
 - Infra:
-  - Use `Helpers.SetAuthorization` and component-level DI to inject required test doubles for user data if needed. Avoid coupling tests to a specific external identity provider implementation; prefer using claims-based AuthenticationState where possible.
+  - Use `Helpers.SetAuthorization` and component-level DI to inject required test doubles for user data if needed. Avoid
+    coupling tests to a specific external identity provider implementation; prefer using claims-based
+    AuthenticationState where possible.
 - Suggested test files:
   - tests/Web.Tests.Unit/Components/Features/UserInfo/Profile/ProfileTests.cs
 - Acceptance: Cover branches in LoadUserDataAsync, including filters/linq display class delegate.
 
 4) Category Handlers: GetCategories.Handler.HandleAsync (0% covered)
+
 - Why: Core data retrieval logic used by Category list. Zero coverage means no direct validation of handler behavior.
 - Proposed tests:
   - Returns Ok with list when repository has data.
@@ -52,6 +67,7 @@ Overall coverage (from report):
 - Acceptance: 100% sequence coverage for handler ctor and HandleAsync, meaningful branch coverage.
 
 5) Category Handlers: EditCategory.Handler.HandleAsync (0% covered)
+
 - Why: Update path should be reliable; editing failures need to be caught.
 - Proposed tests:
   - Successfully updates existing category (Ok result).
@@ -66,16 +82,19 @@ Overall coverage (from report):
 ## Medium Priority Targets
 
 6) Web.Data.Auth0 helpers (if still present)
+
 - Current: Helper logic that was used by the Auth0 integration may or may not be present in the codebase.
 - If `Web.Data.Auth0` remains in the repository: Proposed tests:
   - Unit tests for `IgnoreUnderscoreNamingPolicy.ConvertName` covering names with and without a leading underscore.
-  - Tests for `GetAccessTokenAsync` and other HTTP-dependent branches using `HttpMessageHandler` stubs to simulate non-success responses (401, 500) and verify error handling.
+  - Tests for `GetAccessTokenAsync` and other HTTP-dependent branches using `HttpMessageHandler` stubs to simulate
+    non-success responses (401, 500) and verify error handling.
   - Suggested test files:
     - tests/Shared.Tests.Unit/Data/Auth0/Auth0ServiceTests.cs
   - Acceptance: Increase branch coverage for any remaining Auth0 helper logic.
 - If the `Web.Data.Auth0` code has been removed from the codebase, skip these tests.
 
 7) Web.Data.MyBlogContextFactory (0% covered)
+
 - Proposed tests:
   - CreateAsync returns a context with initialized collections; cancels gracefully on CancellationToken cancellation.
 - Suggested test files:
@@ -84,7 +103,9 @@ Overall coverage (from report):
 ## Low Priority / Consider Exclusions
 
 8) Program.cs exclusion consideration
-- If integration-sytle tests are not feasible in the unit test suite, consider applying [ExcludeFromCodeCoverage] on Program or refactor startup into a testable composition root method.
+
+- If integration-sytle tests are not feasible in the unit test suite, consider applying [ExcludeFromCodeCoverage] on
+  Program or refactor startup into a testable composition root method.
 
 ## Coverage Goals
 
@@ -94,8 +115,10 @@ Overall coverage (from report):
 
 ## Implementation Notes and Patterns
 
-- BUnit patterns are already established in existing tests (Helpers.SetAuthorization, TestServiceRegistrations.RegisterCommonUtilities). Reuse these.
-- For handlers relying on Mongo collections, favor testing via abstractions (IMyBlogContext) and returning in-memory lists to avoid heavy integration.
+- BUnit patterns are already established in existing tests (Helpers.SetAuthorization,
+  TestServiceRegistrations.RegisterCommonUtilities). Reuse these.
+- For handlers relying on Mongo collections, favor testing via abstractions (IMyBlogContext) and returning in-memory
+  lists to avoid heavy integration.
 - Prefer Result<T> assertions (Ok/Fail) directly for handler tests; assert message text where applicable.
 - Use deterministic fake data providers (FakeCategoryDto, FakeArticleDto) with useSeed=true for stable tests.
 - Add logging assertions where feasible using a TestLogger or NSubstitute for ILogger.

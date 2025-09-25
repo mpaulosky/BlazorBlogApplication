@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CategoryDto.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
@@ -79,6 +79,7 @@ public class CategoryDto
 	public bool Archived
 	{
 		get => IsArchived;
+
 		set => IsArchived = value;
 	}
 
@@ -91,11 +92,11 @@ public class CategoryDto
 	{
 		return new CategoryDto
 		{
-			Id = c.Id,
-			CategoryName = c.CategoryName,
-			CreatedOn = c.CreatedOn,
-			ModifiedOn = c.ModifiedOn,
-			IsArchived = c.IsArchived
+				Id = c.Id,
+				CategoryName = c.CategoryName,
+				CreatedOn = c.CreatedOn,
+				ModifiedOn = c.ModifiedOn,
+				IsArchived = c.IsArchived
 		};
 	}
 

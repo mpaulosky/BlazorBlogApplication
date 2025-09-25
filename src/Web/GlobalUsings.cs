@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     GlobalUsings.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
@@ -13,7 +13,6 @@ global using System.Diagnostics.CodeAnalysis;
 global using System.Text.Json;
 
 // Auth0 removed: using Microsoft Identity and cookie authentication instead
-
 global using FluentValidation;
 
 global using Mapster;

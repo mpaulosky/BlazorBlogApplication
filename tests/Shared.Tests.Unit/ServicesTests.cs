@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ServicesTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
@@ -30,15 +30,15 @@ public class ServicesTests
 	public void Constant_Equals_ExpectedValue(string fieldName, string expected)
 	{
 		// Arrange
-		var t = typeof(Services);
+		Type t = typeof(Services);
 
 		// Act
-		var fi = t.GetField(fieldName, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+		FieldInfo? fi = t.GetField(fieldName, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
 
 		// Assert
 		fi.Should().NotBeNull($"Field '{fieldName}' should exist on {t.FullName}");
 		fi.FieldType.Should().Be<string>($"Field '{fieldName}' should be a string");
-		var value = (string?)fi.GetValue(null);
+		string? value = (string?)fi.GetValue(null);
 		value.Should().Be(expected, $"Field '{fieldName}' should have the expected value");
 	}
 
@@ -46,9 +46,9 @@ public class ServicesTests
 	public void All_Public_StringConstants_Are_NotNullOrWhiteSpace_And_Are_Trimmed_And_Are_Const()
 	{
 		// Arrange
-		var t = typeof(Services);
+		Type t = typeof(Services);
 
-		var fields = t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+		FieldInfo[] fields = t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
 				.Where(f => f.FieldType == typeof(string))
 				.ToArray();
 
@@ -56,10 +56,10 @@ public class ServicesTests
 		fields.Should().NotBeNull().And.NotBeEmpty("There should be at least one public string constant in Services");
 
 		// Act & Assert
-		foreach (var f in fields)
+		foreach (FieldInfo f in fields)
 		{
 			// Act
-			var val = (string?)f.GetValue(null);
+			string? val = (string?)f.GetValue(null);
 
 			// Assert - not null or whitespace
 			val.Should().NotBeNullOrWhiteSpace($"Field '{f.Name}' must not be null/empty/whitespace");
@@ -76,15 +76,15 @@ public class ServicesTests
 	public void All_Public_StringConstants_Are_CaseSensitive_Unique()
 	{
 		// Arrange
-		var t = typeof(Services);
+		Type t = typeof(Services);
 
-		var values = t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+		string?[] values = t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
 				.Where(f => f.FieldType == typeof(string))
 				.Select(f => (string?)f.GetValue(null))
 				.ToArray();
 
 		// Act
-		var distinctCount = values.Distinct().Count();
+		int distinctCount = values.Distinct().Count();
 
 		// Assert
 		distinctCount.Should().Be(values.Length, "All public string constants should have unique values (case-sensitive)");
@@ -94,15 +94,15 @@ public class ServicesTests
 	public void All_Public_StringConstants_Are_CaseInsensitive_Unique()
 	{
 		// Arrange
-		var t = typeof(Services);
+		Type t = typeof(Services);
 
-		var values = t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+		string?[] values = t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
 				.Where(f => f.FieldType == typeof(string))
 				.Select(f => ((string?)f.GetValue(null))?.ToLowerInvariant())
 				.ToArray();
 
 		// Act
-		var distinctCount = values.Distinct().Count();
+		int distinctCount = values.Distinct().Count();
 
 		// Assert
 		// Case-insensitive uniqueness is intentionally not enforced because some
@@ -116,14 +116,14 @@ public class ServicesTests
 	public void All_Public_StringConstant_Names_Are_Uppercase()
 	{
 		// Arrange
-		var t = typeof(Services);
+		Type t = typeof(Services);
 
-		var fields = t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+		FieldInfo[] fields = t.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
 				.Where(f => f.FieldType == typeof(string))
 				.ToArray();
 
 		// Act & Assert
-		foreach (var f in fields)
+		foreach (FieldInfo f in fields)
 		{
 			// Only allow uppercase letters, digits and underscore in constant names
 			f.Name.Should().MatchRegex("^[A-Z0-9_]+$",

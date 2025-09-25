@@ -1,18 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     RegisterDatabaseContext.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
 
 namespace Web.Extensions;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-
-using Web.Data;
 
 /// <summary>
 ///   IServiceCollectionExtensions
@@ -32,10 +27,10 @@ public static partial class ServiceCollectionExtensions
 		// Aspire may populate this value as a user secret / parameter or under the
 		// ConnectionStrings section. Also allow overriding via environment variable
 		// for CI or DevOps pipelines.
-		var connectionString = configuration["DefaultConnection"]
-										?? configuration.GetConnectionString("DefaultConnection")
-										?? configuration["ConnectionStrings:DefaultConnection"]
-										?? Environment.GetEnvironmentVariable("DefaultConnection");
+		string? connectionString = configuration["DefaultConnection"]
+															?? configuration.GetConnectionString("DefaultConnection")
+															?? configuration["ConnectionStrings:DefaultConnection"]
+															?? Environment.GetEnvironmentVariable("DefaultConnection");
 
 		if (string.IsNullOrWhiteSpace(connectionString))
 		{
@@ -47,13 +42,13 @@ public static partial class ServiceCollectionExtensions
 			// ensure the connection string is provided (for example via the test
 			// fixture). Falling back prevents startup from throwing.
 			services.AddDbContext<ApplicationDbContext>(options =>
-				options.UseInMemoryDatabase("BlazorBlog_Test_Db"));
+					options.UseInMemoryDatabase("BlazorBlog_Test_Db"));
 		}
 		else
 		{
 			// Register Entity Framework with PostgreSQL
 			services.AddDbContext<ApplicationDbContext>(options =>
-				options.UseNpgsql(connectionString));
+					options.UseNpgsql(connectionString));
 		}
 
 		// Do not register the standard EF Core IDbContextFactory here. The factory

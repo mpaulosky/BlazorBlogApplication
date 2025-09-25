@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     AppHost.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  AppHost
 // =======================================================
@@ -28,20 +28,20 @@ public static class AppHostEntryPoint
 	/// <param name="args">Command-line arguments.</param>
 	public static void Main(string[] args)
 	{
-		var builder = DistributedApplication.CreateBuilder(args);
+		IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
-	var cache = builder.AddRedis(CACHE)
+		IResourceBuilder<RedisResource> cache = builder.AddRedis(CACHE)
 				.WithLifetime(ContainerLifetime.Persistent)
 				.WithRedisInsight();
 
-	var postgres = builder.AddPostgres(SERVER)
+		IResourceBuilder<PostgresServerResource> postgres = builder.AddPostgres(SERVER)
 				.WithLifetime(ContainerLifetime.Persistent)
 				.WithPgAdmin()
 				.WithDataVolume(isReadOnly: false);
 
-	var postgresDb = postgres.AddDatabase(ARTICLE_DATABASE);
+		IResourceBuilder<PostgresDatabaseResource> postgresDb = postgres.AddDatabase(ARTICLE_DATABASE);
 
-	builder.AddProject<Web>(WEBSITE)
+		builder.AddProject<Web>(WEBSITE)
 				.WithReference(postgresDb)
 				.WithReference(cache)
 				.WaitFor(postgres)

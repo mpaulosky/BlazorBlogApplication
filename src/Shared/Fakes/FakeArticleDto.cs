@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeArticleDto.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
@@ -49,7 +49,7 @@ public static class FakeArticleDto
 	/// <returns>Configured Faker <see cref="ArticleDto" /> instance.</returns>
 	internal static Faker<ArticleDto> GenerateFake(bool useSeed = false)
 	{
-		var fake = new Faker<ArticleDto>()
+		Faker<ArticleDto>? fake = new Faker<ArticleDto>()
 				.RuleFor(f => f.Id, Guid.CreateVersion7())
 				.RuleFor(f => f.Title, f => f.WaffleTitle())
 				.RuleFor(f => f.Introduction, f => f.Lorem.Sentence())

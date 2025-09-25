@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     TestWebApplicationFactory.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -28,18 +28,18 @@ public class TestWebApplicationFactory : WebApplicationFactory<IAppMarker>
 	{
 		_environment = environment;
 
-			_config = config ?? new Dictionary<string, string?>
-			{
+		_config = config ?? new Dictionary<string, string?>
+		{
 				// Provide a placeholder DefaultConnection so production startup code that
 				// expects a connection string can initialize during unit tests without
 				// requiring external configuration.
 				["DefaultConnection"] = "Host=localhost;Database=Test;Username=test;Password=test"
-			};
+		};
 
 		// Export the test configuration to environment variables so that
 		// host-level configuration (which may be evaluated before the
 		// web-host's in-memory collection is applied) can see these values.
-		foreach (var kvp in _config)
+		foreach (KeyValuePair<string, string?> kvp in _config)
 		{
 			if (kvp.Value is null)
 			{
@@ -52,9 +52,9 @@ public class TestWebApplicationFactory : WebApplicationFactory<IAppMarker>
 		}
 
 		// Ensure missing known keys are cleared so edge-case tests behave deterministically
-	var knownKeys = new[] { "mongoDb-connection", "DefaultConnection" };
+		string[] knownKeys = new[] { "mongoDb-connection", "DefaultConnection" };
 
-		foreach (var key in knownKeys)
+		foreach (string key in knownKeys)
 		{
 			if (!_config.ContainsKey(key) || string.IsNullOrWhiteSpace(_config[key]))
 			{
@@ -71,7 +71,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<IAppMarker>
 	protected override void Dispose(bool disposing)
 	{
 		// Restore environment variables to previous values
-		foreach (var kvp in _previousEnv)
+		foreach (KeyValuePair<string, string?> kvp in _previousEnv)
 		{
 			Environment.SetEnvironmentVariable(kvp.Key, kvp.Value);
 		}

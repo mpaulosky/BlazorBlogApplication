@@ -1,11 +1,12 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     GlobalUsings.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Architecture.Tests.Unit
 // =======================================================
+
 
 global using System;
 global using System.Collections.Generic;

@@ -2,7 +2,7 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     Services.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
@@ -48,6 +48,7 @@ public static class Services
 	public const string ADMIN_POLICY = "AdminOnly";
 
 	public const string DEFAULT_CORS_POLICY = "DefaultPolicy";
+
 	// NOTE: Public PascalCase aliases were removed to satisfy unit tests which require
 	// all public string constant names to be uppercase and unique. Projects that used
 	// the PascalCase names should reference the uppercase constants (e.g. `SERVER`,

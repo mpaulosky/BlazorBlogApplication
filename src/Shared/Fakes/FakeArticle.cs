@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeArticle.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
@@ -37,23 +37,23 @@ public static class FakeArticle
 	/// <returns>A list of fake <see cref="Article" /> objects.</returns>
 	public static List<Article> GetArticles(int numberRequested, bool useSeed = false)
 	{
-		var articles = new List<Article>();
+		List<Article> articles = new ();
 
 		// Reuse a single Faker instance within this call to ensure unique items in the list.
 		// For seeded runs, create a fresh seeded instance per call so repeated calls yield the same sequence.
-		var faker = GenerateFake(useSeed);
+		Faker<Article>? faker = GenerateFake(useSeed);
 
 		// Ensure CreatedOn/ModifiedOn are deterministic for seeded list generation across separate calls
 		if (useSeed)
 		{
 			faker = faker
-				.RuleFor(f => f.CreatedOn, _ => GetStaticDate())
-				.RuleFor(f => f.ModifiedOn, _ => null);
+					.RuleFor(f => f.CreatedOn, _ => GetStaticDate())
+					.RuleFor(f => f.ModifiedOn, _ => null);
 		}
 
-		for (var i = 0; i < numberRequested; i++)
+		for (int i = 0; i < numberRequested; i++)
 		{
-			var article = faker.Generate();
+			Article? article = faker.Generate();
 			articles.Add(article);
 		}
 
@@ -68,7 +68,7 @@ public static class FakeArticle
 	/// <returns>Configured Faker <see cref="Article" /> instance.</returns>
 	internal static Faker<Article> GenerateFake(bool useSeed = false)
 	{
-		var fake = new Faker<Article>()
+		Faker<Article>? fake = new Faker<Article>()
 				.RuleFor(a => a.Id, (_, __) => Guid.CreateVersion7())
 				.RuleFor(a => a.Title, (f, _) => f.WaffleTitle())
 				.RuleFor(a => a.Introduction, (f, _) => f.Lorem.Sentence())

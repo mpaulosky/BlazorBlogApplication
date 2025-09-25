@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     EnvironmentBehaviorTests.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     EnvironmentBehaviorTests.cs
@@ -6,6 +14,8 @@
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
+
+using System.Net.Http;
 
 namespace Web.Startup;
 
@@ -22,15 +32,12 @@ public class EnvironmentBehaviorTests : BunitContext
 
 		// Arrange
 		Helpers.SetAuthorization(this);
-		await using var factory = new TestWebApplicationFactory("Production");
+		await using TestWebApplicationFactory factory = new ("Production");
 
-		var client = factory.CreateClient(new WebApplicationFactoryClientOptions
-		{
-			AllowAutoRedirect = false
-		});
+		HttpClient client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
 
 		// Act
-		var res = await client.GetAsync("/", _cancellationToken);
+		HttpResponseMessage res = await client.GetAsync("/", _cancellationToken);
 
 		// Assert
 		res.StatusCode.Should().BeOneOf(HttpStatusCode.OK, HttpStatusCode.Redirect, HttpStatusCode.NotFound);

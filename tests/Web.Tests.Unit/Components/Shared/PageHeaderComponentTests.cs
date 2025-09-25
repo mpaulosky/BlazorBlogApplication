@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     PageHeaderComponentTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -24,7 +24,7 @@ public class PageHeaderComponentTests : BunitContext
 	public void Should_Render_Correct_Header_Level(string level, string headerText, string expectedHtml)
 	{
 		// Arrange & Act
-		var cut = Render<PageHeaderComponent>(parameters => parameters
+		IRenderedComponent<PageHeaderComponent> cut = Render<PageHeaderComponent>(parameters => parameters
 				.Add(p => p.Level, level)
 				.Add(p => p.HeaderText, headerText));
 

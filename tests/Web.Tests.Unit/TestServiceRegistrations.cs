@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     TestServiceRegistrations.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     TestServiceRegistrations.cs
@@ -42,7 +50,7 @@ public static class TestServiceRegistrations
 		{
 			try
 			{
-				var concrete = sp.GetService(typeof(TConcrete));
+				object? concrete = sp.GetService(typeof(TConcrete));
 
 				if (concrete is TInterface asInterface)
 				{
@@ -63,11 +71,11 @@ public static class TestServiceRegistrations
 	// Register ApplicationDbContext and a simple factory that returns it
 	private static ApplicationDbContext RegisterMyBlogContext(BunitContext ctx)
 	{
-		var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-			.UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-			.Options;
+		DbContextOptions<ApplicationDbContext> options = new DbContextOptionsBuilder<ApplicationDbContext>()
+				.UseInMemoryDatabase(Guid.NewGuid().ToString())
+				.Options;
 
-		var blogContext = new ApplicationDbContext(options);
+		ApplicationDbContext blogContext = new (options);
 
 		ctx.Services.AddScoped(_ => blogContext);
 		ctx.Services.AddScoped<IApplicationDbContextFactory>(_ => new TestIApplicationDbContextFactory(blogContext));
@@ -79,37 +87,33 @@ public static class TestServiceRegistrations
 	private static void RegisterHandlerSubstitutes(BunitContext ctx)
 	{
 		// Prepare sample data shared by multiple default substitutes
-		var sampleCategory = new CategoryDto
-		{
-			Id = Guid.NewGuid(),
-			CategoryName = "General Programming"
-		};
+		CategoryDto sampleCategory = new() { Id = Guid.NewGuid(), CategoryName = "General Programming" };
 
-		var sampleArticle = new ArticleDto
+		ArticleDto sampleArticle = new()
 		{
-			Id = Guid.NewGuid(),
-			Title = "The Empathy Of Mission Contemplation",
-			Introduction = "Intro",
-			Content = "Sample article content",
-			CoverImageUrl = string.Empty,
-			UrlSlug = "the-empathy-of-mission-contemplation",
-			Author = ApplicationUserDto.Empty,
-			Category = sampleCategory,
-			CreatedOn = DateTime.UtcNow,
-			ModifiedOn = null,
-			IsPublished = true,
-			PublishedOn = DateTime.UtcNow,
-			IsArchived = false,
-			CanEdit = true
+				Id = Guid.NewGuid(),
+				Title = "The Empathy Of Mission Contemplation",
+				Introduction = "Intro",
+				Content = "Sample article content",
+				CoverImageUrl = string.Empty,
+				UrlSlug = "the-empathy-of-mission-contemplation",
+				Author = ApplicationUserDto.Empty,
+				Category = sampleCategory,
+				CreatedOn = DateTime.UtcNow,
+				ModifiedOn = null,
+				IsPublished = true,
+				PublishedOn = DateTime.UtcNow,
+				IsArchived = false,
+				CanEdit = true
 		};
 
 		if (!IsEitherRegistered(typeof(GetCategory.IGetCategoryHandler), typeof(GetCategory.Handler)))
 		{
-			var getCategorySub = Substitute.For<GetCategory.IGetCategoryHandler>();
+			GetCategory.IGetCategoryHandler? getCategorySub = Substitute.For<GetCategory.IGetCategoryHandler>();
 
 			// Default: return a sample category so components render normally in tests.
-	    getCategorySub.HandleAsync(Arg.Any<Guid>())
-		    .Returns(Result.Ok(sampleCategory));
+			getCategorySub.HandleAsync(Arg.Any<Guid>())
+					.Returns(Result.Ok(sampleCategory));
 
 			// Register the interface with a factory that prefers a concrete handler if present,
 			// otherwise falls back to the substitute.
@@ -117,7 +121,7 @@ public static class TestServiceRegistrations
 			{
 				try
 				{
-					var concrete = sp.GetService(typeof(GetCategory.Handler));
+					object? concrete = sp.GetService(typeof(GetCategory.Handler));
 
 					if (concrete is GetCategory.IGetCategoryHandler asInterface)
 					{
@@ -135,16 +139,16 @@ public static class TestServiceRegistrations
 
 		if (!IsEitherRegistered(typeof(GetCategories.IGetCategoriesHandler), typeof(GetCategories.Handler)))
 		{
-			var getCategoriesSub = Substitute.For<GetCategories.IGetCategoriesHandler>();
+			GetCategories.IGetCategoriesHandler? getCategoriesSub = Substitute.For<GetCategories.IGetCategoriesHandler>();
 
-	    getCategoriesSub.HandleAsync(Arg.Any<bool>())
-		    .Returns(Result.Ok<IEnumerable<CategoryDto>>([ sampleCategory ]));
+			getCategoriesSub.HandleAsync(Arg.Any<bool>())
+					.Returns(Result.Ok<IEnumerable<CategoryDto>>([ sampleCategory ]));
 
 			ctx.Services.AddScoped<GetCategories.IGetCategoriesHandler>(sp =>
 			{
 				try
 				{
-					var concrete = sp.GetService(typeof(GetCategories.Handler));
+					object? concrete = sp.GetService(typeof(GetCategories.Handler));
 
 					if (concrete is GetCategories.IGetCategoriesHandler asInterface)
 					{
@@ -162,14 +166,16 @@ public static class TestServiceRegistrations
 
 		if (!IsEitherRegistered(typeof(CreateCategory.ICreateCategoryHandler), typeof(CreateCategory.Handler)))
 		{
-			var createCategorySub = Substitute.For<CreateCategory.ICreateCategoryHandler>();
+			CreateCategory.ICreateCategoryHandler? createCategorySub =
+					Substitute.For<CreateCategory.ICreateCategoryHandler>();
+
 			createCategorySub.HandleAsync(Arg.Any<CategoryDto>()).Returns(Result.Ok());
 
 			ctx.Services.AddScoped<CreateCategory.ICreateCategoryHandler>(sp =>
 			{
 				try
 				{
-					var concrete = sp.GetService(typeof(CreateCategory.Handler));
+					object? concrete = sp.GetService(typeof(CreateCategory.Handler));
 
 					if (concrete is CreateCategory.ICreateCategoryHandler asInterface)
 					{
@@ -187,14 +193,14 @@ public static class TestServiceRegistrations
 
 		if (!IsEitherRegistered(typeof(EditCategory.IEditCategoryHandler), typeof(EditCategory.Handler)))
 		{
-			var editCategorySub = Substitute.For<EditCategory.IEditCategoryHandler>();
+			EditCategory.IEditCategoryHandler? editCategorySub = Substitute.For<EditCategory.IEditCategoryHandler>();
 			editCategorySub.HandleAsync(Arg.Any<CategoryDto>()).Returns(Result.Ok());
 
 			ctx.Services.AddScoped<EditCategory.IEditCategoryHandler>(sp =>
 			{
 				try
 				{
-					var concrete = sp.GetService(typeof(EditCategory.Handler));
+					object? concrete = sp.GetService(typeof(EditCategory.Handler));
 
 					if (concrete is EditCategory.IEditCategoryHandler asInterface)
 					{
@@ -213,14 +219,14 @@ public static class TestServiceRegistrations
 		// Articles
 		if (!IsEitherRegistered(typeof(GetArticle.IGetArticleHandler), typeof(GetArticle.Handler)))
 		{
-			var getArticleSub = Substitute.For<GetArticle.IGetArticleHandler>();
+			GetArticle.IGetArticleHandler? getArticleSub = Substitute.For<GetArticle.IGetArticleHandler>();
 			getArticleSub.HandleAsync(Arg.Any<Guid>()).Returns(Result.Ok(sampleArticle));
 
 			ctx.Services.AddScoped<GetArticle.IGetArticleHandler>(sp =>
 			{
 				try
 				{
-					var concrete = sp.GetService(typeof(GetArticle.Handler));
+					object? concrete = sp.GetService(typeof(GetArticle.Handler));
 
 					if (concrete is GetArticle.IGetArticleHandler asInterface)
 					{
@@ -238,16 +244,16 @@ public static class TestServiceRegistrations
 
 		if (!IsEitherRegistered(typeof(GetArticles.IGetArticlesHandler), typeof(GetArticles.Handler)))
 		{
-			var getArticlesSub = Substitute.For<GetArticles.IGetArticlesHandler>();
+			GetArticles.IGetArticlesHandler? getArticlesSub = Substitute.For<GetArticles.IGetArticlesHandler>();
 
-	    getArticlesSub.HandleAsync(Arg.Any<bool>())
-		    .Returns(Result.Ok<IEnumerable<ArticleDto>>([ sampleArticle ]));
+			getArticlesSub.HandleAsync(Arg.Any<bool>())
+					.Returns(Result.Ok<IEnumerable<ArticleDto>>([ sampleArticle ]));
 
 			ctx.Services.AddScoped<GetArticles.IGetArticlesHandler>(sp =>
 			{
 				try
 				{
-					var concrete = sp.GetService(typeof(GetArticles.Handler));
+					object? concrete = sp.GetService(typeof(GetArticles.Handler));
 
 					if (concrete is GetArticles.IGetArticlesHandler asInterface)
 					{
@@ -283,16 +289,16 @@ public static class TestServiceRegistrations
 		// Create and register an ApplicationDbContext instance and use it directly. Do not
 		// call BuildServiceProvider() here because Bunit will lock the service
 		// provider once any service is resolved.
-		var context = RegisterMyBlogContext(ctx);
+		ApplicationDbContext context = RegisterMyBlogContext(ctx);
 
-		var loggerGet = Substitute.For<ILogger<GetCategory.Handler>>();
-		var getHandler = new GetCategory.Handler(new TestIApplicationDbContextFactory(context), loggerGet);
+		ILogger<GetCategory.Handler>? loggerGet = Substitute.For<ILogger<GetCategory.Handler>>();
+		GetCategory.Handler getHandler = new (new TestIApplicationDbContextFactory(context), loggerGet);
 		ctx.Services.AddScoped(_ => getHandler);
 		ctx.Services.AddScoped<GetCategory.IGetCategoryHandler>(_ => getHandler);
 
-		var loggerEdit = Substitute.For<ILogger<EditCategory.Handler>>();
-		var factory = new TestIApplicationDbContextFactory(context);
-		var editHandler = new EditCategory.Handler(factory, loggerEdit);
+		ILogger<EditCategory.Handler>? loggerEdit = Substitute.For<ILogger<EditCategory.Handler>>();
+		TestIApplicationDbContextFactory factory = new (context);
+		EditCategory.Handler editHandler = new (factory, loggerEdit);
 		ctx.Services.AddScoped(_ => editHandler);
 		ctx.Services.AddScoped<EditCategory.IEditCategoryHandler>(_ => editHandler);
 	}
@@ -305,7 +311,8 @@ public static class TestServiceRegistrations
 		// their own in-memory contexts explicitly via RegisterMyBlogContext.
 		if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("DefaultConnection")))
 		{
-			Environment.SetEnvironmentVariable("DefaultConnection", "Host=localhost;Database=Test;Username=Test;Password=Test");
+			Environment.SetEnvironmentVariable("DefaultConnection",
+					"Host=localhost;Database=Test;Username=Test;Password=Test");
 		}
 
 		if (ctx.Services.All(sd => sd.ServiceType != typeof(NavigationManager)))
@@ -316,7 +323,7 @@ public static class TestServiceRegistrations
 		// Add a generic logger factory if none present
 		if (ctx.Services.All(sd => sd.ServiceType != typeof(ILoggerFactory)))
 		{
-			var loggerFactory = new LoggerFactory();
+			LoggerFactory loggerFactory = new ();
 			ctx.Services.AddSingleton(loggerFactory);
 			ctx.Services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 		}
@@ -366,7 +373,7 @@ public static class TestServiceRegistrations
 
 		public override Task<AuthenticationState> GetAuthenticationStateAsync()
 		{
-			var anonymous = new ClaimsPrincipal(new ClaimsIdentity());
+			ClaimsPrincipal anonymous = new (new ClaimsIdentity());
 
 			return Task.FromResult(new AuthenticationState(anonymous));
 		}
@@ -377,7 +384,8 @@ public static class TestServiceRegistrations
 	public static void RegisterAll(BunitContext ctx)
 	{
 		RegisterCommonUtilities(ctx);
-	// Auth0 removed: no-op
+
+		// Auth0 removed: no-op
 
 		// Ensure ApplicationDbContext is available so concrete handlers (that require it)
 		// can be activated when tests register concrete handler types directly.

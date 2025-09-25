@@ -2,14 +2,14 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     AuthenticationService.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
 
 // Auth0 removed - using Microsoft Identity instead
+
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Web.Extensions;
 
@@ -43,14 +43,14 @@ public static partial class ServiceCollectionExtensions
 
 		// Add Identity stores using EF Core Identity setup already present in ApplicationDbContext
 		services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-		{
-			// Configure password/lockout settings conservatively for security; override in appsettings if needed
-			options.Password.RequireDigit = false;
-			options.Password.RequireNonAlphanumeric = false;
-			options.Password.RequiredLength = 6;
-		})
-		.AddEntityFrameworkStores<ApplicationDbContext>()
-		.AddSignInManager();
+				{
+					// Configure password/lockout settings conservatively for security; override in appsettings if needed
+					options.Password.RequireDigit = false;
+					options.Password.RequireNonAlphanumeric = false;
+					options.Password.RequiredLength = 6;
+				})
+				.AddEntityFrameworkStores<ApplicationDbContext>()
+				.AddSignInManager();
 
 	}
 

@@ -1,11 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeArticleTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
+
+using Bogus;
 
 namespace Shared.Fakes;
 
@@ -22,7 +24,7 @@ public class FakeArticleTests
 	public void GetNewArticle_ShouldReturnValidArticle()
 	{
 		// Act
-		var article = FakeArticle.GetNewArticle();
+		Article article = FakeArticle.GetNewArticle();
 
 		// Assert
 		article.Should().NotBeNull();
@@ -52,13 +54,13 @@ public class FakeArticleTests
 		const int requested = 5;
 
 		// Act
-		var articles = FakeArticle.GetArticles(requested);
+		List<Article> articles = FakeArticle.GetArticles(requested);
 
 		// Assert
 		articles.Should().NotBeNull();
 		articles.Should().HaveCount(requested);
 
-		foreach (var a in articles)
+		foreach (Article a in articles)
 		{
 			a.Id.Should().NotBe(Guid.Empty);
 			a.Title.Should().NotBeNullOrWhiteSpace();
@@ -81,7 +83,7 @@ public class FakeArticleTests
 	public void GetArticles_ZeroRequested_ShouldReturnEmptyList()
 	{
 		// Act
-		var articles = FakeArticle.GetArticles(0);
+		List<Article> articles = FakeArticle.GetArticles(0);
 
 		// Assert
 		articles.Should().NotBeNull();
@@ -95,7 +97,7 @@ public class FakeArticleTests
 	public void GetArticles_ShouldReturnRequestedNumberOfArticles(int count)
 	{
 		// Act
-		var results = FakeArticle.GetArticles(count);
+		List<Article> results = FakeArticle.GetArticles(count);
 
 		// Assert
 		results.Should().NotBeNull();
@@ -111,8 +113,8 @@ public class FakeArticleTests
 	{
 
 		// Act
-		var faker = FakeArticle.GenerateFake();
-		var article = faker.Generate();
+		Faker<Article> faker = FakeArticle.GenerateFake();
+		Article? article = faker.Generate();
 
 		// Assert
 		article.Should().NotBeNull();
@@ -128,8 +130,8 @@ public class FakeArticleTests
 	public void GenerateFake_WithSeedFalse_ShouldNotApplySeed()
 	{
 		// Act
-		var a1 = FakeArticle.GenerateFake().Generate();
-		var a2 = FakeArticle.GenerateFake().Generate();
+		Article? a1 = FakeArticle.GenerateFake().Generate();
+		Article? a2 = FakeArticle.GenerateFake().Generate();
 
 		// Assert - focus on string fields that should generally differ without a seed
 		a1.Title.Should().NotBe(a2.Title);

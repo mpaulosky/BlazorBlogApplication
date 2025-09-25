@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CategoryValidatorTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
@@ -19,16 +19,16 @@ public class CategoryValidatorTests
 	[Fact]
 	public void Should_Have_Error_When_CategoryName_Is_Empty()
 	{
-		var category = new Category { CategoryName = "" };
-		var result = _validator.TestValidate(category);
+		Category category = new()  { CategoryName = "" };
+		TestValidationResult<Category>? result = _validator.TestValidate(category);
 		result.ShouldHaveValidationErrorFor(x => x.CategoryName);
 	}
 
 	[Fact]
 	public void Should_Not_Have_Error_When_CategoryName_Is_Not_Empty()
 	{
-		var category = new Category { CategoryName = "Test Category" };
-		var result = _validator.TestValidate(category);
+		Category category = new()  { CategoryName = "Test Category" };
+		TestValidationResult<Category>? result = _validator.TestValidate(category);
 		result.ShouldNotHaveValidationErrorFor(x => x.CategoryName);
 	}
 

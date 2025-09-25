@@ -1,13 +1,11 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeApplicationUser.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
-
-using Shared.Enums;
 
 namespace Shared.Fakes;
 
@@ -52,12 +50,13 @@ public static class FakeApplicationUser
 	internal static Faker<ApplicationUser> GenerateFake(bool useSeed = false)
 	{
 
-		var fake = new Faker<ApplicationUser>()
+		Faker<ApplicationUser>? fake = new Faker<ApplicationUser>()
 				.RuleFor(x => x.Id, Guid.CreateVersion7().ToString())
 				.RuleFor(x => x.UserName, f => f.Name.FullName())
 				.RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.UserName))
 				.RuleFor(x => x.DisplayName, (f, u) => f.Name.FirstName())
 				.RuleFor(x => x.EmailConfirmed, f => f.Random.Bool())
+
 				// SecurityStamp and ConcurrencyStamp are normally initialized by IdentityUser
 				// using non-deterministic GUIDs. To make seeded generation deterministic
 				// (so tests that expect determinism can pass) we explicitly configure

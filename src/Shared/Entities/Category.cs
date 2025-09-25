@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     Category.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
@@ -39,7 +39,7 @@ public class Category : Entity
 	}
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="Category"/> class with an explicit id. Used by tests and factories.
+	///   Initializes a new instance of the <see cref="Category" /> class with an explicit id. Used by tests and factories.
 	/// </summary>
 	/// <param name="id">The category id.</param>
 	/// <param name="categoryName">The category name.</param>
@@ -48,6 +48,7 @@ public class Category : Entity
 	{
 		CategoryName = categoryName;
 		IsArchived = isArchived;
+
 		// Set the protected init Id (allowed in derived type constructor because it's protected)
 		Id = id;
 	}
@@ -55,10 +56,6 @@ public class Category : Entity
 	/// <summary>
 	///   Gets an empty category instance.
 	/// </summary>
-	public static Category Empty =>
-			new(string.Empty)
-			{
-				Id = Guid.Empty
-			};
+	public static Category Empty => new(string.Empty) { Id = Guid.Empty };
 
 }

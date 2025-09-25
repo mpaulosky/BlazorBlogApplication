@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ApplicationUserDtoTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
@@ -20,7 +20,7 @@ public class ApplicationUserDtoTests
 	[Fact]
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
-		var dto = new ApplicationUserDto();
+		ApplicationUserDto dto = new ();
 		dto.Id.Should().NotBeNull();
 		dto.UserName.Should().BeEmpty();
 		dto.Email.Should().BeEmpty();
@@ -30,26 +30,28 @@ public class ApplicationUserDtoTests
 	[Fact]
 	public void EmptyProperty_ShouldReturnEmptyDto()
 	{
-		var dto = ApplicationUserDto.Empty;
+		ApplicationUserDto dto = ApplicationUserDto.Empty;
 		dto.Id.Should().NotBeNull();
 		dto.UserName.Should().BeEmpty();
 		dto.Email.Should().BeEmpty();
-		dto.DisplayName.Should().BeEmpty();}
+		dto.DisplayName.Should().BeEmpty();
+	}
 
 	[Fact]
 	public void EmptyProperty_ShouldBeSingleton()
 	{
-		var a = ApplicationUserDto.Empty;
-		var b = ApplicationUserDto.Empty;
+		ApplicationUserDto a = ApplicationUserDto.Empty;
+		ApplicationUserDto b = ApplicationUserDto.Empty;
+
 		// For the Empty singleton we expect reference equality
-		object.ReferenceEquals(a, b).Should().BeTrue();
+		ReferenceEquals(a, b).Should().BeTrue();
 	}
 
 	[Fact]
 	public void RecordWith_ShouldCreateNewInstance()
 	{
-		var original = new ApplicationUserDto { Id = "1", UserName = "u", Email = "e", DisplayName = "d" };
-		var modified = original with { UserName = "newuser" };
+		ApplicationUserDto original = new()  { Id = "1", UserName = "u", Email = "e", DisplayName = "d" };
+		ApplicationUserDto modified = original with { UserName = "newuser" };
 		modified.Should().NotBeSameAs(original);
 		modified.UserName.Should().Be("newuser");
 		original.UserName.Should().Be("u");

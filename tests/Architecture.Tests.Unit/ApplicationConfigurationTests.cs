@@ -1,11 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ApplicationConfigurationTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Architecture.Tests.Unit
 // =======================================================
+
+using TestResult = NetArchTest.Rules.TestResult;
 
 namespace Architecture;
 
@@ -17,13 +19,10 @@ public class ApplicationConfigurationTests
 	public void Configuration_Classes_Should_Follow_Naming_Convention()
 	{
 		// Arrange
-		var assemblies = new[]
-		{
-				AssemblyReference.Web
-		};
+		Assembly[] assemblies = new[] { AssemblyReference.Web };
 
 		// Act
-		var result = Types.InAssemblies(assemblies)
+		TestResult? result = Types.InAssemblies(assemblies)
 				.That()
 				.HaveNameEndingWith("Configuration")
 				.Should()
@@ -40,13 +39,10 @@ public class ApplicationConfigurationTests
 	public void Configuration_Classes_Should_Be_Concrete()
 	{
 		// Arrange
-		var assemblies = new[]
-		{
-				AssemblyReference.Web
-		};
+		Assembly[] assemblies = new[] { AssemblyReference.Web };
 
 		// Act
-		var result = Types.InAssemblies(assemblies)
+		TestResult? result = Types.InAssemblies(assemblies)
 				.That()
 				.HaveNameEndingWith("Configuration")
 				.Should()

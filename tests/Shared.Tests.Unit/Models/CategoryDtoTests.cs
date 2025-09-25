@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CategoryDtoTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
@@ -20,7 +20,7 @@ public class CategoryDtoTests
 	[Fact]
 	public void DefaultConstructor_ShouldInitializeWithDefaults()
 	{
-		var dto = new CategoryDto();
+		CategoryDto dto = new ();
 		dto.CategoryName.Should().BeEmpty();
 		dto.CreatedOn.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
 		dto.ModifiedOn.Should().BeNull();
@@ -30,7 +30,7 @@ public class CategoryDtoTests
 	[Fact]
 	public void EmptyProperty_ShouldReturnEmptyDto()
 	{
-		var dto = CategoryDto.Empty;
+		CategoryDto dto = CategoryDto.Empty;
 		dto.CategoryName.Should().BeEmpty();
 		dto.CreatedOn.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
 		dto.ModifiedOn.Should().BeNull();

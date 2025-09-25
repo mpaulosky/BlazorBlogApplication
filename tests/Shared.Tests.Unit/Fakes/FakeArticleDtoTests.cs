@@ -1,11 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeArticleDtoTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared.Tests.Unit
 // =======================================================
+
+using Bogus;
 
 namespace Shared.Fakes;
 
@@ -22,7 +24,7 @@ public class FakeArticleDtoTests
 	public void GetNewArticleDto_ShouldReturnValidDto()
 	{
 		// Act
-		var dto = FakeArticleDto.GetNewArticleDto();
+		ArticleDto dto = FakeArticleDto.GetNewArticleDto();
 
 		// Assert
 		dto.Should().NotBeNull();
@@ -54,13 +56,13 @@ public class FakeArticleDtoTests
 		const int requested = 5;
 
 		// Act
-		var list = FakeArticleDto.GetArticleDtos(requested);
+		List<ArticleDto> list = FakeArticleDto.GetArticleDtos(requested);
 
 		// Assert
 		list.Should().NotBeNull();
 		list.Should().HaveCount(requested);
 
-		foreach (var dto in list)
+		foreach (ArticleDto dto in list)
 		{
 			dto.Id.Should().NotBe(Guid.Empty);
 			dto.Title.Should().NotBeNullOrWhiteSpace();
@@ -86,7 +88,7 @@ public class FakeArticleDtoTests
 	public void GetArticleDtos_ZeroRequested_ShouldReturnEmptyList()
 	{
 		// Act
-		var list = FakeArticleDto.GetArticleDtos(0);
+		List<ArticleDto> list = FakeArticleDto.GetArticleDtos(0);
 
 		// Assert
 		list.Should().NotBeNull();
@@ -99,11 +101,11 @@ public class FakeArticleDtoTests
 
 		// Act
 		const int count = 2;
-		var results = FakeArticleDto.GetArticleDtos(count, true);
+		List<ArticleDto> results = FakeArticleDto.GetArticleDtos(count, true);
 
 		// Assert
 
-		for (var i = 0; i < count; i++)
+		for (int i = 0; i < count; i++)
 		{
 			results[i].Should().NotBeNull();
 			results[i].Id.Should().NotBe(Guid.Empty);
@@ -142,11 +144,11 @@ public class FakeArticleDtoTests
 	{
 
 		// Act
-		var results = FakeArticleDto.GetArticleDtos(count);
+		List<ArticleDto> results = FakeArticleDto.GetArticleDtos(count);
 
 		// Assert
 
-		for (var i = 0; i < count; i++)
+		for (int i = 0; i < count; i++)
 		{
 			results[i].Should().NotBeNull();
 			results[i].Id.Should().NotBe(Guid.Empty);
@@ -183,11 +185,11 @@ public class FakeArticleDtoTests
 
 		// Act
 		const int count = 2;
-		var results = FakeArticleDto.GetArticleDtos(count, true);
+		List<ArticleDto> results = FakeArticleDto.GetArticleDtos(count, true);
 
 		// Assert
 
-		for (var i = 0; i < count; i++)
+		for (int i = 0; i < count; i++)
 		{
 			results[i].Should().NotBeNull();
 			results[i].Id.Should().NotBe(Guid.Empty);
@@ -222,8 +224,8 @@ public class FakeArticleDtoTests
 	public void GenerateFake_ShouldConfigureFakerCorrectly()
 	{
 		// Act
-		var faker = FakeArticleDto.GenerateFake();
-		var dto = faker.Generate();
+		Faker<ArticleDto> faker = FakeArticleDto.GenerateFake();
+		ArticleDto? dto = faker.Generate();
 
 		// Assert
 		dto.Should().NotBeNull();
@@ -240,7 +242,7 @@ public class FakeArticleDtoTests
 	{
 
 		// Act
-		var articles = FakeArticleDto.GenerateFake(true).Generate(2);
+		List<ArticleDto>? articles = FakeArticleDto.GenerateFake(true).Generate(2);
 
 		// Assert - focus on string fields that should generally differ without a seed
 		articles[0].Title.Should().NotBe(articles[1].Title);
@@ -258,7 +260,7 @@ public class FakeArticleDtoTests
 	{
 
 		// Act
-		var articles = FakeArticleDto.GenerateFake().Generate(2);
+		List<ArticleDto>? articles = FakeArticleDto.GenerateFake().Generate(2);
 
 		// Assert - focus on string fields that should generally differ without a seed
 		articles[0].Title.Should().NotBe(articles[1].Title);

@@ -1,11 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ListTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
+
+using AngleSharp.Dom;
 
 namespace Web.Components.Features.Articles.ArticlesList;
 
@@ -47,11 +49,11 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
-		var articles = FakeArticleDto.GetArticleDtos(2, true);
+		List<ArticleDto> articles = FakeArticleDto.GetArticleDtos(2, true);
 		SetupHandlerArticles(articles);
 
 		// Act
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 		cut.Markup.Should().Contain(articles[0].Title);
 		cut.Markup.Should().Contain(articles[1].Title);
 	}
@@ -62,7 +64,7 @@ public class ListTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		SetupHandlerArticles(new List<ArticleDto>());
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, true);
@@ -76,11 +78,11 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
-		var tcs = new TaskCompletionSource<Result<IEnumerable<ArticleDto>>>();
+		TaskCompletionSource<Result<IEnumerable<ArticleDto>>> tcs = new ();
 		_mockHandler.HandleAsync().Returns(_ => tcs.Task);
 
 		// Act
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		// Spinner present while pending
 		cut.Markup.Should().Contain("Loading");
@@ -99,7 +101,7 @@ public class ListTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		SetupHandlerArticles(null);
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -113,9 +115,9 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
-		var articles = FakeArticleDto.GetArticleDtos(2, true);
+		List<ArticleDto> articles = FakeArticleDto.GetArticleDtos(2, true);
 		SetupHandlerArticles(articles);
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -125,7 +127,7 @@ public class ListTests : BunitContext
 
 		cut.Render();
 
-		foreach (var article in articles)
+		foreach (ArticleDto article in articles)
 		{
 			cut.Markup.Should().Contain(article.Title);
 			cut.Markup.Should().Contain(article.Author.UserName);
@@ -137,10 +139,10 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
-		var nav = Services.GetRequiredService<BunitNavigationManager>();
-		var articles = FakeArticleDto.GetArticleDtos(2, true);
+		BunitNavigationManager nav = Services.GetRequiredService<BunitNavigationManager>();
+		List<ArticleDto> articles = FakeArticleDto.GetArticleDtos(2, true);
 		SetupHandlerArticles(articles);
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -156,7 +158,7 @@ public class ListTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		SetupHandlerArticles(null);
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -173,11 +175,11 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "User");
-		var articles = FakeArticleDto.GetArticleDtos(2, true);
+		List<ArticleDto> articles = FakeArticleDto.GetArticleDtos(2, true);
 		SetupHandlerArticles(articles);
 
 		// Act
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -188,7 +190,7 @@ public class ListTests : BunitContext
 		cut.Render();
 
 		// Assert
-		foreach (var button in cut.FindAll("button.btn-primary"))
+		foreach (IElement button in cut.FindAll("button.btn-primary"))
 		{
 			button.HasAttribute("disabled").Should().BeTrue();
 		}
@@ -200,7 +202,7 @@ public class ListTests : BunitContext
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin", "Author");
 		SetupHandlerArticles(null, false, "Failed to load articles");
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -216,15 +218,15 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-		var articles = FakeArticleDto.GetArticleDtos(2, true);
+		List<ArticleDto> articles = FakeArticleDto.GetArticleDtos(2, true);
 
-		foreach (var article in articles)
+		foreach (ArticleDto article in articles)
 		{
 			article.CanEdit = true;
 		}
 
 		SetupHandlerArticles(articles);
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -234,7 +236,7 @@ public class ListTests : BunitContext
 
 		cut.Render();
 
-		foreach (var button in cut.FindAll("button.btn-primary"))
+		foreach (IElement button in cut.FindAll("button.btn-primary"))
 		{
 			button.HasAttribute("disabled").Should().BeFalse();
 		}
@@ -245,10 +247,10 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-		var nav = Services.GetRequiredService<BunitNavigationManager>();
-		var articles = FakeArticleDto.GetArticleDtos(1, true);
+		BunitNavigationManager nav = Services.GetRequiredService<BunitNavigationManager>();
+		List<ArticleDto> articles = FakeArticleDto.GetArticleDtos(1, true);
 		SetupHandlerArticles(articles);
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -266,18 +268,18 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-		var nav = Services.GetRequiredService<BunitNavigationManager>();
-		var articles = FakeArticleDto.GetArticleDtos(1, true);
+		BunitNavigationManager nav = Services.GetRequiredService<BunitNavigationManager>();
+		List<ArticleDto> articles = FakeArticleDto.GetArticleDtos(1, true);
 
 		// ensure edit permission is enabled for the article
-		foreach (var a in articles)
+		foreach (ArticleDto a in articles)
 		{
 			a.CanEdit = true;
 		}
 
 		SetupHandlerArticles(articles);
 
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -299,17 +301,17 @@ public class ListTests : BunitContext
 	{
 		// Arrange - user without edit rights
 		Helpers.SetAuthorization(this, true, "User");
-		var nav = Services.GetRequiredService<BunitNavigationManager>();
-		var articles = FakeArticleDto.GetArticleDtos(1, true);
+		BunitNavigationManager nav = Services.GetRequiredService<BunitNavigationManager>();
+		List<ArticleDto> articles = FakeArticleDto.GetArticleDtos(1, true);
 
-		foreach (var a in articles)
+		foreach (ArticleDto a in articles)
 		{
 			a.CanEdit = false;
 		}
 
 		SetupHandlerArticles(articles);
 
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -319,7 +321,7 @@ public class ListTests : BunitContext
 
 		cut.Render();
 
-		var initial = nav.Uri;
+		string initial = nav.Uri;
 
 		// Assert - navigation should not have changed
 		nav.Uri.Should().Be(initial);
@@ -330,9 +332,9 @@ public class ListTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-		var articles = FakeArticleDto.GetArticleDtos(1, true);
+		List<ArticleDto> articles = FakeArticleDto.GetArticleDtos(1, true);
 		SetupHandlerArticles(articles);
-		var cut = Render<List>();
+		IRenderedComponent<List> cut = Render<List>();
 
 		cut.Instance.GetType().GetField("_isLoading", BindingFlags.NonPublic | BindingFlags.Instance)
 				?.SetValue(cut.Instance, false);
@@ -342,13 +344,13 @@ public class ListTests : BunitContext
 
 		cut.Render();
 
-		var expectedHeaders = new[]
+		string[] expectedHeaders = new[]
 		{
 				"Title", "Release Date", "Content", "Author", "Category", "Created On", "Modified On", "Published",
 				"Published On", "Archived", "Actions"
 		};
 
-		foreach (var header in expectedHeaders)
+		foreach (string header in expectedHeaders)
 		{
 			cut.Markup.Should().Contain(header);
 		}
@@ -374,7 +376,7 @@ public class ListTests : BunitContext
 			builder.CloseComponent();
 		};
 
-		var cut = Render<AuthorizeView>(parameters => parameters
+		IRenderedComponent<AuthorizeView> cut = Render<AuthorizeView>(parameters => parameters
 				.Add(p => p.Authorized, authorizedFragment)
 				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);

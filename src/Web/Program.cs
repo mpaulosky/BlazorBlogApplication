@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     Program.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     Program.cs
@@ -7,15 +15,13 @@
 // Project Name :  Web
 // =======================================================
 
-using Microsoft.AspNetCore.Identity;
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-var builder = WebApplication.CreateBuilder(args);
-
-var configuration = builder.Configuration;
+ConfigurationManager configuration = builder.Configuration;
 
 builder.ConfigureServices(configuration);
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Always attempt to seed roles and a default user if configured. Wrap in try/catch
 // so tests and environments without a DB won't fail startup.
@@ -25,8 +31,9 @@ try
 	await Web.Services.IdentitySeeder.SeedRolesAsync(app.Services);
 
 	// If configuration provides default account settings, seed a default user and assign the default role (Author)
-	var defaultEmail = configuration.GetValue<string>("DefaultUser:Email");
-	var defaultPassword = configuration.GetValue<string>("DefaultUser:Password");
+	string? defaultEmail = configuration.GetValue<string>("DefaultUser:Email");
+	string? defaultPassword = configuration.GetValue<string>("DefaultUser:Password");
+
 	if (!string.IsNullOrWhiteSpace(defaultEmail) && !string.IsNullOrWhiteSpace(defaultPassword))
 	{
 		await Web.Services.IdentitySeeder.SeedDefaultUserAsync(app.Services, defaultEmail!, defaultPassword!);
@@ -45,8 +52,8 @@ else
 {
 	try
 	{
-		using var scope = app.Services.CreateScope();
-		var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+		using IServiceScope scope = app.Services.CreateScope();
+		ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 		dbContext.Database.Migrate();
 	}
 	catch

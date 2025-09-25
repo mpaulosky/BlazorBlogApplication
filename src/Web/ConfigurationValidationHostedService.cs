@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ConfigurationValidationHostedService.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
@@ -35,8 +35,8 @@ public sealed class ConfigurationValidationHostedService : IHostedService
 			// by the test factory may not be visible at the exact moment this
 			// callback runs, so checking env vars ensures values exported by
 			// TestWebApplicationFactory are honored.
-			var mongoConn = _config["mongoDb-connection"];
-			var mongoEnv = Environment.GetEnvironmentVariable("mongoDb-connection");
+			string? mongoConn = _config["mongoDb-connection"];
+			string? mongoEnv = Environment.GetEnvironmentVariable("mongoDb-connection");
 
 			// Diagnostic output to help narrow down why test-provided
 			// configuration isn't visible to the hosted service during tests.

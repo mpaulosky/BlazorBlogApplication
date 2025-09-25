@@ -1,15 +1,25 @@
-﻿using System.Diagnostics;
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     PlaywrightManager.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests
+// =======================================================
+using System.Diagnostics;
 
 using Microsoft.Playwright;
 
-namespace Web.Tests.Infrastructure;
+namespace Web.Infrastructure;
 
 /// <summary>
-/// Configure Playwright for interacting with the browser in tests.
+///   Configure Playwright for interacting with the browser in tests.
 /// </summary>
 public class PlaywrightManager : IAsyncLifetime
 {
+
 	private static bool IsDebugging => Debugger.IsAttached;
+
 	private static bool IsHeadless => IsDebugging is false;
 
 	private IPlaywright? _playwright;
@@ -20,10 +30,7 @@ public class PlaywrightManager : IAsyncLifetime
 	{
 		_playwright = await Playwright.CreateAsync();
 
-		var options = new BrowserTypeLaunchOptions
-		{
-			Headless = IsHeadless
-		};
+		BrowserTypeLaunchOptions options = new() { Headless = IsHeadless };
 
 		Browser = await _playwright.Chromium.LaunchAsync(options).ConfigureAwait(false);
 	}
@@ -34,4 +41,5 @@ public class PlaywrightManager : IAsyncLifetime
 
 		_playwright?.Dispose();
 	}
+
 }

@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ArchitectureTestExtensions.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Architecture.Tests.Unit
 // =======================================================
@@ -25,7 +25,7 @@ internal static class ArchitectureTestExtensions
 	// Dependency checks
 	public static bool HasDependencyOn(this string dependency, Assembly assembly)
 	{
-		var types = Types.InAssembly(assembly)
+		IEnumerable<Type>? types = Types.InAssembly(assembly)
 				.That()
 				.HaveDependencyOn(dependency)
 				.GetTypes();
@@ -35,7 +35,7 @@ internal static class ArchitectureTestExtensions
 
 	public static bool HasDependencyOnAny(this IEnumerable<string> dependencies, Assembly assembly)
 	{
-		var types = Types.InAssembly(assembly)
+		IEnumerable<Type>? types = Types.InAssembly(assembly)
 				.That()
 				.HaveDependencyOnAny(dependencies.ToArray())
 				.GetTypes();
@@ -45,7 +45,7 @@ internal static class ArchitectureTestExtensions
 
 	public static bool HasDependencyOnAll(this IEnumerable<string> dependencies, Assembly assembly)
 	{
-		var types = Types.InAssembly(assembly)
+		IEnumerable<Type>? types = Types.InAssembly(assembly)
 				.That()
 				.HaveDependencyOnAll(dependencies.ToArray())
 				.GetTypes();
@@ -56,16 +56,14 @@ internal static class ArchitectureTestExtensions
 	// Layer dependency checks
 	public static bool HasCleanArchitecture(this Assembly assembly, string baseNamespace)
 	{
-		var domainTypes = Types.InAssembly(assembly)
+		IEnumerable<Type>? domainTypes = Types.InAssembly(assembly)
 				.That()
 				.ResideInNamespace($"{baseNamespace}.Domain")
 				.GetTypes();
 
-		var forbiddenDependencies = new[]
+		string[] forbiddenDependencies = new[]
 		{
-				$"{baseNamespace}.Infrastructure",
-				$"{baseNamespace}.Application",
-				$"{baseNamespace}.Web"
+				$"{baseNamespace}.Infrastructure", $"{baseNamespace}.Application", $"{baseNamespace}.Web"
 		};
 
 		// A clean architecture is violated if any domain types have forbidden dependencies
@@ -76,9 +74,9 @@ internal static class ArchitectureTestExtensions
 	// Type reference checks
 	public static IEnumerable<Type> GetReferencedTypes(this Type type)
 	{
-		var referencedTypes = new HashSet<Type>();
+		HashSet<Type> referencedTypes = new ();
 
-		foreach (var prop in type.GetProperties())
+		foreach (PropertyInfo prop in type.GetProperties())
 		{
 			referencedTypes.Add(prop.PropertyType);
 
@@ -88,7 +86,7 @@ internal static class ArchitectureTestExtensions
 			}
 		}
 
-		foreach (var method in type.GetMethods())
+		foreach (MethodInfo method in type.GetMethods())
 		{
 			referencedTypes.Add(method.ReturnType);
 			referencedTypes.UnionWith(method.GetParameters().Select(p => p.ParameterType));
@@ -100,7 +98,7 @@ internal static class ArchitectureTestExtensions
 	// Pattern checks
 	public static bool MatchesPattern(this Assembly assembly, string ns)
 	{
-		var types = Types.InAssembly(assembly)
+		IEnumerable<Type>? types = Types.InAssembly(assembly)
 				.That()
 				.ResideInNamespace(ns)
 				.GetTypes();

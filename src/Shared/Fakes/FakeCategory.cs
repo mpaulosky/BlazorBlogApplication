@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     FakeCategory.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Shared
 // =======================================================
@@ -50,7 +50,7 @@ public class FakeCategory
 	internal static Faker<Category> GenerateFake(bool useSeed = false)
 	{
 
-		var fake = new Faker<Category>()
+		Faker<Category>? fake = new Faker<Category>()
 				.RuleFor(x => x.Id, _ => Guid.CreateVersion7())
 				.RuleFor(x => x.CategoryName, _ => GetRandomCategoryName())
 				.RuleFor(x => x.IsArchived, f => f.Random.Bool())

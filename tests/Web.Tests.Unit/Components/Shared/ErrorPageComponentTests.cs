@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     ErrorPageComponentTests.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ErrorPageComponentTests.cs
@@ -33,7 +41,7 @@ public class ErrorPageComponentTests : BunitContext
 			string expectedColor,
 			string expectedShadowStyle)
 	{
-		var cut = Render<ErrorPageComponent>(parameters => parameters
+		IRenderedComponent<ErrorPageComponent> cut = Render<ErrorPageComponent>(parameters => parameters
 				.Add(p => p.ErrorCode, errorCode)
 				.Add(p => p.TextColor, expectedColor)
 				.Add(p => p.ShadowStyle, expectedShadowStyle)

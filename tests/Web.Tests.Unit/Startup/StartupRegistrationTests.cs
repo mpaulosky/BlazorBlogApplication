@@ -1,3 +1,11 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     StartupRegistrationTests.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web.Tests.Unit
+// =======================================================
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     StartupRegistrationTests.cs
@@ -24,8 +32,8 @@ public class StartupRegistrationTests : IClassFixture<TestWebApplicationFactory>
 	[Fact]
 	public void Validators_Are_Registered()
 	{
-		using var scope = _factory.Services.CreateScope();
-		var sp = scope.ServiceProvider;
+		using IServiceScope scope = _factory.Services.CreateScope();
+		IServiceProvider sp = scope.ServiceProvider;
 
 		sp.GetRequiredService<IValidator<ArticleDto>>()
 				.Should().BeOfType<ArticleDtoValidator>();
@@ -37,8 +45,8 @@ public class StartupRegistrationTests : IClassFixture<TestWebApplicationFactory>
 	[Fact]
 	public void Feature_Handlers_Are_Registered()
 	{
-		using var scope = _factory.Services.CreateScope();
-		var sp = scope.ServiceProvider;
+		using IServiceScope scope = _factory.Services.CreateScope();
+		IServiceProvider sp = scope.ServiceProvider;
 
 		sp.GetRequiredService<GetArticles.Handler>().Should().NotBeNull();
 		sp.GetRequiredService<GetCategories.Handler>().Should().NotBeNull();
@@ -53,21 +61,21 @@ public class StartupRegistrationTests : IClassFixture<TestWebApplicationFactory>
 	[Fact]
 	public void Mongo_Registrations_And_Lifetimes_Are_Correct()
 	{
-		using var scopeRoot = _factory.Services.CreateScope();
-		var spRoot = scopeRoot.ServiceProvider;
+		using IServiceScope scopeRoot = _factory.Services.CreateScope();
+		IServiceProvider spRoot = scopeRoot.ServiceProvider;
 
-	// ApplicationDbContext factory and lifetimes
-	var ctxFactory = spRoot.GetRequiredService<IApplicationDbContextFactory>();
-	ctxFactory.Should().NotBeNull();
+		// ApplicationDbContext factory and lifetimes
+		IApplicationDbContextFactory ctxFactory = spRoot.GetRequiredService<IApplicationDbContextFactory>();
+		ctxFactory.Should().NotBeNull();
 
-	var ctx1A = spRoot.GetRequiredService<IApplicationDbContext>();
-	var ctx1B = spRoot.GetRequiredService<IApplicationDbContext>();
-	ctx1A.Should().BeSameAs(ctx1B);
+		IApplicationDbContext ctx1A = spRoot.GetRequiredService<IApplicationDbContext>();
+		IApplicationDbContext ctx1B = spRoot.GetRequiredService<IApplicationDbContext>();
+		ctx1A.Should().BeSameAs(ctx1B);
 
-	using var scope2 = _factory.Services.CreateScope();
-	var sp2 = scope2.ServiceProvider;
-	var ctx2 = sp2.GetRequiredService<IApplicationDbContext>();
-	ctx2.Should().NotBeSameAs(ctx1A);
+		using IServiceScope scope2 = _factory.Services.CreateScope();
+		IServiceProvider sp2 = scope2.ServiceProvider;
+		IApplicationDbContext ctx2 = sp2.GetRequiredService<IApplicationDbContext>();
+		ctx2.Should().NotBeSameAs(ctx1A);
 	}
 
 }

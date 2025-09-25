@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     GetCategory.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web
 // =======================================================
@@ -61,7 +61,7 @@ public static class GetCategory
 			try
 			{
 
-				var context = _factory.CreateDbContext();
+				ApplicationDbContext context = _factory.CreateDbContext();
 
 				if (id == Guid.Empty)
 				{
@@ -70,7 +70,7 @@ public static class GetCategory
 					return Result.Fail<CategoryDto>("The ID cannot be empty.");
 				}
 
-				var category = await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+				Category? category = await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
 
 				if (category is null)
 				{

@@ -1,11 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ErrorPageTest.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
+
+using Bunit.Rendering;
 
 namespace Web.Components.Pages;
 
@@ -25,15 +27,18 @@ public class ErrorPageTest : BunitContext
 		ComponentFactories.AddStub<PageTitle>();
 
 		// Act
-		var cut = Render<Error>();
+		IRenderedComponent<Error> cut = Render<Error>();
 
 		// Assert
 		cut.Markup.Should().Contain("Error");
 		cut.Markup.Should().Contain("An error occurred while processing your request.");
 
 		// Assert PageTitle
-		var pageTitleStub = cut.FindComponent<Stub<PageTitle>>();
-		var pageTitle = Render(pageTitleStub.Instance.Parameters.Get(p => p.ChildContent)!);
+		IRenderedComponent<Stub<PageTitle>> pageTitleStub = cut.FindComponent<Stub<PageTitle>>();
+
+		IRenderedComponent<ContainerFragment> pageTitle =
+				Render(pageTitleStub.Instance.Parameters.Get(p => p.ChildContent)!);
+
 		pageTitle.Markup.Should().Be("Error");
 
 	}
@@ -43,7 +48,7 @@ public class ErrorPageTest : BunitContext
 	{
 
 		// Arrange & Act
-		var cut = Render<Error>();
+		IRenderedComponent<Error> cut = Render<Error>();
 
 		// Simulate a request ID being set
 		cut.Instance.GetType().GetField("_requestId",
@@ -63,13 +68,10 @@ public class ErrorPageTest : BunitContext
 	{
 
 		// Arrange
-		var httpContext = new DefaultHttpContext
-		{
-			TraceIdentifier = "Test-Trace-Id"
-		};
+		DefaultHttpContext httpContext = new() { TraceIdentifier = "Test-Trace-Id" };
 
 		// Act
-		var cut = Render<Error>(parameters => parameters
+		IRenderedComponent<Error> cut = Render<Error>(parameters => parameters
 				.AddCascadingValue(httpContext)
 		);
 
@@ -84,7 +86,7 @@ public class ErrorPageTest : BunitContext
 	{
 
 		// Arrange & Act
-		var cut = Render<Error>();
+		IRenderedComponent<Error> cut = Render<Error>();
 
 		// Simulate no request ID
 		cut.Instance.GetType().GetField("_requestId",
@@ -103,7 +105,7 @@ public class ErrorPageTest : BunitContext
 	{
 
 		// Arrange & Act
-		var cut = Render<Error>();
+		IRenderedComponent<Error> cut = Render<Error>();
 
 		// Assert
 		cut.Markup.Should().Contain("Development Mode");

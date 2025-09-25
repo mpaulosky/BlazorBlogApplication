@@ -1,11 +1,13 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     CreateTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
+
+using AngleSharp.Dom;
 
 namespace Web.Components.Features.Articles.ArticleCreate;
 
@@ -22,7 +24,7 @@ public class CreateTests : BunitContext
 	public CreateTests()
 	{
 		_mockHandler = Substitute.For<CreateArticle.ICreateArticleHandler>();
-		var mockLogger = Substitute.For<ILogger<Create>>();
+		ILogger<Create>? mockLogger = Substitute.For<ILogger<Create>>();
 		Services.AddScoped(_ => _mockHandler);
 		Services.AddScoped(_ => mockLogger);
 		Services.AddScoped<CreateArticle.ICreateArticleHandler>(_ => _mockHandler);
@@ -40,7 +42,7 @@ public class CreateTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-		var cut = Render<Create>();
+		IRenderedComponent<Create> cut = Render<Create>();
 
 		// Assert
 		cut.Markup.Should().Contain("Title");
@@ -58,8 +60,8 @@ public class CreateTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-		var cut = Render<Create>();
-		var form = cut.Find("form");
+		IRenderedComponent<Create> cut = Render<Create>();
+		IElement form = cut.Find("form");
 
 		// Act
 		await form.SubmitAsync();
@@ -73,9 +75,9 @@ public class CreateTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-	_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Result.Ok());
-		var cut = Render<Create>();
-		var form = cut.Find("form");
+		_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Result.Ok());
+		IRenderedComponent<Create> cut = Render<Create>();
+		IElement form = cut.Find("form");
 
 		// Fill in required fields
 		cut.Find("input[name='_article.Title']").Change("Test");
@@ -96,9 +98,9 @@ public class CreateTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-	_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Result.Fail("Error occurred"));
-		var cut = Render<Create>();
-		var form = cut.Find("form");
+		_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Result.Fail("Error occurred"));
+		IRenderedComponent<Create> cut = Render<Create>();
+		IElement form = cut.Find("form");
 
 		// Fill in required fields
 		cut.Find("input[name='_article.Title']").Change("Test");
@@ -119,10 +121,10 @@ public class CreateTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-	_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Result.Ok());
-		var nav = Services.GetRequiredService<NavigationManager>();
-		var cut = Render<Create>();
-		var form = cut.Find("form");
+		_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(Result.Ok());
+		NavigationManager nav = Services.GetRequiredService<NavigationManager>();
+		IRenderedComponent<Create> cut = Render<Create>();
+		IElement form = cut.Find("form");
 
 		// Fill in required fields
 		cut.Find("input[name='_article.Title']").Change("Test");
@@ -143,10 +145,10 @@ public class CreateTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-		var tcs = new TaskCompletionSource<Result>();
+		TaskCompletionSource<Result> tcs = new ();
 		_mockHandler.HandleAsync(Arg.Any<ArticleDto>()).Returns(tcs.Task);
-		var cut = Render<Create>();
-		var form = cut.Find("form");
+		IRenderedComponent<Create> cut = Render<Create>();
+		IElement form = cut.Find("form");
 
 		// Fill in required fields
 		cut.Find("input[name='_article.Title']").Change("Test");
@@ -156,8 +158,8 @@ public class CreateTests : BunitContext
 		cut.Find("input[name='_article.UrlSlug']").Change("test_article");
 
 		// Act
-		var submitButton = cut.Find("button[type='submit']");
-		var submitTask = form.SubmitAsync();
+		IElement submitButton = cut.Find("button[type='submit']");
+		Task submitTask = form.SubmitAsync();
 
 		// Assert
 		submitButton.HasAttribute("disabled").Should().BeTrue();
@@ -172,11 +174,11 @@ public class CreateTests : BunitContext
 	{
 		// Arrange
 		Helpers.SetAuthorization(this, true, "Admin");
-		var nav = Services.GetRequiredService<NavigationManager>();
-		var cut = Render<Create>();
+		NavigationManager nav = Services.GetRequiredService<NavigationManager>();
+		IRenderedComponent<Create> cut = Render<Create>();
 
 		// Act
-		var cancel = cut.Find("button[type='button']");
+		IElement cancel = cut.Find("button[type='button']");
 		cancel.Click();
 
 		// Assert
@@ -203,7 +205,7 @@ public class CreateTests : BunitContext
 			builder.CloseComponent();
 		};
 
-		var cut = Render<AuthorizeView>(parameters => parameters
+		IRenderedComponent<AuthorizeView> cut = Render<AuthorizeView>(parameters => parameters
 				.Add(p => p.Authorized, authorizedFragment)
 				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);
@@ -233,7 +235,7 @@ public class CreateTests : BunitContext
 			builder.CloseComponent();
 		};
 
-		var cut = Render<AuthorizeView>(parameters => parameters
+		IRenderedComponent<AuthorizeView> cut = Render<AuthorizeView>(parameters => parameters
 				.Add(p => p.Authorized, authorizedFragment)
 				.Add(p => p.NotAuthorized, notAuthorizedFragment)
 		);

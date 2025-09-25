@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     RecentRelatedComponentTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Unit
 // =======================================================
@@ -21,7 +21,7 @@ public class RecentRelatedComponentTests : BunitContext
 	public void Should_Render_Recent_Posts_Title()
 	{
 		// Arrange & Act
-		var cut = Render<RecentRelatedComponent>();
+		IRenderedComponent<RecentRelatedComponent> cut = Render<RecentRelatedComponent>();
 
 		// Assert
 		cut.Markup.Should().Contain("Recent Posts");

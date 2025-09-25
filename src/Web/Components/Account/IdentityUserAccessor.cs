@@ -1,6 +1,12 @@
+﻿// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     IdentityUserAccessor.cs
+// Company :       mpaulosky
+// Author :        Matthew Paulosky
+// Solution Name : BlazorBlogApplication
+// Project Name :  Web
+// =======================================================
 using Microsoft.AspNetCore.Identity;
-
-using Web.Data;
 
 namespace Web.Components.Account;
 
@@ -13,7 +19,7 @@ internal sealed class IdentityUserAccessor
 
 	public async Task<ApplicationUser> GetRequiredUserAsync(HttpContext context)
 	{
-		var user = await userManager.GetUserAsync(context.User);
+		ApplicationUser? user = await userManager.GetUserAsync(context.User);
 
 		if (user is null)
 		{

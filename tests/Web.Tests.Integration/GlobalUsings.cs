@@ -1,8 +1,8 @@
-// =======================================================
+﻿// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     GlobalUsings.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Integration
 // =======================================================
@@ -19,13 +19,14 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Logging;
 
 global using Shared.Fakes;
+
 global using static Shared.Helpers.Helpers;
 
 global using Web.Data;
 global using Web.Fixtures;
+
 global using Microsoft.EntityFrameworkCore;
 
 global using Shared.Entities;
 global using Shared.Helpers;
 global using Shared.Models;
-

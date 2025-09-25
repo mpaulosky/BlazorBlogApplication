@@ -2,11 +2,10 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     DatabaseCollection.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
 // Project Name :  Web.Tests.Integration
 // =======================================================
-
 namespace Web;
 
 [CollectionDefinition("Test Collection")]
