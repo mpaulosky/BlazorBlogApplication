@@ -28,7 +28,7 @@ public class PlaywrightManager : IAsyncLifetime
 
 	public async ValueTask InitializeAsync()
 	{
-		_playwright = await Playwright.CreateAsync();
+		_playwright = await Microsoft.Playwright.Playwright.CreateAsync();
 
 		BrowserTypeLaunchOptions options = new() { Headless = IsHeadless };
 
