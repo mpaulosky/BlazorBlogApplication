@@ -27,7 +27,7 @@ public class FooterComponentTests : BunitContext
 		string expectedHtml =
 				$"""
 				<div class="text-center px-6 py-2 mx-auto xl:max-w-5xl border-t-blue-700">
-				  <a href="/">Â©{currentYear} MPaulosky Co. All rights reserved.</a>
+				  <a href="/">©{currentYear} MPaulosky Co. All rights reserved.</a>
 				</div>
 				""";
 
@@ -44,7 +44,7 @@ public class FooterComponentTests : BunitContext
 	{
 
 		IRenderedComponent<FooterComponent> cut = Render<FooterComponent>();
-		cut.Markup.Should().Contain("Â©");
+		cut.Markup.Should().Contain("©");
 		cut.Markup.Should().Contain("MPaulosky Co. All rights reserved.");
 		cut.Markup.Should().Contain("text-center px-6 py-2 mx-auto xl:max-w-5xl border-t-blue-700");
 

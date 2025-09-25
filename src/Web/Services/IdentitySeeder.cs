@@ -57,7 +57,7 @@ public static class IdentitySeeder
 
 			if (result.Succeeded)
 			{
-				// Default role for newly created users is Author
+				// The default role for newly created users is Author
 				await userManager.AddToRoleAsync(user, RoleNames.Author);
 			}
 		}
