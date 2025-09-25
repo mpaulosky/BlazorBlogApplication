@@ -77,4 +77,20 @@ public class ErrorAlertComponentTests : BunitContext
 		cut.Markup.Should().Contain(title);
 	}
 
+	[Fact]
+	public void UsesDefaultTitle_WhenTitleNotProvided()
+	{
+		// Arrange
+		string message = "Test message without custom title.";
+
+		// Act
+		IRenderedComponent<ErrorAlertComponent> cut = Render<ErrorAlertComponent>(parameters => parameters
+				.Add(p => p.Message, message)
+		);
+
+		// Assert
+		cut.Markup.Should().Contain("Error"); // Default title
+		cut.Markup.Should().Contain(message);
+	}
+
 }
