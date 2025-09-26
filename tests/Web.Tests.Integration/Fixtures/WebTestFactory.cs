@@ -120,11 +120,11 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 			await s_sharedContainer!.StartAsync(_cts.Token);
 			_logger.LogInformation("PostgresSQL container started successfully on localhost:{Port}", s_port);
 
-			// Apply EF Core migrations to ensure the schema is ready
+			// Run migrations to create the database schema with proper Identity schema support
 			using IServiceScope scope = Services.CreateScope();
 			ApplicationDbContext db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 			await db.Database.MigrateAsync(_cts.Token);
-			_logger.LogInformation("Database migrated successfully");
+			_logger.LogInformation("Database schema created successfully using migrations");
 		}
 		catch (OperationCanceledException)
 		{
@@ -134,7 +134,7 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 		}
 		catch (Exception ex)
 		{
-			_logger.LogError(ex, "Failed to start PostgresSQL container or migrate database");
+			_logger.LogError(ex, "Failed to start PostgresSQL container or create database schema");
 
 			throw;
 		}
@@ -173,9 +173,11 @@ public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 			await DbLock.WaitAsync();
 			using IServiceScope scope = Services.CreateScope();
 			ApplicationDbContext db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+			
+			// Delete all data and recreate using migrations
 			await db.Database.EnsureDeletedAsync(_cts.Token);
 			await db.Database.MigrateAsync(_cts.Token);
-			_logger.LogInformation("Database {DatabaseName} reset successfully", _databaseName);
+			_logger.LogInformation("Database {DatabaseName} reset successfully using migrations", _databaseName);
 		}
 		catch (Exception ex)
 		{
