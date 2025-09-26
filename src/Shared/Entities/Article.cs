@@ -40,9 +40,9 @@ public class Article : Entity
 	public string AuthorId { get; set; }
 
 	/// <summary>
-	///   Navigation property to the author (DTO expected by tests)
+	///   Navigation property to the author entity
 	/// </summary>
-	public ApplicationUserDto Author { get; set; } = ApplicationUserDto.Empty;
+	public ApplicationUser? Author { get; set; }
 
 	/// <summary>
 	///   Foreign key to the category
@@ -50,9 +50,9 @@ public class Article : Entity
 	public Guid CategoryId { get; set; }
 
 	/// <summary>
-	///   Navigation property to the category (DTO expected by tests)
+	///   Navigation property to the category entity
 	/// </summary>
-	public CategoryDto Category { get; set; } = CategoryDto.Empty;
+	public Category? Category { get; set; }
 
 	[Display(Name = "Is Published")] public bool IsPublished { get; set; }
 
@@ -76,9 +76,9 @@ public class Article : Entity
 		PublishedOn = null;
 		IsArchived = false;
 
-		// Ensure navigation DTOs are initialized to Empty to match test expectations
-		Author = ApplicationUserDto.Empty;
-		Category = CategoryDto.Empty;
+		// Navigation properties will be null until loaded via Include()
+		Author = null;
+		Category = null;
 	}
 
 	/// <summary>
@@ -137,8 +137,8 @@ public class Article : Entity
 			string content,
 			string coverImageUrl,
 			string urlSlug,
-			ApplicationUserDto author,
-			CategoryDto category,
+			ApplicationUser? author,
+			Category? category,
 			bool isPublished = false,
 			DateTime? publishedOn = null,
 			bool isArchived = false)
@@ -152,9 +152,9 @@ public class Article : Entity
 		CoverImageUrl = coverImageUrl;
 		UrlSlug = urlSlug;
 		Author = author;
-		AuthorId = string.Empty;
+		AuthorId = author?.Id ?? string.Empty;
 		Category = category;
-		CategoryId = Guid.Empty;
+		CategoryId = category?.Id ?? Guid.Empty;
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
 		IsArchived = isArchived;
@@ -222,8 +222,8 @@ public class Article : Entity
 			Id = Guid.Empty,
 			AuthorId = string.Empty,
 			CategoryId = Guid.Empty,
-			Author = ApplicationUserDto.Empty,
-			Category = CategoryDto.Empty
+			Author = null,
+			Category = null
 	};
 
 }

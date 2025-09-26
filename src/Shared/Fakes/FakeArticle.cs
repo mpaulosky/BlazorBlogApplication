@@ -80,8 +80,8 @@ public static class FakeArticle
 				.RuleFor(a => a.IsArchived, (f, _) => f.Random.Bool())
 				.RuleFor(a => a.CategoryId, (f, _) => FakeCategory.GetNewCategory(useSeed).Id)
 				.RuleFor(a => a.AuthorId, (f, _) => Guid.CreateVersion7().ToString())
-				.RuleFor(a => a.Category, (f, _) => FakeCategoryDto.GetNewCategoryDto(useSeed))
-				.RuleFor(a => a.Author, (f, _) => FakeApplicationUserDto.GetNewApplicationUserDto(useSeed))
+				.RuleFor(a => a.Category, (f, _) => FakeCategory.GetNewCategory(useSeed))
+				.RuleFor(a => a.Author, (f, _) => FakeApplicationUser.GetNewApplicationUser(useSeed))
 				.RuleFor(a => a.CreatedOn, (_, __) => DateTime.Now)
 				.RuleFor(a => a.ModifiedOn, (_, __) => DateTime.Now);
 
