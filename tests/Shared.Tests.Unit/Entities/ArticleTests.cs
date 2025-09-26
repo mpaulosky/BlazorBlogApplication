@@ -29,8 +29,8 @@ public class ArticleTests
 		article.Content.Should().Be("");
 		article.CoverImageUrl.Should().Be("");
 		article.UrlSlug.Should().Be("");
-		article.Author.Should().Be(ApplicationUserDto.Empty);
-		article.Category.Should().Be(CategoryDto.Empty);
+		article.Author.Should().BeNull();
+		article.Category.Should().BeNull();
 		article.IsPublished.Should().BeFalse();
 		article.PublishedOn.Should().BeNull();
 		article.IsArchived.Should().BeFalse();
@@ -163,8 +163,8 @@ public class ArticleTests
 		empty.Content.Should().Be("");
 		empty.CoverImageUrl.Should().Be("");
 		empty.UrlSlug.Should().Be("");
-		empty.Author.Should().Be(ApplicationUserDto.Empty);
-		empty.Category.Should().Be(CategoryDto.Empty);
+		empty.Author.Should().BeNull();
+		empty.Category.Should().BeNull();
 		empty.IsPublished.Should().BeFalse();
 		empty.PublishedOn.Should().BeNull();
 		empty.IsArchived.Should().BeFalse();
