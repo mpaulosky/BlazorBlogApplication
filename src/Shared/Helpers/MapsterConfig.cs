@@ -30,8 +30,19 @@ public static class MapsterConfig
 				.Map(dest => dest.Content, src => src.Content)
 				.Map(dest => dest.UrlSlug, src => src.UrlSlug)
 				.Map(dest => dest.CoverImageUrl, src => src.CoverImageUrl)
-				.Map(dest => dest.Author, src => src.Author)
-				.Map(dest => dest.Category, src => src.Category)
+				.Map(dest => dest.Author, src => src.Author != null 
+					? new ApplicationUserDto
+					{
+						Id = src.Author.Id,
+						UserName = src.Author.UserName ?? string.Empty,
+						Email = src.Author.Email ?? string.Empty,
+						DisplayName = src.Author.DisplayName,
+						EmailConfirmed = src.Author.EmailConfirmed
+					}
+					: ApplicationUserDto.Empty)
+				.Map(dest => dest.Category, src => src.Category != null 
+					? CategoryDto.FromEntity(src.Category)
+					: CategoryDto.Empty)
 				.Map(dest => dest.CreatedOn, src => src.CreatedOn)
 				.Map(dest => dest.ModifiedOn, src => src.ModifiedOn)
 				.Map(dest => dest.IsPublished, src => src.IsPublished)

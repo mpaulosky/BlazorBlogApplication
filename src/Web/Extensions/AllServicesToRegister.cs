@@ -7,6 +7,8 @@
 // Project Name :  Web
 // =======================================================
 
+using Shared.Helpers;
+
 namespace Web.Extensions;
 
 /// <summary>
@@ -38,6 +40,9 @@ public static class AllServicesToRegister
 		builder.Services.AddOutputCache();
 		builder.Services.AddMemoryCache();
 		builder.Services.AddHealthChecks();
+
+		// Configure Mapster mappings
+		MapsterConfig.RegisterMappings();
 
 		// Add services to the container.
 		builder.Services.AddRazorComponents()
