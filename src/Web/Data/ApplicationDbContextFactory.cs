@@ -39,24 +39,26 @@ public sealed class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Ap
 
 		if (string.IsNullOrWhiteSpace(connectionString))
 		{
-			// When running unit tests or design-time tools in environments without a
-			// configured DefaultConnection, fall back to an in-memory provider so
-			// tests that instantiate this factory succeed. This keeps design-time
-			// behavior convenient while still allowing production to require a real
-			// connection string via RegisterDatabaseContext.
-			optionsBuilder.UseInMemoryDatabase("DesignTimeFallback");
-
-			return new ApplicationDbContext(optionsBuilder.Options);
+			// For design-time tools (like EF migrations), we need a real database provider
+			// instead of in-memory. Use a development PostgreSQL connection string.
+			// In production, the connection string should be properly configured.
+			connectionString = "Host=localhost;Database=BlazorBlogDev;Username=dev;Password=dev";
 		}
 
-		optionsBuilder.UseNpgsql(connectionString);
+		optionsBuilder.UseNpgsql(connectionString, options =>
+		{
+			// Specify the migrations directory relative to the project root
+			options.MigrationsHistoryTable("__EFMigrationsHistory", "identity");
+		});
 
 		return new ApplicationDbContext(optionsBuilder.Options);
 	}
 
 	public ApplicationDbContext CreateDbContext(string[] args)
 	{
-		throw new NotImplementedException();
+		// For design-time tools (like EF migrations), delegate to the parameterless method
+		// since we don't typically use the args parameter for simple scenarios
+		return CreateDbContext();
 	}
 
 }
