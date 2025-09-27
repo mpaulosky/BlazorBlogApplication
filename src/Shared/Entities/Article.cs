@@ -30,9 +30,9 @@ public class Article : Entity
 
 	public string Content { get; set; }
 
-	[Display(Name = "Cover Image URL")] public string CoverImageUrl { get; set; }
+	[Display(Name = "Cover Image URL")] public string CoverImageUrl { get; set; } = string.Empty;
 
-	[Display(Name = "Url Slug")] public string UrlSlug { get; set; }
+	[Display(Name = "Url Slug")] public string UrlSlug { get; set; } = string.Empty;
 
 	/// <summary>
 	///   Foreign key to the author (ApplicationUser)
