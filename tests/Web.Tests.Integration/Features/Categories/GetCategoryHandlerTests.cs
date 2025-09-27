@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Integration
+// Project Name :  Web.Tests (migrated from Web.Tests.Integration)
 // =======================================================
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
@@ -165,7 +165,7 @@ public class GetCategoryHandlerTests
 
 		// Verify the DTO is the correct type
 		category.Should().BeOfType<CategoryDto>();
-		
+        
 		// Verify IsArchived property is properly mapped (boolean should have a valid value)
 		category.IsArchived.Should().BeFalse();  // We created a non-archived category
 	}

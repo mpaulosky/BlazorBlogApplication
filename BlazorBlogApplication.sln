@@ -17,9 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "src\Web\Web.csproj",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Tests.Unit", "tests\Web.Tests.Unit\Web.Tests.Unit.csproj", "{076FDF68-1ADB-FDFC-51FE-E164EF5517F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Tests.Integration", "tests\Web.Tests.Integration\Web.Tests.Integration.csproj", "{E4891819-A913-46EB-932A-BDBE7DE197DE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Tests", "tests\Web.Tests\Web.Tests.csproj", "{8E178347-2595-408F-BBF5-2FAACE9B1A52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.Tests.Integration", "tests\Web.Tests.Integration\Web.Tests.Integration.csproj", "{8E178347-2595-408F-BBF5-2FAACE9B1A52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,10 +53,6 @@ Global
 		{076FDF68-1ADB-FDFC-51FE-E164EF5517F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{076FDF68-1ADB-FDFC-51FE-E164EF5517F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{076FDF68-1ADB-FDFC-51FE-E164EF5517F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E4891819-A913-46EB-932A-BDBE7DE197DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E4891819-A913-46EB-932A-BDBE7DE197DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E4891819-A913-46EB-932A-BDBE7DE197DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E4891819-A913-46EB-932A-BDBE7DE197DE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8E178347-2595-408F-BBF5-2FAACE9B1A52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8E178347-2595-408F-BBF5-2FAACE9B1A52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E178347-2595-408F-BBF5-2FAACE9B1A52}.Release|Any CPU.ActiveCfg = Release|Any CPU

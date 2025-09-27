@@ -1,13 +1,12 @@
-﻿// =======================================================
+// =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name :     WebTestFactory.cs
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Integration
+// Project Name :  Web.Tests (migrated from Web.Tests.Integration)
 // =======================================================
 using Microsoft.Extensions.DependencyInjection;
-
 using Testcontainers.PostgreSql;
 
 namespace Web.Fixtures;
@@ -17,178 +16,144 @@ namespace Web.Fixtures;
 [UsedImplicitly]
 public class WebTestFactory : WebApplicationFactory<IAppMarker>, IAsyncLifetime
 {
+    private readonly ILogger<WebTestFactory> _logger;
+    private readonly string _databaseName;
+    private readonly CancellationTokenSource _cts;
 
-	private readonly ILogger<WebTestFactory> _logger;
+    private static PostgreSqlContainer? s_sharedContainer;
+    private static readonly Lock Lock = new();
+    private static int s_port;
+    private static readonly SemaphoreSlim DbLock = new(1, 1);
 
-	private readonly string _databaseName;
+    public WebTestFactory()
+    {
+        _databaseName = $"test_db_{Guid.NewGuid():N}";
+        _cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
 
-	private readonly CancellationTokenSource _cts;
+        ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Debug);
+        });
 
-	private static PostgreSqlContainer? s_sharedContainer;
+        _logger = loggerFactory.CreateLogger<WebTestFactory>();
 
-	private static readonly Lock Lock = new();
+        if (s_sharedContainer == null)
+        {
+            lock (Lock)
+            {
+                if (s_sharedContainer == null)
+                {
+                    s_port = new Random().Next(5237, 6000);
 
-	private static int s_port;
+                    s_sharedContainer = new PostgreSqlBuilder()
+                        .WithImage("postgres:16-alpine")
+                        .WithDatabase(_databaseName)
+                        .WithUsername("postgres")
+                        .WithPassword("postgrespw")
+                        .WithPortBinding(s_port, 5432)
+                        .Build();
+                }
+            }
+        }
 
-	private static readonly SemaphoreSlim DbLock = new(1, 1);
+        Environment.SetEnvironmentVariable("ASPIRE_ALLOW_UNSECURED_TRANSPORT", "true");
+        Environment.SetEnvironmentVariable("ASPNETCORE_URLS", "http://localhost:0");
 
-	public WebTestFactory()
-	{
-		_databaseName = $"test_db_{Guid.NewGuid():N}";
-		_cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+        string earlyConnection =
+            $"Host=localhost;Port={s_port};Database={_databaseName};Username=postgres;Password=postgrespw;";
 
-		ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
-		{
-			builder.AddConsole();
-			builder.SetMinimumLevel(LogLevel.Debug);
-		});
+        Environment.SetEnvironmentVariable("DefaultConnection", earlyConnection);
+    }
 
-		_logger = loggerFactory.CreateLogger<WebTestFactory>();
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureAppConfiguration((context, config) =>
+        {
+            string npgsqlConnection =
+                $"Host=localhost;Port={s_port};Database={_databaseName};Username=postgres;Password=postgrespw;";
 
-		// Initialize a shared container if not already done
-		if (s_sharedContainer == null)
-		{
-			lock (Lock)
-			{
-				if (s_sharedContainer == null)
-				{
-					s_port = new Random().Next(5237, 6000);
+            config.AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:DefaultConnection"] = npgsqlConnection,
+                ["DefaultConnection"] = npgsqlConnection,
+                ["Aspire:AllowUnsecuredTransport"] = "true",
+                ["ASPNETCORE_URLS"] = "http://localhost:0"
+            });
 
-					s_sharedContainer = new PostgreSqlBuilder()
-							.WithImage("postgres:16-alpine")
-							.WithDatabase(_databaseName)
-							.WithUsername("postgres")
-							.WithPassword("postgrespw")
-							.WithPortBinding(s_port, 5432)
-							.Build();
-				}
-			}
-		}
+            Environment.SetEnvironmentVariable("DefaultConnection", npgsqlConnection);
+        });
+    }
 
-		// Prefer unsecured transport for Aspire/test hosts and export the DefaultConnection
-		// environment variable early so it is available during host startup when
-		// Program.ConfigureServices runs. Some test hosts construct the application
-		// before ConfigureWebHost runs, so ConfigureAppConfiguration isn't enough.
-		// Allow Aspire to expose unsecured HTTP endpoints for integration tests.
-		Environment.SetEnvironmentVariable("ASPIRE_ALLOW_UNSECURED_TRANSPORT", "true");
+    public async ValueTask InitializeAsync()
+    {
+        try
+        {
+            _logger.LogInformation("Starting PostgresSQL container...");
+            await s_sharedContainer!.StartAsync(_cts.Token);
+            _logger.LogInformation("PostgresSQL container started successfully on localhost:{Port}", s_port);
 
-		// Ensure ASP.NET binds to an HTTP URL (use dynamic port 0 letting the host choose)
-		Environment.SetEnvironmentVariable("ASPNETCORE_URLS", "http://localhost:0");
+            using IServiceScope scope = Services.CreateScope();
+            ApplicationDbContext db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            await db.Database.MigrateAsync(_cts.Token);
+            _logger.LogInformation("Database schema created successfully using migrations");
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogError("PostgresSQL container startup timed out after 5 minutes");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to start PostgresSQL container or create database schema");
+            throw;
+        }
+    }
 
-		// Export the DefaultConnection environment variable early so it is available
-		// during host startup when Program.ConfigureServices runs. Some test hosts
-		// construct the application before ConfigureWebHost runs, so ConfigureAppConfiguration
-		// isn't enough.
-		string earlyConnection =
-				$"Host=localhost;Port={s_port};Database={_databaseName};Username=postgres;Password=postgrespw;";
+    public override async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (s_sharedContainer != null)
+            {
+                _logger.LogInformation("Disposing PostgresSQL container...");
+                await s_sharedContainer.DisposeAsync();
+                s_sharedContainer = null;
+                _logger.LogInformation("PostgresSQL container disposed successfully");
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error disposing PostgresSQL container");
+            throw;
+        }
+        finally
+        {
+            _cts.Dispose();
+            await base.DisposeAsync();
+        }
+    }
 
-		Environment.SetEnvironmentVariable("DefaultConnection", earlyConnection);
-	}
+    public async Task ResetDatabaseAsync()
+    {
+        try
+        {
+            await DbLock.WaitAsync();
+            using IServiceScope scope = Services.CreateScope();
+            ApplicationDbContext db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-	protected override void ConfigureWebHost(IWebHostBuilder builder)
-	{
-		builder.ConfigureAppConfiguration((context, config) =>
-		{
-			string npgsqlConnection =
-					$"Host=localhost;Port={s_port};Database={_databaseName};Username=postgres;Password=postgrespw;";
-
-			// Add to the in-memory configuration so the app picks it up.
-			config.AddInMemoryCollection(new Dictionary<string, string?>
-			{
-					["ConnectionStrings:DefaultConnection"] = npgsqlConnection,
-					["DefaultConnection"] = npgsqlConnection,
-
-					// Prefer unsecured transport in the app's configuration for tests
-					["Aspire:AllowUnsecuredTransport"] = "true",
-					["ASPNETCORE_URLS"] = "http://localhost:0"
-			});
-
-			// Also, export to environment variables so code paths that read
-			// Environment.GetEnvironmentVariable("DefaultConnection") can find it
-			// during host startup in the test environment.
-			Environment.SetEnvironmentVariable("DefaultConnection", npgsqlConnection);
-		});
-
-		// No extra service registrations required here; the app registers DbContext via configuration
-	}
-
-	public async ValueTask InitializeAsync()
-	{
-		try
-		{
-			_logger.LogInformation("Starting PostgresSQL container...");
-			await s_sharedContainer!.StartAsync(_cts.Token);
-			_logger.LogInformation("PostgresSQL container started successfully on localhost:{Port}", s_port);
-
-			// Run migrations to create the database schema with proper Identity schema support
-			using IServiceScope scope = Services.CreateScope();
-			ApplicationDbContext db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-			await db.Database.MigrateAsync(_cts.Token);
-			_logger.LogInformation("Database schema created successfully using migrations");
-		}
-		catch (OperationCanceledException)
-		{
-			_logger.LogError("PostgresSQL container startup timed out after 5 minutes");
-
-			throw;
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "Failed to start PostgresSQL container or create database schema");
-
-			throw;
-		}
-	}
-
-	public override async ValueTask DisposeAsync()
-	{
-		try
-		{
-			// Only dispose of the container when the last test factory is disposed
-			if (s_sharedContainer != null)
-			{
-				_logger.LogInformation("Disposing PostgresSQL container...");
-				await s_sharedContainer.DisposeAsync();
-				s_sharedContainer = null;
-				_logger.LogInformation("PostgresSQL container disposed successfully");
-			}
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "Error disposing PostgresSQL container");
-
-			throw;
-		}
-		finally
-		{
-			_cts.Dispose();
-			await base.DisposeAsync();
-		}
-	}
-
-	public async Task ResetDatabaseAsync()
-	{
-		try
-		{
-			await DbLock.WaitAsync();
-			using IServiceScope scope = Services.CreateScope();
-			ApplicationDbContext db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-			
-			// Delete all data and recreate using migrations
-			await db.Database.EnsureDeletedAsync(_cts.Token);
-			await db.Database.MigrateAsync(_cts.Token);
-			_logger.LogInformation("Database {DatabaseName} reset successfully using migrations", _databaseName);
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex, "Error resetting database");
-
-			throw;
-		}
-		finally
-		{
-			DbLock.Release();
-		}
-	}
-
+            await db.Database.EnsureDeletedAsync(_cts.Token);
+            await db.Database.MigrateAsync(_cts.Token);
+            _logger.LogInformation("Database {DatabaseName} reset successfully using migrations", _databaseName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error resetting database");
+            throw;
+        }
+        finally
+        {
+            DbLock.Release();
+        }
+    }
 }

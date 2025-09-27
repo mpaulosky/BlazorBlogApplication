@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Integration
+// Project Name :  Web.Tests (migrated from Web.Tests.Integration)
 // =======================================================
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
