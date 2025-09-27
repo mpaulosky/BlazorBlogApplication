@@ -27,8 +27,6 @@ namespace Web.Playwright;
 /// <summary>
 ///   Base class for Playwright tests, providing common functionality and setup for Playwright testing with ASP.NET Core.
 /// </summary>
-/// <typeparam name="TFixture"></typeparam>
-/// <param name="aspireManager"></param>
 public abstract class BasePlaywrightTests : IClassFixture<AspireManager>, IAsyncDisposable
 {
 
@@ -77,20 +75,20 @@ public abstract class BasePlaywrightTests : IClassFixture<AspireManager>, IAsync
 		// Empty string means the dashboard URL
 		if (!string.IsNullOrEmpty(serviceName))
 		{
-			if (AspireManager.App.GetEndpoint(serviceName) is null)
+			if (AspireManager.App!.GetEndpoint(serviceName) is null)
 			{
 				throw new InvalidOperationException($"Service '{serviceName}' not found in the application endpoints");
 			}
 
 			//			urlSought = new Uri (AppHostTestFixture.App.GetEndpoint(serviceName), relativeUrl);
-			urlSought = AspireManager.App.GetEndpoint(serviceName);
+			urlSought = AspireManager.App!.GetEndpoint(serviceName);
 		}
 		else
 		{
-			urlSought = new Uri(DashboardUrl);
+			urlSought = new Uri(DashboardUrl!);
 		}
 
-		await AspireManager.App.ResourceNotifications.WaitForResourceHealthyAsync(serviceName, cancellationToken)
+		await AspireManager.App!.ResourceNotifications.WaitForResourceHealthyAsync(serviceName, cancellationToken)
 				.WaitAsync(DefaultTimeout, cancellationToken);
 
 		IPage page = await CreateNewPageAsync(urlSought, size);
