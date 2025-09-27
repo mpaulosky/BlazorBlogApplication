@@ -1,0 +1,24 @@
+<Project>
+  <PropertyGroup>
+    <!-- Enable faster builds -->
+    <UseSharedCompilation>true</UseSharedCompilation>
+    <BuildInParallel>true</BuildInParallel>
+    <MaxCpuCount>0</MaxCpuCount>
+    
+    <!-- Improve MSBuild performance -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+    
+    <!-- Test configuration optimizations -->
+    <VSTestTimeout>600000</VSTestTimeout>
+    <VSTestParallel>true</VSTestParallel>
+    <VSTestBlame>true</VSTestBlame>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+    <!-- Test project specific settings -->
+    <TestTimeout>300000</TestTimeout>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+</Project>

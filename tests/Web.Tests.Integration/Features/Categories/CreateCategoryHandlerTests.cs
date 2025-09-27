@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
 // Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Integration
+// Project Name :  Web.Tests (migrated from Web.Tests.Integration)
 // =======================================================
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
@@ -124,7 +124,7 @@ public class CreateCategoryHandlerTests
 
 		// Act & Assert - This should throw or fail due to database constraints
 		var result = await handler.HandleAsync(categoryDto);
-		
+        
 		// The handler might succeed but database constraints should apply
 		// This tests the actual database behavior with constraint violations
 		result.Success.Should().BeFalse();
@@ -149,7 +149,7 @@ public class CreateCategoryHandlerTests
 		// Verify the database entity was created with correct properties
 		using var context = _contextFactory.CreateDbContext();
 		var category = await context.Categories.FirstAsync(c => c.CategoryName == "Technology", TestContext.Current.CancellationToken);
-		
+        
 		category.Should().NotBeNull();
 		category.CategoryName.Should().Be("Technology");
 		category.Id.Should().NotBe(Guid.Empty);

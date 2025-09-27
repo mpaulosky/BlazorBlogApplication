@@ -4,6 +4,10 @@
 	<RunConfiguration>
 		<ResultsDirectory>./TestResults</ResultsDirectory>
 		<TestSessionTimeout>350000</TestSessionTimeout>
+		<MaxCpuCount>0</MaxCpuCount>
+		<BatchSize>10</BatchSize>
+		<DisableParallelization>false</DisableParallelization>
+		<CollectSourceInformation>false</CollectSourceInformation>
 	</RunConfiguration>
 	<DataCollectionRunSettings>
 		<DataCollectors>

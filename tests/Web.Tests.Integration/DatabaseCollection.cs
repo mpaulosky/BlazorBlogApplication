@@ -1,19 +1,10 @@
-﻿// =======================================================
-// Copyright (c) 2025. All rights reserved.
-// File Name :     DatabaseCollection.cs
-// Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : BlazorBlogApplication
-// Project Name :  Web.Tests.Integration
+// =======================================================
+// Migrated from Web.Tests.Integration
 // =======================================================
 namespace Web;
 
 [CollectionDefinition("Test Collection")]
-public class DatabaseCollection : ICollectionFixture<WebTestFactory>
+public class DatabaseCollection : ICollectionFixture<Web.Fixtures.WebTestFactory>
 {
-
-	// This class has no code and is never created. Its purpose is simply
-	// to be the place to apply [CollectionDefinition] and all the
-	// ICollectionFixture<> interfaces.
-
+    // Marker to apply WebTestFactory as collection fixture for DB-backed tests.
 }

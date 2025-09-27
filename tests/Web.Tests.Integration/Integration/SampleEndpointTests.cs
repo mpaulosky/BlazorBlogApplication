@@ -12,8 +12,7 @@ namespace Web.Tests.Integration;
 [Collection("IntegrationTests")]
 public class SampleEndpointTests
 {
-
-	private readonly TestPostgresFixture _dbFixture = new ();
+	// Removed unused TestPostgresFixture stub
 
 	[Fact]
 	public async Task GetRoot_ReturnsSuccess()

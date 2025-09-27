@@ -10,9 +10,7 @@
 namespace Web.Tests.Integration;
 
 [CollectionDefinition("IntegrationTests")]
-public class IntegrationTestsCollection : ICollectionFixture<TestPostgresFixture>
+public class IntegrationTestsCollection
 {
-
-	// Collection fixture wires TestPostgresFixture to all tests in the collection.
-
+    // Marker collection for Aspire-based tests; no per-collection fixture needed.
 }
