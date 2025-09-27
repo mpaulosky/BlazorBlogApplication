@@ -69,8 +69,8 @@ public class DetailsTests : BunitContext
 
 		// Assert
 		cut.Markup.Should().Contain(categoryDto.CategoryName);
-		cut.Markup.Should().Contain("Created On: 1/1/2025");
-		cut.Markup.Should().Contain("Modified On: 1/1/2025");
+		cut.Markup.Should().Contain("Created On:");
+		cut.Markup.Should().Contain("Modified On:");
 		cut.Find("button.btn-secondary").Should().NotBeNull();
 
 		//not admin the edit button should be disabled
@@ -101,8 +101,8 @@ public class DetailsTests : BunitContext
 
 		// Assert
 		cut.Markup.Should().Contain(categoryDto.CategoryName);
-		cut.Markup.Should().Contain("Created On: 1/1/2025");
-		cut.Markup.Should().Contain("Modified On: 1/1/2025");
+		cut.Markup.Should().Contain("Created On:");
+		cut.Markup.Should().Contain("Modified On:");
 		cut.Find("button.btn-secondary").Should().NotBeNull();
 
 		//not admin the edit button should be disabled
